@@ -2659,6 +2659,9 @@ void SPIRVBuilder::writeExtensions(spirv::Blob *blob)
             case SPIRVExtensions::FragmentShadingRate:
                 spirv::WriteExtension(blob, "SPV_KHR_fragment_shading_rate");
                 break;
+            case SPIRVExtensions::DemoteToHelperInvocation:
+                spirv::WriteExtension(blob, "SPV_EXT_demote_to_helper_invocation");
+                break;
             default:
                 UNREACHABLE();
         }
@@ -2679,6 +2682,9 @@ void SPIRVBuilder::writeSourceExtensions(spirv::Blob *blob)
                 break;
             case SPIRVExtensions::FragmentShadingRate:
                 spirv::WriteSourceExtension(blob, "GL_EXT_fragment_shading_rate");
+                break;
+            case SPIRVExtensions::DemoteToHelperInvocation:
+                spirv::WriteSourceExtension(blob, "GL_EXT_demote_to_helper_invocation");
                 break;
             default:
                 UNREACHABLE();

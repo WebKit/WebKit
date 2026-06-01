@@ -37,12 +37,8 @@ xml_inputs = sorted(khronos_xml_inputs + angle_xml_inputs)
 # Notes on categories of extensions:
 # 'Requestable' extensions are extensions that can be enabled with ANGLE_request_extension
 # 'ES-Only' extensions are always implicitly enabled.
-# 'Toggleable' extensions are like 'Requestable' except they can be also disabled.
 # 'ANGLE' extensions are extensions that are not yet officially upstreamed to Khronos.
 # We document those extensions in gl_angle_ext.xml instead of the canonical gl.xml.
-
-angle_toggleable_extensions = [
-]
 
 angle_requestable_extensions = [
     "GL_ANGLE_base_vertex_base_instance",
@@ -151,6 +147,7 @@ gles_requestable_extensions = [
     "GL_EXT_shader_texture_samples",
     "GL_EXT_shadow_samplers",
     "GL_EXT_sRGB",
+    "GL_EXT_sRGB_write_control",
     "GL_EXT_tessellation_shader",
     "GL_EXT_texture_border_clamp",
     "GL_EXT_texture_buffer",
@@ -165,11 +162,13 @@ gles_requestable_extensions = [
     "GL_EXT_texture_filter_anisotropic",
     "GL_EXT_texture_filter_minmax",
     "GL_EXT_texture_format_BGRA8888",
+    "GL_EXT_texture_format_sRGB_override",
     "GL_EXT_texture_mirror_clamp_to_edge",
     "GL_EXT_texture_norm16",
     "GL_EXT_texture_query_lod",
     "GL_EXT_texture_rg",
     "GL_EXT_texture_shadow_lod",
+    "GL_EXT_texture_sRGB_decode",
     "GL_EXT_texture_sRGB_R8",
     "GL_EXT_texture_sRGB_RG8",
     "GL_EXT_texture_storage",
@@ -287,9 +286,6 @@ gles_es_only_extensions = [
     "GL_EXT_discard_framebuffer",
     "GL_EXT_multisample_compatibility",
     "GL_EXT_robustness",
-    "GL_EXT_sRGB_write_control",
-    "GL_EXT_texture_format_sRGB_override",
-    "GL_EXT_texture_sRGB_decode",
     "GL_KHR_debug",
     "GL_KHR_no_error",
     "GL_KHR_robust_buffer_access_behavior",
@@ -345,14 +341,13 @@ def check_sorted(name, l):
     assert not diff_lines, '\n\nPlease sort "%s":\n%s' % (name, '\n'.join(diff_lines))
 
 
-angle_extensions = angle_requestable_extensions + angle_es_only_extensions + angle_toggleable_extensions
+angle_extensions = angle_requestable_extensions + angle_es_only_extensions
 gles_extensions = gles_requestable_extensions + gles_es_only_extensions
 supported_extensions = sorted(angle_extensions + gles1_extensions + gles_extensions)
 
 assert len(supported_extensions) == len(set(supported_extensions)), 'Duplicates in extension list'
 check_sorted('angle_requestable_extensions', angle_requestable_extensions)
 check_sorted('angle_es_only_extensions', angle_es_only_extensions)
-check_sorted('angle_toggleable_extensions', angle_toggleable_extensions)
 check_sorted('gles_requestable_extensions', gles_requestable_extensions)
 check_sorted('gles_es_only_extensions', gles_es_only_extensions)
 check_sorted('gles_extensions', gles1_extensions)

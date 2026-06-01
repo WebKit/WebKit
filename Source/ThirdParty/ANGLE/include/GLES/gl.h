@@ -488,7 +488,7 @@ typedef void (GL_APIENTRYP PFNGLGETCLIPPLANEXPROC) (GLenum plane, GLfixed *equat
 typedef void (GL_APIENTRYP PFNGLGENBUFFERSPROC) (GLsizei n, GLuint *buffers);
 typedef void (GL_APIENTRYP PFNGLGENTEXTURESPROC) (GLsizei n, GLuint *textures);
 typedef GLenum (GL_APIENTRYP PFNGLGETERRORPROC) (void);
-typedef void (GL_APIENTRYP PFNGLGETFIXEDVPROC) (GLenum pname, GLfixed *params);
+typedef void (GL_APIENTRYP PFNGLGETFIXEDVPROC) (GLenum pname, GLfixed *data);
 typedef void (GL_APIENTRYP PFNGLGETINTEGERVPROC) (GLenum pname, GLint *data);
 typedef void (GL_APIENTRYP PFNGLGETLIGHTXVPROC) (GLenum light, GLenum pname, GLfixed *params);
 typedef void (GL_APIENTRYP PFNGLGETMATERIALXVPROC) (GLenum face, GLenum pname, GLfixed *params);
@@ -633,7 +633,7 @@ GL_API void GL_APIENTRY glGetClipPlanex (GLenum plane, GLfixed *equation);
 GL_API void GL_APIENTRY glGenBuffers (GLsizei n, GLuint *buffers);
 GL_API void GL_APIENTRY glGenTextures (GLsizei n, GLuint *textures);
 GL_API GLenum GL_APIENTRY glGetError (void);
-GL_API void GL_APIENTRY glGetFixedv (GLenum pname, GLfixed *params);
+GL_API void GL_APIENTRY glGetFixedv (GLenum pname, GLfixed *data);
 GL_API void GL_APIENTRY glGetIntegerv (GLenum pname, GLint *data);
 GL_API void GL_APIENTRY glGetLightxv (GLenum light, GLenum pname, GLfixed *params);
 GL_API void GL_APIENTRY glGetMaterialxv (GLenum face, GLenum pname, GLfixed *params);

@@ -186,10 +186,10 @@ class TextureMtl : public TextureImpl
     void deallocateNativeStorage(bool keepImages);
     angle::Result createNativeStorage(const gl::Context *context,
                                       gl::TextureType type,
-                                      const mtl::Format &mtlFormat,
                                       GLuint mips,
                                       GLuint samples,
-                                      const gl::Extents &size);
+                                      const gl::Extents &size,
+                                      const mtl::Format &format);
     angle::Result onBaseMaxLevelsChanged(const gl::Context *context);
     angle::Result ensureSamplerStateCreated(const gl::Context *context);
     // Ensure all image views at all faces/levels are retained.
@@ -327,7 +327,6 @@ class TextureMtl : public TextureImpl
 
     bool isImmutableOrPBuffer() const;
 
-    mtl::Format mFormat;
     egl::Surface *mBoundSurface = nullptr;
     class NativeTextureWrapper;
     class NativeTextureWrapperWithViewSupport;

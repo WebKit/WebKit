@@ -267,6 +267,7 @@ class TextureGL : public TextureImpl
                                                const gl::PixelUnpackState &unpack,
                                                const gl::Buffer *unpackBuffer,
                                                const uint8_t *pixels);
+    angle::Result allocateMipmapLevelsForGeneration(const gl::Context *context);
 
     angle::Result syncTextureStateSwizzle(const gl::Context *context,
                                           const FunctionsGL *functions,

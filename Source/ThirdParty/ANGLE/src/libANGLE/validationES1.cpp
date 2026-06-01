@@ -924,9 +924,9 @@ bool ValidateGetClipPlanex(const PrivateState &state,
 bool ValidateGetFixedv(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLenum pname,
-                       const GLfixed *params)
+                       const GLfixed *data)
 {
-    return ValidateStateQuery(context, entryPoint, pname, params, nullptr);
+    return ValidateStateQuery(context, entryPoint, pname, data, nullptr);
 }
 
 bool ValidateGetLightfv(const PrivateState &state,
@@ -1003,11 +1003,11 @@ bool ValidateGetTexEnvxv(const PrivateState &state,
 
 bool ValidateGetTexParameterxv(const Context *context,
                                angle::EntryPoint entryPoint,
-                               TextureType target,
+                               TextureType targetPacked,
                                GLenum pname,
                                const GLfixed *params)
 {
-    return ValidateGetTexParameterBase(context, entryPoint, target, pname, nullptr);
+    return ValidateGetTexParameterBase(context, entryPoint, targetPacked, pname, nullptr);
 }
 
 bool ValidateLightModelf(const PrivateState &state,
@@ -1563,10 +1563,8 @@ bool ValidateTexEnvxv(const PrivateState &state,
 
 bool ValidateTexParameterBaseForGLfixed(const Context *context,
                                         angle::EntryPoint entryPoint,
-                                        TextureType target,
+                                        TextureType targetPacked,
                                         GLenum pname,
-                                        GLsizei bufSize,
-                                        bool vectorParams,
                                         const GLfixed *params)
 {
     // Convert GLfixed parameter for GL_TEXTURE_MAX_ANISOTROPY_EXT independently
@@ -1582,27 +1580,25 @@ bool ValidateTexParameterBaseForGLfixed(const Context *context,
     {
         paramValue = static_cast<GLfloat>(params[0]);
     }
-    return ValidateTexParameterBase(context, entryPoint, target, pname, bufSize, vectorParams,
-                                    &paramValue);
+    return ValidateTexParameterBase(context, entryPoint, targetPacked, pname, &paramValue);
 }
 
 bool ValidateTexParameterx(const Context *context,
                            angle::EntryPoint entryPoint,
-                           TextureType target,
+                           TextureType targetPacked,
                            GLenum pname,
                            GLfixed param)
 {
-    return ValidateTexParameterBaseForGLfixed(context, entryPoint, target, pname, -1, false,
-                                              &param);
+    return ValidateTexParameterBaseForGLfixed(context, entryPoint, targetPacked, pname, &param);
 }
 
 bool ValidateTexParameterxv(const Context *context,
                             angle::EntryPoint entryPoint,
-                            TextureType target,
+                            TextureType targetPacked,
                             GLenum pname,
                             const GLfixed *params)
 {
-    return ValidateTexParameterBaseForGLfixed(context, entryPoint, target, pname, -1, true, params);
+    return ValidateTexParameterBaseForGLfixed(context, entryPoint, targetPacked, pname, params);
 }
 
 bool ValidateTranslatef(const PrivateState &state,

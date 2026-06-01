@@ -73,11 +73,6 @@ class PoolAllocator : angle::NonCopyable
     // Marks all allocated memory as unused. The memory will be reused.
     void reset();
 
-    // Catch unwanted allocations.
-    // TODO(jmadill): Remove this when we remove the global allocator.
-    void lock();
-    void unlock();
-
   private:
     static constexpr size_t kAlignment = ANGLE_ALLOC_PROFILE_ALIGNMENT(sizeof(void *));
     Span<uint8_t> allocateSingleObject(size_t size);
@@ -98,12 +93,10 @@ class PoolAllocator : angle::NonCopyable
 
     std::vector<Span<uint8_t>> mGuards;  // Guards, memory which is asserted to stay prestine.
 #endif
-    bool mLocked = false;
 };
 
 inline void *PoolAllocator::allocate(size_t size)
 {
-    ASSERT(!mLocked);
     Span<uint8_t> data;
 
     size_t extent = size;

@@ -16,7 +16,7 @@
                       const void *pointer);                                               \
     void disableClientState(ClientVertexArrayType arrayPacked);                           \
     void enableClientState(ClientVertexArrayType arrayPacked);                            \
-    void getFixedv(GLenum pname, GLfixed *params);                                        \
+    void getFixedv(GLenum pname, GLfixed *data);                                          \
     void getTexParameterxv(TextureType targetPacked, GLenum pname, GLfixed *params);      \
     void normalPointer(VertexAttribType typePacked, GLsizei stride, const void *pointer); \
     void texCoordPointer(GLint size, VertexAttribType typePacked, GLsizei stride,         \

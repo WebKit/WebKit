@@ -85,18 +85,6 @@ PoolAllocator::~PoolAllocator()
     reset();
 }
 
-void PoolAllocator::lock()
-{
-    ASSERT(!mLocked);
-    mLocked = true;
-}
-
-void PoolAllocator::unlock()
-{
-    ASSERT(mLocked);
-    mLocked = false;
-}
-
 #if defined(ANGLE_POOL_ALLOC_GUARD_BLOCKS)
 
 void PoolAllocator::addGuard(Span<uint8_t> guardData)

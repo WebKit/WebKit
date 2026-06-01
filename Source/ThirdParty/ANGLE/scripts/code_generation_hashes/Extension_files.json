@@ -20,13 +20,13 @@
   "scripts/extension_data/swiftshader_win10_gles1.json":
     "bea8e2106d62e1ea0e8938f150865a37",
   "scripts/gl_angle_ext.xml":
-    "3ebf41a3d720c716f7a32b043bd1881b",
+    "16f301517b71fe9ec51325ef6b3423f0",
   "scripts/registry_xml.py":
-    "83e08bdb9a8469d1cd29faf0bc6340ac",
+    "e0ef47c009c96fa3257dcd6845e9faa7",
   "src/libANGLE/gen_extensions.py":
-    "dc4727460d1ece9f98a2ae47bf15ddb3",
+    "b633607f7ec8333cd64234e5e10af145",
   "src/libANGLE/gles_extensions_autogen.cpp":
-    "41d4cb9be078354a0c9fc33a7bc58cec",
+    "5b6a7f640a4b3f74cba49dcf1d41cbe7",
   "src/libANGLE/gles_extensions_autogen.h":
     "0538ca79e5f32862e3177eb26b38aa33",
   "third_party/EGL-Registry/src/api/egl.xml":
@@ -34,9 +34,9 @@
   "third_party/OpenCL-Docs/src/xml/cl.xml":
     "3c93f136de5049f4d9eca8240df1a025",
   "third_party/OpenGL-Registry/src/xml/gl.xml":
-    "00c18abda09593ce770fd184bd8f6255",
+    "1eb37882507017323d5e447e42e74f62",
   "third_party/OpenGL-Registry/src/xml/glx.xml":
-    "649f24094c1938779ada7db2dc092d35",
+    "848c20fce49f58e42a23b93005202739",
   "third_party/OpenGL-Registry/src/xml/wgl.xml":
-    "da69debd6646f79119fcdaaf5969af2f"
+    "53f90180449a1abcd8fdfe56fc5c869c"
 }

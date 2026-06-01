@@ -28,6 +28,7 @@ enum class SpecConstantType : uint32_t
     GlobalOffsetX,
     GlobalOffsetY,
     GlobalOffsetZ,
+    SubgroupMaxSize,
 
     InvalidEnum,
     EnumCount = InvalidEnum

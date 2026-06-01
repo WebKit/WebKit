@@ -37,6 +37,7 @@ class MultithreadingTest : public ANGLETest<>
         setConfigGreenBits(8);
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
+        setPbuffer(true);
     }
 
     bool hasFenceSyncExtension() const

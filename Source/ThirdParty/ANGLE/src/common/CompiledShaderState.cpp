@@ -154,7 +154,6 @@ void WriteShInterfaceBlock(gl::BinaryOutputStream *stream, const sh::InterfaceBl
     stream->writeString(block.instanceName);
     stream->writeInt(block.arraySize);
     stream->writeEnum(block.layout);
-    stream->writeBool(block.isRowMajorLayout);
     stream->writeInt(block.binding);
     stream->writeBool(block.staticUse);
     stream->writeBool(block.active);
@@ -175,7 +174,6 @@ void LoadShInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock *blo
     block->instanceName     = stream->readString();
     block->arraySize        = stream->readInt<unsigned int>();
     block->layout           = stream->readEnum<sh::BlockLayoutType>();
-    block->isRowMajorLayout = stream->readBool();
     block->binding          = stream->readInt<int>();
     block->staticUse        = stream->readBool();
     block->active           = stream->readBool();

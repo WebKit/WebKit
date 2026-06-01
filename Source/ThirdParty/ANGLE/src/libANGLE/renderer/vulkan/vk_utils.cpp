@@ -267,6 +267,7 @@ bool GetAvailableValidationLayers(const std::vector<VkLayerProperties> &layerPro
 {
 
     ASSERT(enabledLayerNames);
+    const size_t enabledLayerNamesCountWithoutValidationLayer = enabledLayerNames->size();
     for (const auto &layerProp : layerProps)
     {
         std::string layerPropLayerName = std::string(layerProp.layerName);
@@ -293,7 +294,7 @@ bool GetAvailableValidationLayers(const std::vector<VkLayerProperties> &layerPro
         }
     }
 
-    if (enabledLayerNames->size() == 0)
+    if (enabledLayerNames->size() == enabledLayerNamesCountWithoutValidationLayer)
     {
         // Generate an error if the layers were explicitly requested, warning otherwise.
         if (mustHaveLayers)

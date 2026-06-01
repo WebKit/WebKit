@@ -4824,6 +4824,43 @@ TEST_P(TransformFeedbackTest, ResumeWithDifferentProgram)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that deleting a buffer bound to a transform feedback slot that is not used by the current
+// program.
+TEST_P(TransformFeedbackTest, StaleBufferBinding)
+{
+    std::vector<std::string> tfVaryings = {"gl_Position"};
+    mProgram                            = CompileProgramWithTransformFeedback(
+        essl3_shaders::vs::Simple(), essl3_shaders::fs::Red(), tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_NE(0u, mProgram);
+    glUseProgram(mProgram);
+
+    GLBuffer buf0, buf1;
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buf0);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 1024, nullptr, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buf1);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 1024, nullptr, GL_DYNAMIC_COPY);
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf0);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, buf1);
+
+    // Draw once with the buffers, syncs initial state.
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+
+    // Regular draw while TF inactive, syncs null transform feedback buffers.
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    buf1.reset();
+
+    // Draw with TF after the buffer has been deleted. It should not be referenced.
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackTest,
                                ES3_VULKAN().disable(Feature::SupportsTransformFeedbackExtension),

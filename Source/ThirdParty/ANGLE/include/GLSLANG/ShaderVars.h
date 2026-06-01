@@ -55,15 +55,12 @@ enum class BlockType
 {
     kBlockUniform,
     kBlockBuffer,
-    kPixelLocalExt,  // GL_EXT_shader_pixel_local_storage.
 };
 
 const char *BlockTypeToString(BlockType type);
 
-// Base class for all variables defined in shaders, including Varyings, Uniforms, etc
-// Note: we must override the copy constructor and assignment operator so we can
-// work around excessive GCC binary bloating:
-// See https://code.google.com/p/angleproject/issues/detail?id=697
+// All interface variables defined in shaders like varyings, uniforms, etc, excluding interface
+// blocks.
 struct ShaderVariable
 {
     ShaderVariable();
@@ -291,10 +288,6 @@ struct InterfaceBlock
     std::string instanceName;
     unsigned int arraySize;
     BlockLayoutType layout;
-
-    // Deprecated. Matrix packing should only be queried from individual fields of the block.
-    // TODO(oetuaho): Remove this once it is no longer used in Chromium.
-    bool isRowMajorLayout;
 
     int binding;
     bool staticUse;

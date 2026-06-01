@@ -72,13 +72,14 @@ PLS_DISABLE_LIST = {
     "glFramebufferRenderbuffer",
     "glInvalidateFramebuffer",
     "glInvalidateSubFramebuffer",
-    "glReadPixels",
     "glStartTilingQCOM",
 }
 PLS_DISABLE_WILDCARDS = [
     "glCopyTexSubImage*",
     "glFramebufferParameter*",
     "glFramebufferTexture*",
+    "glReadnPixels*",
+    "glReadPixels*",
 ]
 
 # These are the entry points which purely set state in the current context with

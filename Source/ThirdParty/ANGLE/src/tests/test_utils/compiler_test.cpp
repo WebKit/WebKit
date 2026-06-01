@@ -146,6 +146,7 @@ void MatchOutputCodeTest::compile(const std::string &shaderString,
         if (output == SH_SPIRV_VULKAN_OUTPUT || output == SH_MSL_METAL_OUTPUT)
         {
             options.removeInactiveVariables = true;
+            options.retainInactiveFragmentOutputs = output == SH_MSL_METAL_OUTPUT;
         }
 
         bool compilationSuccess =

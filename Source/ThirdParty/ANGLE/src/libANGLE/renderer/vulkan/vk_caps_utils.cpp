@@ -80,18 +80,15 @@ bool GetTextureSRGBDecodeSupport(const Renderer *renderer)
 {
     static constexpr bool kLinearColorspace = true;
 
+    // As per OpenGL ES specs, ASTC, ETC2, and BPTC compressed formats are either exposed with their
+    // sRGB variants or not exposed at all; the Vulkan backend treats S3TC formats similarly.
+    // Therefore, there is no need to check compressed formats here as they do not affect support
+    // for skipping sRGB decode.
+
     // GL_SRGB and GL_SRGB_ALPHA unsized formats are also required by the spec, but the only valid
     // type for them is GL_UNSIGNED_BYTE, so they are fully included in the sized formats listed
     // here
-    std::vector<GLenum> optionalSizedSRGBFormats = {
-        GL_SRGB8,
-        GL_SRGB8_ALPHA8_EXT,
-        GL_COMPRESSED_SRGB_S3TC_DXT1_EXT,
-        GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,
-        GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT,
-        GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,
-    };
-
+    std::vector<GLenum> optionalSizedSRGBFormats = {GL_SRGB8, GL_SRGB8_ALPHA8_EXT};
     if (!FormatReinterpretationSupported(optionalSizedSRGBFormats, renderer, kLinearColorspace))
     {
         return false;
@@ -105,51 +102,23 @@ bool GetTextureSRGBOverrideSupport(const Renderer *renderer,
 {
     static constexpr bool kNonLinearColorspace = false;
 
+    // As per OpenGL ES specs, ASTC, ETC2, and BPTC compressed formats are either exposed with their
+    // sRGB variants or not exposed at all; the Vulkan backend treats S3TC formats similarly.
+    // Therefore, there is no need to check compressed formats here as they do not affect support
+    // for sRGB overriding.
+
     // If the given linear format is supported, we also need to support its corresponding nonlinear
     // format. If the given linear format is NOT supported, we don't care about its corresponding
     // nonlinear format.
-    std::vector<GLenum> optionalLinearFormats     = {GL_RGB8,
-                                                     GL_RGBA8,
-                                                     GL_COMPRESSED_RGB8_ETC2,
-                                                     GL_COMPRESSED_RGBA8_ETC2_EAC,
-                                                     GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
-                                                     GL_COMPRESSED_RGBA_ASTC_4x4,
-                                                     GL_COMPRESSED_RGBA_ASTC_5x4,
-                                                     GL_COMPRESSED_RGBA_ASTC_5x5,
-                                                     GL_COMPRESSED_RGBA_ASTC_6x5,
-                                                     GL_COMPRESSED_RGBA_ASTC_6x6,
-                                                     GL_COMPRESSED_RGBA_ASTC_8x5,
-                                                     GL_COMPRESSED_RGBA_ASTC_8x6,
-                                                     GL_COMPRESSED_RGBA_ASTC_8x8,
-                                                     GL_COMPRESSED_RGBA_ASTC_10x5,
-                                                     GL_COMPRESSED_RGBA_ASTC_10x6,
-                                                     GL_COMPRESSED_RGBA_ASTC_10x8,
-                                                     GL_COMPRESSED_RGBA_ASTC_10x10,
-                                                     GL_COMPRESSED_RGBA_ASTC_12x10,
-                                                     GL_COMPRESSED_RGBA_ASTC_12x12};
-    std::vector<GLenum> optionalS3TCLinearFormats = {
-        GL_COMPRESSED_RGB_S3TC_DXT1_EXT, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
-        GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT};
-    std::vector<GLenum> optionalR8LinearFormats   = {GL_R8};
-    std::vector<GLenum> optionalRG8LinearFormats  = {GL_RG8};
-    std::vector<GLenum> optionalBPTCLinearFormats = {GL_COMPRESSED_RGBA_BPTC_UNORM_EXT};
-
+    std::vector<GLenum> optionalLinearFormats = {GL_RGB8, GL_RGBA8};
     if (!FormatReinterpretationSupported(optionalLinearFormats, renderer, kNonLinearColorspace))
     {
         return false;
     }
 
-    if (supportedExtensions.textureCompressionS3tcSrgbEXT)
-    {
-        if (!FormatReinterpretationSupported(optionalS3TCLinearFormats, renderer,
-                                             kNonLinearColorspace))
-        {
-            return false;
-        }
-    }
-
     if (supportedExtensions.textureSRGBR8EXT)
     {
+        std::vector<GLenum> optionalR8LinearFormats = {GL_R8};
         if (!FormatReinterpretationSupported(optionalR8LinearFormats, renderer,
                                              kNonLinearColorspace))
         {
@@ -159,16 +128,8 @@ bool GetTextureSRGBOverrideSupport(const Renderer *renderer,
 
     if (supportedExtensions.textureSRGBRG8EXT)
     {
+        std::vector<GLenum> optionalRG8LinearFormats = {GL_RG8};
         if (!FormatReinterpretationSupported(optionalRG8LinearFormats, renderer,
-                                             kNonLinearColorspace))
-        {
-            return false;
-        }
-    }
-
-    if (supportedExtensions.textureCompressionBptcEXT)
-    {
-        if (!FormatReinterpretationSupported(optionalBPTCLinearFormats, renderer,
                                              kNonLinearColorspace))
         {
             return false;
@@ -336,6 +297,31 @@ void Renderer::ensureCapsInitialized() const
 
     // Enable GL_EXT_buffer_storage
     mNativeExtensions.bufferStorageEXT = true;
+
+    // If the BC compression formats device feature is not explicitly enabled, ensure that either
+    // all S3TC formats are supported or none to guarantee availability of their sRGB variants.
+    if (mPhysicalDeviceFeatures.textureCompressionBC == VK_FALSE)
+    {
+        if (!mNativeExtensions.textureCompressionDxt1EXT ||
+            !mNativeExtensions.textureCompressionDxt3ANGLE ||
+            !mNativeExtensions.textureCompressionDxt5ANGLE ||
+            !mNativeExtensions.textureCompressionS3tcSrgbEXT)
+        {
+            mNativeExtensions.textureCompressionDxt1EXT     = false;
+            mNativeExtensions.textureCompressionDxt3ANGLE   = false;
+            mNativeExtensions.textureCompressionDxt5ANGLE   = false;
+            mNativeExtensions.textureCompressionS3tcSrgbEXT = false;
+        }
+    }
+    else
+    {
+        ASSERT(mNativeExtensions.textureCompressionDxt1EXT);
+        ASSERT(mNativeExtensions.textureCompressionDxt3ANGLE);
+        ASSERT(mNativeExtensions.textureCompressionDxt5ANGLE);
+        ASSERT(mNativeExtensions.textureCompressionS3tcSrgbEXT);
+        ASSERT(mNativeExtensions.textureCompressionRgtcEXT);
+        ASSERT(mNativeExtensions.textureCompressionBptcEXT);
+    }
 
     // When ETC2/EAC formats are natively supported, enable ANGLE-specific extension string to
     // expose them to WebGL. In other case, mark potentially-available ETC1 extension as emulated.

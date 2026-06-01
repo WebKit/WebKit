@@ -17,7 +17,7 @@ TEST(ConstructCompilerTest, DefaultParameters)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
     ShHandle compiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, SH_WEBGL_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+                                              SH_GLSL_150_CORE_OUTPUT, &resources);
     ASSERT_NE(nullptr, compiler);
     sh::Destruct(compiler);
 }
@@ -29,7 +29,7 @@ TEST(ConstructCompilerTest, InvalidMaxDrawBuffers)
     sh::InitBuiltInResources(&resources);
     resources.MaxDrawBuffers = 0;
     ShHandle compiler        = sh::ConstructCompiler(GL_FRAGMENT_SHADER, SH_WEBGL_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+                                                     SH_GLSL_150_CORE_OUTPUT, &resources);
     ASSERT_EQ(nullptr, compiler);
 }
 
@@ -41,6 +41,6 @@ TEST(ConstructCompilerTest, InvalidMaxDualSourceDrawBuffers)
     resources.EXT_blend_func_extended  = 1;
     resources.MaxDualSourceDrawBuffers = 0;
     ShHandle compiler                  = sh::ConstructCompiler(GL_FRAGMENT_SHADER, SH_WEBGL_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+                                                               SH_GLSL_150_CORE_OUTPUT, &resources);
     ASSERT_EQ(nullptr, compiler);
 }

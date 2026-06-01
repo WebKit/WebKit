@@ -31,6 +31,8 @@ class ImageIndex;
 
 namespace rx
 {
+class GraphicsDriverUniforms;
+
 namespace vk
 {
 constexpr VkBufferUsageFlags kVertexBufferUsageFlags =
@@ -1961,6 +1963,10 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     bool isDefault() const { return mFramebuffer.isDefault(); }
 
+    void addCurrentDriverUniforms(const vk::PipelineLayout *pipelineLayout,
+                                  const GraphicsDriverUniforms &graphicsDriverUniforms);
+    void dirtyCurrentDriverUniforms();
+
   private:
     uint32_t getSubpassCommandBufferCount() const { return mCurrentSubpassCommandBufferIndex + 1; }
 
@@ -2048,6 +2054,10 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     // The list of VkEvents copied from RefCountedEventArray
     EventArray mVkEventArray;
+
+    // pushConstant at beginning of this renderPass
+    const vk::PipelineLayout *mPipelineLayout;
+    std::unique_ptr<GraphicsDriverUniforms> mGraphicsDriverUniforms;
 
     friend class CommandBufferHelperCommon;
 };
@@ -2585,7 +2595,8 @@ class ImageHelper final : public Resource, public angle::Subject
                                                      const gl::Extents &glExtents,
                                                      const angle::Format &intendedFormat,
                                                      const angle::Format &imageFormat);
-    void stageRobustResourceClear(const gl::ImageIndex &index);
+    void stageRobustResourceClear(const gl::ImageIndex &index,
+                                  const VkImageAspectFlags aspectFlags);
 
     angle::Result stageResourceClearWithFormat(ContextVk *contextVk,
                                                const gl::ImageIndex &index,

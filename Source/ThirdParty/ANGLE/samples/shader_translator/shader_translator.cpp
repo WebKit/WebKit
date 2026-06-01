@@ -181,6 +181,7 @@ int main(int argc, char *argv[])
                             case 'v':
                                 output = SH_SPIRV_VULKAN_OUTPUT;
                                 compileOptions.initializeUninitializedLocals = true;
+                                compileOptions.removeInactiveVariables       = true;
                                 break;
                             case 'h':
                                 if (argv[0][4] == '1' && argv[0][5] == '1')
@@ -198,6 +199,8 @@ int main(int argc, char *argv[])
                                 compileOptions.forceDeferNonConstGlobalInitializers = true;
                                 compileOptions.clampPointSize                       = true;
                                 compileOptions.removeInactiveVariables              = true;
+                                compileOptions.retainInactiveFragmentOutputs        = true;
+                                compileOptions.ensureLoopForwardProgress            = true;
                                 break;
                             default:
                                 failCode = EFailUsage;
@@ -446,9 +449,8 @@ void usage()
         "       -s=w     : use WebGL 1.0 spec\n"
         "       -s=w2    : use WebGL 2.0 spec\n"
         "       -b=e     : output GLSL ES code (this is by default)\n"
-        "       -b=g     : output GLSL code (compatibility profile)\n"
-        "       -b=g[NUM]: output GLSL code (NUM can be 130, 140, 150, 330, 400, 410, 420, 430, "
-        "440, 450)\n"
+        "       -b=g     : output GLSL code (version 150)\n"
+        "       -b=g[NUM]: output GLSL code (NUM can be 150, 330, 400, 410, 420, 430, 440, 450)\n"
         "       -b=v     : output Vulkan SPIR-V code\n"
         "       -b=h9    : output HLSL9 code\n"
         "       -b=h11   : output HLSL11 code\n"
@@ -841,7 +843,7 @@ static bool ParseGLSLOutputVersion(const std::string &num, ShShaderOutput *outRe
 {
     if (num.length() == 0)
     {
-        *outResult = SH_GLSL_COMPATIBILITY_OUTPUT;
+        *outResult = SH_GLSL_150_CORE_OUTPUT;
         return true;
     }
     std::istringstream input(num);
@@ -853,12 +855,6 @@ static bool ParseGLSLOutputVersion(const std::string &num, ShShaderOutput *outRe
 
     switch (value)
     {
-        case 130:
-            *outResult = SH_GLSL_130_OUTPUT;
-            return true;
-        case 140:
-            *outResult = SH_GLSL_140_OUTPUT;
-            return true;
         case 150:
             *outResult = SH_GLSL_150_CORE_OUTPUT;
             return true;

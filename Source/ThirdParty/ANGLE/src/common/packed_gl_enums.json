@@ -121,6 +121,17 @@
         "Projection": "GL_PROJECTION",
         "Texture": "GL_TEXTURE"
     },
+    "PlaneParameter":
+    {
+        "InternalFormat": "GL_PIXEL_LOCAL_INTERNAL_FORMAT_ANGLE",
+        "TextureName": "GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE",
+        "TextureLevel": "GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE",
+        "TextureLayer": "GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE",
+        "Usage": "GL_PIXEL_LOCAL_USAGE_ANGLE",
+        "ClearValueFloat": "GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE",
+        "ClearValueInt": "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE",
+        "ClearValueUnsignedInt": "GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE"
+    },
     "QueryType":
     {
         "AnySamples": "GL_ANY_SAMPLES_PASSED",
@@ -129,6 +140,41 @@
         "TimeElapsed": "GL_TIME_ELAPSED_EXT",
         "Timestamp": "GL_TIMESTAMP_EXT",
         "TransformFeedbackPrimitivesWritten": "GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN"
+    },
+    "QueryObjectParameter":
+    {
+        "QueryResult": "GL_QUERY_RESULT",
+        "QueryResultAvailable": "GL_QUERY_RESULT_AVAILABLE"
+    },
+    "QueryParameter":
+    {
+        "QueryCounterBits": "GL_QUERY_COUNTER_BITS_EXT",
+        "CurrentQuery": "GL_CURRENT_QUERY"
+    },
+    "SamplerParameter":
+    {
+        "MagFilter": "GL_TEXTURE_MAG_FILTER",
+        "MinFilter": "GL_TEXTURE_MIN_FILTER",
+        "WrapS": "GL_TEXTURE_WRAP_S",
+        "WrapT": "GL_TEXTURE_WRAP_T",
+        "WrapR": "GL_TEXTURE_WRAP_R",
+        "MinLod": "GL_TEXTURE_MIN_LOD",
+        "MaxLod": "GL_TEXTURE_MAX_LOD",
+        "CompareMode": "GL_TEXTURE_COMPARE_MODE",
+        "CompareFunc": "GL_TEXTURE_COMPARE_FUNC",
+        "BorderColor": "GL_TEXTURE_BORDER_COLOR",
+        "MaxAnisotropy": "GL_TEXTURE_MAX_ANISOTROPY_EXT",
+        "SrgbDecode": "GL_TEXTURE_SRGB_DECODE_EXT"
+    },
+    "ShaderParameter":
+    {
+        "ShaderType": "GL_SHADER_TYPE",
+        "DeleteStatus": "GL_DELETE_STATUS",
+        "CompileStatus": "GL_COMPILE_STATUS",
+        "InfoLogLength": "GL_INFO_LOG_LENGTH",
+        "ShaderSourceLength": "GL_SHADER_SOURCE_LENGTH",
+        "CompletionStatus": "GL_COMPLETION_STATUS_KHR",
+        "TranslatedShaderSourceLength": "GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE"
     },
     "ShaderType":
     {
@@ -190,6 +236,33 @@
         "Op1Alpha": "GL_OPERAND1_ALPHA",
         "Op2Alpha": "GL_OPERAND2_ALPHA",
         "PointCoordReplace": "GL_COORD_REPLACE_OES"
+    },
+    "TextureImageParameter":
+    {
+        "Width": "GL_TEXTURE_WIDTH",
+        "Height": "GL_TEXTURE_HEIGHT",
+        "Depth": "GL_TEXTURE_DEPTH",
+        "InternalFormat": "GL_TEXTURE_INTERNAL_FORMAT",
+        "RedSize": "GL_TEXTURE_RED_SIZE",
+        "GreenSize": "GL_TEXTURE_GREEN_SIZE",
+        "BlueSize": "GL_TEXTURE_BLUE_SIZE",
+        "AlphaSize": "GL_TEXTURE_ALPHA_SIZE",
+        "DepthSize": "GL_TEXTURE_DEPTH_SIZE",
+        "StencilSize": "GL_TEXTURE_STENCIL_SIZE",
+        "SharedSize": "GL_TEXTURE_SHARED_SIZE",
+        "RedType": "GL_TEXTURE_RED_TYPE",
+        "GreenType": "GL_TEXTURE_GREEN_TYPE",
+        "BlueType": "GL_TEXTURE_BLUE_TYPE",
+        "AlphaType": "GL_TEXTURE_ALPHA_TYPE",
+        "DepthType": "GL_TEXTURE_DEPTH_TYPE",
+        "Compressed": "GL_TEXTURE_COMPRESSED",
+        "Samples": "GL_TEXTURE_SAMPLES",
+        "FixedSampleLocations": "GL_TEXTURE_FIXED_SAMPLE_LOCATIONS",
+        "BufferDataStoreBinding": "GL_TEXTURE_BUFFER_DATA_STORE_BINDING",
+        "BufferOffset": "GL_TEXTURE_BUFFER_OFFSET",
+        "BufferSize": "GL_TEXTURE_BUFFER_SIZE",
+        "MemorySize": "GL_MEMORY_SIZE_ANGLE",
+        "ResourceInitialized": "GL_RESOURCE_INITIALIZED_ANGLE"
     },
     "TextureOp":
     {
@@ -347,5 +420,15 @@
     {
         "Optimal": "GL_OPTIMAL_TILING_EXT",
         "Linear": "GL_LINEAR_TILING_EXT"
+    },
+    "UniformBlockParameter":
+    {
+        "Binding": "GL_UNIFORM_BLOCK_BINDING",
+        "DataSize": "GL_UNIFORM_BLOCK_DATA_SIZE",
+        "NameLength": "GL_UNIFORM_BLOCK_NAME_LENGTH",
+        "ActiveUniforms": "GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS",
+        "ActiveUniformIndices": "GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES",
+        "ReferencedByVertexShader": "GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER",
+        "ReferencedByFragmentShader": "GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER"
     }
 }

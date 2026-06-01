@@ -263,7 +263,7 @@ bool TextureManager::createTexture(TextureID *outTexture)
 
 void TextureManager::signalAllTexturesDirty() const
 {
-    // Note: this function is called with glRequestExtensionANGLE and glDisableExtensionANGLE.  The
+    // Note: this function is called with glRequestExtensionANGLE.  The
     // GL_ANGLE_request_extension explicitly requires the application to ensure thread safety.
     for (const auto &texture : UnsafeResourceMapIter(mObjectMap))
     {

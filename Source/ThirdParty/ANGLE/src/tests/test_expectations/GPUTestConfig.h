@@ -75,6 +75,7 @@ struct GPUTestConfig
         kConditionPixel4OrXL,
         kConditionPixel6,
         kConditionPixel7,
+        kConditionPixel10,
         kConditionFlipN2,
         kConditionMaliG710,
         kConditionGalaxyA23,

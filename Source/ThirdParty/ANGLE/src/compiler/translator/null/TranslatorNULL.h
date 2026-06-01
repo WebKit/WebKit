@@ -18,10 +18,6 @@ class TranslatorNULL : public TCompiler
     TranslatorNULL(sh::GLenum type, ShShaderSpec spec) : TCompiler(type, spec, SH_NULL_OUTPUT) {}
 
   protected:
-    void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
-                                     const ShCompileOptions &compileOptions) override
-    {}
-
     [[nodiscard]] bool translate(TIntermBlock *root,
                                  const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics) override

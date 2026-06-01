@@ -88,6 +88,9 @@ class FunctionsGLX
     void bindTexImageEXT(glx::Drawable drawable, int buffer, const int *attribList) const;
     void releaseTexImageEXT(glx::Drawable drawable, int buffer) const;
 
+    // Mesa-specific
+    const char *getScreenDriver() const;
+
   private:
     // So as to isolate GLX from angle we do not include angleutils.h and cannot
     // use angle::NonCopyable so we replicated it here instead.

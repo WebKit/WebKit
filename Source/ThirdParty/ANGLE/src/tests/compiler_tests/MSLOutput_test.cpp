@@ -32,6 +32,7 @@ class MSLOutputTestBase : public MatchOutputCodeTest
         options.initializeUninitializedLocals      = true;
         options.separateCompoundStructDeclarations = true;
         options.removeInactiveVariables            = true;
+        options.retainInactiveFragmentOutputs      = true;
         // The tests also test that validation succeeds. This should be also the
         // default forced option, but currently MSL backend does not generate
         // valid trees. Once validateAST is forced, move to above hunk.
@@ -1084,37 +1085,6 @@ int g;
 void F(int v) { g = v; }
 void main() { F(1), F(g); })";
     compile(kShader, options);
-}
-
-TEST_F(MSLOutputTest, EnsureLoopForwardProgressInfinite)
-{
-    ShCompileOptions options          = defaultOptions();
-    options.ensureLoopForwardProgress = 1;
-    const std::string &shaderString =
-        R"(
-        precision mediump float;
-        void main() {
-            for (int i = 0; i < i + 1; ++i) { }
-            gl_FragColor = vec4(1);
-        })";
-    compile(shaderString, options);
-    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "loopForwardProgress();"));
-    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "volatile bool p = true;"));
-}
-
-TEST_F(MSLOutputTest, EnsureLoopForwardProgressFinite)
-{
-    ShCompileOptions options          = defaultOptions();
-    options.ensureLoopForwardProgress = 1;
-    const std::string &shaderString =
-        R"(
-        precision mediump float;
-        void main() {
-            for (int i = 0; i < 1; ++i) { }
-            gl_FragColor = vec4(1);
-        })";
-    compile(shaderString, options);
-    ASSERT_FALSE(foundInCode(SH_MSL_METAL_OUTPUT, "loopForwardProgress();"));
 }
 
 // Tests that uint assignment operators use the expected functions.

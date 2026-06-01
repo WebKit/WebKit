@@ -47,16 +47,19 @@ void QueryRenderbufferiv(const Context *context,
                          const Renderbuffer *renderbuffer,
                          GLenum pname,
                          GLint *params);
-void QueryShaderiv(const Context *context, Shader *shader, GLenum pname, GLint *params);
+void QueryShaderiv(const Context *context,
+                   Shader *shader,
+                   ShaderParameter pnamePacked,
+                   GLint *params);
 void QueryTexLevelParameterfv(const Texture *texture,
-                              TextureTarget target,
+                              TextureTarget targetPacked,
                               GLint level,
-                              GLenum pname,
+                              TextureImageParameter pnamePacked,
                               GLfloat *params);
 void QueryTexLevelParameteriv(const Texture *texture,
-                              TextureTarget target,
+                              TextureTarget targetPacked,
                               GLint level,
-                              GLenum pname,
+                              TextureImageParameter pnamePacked,
                               GLint *params);
 void QueryTexParameterfv(const Context *context,
                          const Texture *texture,
@@ -78,10 +81,12 @@ void QueryTexParameterIuiv(const Context *context,
                            const Texture *texture,
                            GLenum pname,
                            GLuint *params);
-void QuerySamplerParameterfv(const Sampler *sampler, GLenum pname, GLfloat *params);
-void QuerySamplerParameteriv(const Sampler *sampler, GLenum pname, GLint *params);
-void QuerySamplerParameterIiv(const Sampler *sampler, GLenum pname, GLint *params);
-void QuerySamplerParameterIuiv(const Sampler *sampler, GLenum pname, GLuint *params);
+void QuerySamplerParameterfv(const Sampler *sampler, SamplerParameter pnamePacked, GLfloat *params);
+void QuerySamplerParameteriv(const Sampler *sampler, SamplerParameter pnamePacked, GLint *params);
+void QuerySamplerParameterIiv(const Sampler *sampler, SamplerParameter pnamePacked, GLint *params);
+void QuerySamplerParameterIuiv(const Sampler *sampler,
+                               SamplerParameter pnamePacked,
+                               GLuint *params);
 
 // Warning: you should ensure binding really matches attrib.bindingIndex before using the following
 // functions.
@@ -114,8 +119,9 @@ void QueryVertexAttribIuiv(const VertexAttribute &attrib,
                            GLuint *params);
 
 void QueryActiveUniformBlockiv(const Program *program,
-                               UniformBlockIndex uniformBlockIndex,
-                               GLenum pname,
+                               UniformBlockIndex uniformBlockIndexPacked,
+                               UniformBlockParameter pnamePacked,
+                               GLsizei *length,
                                GLint *params);
 
 void QueryInternalFormativ(const Context *context,
@@ -130,14 +136,19 @@ void QueryFramebufferParameteriv(const Framebuffer *framebuffer, GLenum pname, G
 
 void QueryFramebufferPixelLocalStorageParameterfv(Context *context,
                                                   GLint plane,
-                                                  GLenum pname,
+                                                  PlaneParameter pnamePacked,
                                                   GLsizei *length,
                                                   GLfloat *params);
 void QueryFramebufferPixelLocalStorageParameteriv(Context *context,
                                                   GLint plane,
-                                                  GLenum pname,
+                                                  PlaneParameter pnamePacked,
                                                   GLsizei *length,
                                                   GLint *params);
+void QueryFramebufferPixelLocalStorageParameteruiv(Context *context,
+                                                   GLint plane,
+                                                   PlaneParameter pnamePacked,
+                                                   GLsizei *length,
+                                                   GLuint *params);
 
 angle::Result QuerySynciv(const Context *context,
                           const Sync *sync,
@@ -155,14 +166,21 @@ void SetTexParameterIuiv(Context *context, Texture *texture, GLenum pname, const
 void SetTexParameterx(Context *context, Texture *texture, GLenum pname, GLfixed param);
 void SetTexParameterxv(Context *context, Texture *texture, GLenum pname, const GLfixed *params);
 
-void SetSamplerParameterf(Context *context, Sampler *sampler, GLenum pname, GLfloat param);
-void SetSamplerParameterfv(Context *context, Sampler *sampler, GLenum pname, const GLfloat *params);
-void SetSamplerParameteri(Context *context, Sampler *sampler, GLenum pname, GLint param);
-void SetSamplerParameteriv(Context *context, Sampler *sampler, GLenum pname, const GLint *params);
-void SetSamplerParameterIiv(Context *context, Sampler *sampler, GLenum pname, const GLint *params);
+void SetSamplerParameterfv(Context *context,
+                           Sampler *sampler,
+                           SamplerParameter pnamePacked,
+                           const GLfloat *params);
+void SetSamplerParameteriv(Context *context,
+                           Sampler *sampler,
+                           SamplerParameter pnamePacked,
+                           const GLint *params);
+void SetSamplerParameterIiv(Context *context,
+                            Sampler *sampler,
+                            SamplerParameter pnamePacked,
+                            const GLint *params);
 void SetSamplerParameterIuiv(Context *context,
                              Sampler *sampler,
-                             GLenum pname,
+                             SamplerParameter pnamePacked,
                              const GLuint *params);
 
 void SetFramebufferParameteri(const Context *context,
@@ -268,8 +286,6 @@ void GetPointParameter(const GLES1State *state, PointParameter pname, GLfloat *p
 
 void SetPointSize(GLES1State *state, GLfloat size);
 void GetPointSize(const GLES1State *state, GLfloat *sizeOut);
-
-unsigned int GetTexParameterCount(GLenum pname);
 
 bool GetQueryParameterInfo(const State &glState,
                            GLenum pname,

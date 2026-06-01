@@ -1084,10 +1084,10 @@ void RemoteGraphicsContextGL::texSubImage2D1(uint32_t target, int32_t level, int
     protectedContext()->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, static_cast<GCGLintptr>(offset));
 }
 
-void RemoteGraphicsContextGL::compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
+void RemoteGraphicsContextGL::compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+    protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, uint64_t offset)
@@ -1096,10 +1096,10 @@ void RemoteGraphicsContextGL::compressedTexImage2D1(uint32_t target, int32_t lev
     protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, static_cast<GCGLintptr>(offset));
 }
 
-void RemoteGraphicsContextGL::compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
+void RemoteGraphicsContextGL::compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+    protectedContext()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, uint64_t offset)
@@ -1240,10 +1240,10 @@ void RemoteGraphicsContextGL::copyTexSubImage3D(uint32_t target, int32_t level, 
     protectedContext()->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
-void RemoteGraphicsContextGL::compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
+void RemoteGraphicsContextGL::compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
+    protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexImage3D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, uint64_t offset)
@@ -1252,10 +1252,10 @@ void RemoteGraphicsContextGL::compressedTexImage3D1(uint32_t target, int32_t lev
     protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, static_cast<GCGLintptr>(offset));
 }
 
-void RemoteGraphicsContextGL::compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
+void RemoteGraphicsContextGL::compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, std::span<const uint8_t>&& data)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+    protectedContext()->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, data);
 }
 
 void RemoteGraphicsContextGL::compressedTexSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, uint64_t offset)

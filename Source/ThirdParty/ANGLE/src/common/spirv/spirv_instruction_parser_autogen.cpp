@@ -4443,6 +4443,18 @@ void ParsePtrNotEqual(const uint32_t *_instruction,
     *operand1      = IdRef(_instruction[_o++]);
     *operand2      = IdRef(_instruction[_o++]);
 }
+void ParseIsHelperInvocationEXT(const uint32_t *_instruction,
+                                IdResultType *idResultType1,
+                                IdResult *idResult2)
+{
+    spv::Op _op;
+    uint32_t _length;
+    GetInstructionOpAndLength(_instruction, &_op, &_length);
+    ASSERT(_op == spv::OpIsHelperInvocationEXT);
+    uint32_t _o    = 1;
+    *idResultType1 = IdResultType(_instruction[_o++]);
+    *idResult2     = IdResult(_instruction[_o++]);
+}
 
 }  // namespace spirv
 }  // namespace angle

@@ -215,14 +215,14 @@ void CaptureGetActiveUniformBlockName_uniformBlockName(const State &glState,
 }
 
 void CaptureGetActiveUniformBlockiv_params(const State &glState,
-                                           ShaderProgramID program,
-                                           UniformBlockIndex uniformBlockIndex,
-                                           GLenum pname,
+                                           ShaderProgramID programPacked,
+                                           UniformBlockIndex uniformBlockIndexPacked,
+                                           UniformBlockParameter pnamePacked,
                                            GLint *params,
                                            ParamCapture *paramCapture)
 {
-    CaptureGetActiveUniformBlockivParameters(glState, program, uniformBlockIndex, pname,
-                                             paramCapture);
+    CaptureGetActiveUniformBlockivParameters(glState, programPacked, uniformBlockIndexPacked,
+                                             pnamePacked, paramCapture);
 }
 
 void CaptureGetActiveUniformsiv_uniformIndices(const State &glState,
@@ -388,8 +388,8 @@ void CaptureGetProgramBinary_binary(const State &glState,
 }
 
 void CaptureGetQueryObjectuiv_params(const State &glState,
-                                     QueryID id,
-                                     GLenum pname,
+                                     QueryID idPacked,
+                                     QueryObjectParameter pnamePacked,
                                      GLuint *params,
                                      ParamCapture *paramCapture)
 {
@@ -399,7 +399,7 @@ void CaptureGetQueryObjectuiv_params(const State &glState,
 
 void CaptureGetQueryiv_params(const State &glState,
                               QueryType targetPacked,
-                              GLenum pname,
+                              QueryParameter pnamePacked,
                               GLint *params,
                               ParamCapture *paramCapture)
 {
@@ -408,8 +408,8 @@ void CaptureGetQueryiv_params(const State &glState,
 }
 
 void CaptureGetSamplerParameterfv_params(const State &glState,
-                                         SamplerID sampler,
-                                         GLenum pname,
+                                         SamplerID samplerPacked,
+                                         SamplerParameter pnamePacked,
                                          GLfloat *params,
                                          ParamCapture *paramCapture)
 {
@@ -418,8 +418,8 @@ void CaptureGetSamplerParameterfv_params(const State &glState,
 }
 
 void CaptureGetSamplerParameteriv_params(const State &glState,
-                                         SamplerID sampler,
-                                         GLenum pname,
+                                         SamplerID samplerPacked,
+                                         SamplerParameter pnamePacked,
                                          GLint *params,
                                          ParamCapture *paramCapture)
 {
@@ -605,21 +605,21 @@ void CaptureProgramBinary_binary(const State &glState,
 }
 
 void CaptureSamplerParameterfv_param(const State &glState,
-                                     SamplerID sampler,
-                                     GLenum pname,
+                                     SamplerID samplerPacked,
+                                     SamplerParameter pnamePacked,
                                      const GLfloat *param,
                                      ParamCapture *paramCapture)
 {
-    CaptureTextureAndSamplerParameter_params<GLfloat>(pname, param, paramCapture);
+    CaptureTextureAndSamplerParameter_params<GLfloat>(ToGLenum(pnamePacked), param, paramCapture);
 }
 
 void CaptureSamplerParameteriv_param(const State &glState,
-                                     SamplerID sampler,
-                                     GLenum pname,
+                                     SamplerID samplerPacked,
+                                     SamplerParameter pnamePacked,
                                      const GLint *param,
                                      ParamCapture *paramCapture)
 {
-    CaptureTextureAndSamplerParameter_params<GLint>(pname, param, paramCapture);
+    CaptureTextureAndSamplerParameter_params<GLint>(ToGLenum(pnamePacked), param, paramCapture);
 }
 
 void CaptureTexImage3D_pixels(const State &glState,

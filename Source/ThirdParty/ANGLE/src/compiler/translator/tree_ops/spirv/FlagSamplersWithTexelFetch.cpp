@@ -54,7 +54,8 @@ class FlagSamplersWithTexelFetchTraverser : public TIntermTraverser
         // Handle cases where the argument comes from an array of samplers.
         if (asBinary != nullptr)
         {
-            ASSERT(asBinary->getOp() == TOperator::EOpIndexDirect);
+            ASSERT(asBinary->getOp() == TOperator::EOpIndexDirect ||
+                   asBinary->getOp() == TOperator::EOpIndexIndirect);
             samplerNode = asBinary->getLeft();
         }
 

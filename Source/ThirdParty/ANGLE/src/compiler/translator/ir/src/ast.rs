@@ -9,6 +9,14 @@
 use crate::ir::*;
 use crate::*;
 
+// For cleaner output, the astify pass does not cache some expressions with side effect in a
+// temporary variable if the result is never used.  Instead, it returns a map that indicates which
+// instructions are uncached as such.  The generator would have to treat then as "void"
+// instructions by immediately adding them to the block and discarding the result.
+//
+// Only Call, Unary, Binary and BuiltIn instructions may be in this list.
+pub type UncachedRegistersWithSideEffect = HashSet<RegisterId>;
+
 pub trait Target {
     type BlockResult;
 
@@ -27,7 +35,12 @@ pub trait Target {
     // variables, geometry/tessellation info, etc.
     fn global_scope(&mut self, ir_meta: &IRMeta);
 
-    fn begin_block(&mut self, ir_meta: &IRMeta, variables: &[VariableId]) -> Self::BlockResult;
+    fn begin_block(
+        &mut self,
+        ir_meta: &IRMeta,
+        variables: &[VariableId],
+        for_loop_variable: Option<VariableId>,
+    ) -> Self::BlockResult;
     fn merge_blocks(&mut self, blocks: Vec<Self::BlockResult>) -> Self::BlockResult;
 
     // Instructions
@@ -82,6 +95,7 @@ pub trait Target {
         result: Option<RegisterId>,
         function_id: FunctionId,
         params: &[TypedId],
+        has_side_effect_with_unused_result: bool,
     );
     fn unary(
         &mut self,
@@ -89,6 +103,7 @@ pub trait Target {
         result: RegisterId,
         unary_op: UnaryOpCode,
         id: TypedId,
+        has_side_effect_with_unused_result: bool,
     );
     fn binary(
         &mut self,
@@ -97,6 +112,7 @@ pub trait Target {
         binary_op: BinaryOpCode,
         lhs: TypedId,
         rhs: TypedId,
+        has_side_effect_with_unused_result: bool,
     );
     fn built_in(
         &mut self,
@@ -104,6 +120,7 @@ pub trait Target {
         result: Option<RegisterId>,
         built_in_op: BuiltInOpCode,
         args: &[TypedId],
+        has_side_effect_with_unused_result: bool,
     );
     fn texture(
         &mut self,
@@ -231,6 +248,12 @@ pub trait Target {
         block: &mut Self::BlockResult,
         body_block: Option<Self::BlockResult>,
     );
+    fn branch_for_loop(
+        &mut self,
+        block: &mut Self::BlockResult,
+        info: &util::TrivialLoopInfo,
+        body_block: Option<Self::BlockResult>,
+    );
     fn branch_loop_if(&mut self, block: &mut Self::BlockResult, condition: TypedId);
     fn branch_switch(
         &mut self,
@@ -246,11 +269,15 @@ pub trait Target {
 
 pub struct Generator {
     ir: IR,
+    uncached_registers_with_side_effect: ast::UncachedRegistersWithSideEffect,
 }
 
 impl Generator {
-    pub fn new(ir: IR) -> Generator {
-        Generator { ir }
+    pub fn new(
+        ir: IR,
+        uncached_registers_with_side_effect: UncachedRegistersWithSideEffect,
+    ) -> Generator {
+        Generator { ir, uncached_registers_with_side_effect }
     }
 
     // Note: call transform::dealias::run() beforehand, as well as transform::astify::run().
@@ -327,30 +354,55 @@ impl Generator {
             &|(generator, target), block: &Block| {
                 // transform::astify::run() should have gotten rid of merge block inputs.
                 debug_assert!(block.input.is_none());
-                target.begin_block(&generator.ir.meta, &block.variables)
+
+                // Keep trivial `for` loops as `for` loops, multiple backends rely on it currently.
+                //
+                // Eventually, this check should move to the backend-specific code (when ported to
+                // the IR) where the information is needed, while the loop is not
+                // necessarily generated as a `for` ultimately.
+                let for_loop_info = util::block_ends_in_trivial_for_loop(&self.ir.meta, block);
+                (
+                    target.begin_block(
+                        &generator.ir.meta,
+                        &block.variables,
+                        for_loop_info.as_ref().map(|info| info.loop_variable),
+                    ),
+                    for_loop_info,
+                )
             },
-            &|(generator, target), block_result, instructions| {
+            &|(generator, target), (block_result, _), instructions| {
                 generator.generate_instructions(block_result, instructions, *target);
             },
             &|(generator, target),
-              block_result,
+              (block_result, for_loop_info),
               branch_opcode,
               loop_condition_block_result,
               block1_result,
               block2_result,
               case_block_results| {
-                generator.generate_branch_instruction(
-                    block_result,
-                    branch_opcode,
-                    loop_condition_block_result,
-                    block1_result,
-                    block2_result,
-                    case_block_results,
-                    *target,
-                );
+                if let Some(info) = &for_loop_info {
+                    target.branch_for_loop(block_result, info, block1_result.map(|result| result.0))
+                } else {
+                    let case_block_results =
+                        case_block_results.into_iter().map(|result| result.0).collect();
+                    generator.generate_branch_instruction(
+                        block_result,
+                        branch_opcode,
+                        loop_condition_block_result.map(|result| result.0),
+                        block1_result.map(|result| result.0),
+                        block2_result.map(|result| result.0),
+                        case_block_results,
+                        *target,
+                    );
+                }
             },
-            &|(_, target), block_result_chain| target.merge_blocks(block_result_chain),
+            &|(_, target), block_result_chain| {
+                let block_result_chain =
+                    block_result_chain.into_iter().map(|result| result.0).collect();
+                (target.merge_blocks(block_result_chain), None)
+            },
         )
+        .0
     }
 
     fn generate_instructions<T: Target>(
@@ -420,17 +472,54 @@ impl Generator {
                 }
 
                 &OpCode::Call(function_id, ref params) => {
-                    target.call(block_result, result.map(|id| id.id), function_id, params)
+                    let has_side_effect_with_unused_result = result.is_some_and(|id| {
+                        self.uncached_registers_with_side_effect.contains(&id.id)
+                    });
+                    target.call(
+                        block_result,
+                        result.map(|id| id.id),
+                        function_id,
+                        params,
+                        has_side_effect_with_unused_result,
+                    )
                 }
 
                 &OpCode::Unary(unary_op, id) => {
-                    target.unary(block_result, result.unwrap().id, unary_op, id)
+                    let result = result.unwrap().id;
+                    let has_side_effect_with_unused_result =
+                        self.uncached_registers_with_side_effect.contains(&result);
+                    target.unary(
+                        block_result,
+                        result,
+                        unary_op,
+                        id,
+                        has_side_effect_with_unused_result,
+                    )
                 }
                 &OpCode::Binary(binary_op, lhs, rhs) => {
-                    target.binary(block_result, result.unwrap().id, binary_op, lhs, rhs)
+                    let result = result.unwrap().id;
+                    let has_side_effect_with_unused_result =
+                        self.uncached_registers_with_side_effect.contains(&result);
+                    target.binary(
+                        block_result,
+                        result,
+                        binary_op,
+                        lhs,
+                        rhs,
+                        has_side_effect_with_unused_result,
+                    )
                 }
                 &OpCode::BuiltIn(built_in_op, ref params) => {
-                    target.built_in(block_result, result.map(|id| id.id), built_in_op, params)
+                    let has_side_effect_with_unused_result = result.is_some_and(|id| {
+                        self.uncached_registers_with_side_effect.contains(&id.id)
+                    });
+                    target.built_in(
+                        block_result,
+                        result.map(|id| id.id),
+                        built_in_op,
+                        params,
+                        has_side_effect_with_unused_result,
+                    )
                 }
                 &OpCode::Texture(TextureOpCode::Implicit { is_proj, offset }, sampler, coord) => {
                     target.texture(

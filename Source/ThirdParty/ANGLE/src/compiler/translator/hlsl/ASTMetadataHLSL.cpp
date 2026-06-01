@@ -245,7 +245,9 @@ class PullComputeDiscontinuousAndGradientLoops : public TIntermTraverser
         //         ...
         //         continue;
         //     }
-        if (visit == PreVisit && getParentNode()->getAsLoopNode() == nullptr)
+        const bool isDirectlyInLoopBody = getParentNode()->getAsBlock() != nullptr &&
+                                          getAncestorNode(1)->getAsLoopNode() != nullptr;
+        if (visit == PreVisit && !isDirectlyInLoopBody)
         {
             switch (node->getFlowOp())
             {

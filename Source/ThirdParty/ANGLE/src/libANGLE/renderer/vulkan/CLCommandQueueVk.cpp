@@ -54,30 +54,6 @@ namespace rx
 
 namespace
 {
-// Given an image and rect region to copy in to a buffer, calculate the VKBufferImageCopy struct to
-// be using in VkCmd's.
-VkBufferImageCopy CalculateBufferImageCopyRegion(const size_t bufferOffset,
-                                                 const uint32_t rowPitch,
-                                                 const uint32_t slicePitch,
-                                                 const cl::Offset &origin,
-                                                 const cl::Extents &region,
-                                                 CLImageVk *imageVk)
-{
-    VkBufferImageCopy copyRegion{
-        .bufferOffset = bufferOffset,
-        .bufferRowLength =
-            rowPitch == 0 ? 0 : rowPitch / static_cast<uint32_t>(imageVk->getElementSize()),
-        .bufferImageHeight = rowPitch == 0 ? 0 : slicePitch / rowPitch,
-        .imageSubresource = imageVk->getSubresourceLayersForCopy(origin, region, imageVk->getType(),
-                                                                 ImageCopyWith::Buffer),
-        .imageOffset      = cl_vk::GetOffset(origin),
-        .imageExtent      = cl_vk::GetExtent(region)};
-    ASSERT((copyRegion.bufferRowLength == 0 && copyRegion.bufferImageHeight == 0) ||
-           (copyRegion.bufferRowLength >= region.width &&
-            copyRegion.bufferImageHeight >= region.height));
-
-    return copyRegion;
-}
 
 constexpr size_t kTimeoutInMS            = 10000;
 constexpr size_t kSleepInMS              = 500;
@@ -883,12 +859,26 @@ angle::Result CLCommandQueueVk::addToHostTransferList(CLImageVk *srcImage,
             ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
     }
 
-    VkBufferImageCopy copyRegion = CalculateBufferImageCopyRegion(
+    VkBufferImageCopy copyRegion = cl_vk::CalculateBufferImageCopyRegion(
         0, static_cast<uint32_t>(transferConfig.getRowPitch()),
         static_cast<uint32_t>(transferConfig.getSlicePitch()), transferConfig.getOrigin(),
         transferConfig.getRegion(), srcImage);
+    ANGLE_TRY(copyImageToFromBuffer(*srcImage, transferBufferHandleVk, copyRegion, direction));
 
-    return copyImageToFromBuffer(*srcImage, transferBufferHandleVk, copyRegion, direction);
+    // if its a image2d_from_buffer kick off an update to the parent buffer. We can get rid of this
+    // when we can use the same underlying buffer as an image.
+    if (srcImage->isImage2DFromBuffer())
+    {
+        copyRegion = cl_vk::CalculateBufferImageCopyRegion(
+            srcImage->getParent<CLBufferVk>()->getOffset(),
+            static_cast<uint32_t>(srcImage->getRowPitch()),
+            static_cast<uint32_t>(srcImage->getSlicePitch()), transferConfig.getOrigin(),
+            transferConfig.getRegion(), srcImage);
+        ANGLE_TRY(copyImageToFromBuffer(*srcImage, *srcImage->getParent<CLBufferVk>(), copyRegion,
+                                        direction));
+    }
+
+    return angle::Result::Continue;
 }
 
 angle::Result CLCommandQueueVk::enqueueReadImage(const cl::Image &image,
@@ -911,9 +901,10 @@ angle::Result CLCommandQueueVk::enqueueReadImage(const cl::Image &image,
     CLImageVk &imageVk = image.getImpl<CLImageVk>();
     cl::BufferRect ptrRect{cl::kOffsetZero, region, rowPitch, slicePitch, imageVk.getElementSize()};
 
-    if (imageVk.getParentType() == cl::MemObjectType::Buffer)
+    if (cl::Is1DImageBuffer(image.getType()) ||
+        (image.getParent() && cl::Is2DImage(image.getParent()->getType())))
     {
-        // TODO: implement this later
+        // TODO: need to implement buffer-based parent image ops later
         // http://anglebug.com/444481344
         UNIMPLEMENTED();
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
@@ -954,9 +945,10 @@ angle::Result CLCommandQueueVk::enqueueWriteImage(const cl::Image &image,
     cl::BufferRect ptrRect{cl::kOffsetZero, region, inputRowPitch, inputSlicePitch,
                            imageVk.getElementSize()};
 
-    if (imageVk.getParentType() == cl::MemObjectType::Buffer)
+    if (cl::Is1DImageBuffer(image.getType()) ||
+        (image.getParent() && cl::Is2DImage(image.getParent()->getType())))
     {
-        // TODO: implement this later
+        // TODO: need to implement buffer-based parent image ops later
         // http://anglebug.com/444481344
         UNIMPLEMENTED();
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
@@ -1038,24 +1030,21 @@ angle::Result CLCommandQueueVk::enqueueFillImage(const cl::Image &image,
     ANGLE_TRY(processWaitlist(waitEvents));
 
     CLImageVk &imageVk = image.getImpl<CLImageVk>();
-    PixelColor packedColor;
     cl::Extents extent = imageVk.getImageExtent();
-
-    imageVk.packPixels(fillColor, &packedColor);
 
     CLBufferVk *stagingBuffer = nullptr;
     ANGLE_TRY(imageVk.getOrCreateStagingBuffer(&stagingBuffer));
     ASSERT(stagingBuffer);
 
     VkBufferImageCopy copyRegion =
-        CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, &imageVk);
+        cl_vk::CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, &imageVk);
     ANGLE_TRY(copyImageToFromBuffer(imageVk, *stagingBuffer, copyRegion,
                                     ImageBufferCopyDirection::ToBuffer));
     ANGLE_TRY(finishInternal());
 
-    ANGLE_TRY(imageVk.fillImageWithColor(origin, region, &packedColor));
+    ANGLE_TRY(imageVk.fillImageWithColor(origin, region, image.packPixels(fillColor)));
 
-    copyRegion = CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, &imageVk);
+    copyRegion = cl_vk::CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, &imageVk);
     ANGLE_TRY(copyImageToFromBuffer(imageVk, *stagingBuffer, copyRegion,
                                     ImageBufferCopyDirection::ToImage));
 
@@ -1078,7 +1067,7 @@ angle::Result CLCommandQueueVk::enqueueCopyImageToBuffer(const cl::Image &srcIma
     CLImageVk &srcImageVk   = srcImage.getImpl<CLImageVk>();
     CLBufferVk &dstBufferVk = dstBuffer.getImpl<CLBufferVk>();
     VkBufferImageCopy copyRegion =
-        CalculateBufferImageCopyRegion(dstOffset, 0, 0, srcOrigin, region, &srcImageVk);
+        cl_vk::CalculateBufferImageCopyRegion(dstOffset, 0, 0, srcOrigin, region, &srcImageVk);
     ANGLE_TRY(copyImageToFromBuffer(srcImageVk, dstBufferVk, copyRegion,
                                     ImageBufferCopyDirection::ToBuffer));
 
@@ -1101,7 +1090,7 @@ angle::Result CLCommandQueueVk::enqueueCopyBufferToImage(const cl::Buffer &srcBu
     CLBufferVk &srcBufferVk = srcBuffer.getImpl<CLBufferVk>();
     CLImageVk &dstImageVk   = dstImage.getImpl<CLImageVk>();
     VkBufferImageCopy copyRegion =
-        CalculateBufferImageCopyRegion(srcOffset, 0, 0, dstOrigin, region, &dstImageVk);
+        cl_vk::CalculateBufferImageCopyRegion(srcOffset, 0, 0, dstOrigin, region, &dstImageVk);
     ANGLE_TRY(copyImageToFromBuffer(dstImageVk, srcBufferVk, copyRegion,
                                     ImageBufferCopyDirection::ToImage));
 
@@ -1139,7 +1128,7 @@ angle::Result CLCommandQueueVk::enqueueMapImage(const cl::Image &image,
     ANGLE_TRY(imageVk->getOrCreateStagingBuffer(&stagingBuffer));
 
     VkBufferImageCopy copyRegion =
-        CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, imageVk);
+        cl_vk::CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, imageVk);
     ANGLE_TRY(copyImageToFromBuffer(*imageVk, *stagingBuffer, copyRegion,
                                     ImageBufferCopyDirection::ToBuffer));
 
@@ -1224,7 +1213,7 @@ angle::Result CLCommandQueueVk::enqueueUnmapMemObject(const cl::Memory &memory,
         ASSERT(stagingBuffer);
 
         VkBufferImageCopy copyRegion =
-            CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, &imageVk);
+            cl_vk::CalculateBufferImageCopyRegion(0, 0, 0, cl::kOffsetZero, extent, &imageVk);
         ANGLE_TRY(copyImageToFromBuffer(imageVk, *stagingBuffer, copyRegion,
                                         ImageBufferCopyDirection::ToImage));
 

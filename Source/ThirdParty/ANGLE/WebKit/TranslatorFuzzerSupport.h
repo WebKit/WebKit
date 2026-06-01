@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 401
+#if ANGLE_SH_VERSION != 407
 #    error Check if there are added options and update this check.
 #endif
 
@@ -45,7 +45,7 @@
     MACRO(lineDirectives, 6, any, none)                                       \
     MACRO(removeInvariantAndCentroidForESSL3, 7, glsl, none)                  \
     MACRO(emulateAbsIntFunction, 8, glsl, none)                               \
-    MACRO(unused, 9, any, none)                                               \
+    MACRO(useDemoteToHelperInvocation, 9, spirvVk, none)                      \
     MACRO(clampIndirectArrayBounds, 10, glsl, none)                           \
     MACRO(limitExpressionComplexity, 11, none, any)                           \
     MACRO(limitCallStackDepth, 12, none, any)                                 \
@@ -93,7 +93,7 @@
     MACRO(explicitFragmentLocations, 57, glsl, none)                          \
     MACRO(emulateDithering, 58, spirvVk, none)                                \
     MACRO(roundOutputAfterDithering, 59, spirvVk, none)                       \
-    MACRO(castMediumpFloatTo16Bit, 60, spirvVk, none)                         \
+    MACRO(unused3, 60, any, none)                                             \
     MACRO(passHighpToPackUnormSnormBuiltins, 61, glsl, none)                  \
     MACRO(emulateClipDistanceState, 62, glsl, none)                           \
     MACRO(emulateClipOrigin, 63, glsl, none)                                  \
@@ -109,10 +109,11 @@
     MACRO(separateCompoundStructDeclarations, 73, none, msl || wgsl)          \
     MACRO(preserveDenorms, 74, none, spirvVk)                                 \
     MACRO(removeInactiveVariables, 75, any, spirvVk || msl)                   \
-    MACRO(ensureLoopForwardProgress, 76, none, msl)                           \
-    MACRO(skipAllValidationAndTransforms, 77, none, none)                     \
-    MACRO(transformFloatUniformTo16Bits, 78, none, spirvVk)                   \
-    MACRO(useIR, 79, none, none)
+    MACRO(retainInactiveFragmentOutputs, 76, any, msl)                        \
+    MACRO(ensureLoopForwardProgress, 77, none, msl)                           \
+    MACRO(skipAllValidationAndTransforms, 78, none, none)                     \
+    MACRO(transformFloatUniformTo16Bits, 79, none, spirvVk)                   \
+    MACRO(useIR, 80, none, none)
 
 void filterOptions(ShShaderOutput output, ShCompileOptions &options);
 ShShaderOutput resolveShaderOutput(ShShaderOutput output);

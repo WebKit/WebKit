@@ -102,7 +102,8 @@ angle::Result RenderbufferWgpu::getAttachmentRenderTarget(const gl::Context *con
     gl::LevelIndex level(0);
 
     webgpu::TextureViewHandle textureView;
-    ANGLE_TRY(mImage->createTextureViewSingleLevel(level, 0, textureView));
+    ANGLE_TRY(mImage->createTextureViewSingleLevel(level, 0, textureView, WGPUTextureAspect_All,
+                                                   WGPUTextureFormat_Undefined));
 
     mRenderTarget.set(mImage, textureView, mImage->toWgpuLevel(level), 0,
                       mImage->toWgpuTextureFormat());

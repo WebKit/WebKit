@@ -10,8 +10,10 @@
 #    pragma allow_unsafe_buffers
 #endif
 
-#include "libANGLE/CLImage.h"
+#include "CL/cl_half.h"
+
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLImage.h"
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>
@@ -116,6 +118,124 @@ angle::Result Image::getInfo(ImageInfo name,
         *valueSizeRet = copySize;
     }
     return angle::Result::Continue;
+}
+
+PixelColor Image::packPixels(const void *fillColor) const
+{
+    PixelColor packedColor;
+    const cl_image_format &fmt = getFormat();
+    const size_t channelCount  = GetChannelCount(fmt.image_channel_order);
+    ChannelMapping swizzle     = GetChannelOrderMapping(fmt.image_channel_order);
+
+    switch (fmt.image_channel_data_type)
+    {
+        case CL_UNORM_INT8:
+        {
+            const float *src = static_cast<const float *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                packedColor.u8[i] =
+                    gl::floatToNormalized<uint8_t>(gl::clamp(src[swizzle[i]], 0.0f, 1.0f));
+            }
+            break;
+        }
+        case CL_UNORM_INT16:
+        {
+            const float *src = static_cast<const float *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                packedColor.u16[i] =
+                    gl::floatToNormalized<uint16_t>(gl::clamp(src[swizzle[i]], 0.0f, 1.0f));
+            }
+            break;
+        }
+        case CL_SNORM_INT8:
+        {
+            const float *src = static_cast<const float *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                packedColor.s8[i] =
+                    gl::floatToNormalized<int8_t>(gl::clamp(src[swizzle[i]], -1.0f, 1.0f));
+            }
+            break;
+        }
+        case CL_SNORM_INT16:
+        {
+            const float *src = static_cast<const float *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                packedColor.s16[i] =
+                    gl::floatToNormalized<int16_t>(gl::clamp(src[swizzle[i]], -1.0f, 1.0f));
+            }
+            break;
+        }
+        case CL_SIGNED_INT8:
+        case CL_SIGNED_INT16:
+        case CL_SIGNED_INT32:
+        {
+            const int *src = static_cast<const int *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                if (fmt.image_channel_data_type == CL_SIGNED_INT8)
+                {
+                    packedColor.s8[i] = gl::clampCast<int8_t>(src[swizzle[i]]);
+                }
+                else if (fmt.image_channel_data_type == CL_SIGNED_INT16)
+                {
+                    packedColor.s16[i] = gl::clampCast<int16_t>(src[swizzle[i]]);
+                }
+                else
+                {
+                    packedColor.s32[i] = src[swizzle[i]];
+                }
+            }
+            break;
+        }
+        case CL_UNSIGNED_INT8:
+        case CL_UNSIGNED_INT16:
+        case CL_UNSIGNED_INT32:
+        {
+            const unsigned *src = static_cast<const unsigned *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                if (fmt.image_channel_data_type == CL_UNSIGNED_INT8)
+                {
+                    packedColor.u8[i] = gl::clampCast<uint8_t>(src[swizzle[i]]);
+                }
+                else if (fmt.image_channel_data_type == CL_UNSIGNED_INT16)
+                {
+                    packedColor.u16[i] = gl::clampCast<uint16_t>(src[swizzle[i]]);
+                }
+                else
+                {
+                    packedColor.u32[i] = src[swizzle[i]];
+                }
+            }
+            break;
+        }
+        case CL_HALF_FLOAT:
+        {
+            const float *src = static_cast<const float *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                packedColor.fp16[i] = cl_half_from_float(src[swizzle[i]], CL_HALF_RTE);
+            }
+            break;
+        }
+        case CL_FLOAT:
+        {
+            const float *src = static_cast<const float *>(fillColor);
+            for (size_t i = 0; i < channelCount; ++i)
+            {
+                packedColor.fp32[i] = src[swizzle[i]];
+            }
+            break;
+        }
+        default:
+            UNIMPLEMENTED();
+            break;
+    }
+    return packedColor;
 }
 
 Image::~Image() = default;

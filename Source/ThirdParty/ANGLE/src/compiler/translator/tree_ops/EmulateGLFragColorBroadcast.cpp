@@ -145,7 +145,6 @@ bool EmulateGLFragColorBroadcast(TCompiler *compiler,
                                  TIntermBlock *root,
                                  int maxDrawBuffers,
                                  int maxDualSourceDrawBuffers,
-                                 std::vector<sh::ShaderVariable> *outputVariables,
                                  TSymbolTable *symbolTable,
                                  int shaderVersion)
 {
@@ -162,27 +161,6 @@ bool EmulateGLFragColorBroadcast(TCompiler *compiler,
         if (!traverser.broadcastGLFragColor(compiler, root))
         {
             return false;
-        }
-
-        for (auto &var : *outputVariables)
-        {
-            if (var.name == "gl_FragColor")
-            {
-                // TODO(zmo): Find a way to keep the original variable information.
-                var.name       = "gl_FragData";
-                var.mappedName = "gl_FragData";
-                var.arraySizes.push_back(traverser.isGLSecondaryFragColorUsed()
-                                             ? maxDualSourceDrawBuffers
-                                             : maxDrawBuffers);
-                ASSERT(var.arraySizes.size() == 1u);
-            }
-            else if (var.name == "gl_SecondaryFragColorEXT")
-            {
-                var.name       = "gl_SecondaryFragDataEXT";
-                var.mappedName = "gl_SecondaryFragDataEXT";
-                var.arraySizes.push_back(maxDualSourceDrawBuffers);
-                ASSERT(var.arraySizes.size() == 1u);
-            }
         }
     }
 

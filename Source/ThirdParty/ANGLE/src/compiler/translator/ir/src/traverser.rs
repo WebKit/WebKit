@@ -127,6 +127,27 @@ pub mod visitor {
         }
     }
 
+    pub fn for_each_instruction<State, InstVisit>(
+        state: &mut State,
+        function_entries: &[Option<Block>],
+        inst_visit: &InstVisit,
+    ) where
+        InstVisit: Fn(&mut State, &BlockInstruction),
+    {
+        for_each_function(
+            state,
+            function_entries,
+            |_, _| {},
+            |state, block, _, _| {
+                for instruction in block.instructions.iter() {
+                    inst_visit(state, instruction);
+                }
+                traverser::visitor::VISIT_SUB_BLOCKS
+            },
+            |_, _| {},
+        );
+    }
+
     // A helper to visit the instructions (but also variables and inputs) of a block in a way
     // that is convenient for replicating what the block includes, such as when generating
     // code.
@@ -370,7 +391,7 @@ pub mod transformer {
 
             // Visit the sub-blocks after transforming the root block.
             cur_block.for_each_sub_block_mut(state, &|state, sub_block| {
-                for_each_block(state, sub_block, block_transform_pre, block_transform_post)
+                for_each_block(state, sub_block, block_transform_pre, block_transform_post);
             });
 
             // Visit the block again after visiting the sub-blocks.  It may be transformed further.

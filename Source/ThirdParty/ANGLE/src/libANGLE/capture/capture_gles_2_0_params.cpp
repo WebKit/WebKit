@@ -458,7 +458,7 @@ void CaptureGetShaderSource_source(const State &glState,
 
 void CaptureGetShaderiv_params(const State &glState,
                                ShaderProgramID shader,
-                               GLenum pname,
+                               ShaderParameter pnamePacked,
                                GLint *params,
                                ParamCapture *paramCapture)
 {

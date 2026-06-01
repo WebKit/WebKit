@@ -83,6 +83,10 @@
 
 42265173 UBSAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
 
+// Pixel 10
+484308794 PIXEL10 VULKAN : KHR-GLES3.copy_tex_image_conversions.required.cubemap_*_texture2d = FAIL
+484308794 PIXEL10 VULKAN : KHR-GLES3.copy_tex_image_conversions.required.renderbuffer_texture2d = FAIL
+
 // Samsung Galaxy S22
 341780527 GALAXYS22 VULKAN : KHR-GLES3.clip_distance.coverage = FAIL
 b/267953710 GALAXYS22 VULKAN : KHR-GLES3.framebuffer_blit.scissor_blit = FAIL

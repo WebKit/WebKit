@@ -33,7 +33,7 @@ Dependencies
 
     OpenGL ES 3.0 is required.
 
-    This extension is written against the OpenGL ES 3.0.5 and OpenGL ES
+    This extension is written against the OpenGL ES 3.0.6 and OpenGL ES
     Shading Language 3.0 (Document Revision 6) specifications.
 
     KHR_robustness affects the behavior of this specification.
@@ -73,7 +73,7 @@ New Procedures and Functions
 
     void TexStorage2DMultisampleANGLE(enum target,
                                       sizei samples,
-                                      enum sizedinternalformat,
+                                      enum internalformat,
                                       sizei width,
                                       sizei height,
                                       boolean fixedsamplelocations);
@@ -111,18 +111,13 @@ New Tokens
         MAX_INTEGER_SAMPLES_ANGLE                         0x9110
         TEXTURE_BINDING_2D_MULTISAMPLE_ANGLE              0x9104
 
-    Accepted by the <pname> parameter of GetTexLevelParameter{if}vANGLE:
-
-        TEXTURE_SAMPLES_ANGLE                             0x9106
-        TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE              0x9107
-
     Returned by the <type> parameter of GetActiveUniform:
 
         SAMPLER_2D_MULTISAMPLE_ANGLE                      0x9108
         INT_SAMPLER_2D_MULTISAMPLE_ANGLE                  0x9109
         UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ANGLE         0x910A
 
-Additions to Chapter 2 of the OpenGL ES 3.0.5 Specification (OpenGL ES
+Additions to Chapter 2 of the OpenGL ES 3.0.6 Specification (OpenGL ES
 Operation)
 
     Add to table 2.10 "OpenGL ES Shading Language type tokens" page 64:
@@ -133,7 +128,8 @@ Operation)
     INT_SAMPLER_2D_MULTISAMPLE_ANGLE                      isampler2DMS
     UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ANGLE             usampler2DMS
 
-    Add to section 2.12.9, after subsection "Texel Fetches":
+    Insert new Section 2.12.9.3, "Multisample Texel Fetches", renumber
+    subsequent sections:
 
     Multisample Texel Fetches
 
@@ -164,7 +160,7 @@ Operation)
     texture sampler. No other sample or fetch commands may be performed
     on a multisample texture sampler.
 
-Additions to Chapter 3 of the OpenGL ES 3.0.5 Specification (Rasterization)
+Additions to Chapter 3 of the OpenGL ES 3.0.6 Specification (Rasterization)
 
     Insert into section 3.3, "Multisampling" after the discussion of
     the query for SAMPLES:
@@ -185,10 +181,6 @@ Additions to Chapter 3 of the OpenGL ES 3.0.5 Specification (Rasterization)
     shading is performed). (0.5, 0.5) thus corresponds to the pixel center.
     If the multisample mode does not have fixed sample locations, the returned
     values may only reflect the locations of samples within some pixels.
-
-    An INVALID_ENUM error is generated if <pname> is not SAMPLE_LOCATION.
-    An INVALID_VALUE error is generated if <index> is greater than or equal to
-    the value of SAMPLES.
 
     Modify Section 3.8.1, "Texture Objects":
 
@@ -233,10 +225,12 @@ Additions to Chapter 3 of the OpenGL ES 3.0.5 Specification (Rasterization)
 
     The command
 
-        void TexStorage2DMultisampleANGLE(enum target, sizei samples,
-                                   int sizedinternalformat,
-                                   sizei width, sizei height,
-                                   boolean fixedsamplelocations);
+        void TexStorage2DMultisampleANGLE(enum target,
+                                          sizei samples,
+                                          enum internalformat,
+                                          sizei width,
+                                          sizei height,
+                                          boolean fixedsamplelocations);
 
     establishes the data storage, format, dimensions, and number of samples
     of a multisample texture's image. <target> must be
@@ -246,22 +240,17 @@ Additions to Chapter 3 of the OpenGL ES 3.0.5 Specification (Rasterization)
     <samples> represents a request for a desired minimum number of samples.
     Since different implementations may support different sample counts for
     multisampled textures, the actual number of samples allocated for the
-    texture image is implementation-dependent. However, the resulting value
-    for TEXTURE_SAMPLES_ANGLE is guaranteed to be greater than or equal to
-    <samples> and no more than the next larger sample count supported by the
-    implementation.
+    texture image is implementation-dependent. However, the resulting number of
+    samples is guaranteed to be greater than or equal to <samples> and no more
+    than the next larger sample count supported by the implementation.
 
     If <fixedsamplelocations> is TRUE, the image will use identical sample
     locations and the same number of samples for all texels in the image,
-    and the sample locations will not depend on the sizedinternalformat or
+    and the sample locations will not depend on the <internalformat> or
     size of the image.
 
     Upon success, TexStorage2DMultisampleANGLE deletes any existing image
-    for <target> and the contents of texels are undefined. The values of
-    TEXTURE_WIDTH_ANGLE, TEXTURE_HEIGHT_ANGLE, TEXTURE_SAMPLES_ANGLE,
-    TEXTURE_INTERNAL_FORMAT_ANGLE, and TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE are
-    set to <width>, <height>, the actual number of samples allocated,
-    <sizedinternalformat>, and <fixedsamplelocations> respectively.
+    for <target> and the contents of texels are undefined.
 
     When a multisample texture is accessed in a shader, the access takes one
     vector of integers describing which texel to fetch and an integer
@@ -271,28 +260,6 @@ Additions to Chapter 3 of the OpenGL ES 3.0.5 Specification (Rasterization)
     performed by the fetch. Fetching a sample number less than zero, or
     greater than or equal to the number of samples in the texture, produces
     undefined results.
-
-    An INVALID_ENUM error is generated if target is not
-    TEXTURE_2D_MULTISAMPLE_ANGLE.
-    An INVALID_OPERATION error is generated if zero is bound to <target>.
-    An INVALID_VALUE is generated if <width> or <height> is less than 1.
-    An INVALID_VALUE is generated if <width> or <height> is greater than
-    the value of MAX_TEXTURE_SIZE.
-    An INVALID_VALUE is generated if samples is zero.
-    An INVALID_ENUM error is generated if <sizedinternalformat> is not
-    color-renderable, depth-renderable, or stencil-renderable (as defined
-    in section 4.4.4).
-    An INVALID_ENUM error is generated if <sizedinternalformat> is one of the
-    unsized base internal formats listed in table 3.11.
-    An INVALID_OPERATION is generated if <samples> is greater than the maximum
-    number of samples supported for this <target> and <sizedinternalformat>,
-    The maximum number of samples supported can be determined by calling
-    GetInternalformativ with a <pname> of SAMPLES (see section 6.1.15).
-    An INVALID_OPERATION is generated if the value of TEXTURE_IMMUTABLE_FORMAT
-    for the texture currently bound to <target> on the active texture unit is
-    TRUE.
-    An OUT_OF_MEMORY error is generated if the GL is unable to create a texture
-    image of the requested size.
 
     Modify Section 3.8.7, "Texture Parameters":
 
@@ -317,7 +284,7 @@ Additions to Chapter 3 of the OpenGL ES 3.0.5 Specification (Rasterization)
     samples in each texel, and a boolean indicating whether identical sample
     locations and number of samples will be used for all texels in the image.
 
-Additions to Chapter 4 of the OpenGL ES 3.0.5 Specification (Per-Fragment
+Additions to Chapter 4 of the OpenGL ES 3.0.6 Specification (Per-Fragment
 Operations and the Framebuffer)
 
     Modify Section 4.1.3, "Multisample Fragment Operations" (p. 174):
@@ -344,9 +311,6 @@ Operations and the Framebuffer)
     sample mask value is queried by calling GetIntegeri_v with <target> set to
     SAMPLE_MASK_VALUE_ANGLE and the index set to <maskNumber>.
 
-    An INVALID_VALUE error is generated if <maskNumber> is greater than or
-    equal to the value of MAX_SAMPLE_MASK_WORDS_ANGLE.
-
     Modify Section 4.4.2, "Attaching Images to Framebuffer Objects":
 
     (the first paragraph of RenderbufferStorageMultisample p. 204)
@@ -354,7 +318,7 @@ Operations and the Framebuffer)
     ... If either <width> or <height> is greater than the value of
     MAX_RENDERBUFFER_SIZE, then the error INVALID_VALUE is generated. If
     <samples> is greater than the maximum number of samples supported for
-    <sizedinternalformat>, then the error INVALID_OPERATION is generated (see
+    <internalformat>, then the error INVALID_OPERATION is generated (see
     GetInternalformativ in section 6.1.15). If the GL is unable to create
     a data store of the requested size, the error OUT_OF_MEMORY is generated.
 
@@ -388,23 +352,22 @@ Operations and the Framebuffer)
     (modify the last bullet at the top of p. 215)
 
     - The value of RENDERBUFFER_SAMPLES is the same for all attached
-      renderbuffers; the value of TEXTURE_SAMPLES_ANGLE is the same for all
+      renderbuffers; the number of samples is the same for all
       attached textures; and, if the attached images are a mix of
-      renderbuffers and textures, the value of RENDERBUFFER_SAMPLES
-      matches the value of TEXTURE_SAMPLES_ANGLE.
+      renderbuffers and textures, they all have the same number of samples.
 
       { FRAMEBUFFER_INCOMPLETE_MULTISAMPLE }
 
     (add one more bullet after the last bullet, p. 215)
 
-    - The value of TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE is the same for all
-      attached textures; and, if the attached images are a mix of renderbuffers
-      and textures, the value of TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE must be
-      TRUE for all attached textures.
+    - All attached multisample textures were created with the same
+      <fixedsamplelocations> value; and, if the attached images are a mix of
+      renderbuffers and textures, all attached multisample textures were created
+      with <fixedsamplelocations> set to TRUE.
 
       { FRAMEBUFFER_INCOMPLETE_MULTISAMPLE }
 
-Additions to Chapter 6 of the OpenGL ES 3.0.5 Specification (State and State
+Additions to Chapter 6 of the OpenGL ES 3.0.6 Specification (State and State
 Requests)
 
     Modify Section 6.1.3, "Enumerated Queries":
@@ -418,16 +381,11 @@ Requests)
     array, cube map, or two-dimensional multisample texture object,
     respectively.
 
-    An INVALID_ENUM is generated if <target> is not one of the texture
-    targets described above.
-    An INVALID_ENUM is generated if <pname> is not one of the texture
-    parameters described above.
-
     Modify Section 6.1.15, "Internal Format Queries":
 
     (modify the paragraph describing target as follows, p. 244)
 
-    <target> indicates the usage of the internalformat, and must be either
+    <target> indicates the usage of the <internalformat>, and must be either
     RENDERBUFFER or TEXTURE_2D_MULTISAMPLE_ANGLE, indicating the renderbuffer,
     or two-dimensional multisample texture. Otherwise an INVALID_ENUM error
     is generated.
@@ -438,7 +396,7 @@ Requests)
     The maximum value of SAMPLES is guaranteed to be at least the lowest of
     the value of MAX_INTEGER_SAMPLES_ANGLE if internal format is a signed or
     unsigned integer format, the value of MAX_DEPTH_TEXTURE_SAMPLES_ANGLE if
-    internalformat is a depth or stencil-renderable format and target is
+    <internalformat> is a depth or stencil-renderable format and target is
     TEXTURE_2D_MULTISAMPLE_ANGLE, the value of MAX_COLOR_TEXTURE_SAMPLES_ANGLE
     if internal format is a color-renderable format and target is
     TEXTURE_2D_MULTISAMPLE_ANGLE, or the value of MAX_SAMPLES.
@@ -459,9 +417,7 @@ Requests)
 Dependencies on ANGLE_get_tex_level_parameter
 
     If ANGLE_get_tex_level_parameter is not supported, omit any references to
-    GetTexLevelParameter{if}vANGLE, TEXTURE_WIDTH_ANGLE, TEXTURE_HEIGHT_ANGLE,
-    TEXTURE_INTERNAL_FORMAT_ANGLE, TEXTURE_SAMPLES_ANGLE, and
-    TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE.
+    GetTexLevelParameter{if}vANGLE.
 
 Errors
 
@@ -469,7 +425,7 @@ Errors
     SAMPLE_MASK_VALUE_ANGLE and <index> is greater than or equal to
     MAX_SAMPLE_MASK_WORDS_ANGLE.
 
-    The error INVALID_VALUE is generated by SampleMaskiANGLE if <index> is
+    The error INVALID_VALUE is generated by SampleMaskiANGLE if <maskNumber> is
     greater than or equal to MAX_SAMPLE_MASK_WORDS_ANGLE.
 
     The error INVALID_ENUM is generated by TexStorage2DMultisampleANGLE if
@@ -486,17 +442,16 @@ Errors
     <samples> is zero.
 
     The error INVALID_ENUM is generated by TexStorage2DMultisampleANGLE if
-    <sizedinternalformat> is not color-renderable, depth-renderable, or
-    stencil-renderable (as defined
-    in section 4.4.4).
+    <internalformat> is not color-renderable, depth-renderable, or
+    stencil-renderable (as defined in section 4.4.4).
 
     The error INVALID_ENUM is generated by TexStorage2DMultisampleANGLE if
-    <sizedinternalformat> is one of the unsized base internal formats listed
+    <internalformat> is one of the unsized base internal formats listed
     in table 3.11.
 
     The error INVALID_OPERATION is generated by TexStorage2DMultisampleANGLE
     if <samples> is greater than the maximum number of samples supported for
-    this <target> and <sizedinternalformat>, The maximum number of samples
+    this <target> and <internalformat>, The maximum number of samples
     supported can be determined by calling GetInternalformativ with a <pname>
     of SAMPLES (see section 6.1.15).
 
@@ -514,14 +469,14 @@ Errors
     is greater than or equal to the value of SAMPLES.
 
     The error INVALID_OPERATION is generated by RenderbufferStorageMultisample
-    if <sizedinternalformat> is a signed or unsigned integer format and
+    if <internalformat> is a signed or unsigned integer format and
     <samples> is greater than the value of MAX_INTEGER_SAMPLES_ANGLE.
 
     The error INVALID_OPERATION is generated by TexParameter* if <target> is
     TEXTURE_2D_MULTISAMPLE_ANGLE, <pname> is TEXTURE_BASE_LEVEL, and <value>
     is not zero.
 
-    The error INVALID_OPERATION is generated by TexParameter* if <target> is
+    The error INVALID_ENUM is generated by TexParameter* if <target> is
     TEXTURE_2D_MULTISAMPLE_ANGLE and <pname> is sampler state value from table
     6.10.
 
@@ -533,7 +488,9 @@ New State
     Get Value                           Type    Get Command     Value     Description                     Sec.
     ---------                           ----    -----------    -------    ----------------------          -----
     SAMPLE_MASK_ANGLE                   B       IsEnabled      FALSE      Additional sample mask          4.1.3
-    SAMPLE_MASK_VALUE_ANGLE             nxZ+    GetIntegeri_v  ~0         Additional sample mask value    4.1.3
+    SAMPLE_MASK_VALUE_ANGLE             nxZ+    GetIntegeri_v  All bits   Additional sample mask value    4.1.3
+                                                               of all
+                                                               words set
 
     Where n is the number of sample mask words (the value of
     MAX_SAMPLE_MASK_WORDS_ANGLE) the implementation supports.
@@ -542,25 +499,16 @@ New State
 
                                                                      Initial
     Get Value                                 Type     Get Command    Value  Description                   Sec.
-    ------------------------------------      ----     -----------    ------ ---------------------------   -----
-    TEXTURE_BINDING_2D_MULTISAMPLE_ANGLE        32*xZ+   GetIntegerv    0      Texture object bound to     3.8.1
+    ------------------------------------      ----     -----------   ------- ---------------------------   -----
+    TEXTURE_BINDING_2D_MULTISAMPLE_ANGLE      32*xZ+   GetIntegerv   0       Texture object bound to       3.8.1
                                                                              TEXTURE_2D_MULTISAMPLE_ANGLE
-
-    (add new table 6.10, Textures (state per texture image), renumber subsequent tables)
-
-                                                                          Initial
-    Get Value                            Type   Get Command                Value   Description                  Sec.
-    ----------------------               ----   -------------------        ------  ---------------------------  ------
-    TEXTURE_SAMPLES_ANGLE                 Z+    GetTexLevelParameterANGLE  0       Number of samples per texel  3.8.5
-    TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE  B     GetTexLevelParameterANGLE  TRUE    Whether the image uses a     3.8.5
-                                                                                   fixed sample pattern
 
     (add to table 6.35, Framebuffer dependent Values, p. 280)
 
-                                                              Initial
-    Get Value               Type        Get Command            Value           Description      Sec.
+                                                               Initial
+    Get Value               Type        Get Command             Value          Description      Sec.
     ------------------      ----------  ------------------     --------------  ---------------  ------
-    SAMPLE_POSITION_ANGLE   N*2*R[0,1]  GetMultisamplefvANGLE  implementation  Explicit sample  3.3.1
+    SAMPLE_POSITION_ANGLE   N*2*R[0,1]  GetMultisamplefvANGLE  Implementation  Explicit sample  3.3.1
                                                                dependent       positions
 
     Where N is the number of samples (the value of SAMPLES) the framebuffer supports.
@@ -570,12 +518,12 @@ New Implementation Dependent State
                                                           Minimum
     Get Value                        Type    Get Command  Value   Description                Sec.
     ---------                        ------- -----------  ------- ------------------------   ------
-    MAX_SAMPLE_MASK_WORDS_ANGLE      Z+      GetIntegerv  1       maximum number of sample   4.1.3
+    MAX_SAMPLE_MASK_WORDS_ANGLE      Z+      GetIntegerv  1       Maximum number of sample   4.1.3
                                                                   mask words
-    MAX_COLOR_TEXTURE_SAMPLES_ANGLE  Z+      GetIntegerv  1       maximum number of samples  4.1.3
+    MAX_COLOR_TEXTURE_SAMPLES_ANGLE  Z+      GetIntegerv  1       Maximum number of samples  6.1.15
                                                                   in a color multisample
                                                                   texture
-    MAX_DEPTH_TEXTURE_SAMPLES_ANGLE  Z+      GetIntegerv  1       maximum number of samples  4.1.3
+    MAX_DEPTH_TEXTURE_SAMPLES_ANGLE  Z+      GetIntegerv  1       Maximum number of samples  6.1.15
                                                                   in a depth/stencil
                                                                   multisample texture
     MAX_INTEGER_SAMPLES_ANGLE        Z+      GetIntegerv  1       Maximum number of samples  4.4.2

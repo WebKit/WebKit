@@ -114,7 +114,7 @@ class VertexDataManager : angle::NonCopyable
                                       GLint start,
                                       size_t count,
                                       GLsizei instances,
-                                      GLuint baseInstance);
+                                      uint64_t baseInstance);
 
     // Promote static usage of dynamic buffers.
     static void PromoteDynamicAttribs(const gl::Context *context,
@@ -144,14 +144,14 @@ class VertexDataManager : angle::NonCopyable
                                         GLint start,
                                         size_t count,
                                         GLsizei instances,
-                                        GLuint baseInstance);
+                                        uint64_t baseInstance);
 
     angle::Result storeDynamicAttrib(const gl::Context *context,
                                      TranslatedAttribute *translated,
                                      GLint start,
                                      size_t count,
                                      GLsizei instances,
-                                     GLuint baseInstance);
+                                     uint64_t baseInstance);
 
     BufferFactoryD3D *const mFactory;
 

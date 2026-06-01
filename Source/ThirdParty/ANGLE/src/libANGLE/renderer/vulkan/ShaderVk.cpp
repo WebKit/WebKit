@@ -110,11 +110,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
         options->aliasedUnlessRestrict = true;
     }
 
-    if (contextVk->getFeatures().explicitlyCastMediumpFloatTo16Bit.enabled)
-    {
-        options->castMediumpFloatTo16Bit = true;
-    }
-
     if (contextVk->getExtensions().shaderPixelLocalStorageANGLE)
     {
         options->pls = contextVk->getNativePixelLocalStorageOptions();
@@ -133,6 +128,11 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
     if (contextVk->getFeatures().emulateR32fImageAtomicExchange.enabled)
     {
         options->emulateR32fImageAtomicExchange = true;
+    }
+
+    if (contextVk->getFeatures().supportsShaderDemoteToHelperInvocation.enabled)
+    {
+        options->useDemoteToHelperInvocation = true;
     }
 
     // https://issuetracker.google.com/406827038

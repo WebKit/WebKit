@@ -3189,6 +3189,7 @@ void FrameCaptureShared::writeCppReplayIndexFilesCL()
         header << "#pragma once\n";
         header << "\n";
         header << "#define CL_NO_EXTENSION_PROTOTYPES\n";
+        header << "#define CL_ENABLE_BETA_EXTENSIONS\n";
         header << "#include <angle_cl.h>\n";
         header << "#include <stdint.h>\n";
         header << "#include \"trace_fixture_cl.h\"\n";

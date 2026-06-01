@@ -110,6 +110,7 @@ class FramebufferAttachment final
     TextureTarget cubeMapFace() const;
     GLint mipLevel() const;
     GLint layer() const;
+    bool hasLayer() const;
     bool isLayered() const;
 
     GLsizei getNumViews() const { return mNumViews; }

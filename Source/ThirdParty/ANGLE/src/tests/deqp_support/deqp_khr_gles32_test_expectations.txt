@@ -111,6 +111,16 @@
 42264522 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
 365108862 PIXEL4ORXL VULKAN : KHR-GLES32.core.ext_texture_shadow_lod.texturelod.samplercubearrayshadow_fragment = SKIP
 
+// Pixel 10
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.ext_texture_shadow_lod.texture.samplercubearrayshadow_bias_fragment = FAIL
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.layered_rendering_fbo_no_attachment.layered_rendering_fbo_no_attachment = FAIL
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_fan_drawcall = SKIP
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_strip_drawcall = SKIP
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangles_drawcall = SKIP
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_triangle_strip_output_triangle_strip_adjacency_drawcall = SKIP
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_with_adjacency_input_triangle_strip_output_triangles_adjacency_drawcall = SKIP
+449120556 PIXEL10 VULKAN : KHR-GLES32.core.texture_cube_map_array.sampling = FAIL
+
 // Samsung Galaxy S22 (Xclipse)
 267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
 386749841 GALAXYS22 VULKAN : KHR-GLES32.core.geometry_shader.primitive_counter.* = FAIL

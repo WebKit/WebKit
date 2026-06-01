@@ -556,16 +556,11 @@ EXPORTS
     ; GL_ANGLE_renderability_validation
 
     ; GL_ANGLE_request_extension
-    glDisableExtensionANGLE
     glRequestExtensionANGLE
 
     ; GL_ANGLE_rgbx_internal_format
 
     ; GL_ANGLE_robust_client_memory
-    glCompressedTexImage2DRobustANGLE
-    glCompressedTexImage3DRobustANGLE
-    glCompressedTexSubImage2DRobustANGLE
-    glCompressedTexSubImage3DRobustANGLE
     glGetActiveUniformBlockivRobustANGLE
     glGetBooleanvRobustANGLE
     glGetBufferParameteri64vRobustANGLE
@@ -575,6 +570,7 @@ EXPORTS
     glGetFramebufferAttachmentParameterivRobustANGLE
     glGetFramebufferPixelLocalStorageParameterfvRobustANGLE
     glGetFramebufferPixelLocalStorageParameterivRobustANGLE
+    glGetFramebufferPixelLocalStorageParameteruivRobustANGLE
     glGetInteger64i_vRobustANGLE
     glGetInteger64vRobustANGLE
     glGetIntegeri_vRobustANGLE
@@ -625,6 +621,7 @@ EXPORTS
     ; GL_ANGLE_shader_pixel_local_storage
     glBeginPixelLocalStorageANGLE
     glEndPixelLocalStorageANGLE
+    glEndPixelLocalStorageImplicitANGLE
     glFramebufferMemorylessPixelLocalStorageANGLE
     glFramebufferPixelLocalClearValuefvANGLE
     glFramebufferPixelLocalClearValueivANGLE
@@ -634,6 +631,7 @@ EXPORTS
     glFramebufferTexturePixelLocalStorageANGLE
     glGetFramebufferPixelLocalStorageParameterfvANGLE
     glGetFramebufferPixelLocalStorageParameterivANGLE
+    glGetFramebufferPixelLocalStorageParameteruivANGLE
     glPixelLocalStorageBarrierANGLE
 
     ; GL_ANGLE_stencil_texturing

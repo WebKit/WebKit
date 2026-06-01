@@ -89,6 +89,8 @@ declare_args() {
 
   # Prefix where the artifacts should be installed on the system
   install_prefix = ""
+
+  angle_use_crypto_hasher = build_with_chromium
 }
 
 declare_args() {
@@ -310,6 +312,9 @@ config("internal_config") {
 
   if (angle_trace_events_ignore_timestamp) {
     defines += [ "ANGLE_TRACE_EVENTS_IGNORE_TIMESTAMP" ]
+  }
+  if (angle_use_crypto_hasher) {
+    defines += [ "ANGLE_USE_CRYPTO_HASHER=1" ]
   }
 }
 

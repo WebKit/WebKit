@@ -138,12 +138,6 @@ const ExtensionInfoMap &GetExtensionInfoMap()
             return info;
         }};
 
-        [[maybe_unused]] auto enableableDisablableExtension = [&](ExtensionBool member) {{
-            ExtensionInfo info = enableableExtension(member);
-            info.Disablable    = true;
-            return info;
-        }};
-
         auto esOnlyExtension = [](ExtensionBool member) {{
             ExtensionInfo info;
             info.ExtensionsMember = member;
@@ -188,7 +182,6 @@ _EXT_STRING_TEMPLATE = """\
 
 ESONLY = 'esOnly'
 REQUESTABLE = 'enableable'
-TOGGLEABLE = 'enableableDisablable'
 
 _MARKDOWN_TEMPLATE = """\
 # ANGLE Supported Extensions
@@ -410,8 +403,7 @@ def main():
 
     angle_ext_infos = (
         break_down_exts(registry_xml.angle_requestable_extensions, expr, REQUESTABLE) +
-        break_down_exts(registry_xml.angle_es_only_extensions, expr, ESONLY) +
-        break_down_exts(registry_xml.angle_toggleable_extensions, expr, TOGGLEABLE))
+        break_down_exts(registry_xml.angle_es_only_extensions, expr, ESONLY))
 
     angle_ext_infos = sort_by_ext_name(angle_ext_infos)
 

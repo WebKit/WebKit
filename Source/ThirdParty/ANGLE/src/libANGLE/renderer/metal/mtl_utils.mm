@@ -905,7 +905,18 @@ angle::ObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
         else
 #endif
         {
+            // Suppress `fastMathEnabled` deprecation warnings. The
+            // `fastMathEnabled` property must be used as a fallback in
+            // case the user is running an OS that is less than MacOS15.0
+            // or iOS18.0. There is no way to use compile-time guards to
+            // both avoid suppressing the warning and provide the API as
+            // a fallback.
+            // TODO (crbug.com/383994655): Remove deprecation supression
+            // once `fastMathEnabled` is no longer needed as a fallback.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             options.get().fastMathEnabled = !disableFastMath;
+#pragma clang diagnostic pop
         }
 
         options.get().languageVersion =

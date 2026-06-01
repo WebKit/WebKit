@@ -188,66 +188,28 @@ fn visit_block(state: &mut State, block: &Block, depth: usize) {
     for instruction in block.instructions.iter() {
         let (opcode, _) = instruction.get_op_and_result(state.ir_meta);
 
-        match opcode {
-            OpCode::Discard => {
-                state.shader_has_discard = true;
-            },
-            // Read accesses
-            &OpCode::Load(pointer) |
-            &OpCode::Unary(UnaryOpCode::PrefixIncrement, pointer) |
-            &OpCode::Unary(UnaryOpCode::PrefixDecrement, pointer) |
-            &OpCode::Unary(UnaryOpCode::PostfixIncrement, pointer) |
-            &OpCode::Unary(UnaryOpCode::PostfixDecrement, pointer) |
-            // While the atomic*() functions don't make sense for color outputs, there's nothing
-            // preventing a shader from using them.
-            &OpCode::Binary(BinaryOpCode::AtomicAdd, pointer, _) |
-            &OpCode::Binary(BinaryOpCode::AtomicMin, pointer, _) |
-            &OpCode::Binary(BinaryOpCode::AtomicMax, pointer, _) |
-            &OpCode::Binary(BinaryOpCode::AtomicAnd, pointer, _) |
-            &OpCode::Binary(BinaryOpCode::AtomicOr, pointer, _) |
-            &OpCode::Binary(BinaryOpCode::AtomicXor, pointer, _) |
-            &OpCode::Binary(BinaryOpCode::AtomicExchange, pointer, _) => {
-                read_pointer(state.ir_meta, &mut state.is_read, pointer);
-            }
-
-            // Write accesses
-            &OpCode::Store(pointer, _) |
-            &OpCode::Binary(BinaryOpCode::Modf, _, pointer) |
-            &OpCode::Binary(BinaryOpCode::Frexp, _, pointer) => {
-                write_pointer(state.ir_meta, &mut state.written_channels, pointer, depth, state.is_in_main);
-            },
-            OpCode::BuiltIn(BuiltInOpCode::UaddCarry, args) |
-            OpCode::BuiltIn(BuiltInOpCode::UsubBorrow, args) => {
-                write_pointer(state.ir_meta, &mut state.written_channels, args[2], depth, state.is_in_main);
-            }
-            OpCode::BuiltIn(BuiltInOpCode::UmulExtended, args) |
-            OpCode::BuiltIn(BuiltInOpCode::ImulExtended, args) => {
-                write_pointer(state.ir_meta, &mut state.written_channels, args[3], depth, state.is_in_main);
-                write_pointer(state.ir_meta, &mut state.written_channels, args[2], depth, state.is_in_main);
-            },
-
-            // Calls could read or write from variables depending on the parameter direction.
-            &OpCode::Call(function_id, ref args) => {
-                let param_directions = state.ir_meta.get_function(function_id).params.iter().map(|param| param.direction);
-                args.iter().zip(param_directions).for_each(|(&arg, direction)| {
-                    // `out` and `inout` parameters are always pointers.  Treat `inout` parameters
-                    // as being read.
-                    match direction {
-                        FunctionParamDirection::Input => {
-                            if state.ir_meta.get_type(arg.type_id).is_pointer() {
-                                read_pointer(state.ir_meta, &mut state.is_read, arg);
-                            }
-                        },
-                        FunctionParamDirection::InputOutput => {
-                            read_pointer(state.ir_meta, &mut state.is_read, arg);
-                        },
-                        FunctionParamDirection::Output => {
-                            write_pointer(state.ir_meta, &mut state.written_channels, arg, depth, state.is_in_main);
-                        },
-                    };
-                });
-            },
-            _ => {},
-        };
+        if matches!(opcode, OpCode::Discard) {
+            state.shader_has_discard = true;
+        } else {
+            util::inspect_pointer_access(
+                state.ir_meta,
+                &mut (&mut state.written_channels, &mut state.is_read),
+                opcode,
+                &|(written_channels, is_read), pointer, access| {
+                    if access == util::PointerAccess::Write {
+                        write_pointer(
+                            state.ir_meta,
+                            written_channels,
+                            pointer,
+                            depth,
+                            state.is_in_main,
+                        );
+                    } else {
+                        // Treat `inout` parameters as being read.
+                        read_pointer(state.ir_meta, is_read, pointer);
+                    }
+                },
+            );
+        }
     }
 }

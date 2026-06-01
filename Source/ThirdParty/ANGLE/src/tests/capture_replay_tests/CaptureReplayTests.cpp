@@ -260,6 +260,7 @@ class CaptureReplayTests
         configParams.bindGeneratesResource = traceInfo.isBindGeneratesResourcesEnabled;
         configParams.webGLCompatibility    = traceInfo.isWebGLCompatibilityEnabled;
         configParams.robustResourceInit    = traceInfo.isRobustResourceInitEnabled;
+        configParams.extensionsEnabled     = traceInfo.areExtensionsEnabled;
 
         mPlatformParams.renderer   = traceInfo.displayPlatformType;
         mPlatformParams.deviceType = traceInfo.displayDeviceType;

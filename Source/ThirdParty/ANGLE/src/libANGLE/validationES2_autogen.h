@@ -361,7 +361,7 @@ bool ValidateGetShaderSource(const Context *context,
 bool ValidateGetShaderiv(const Context *context,
                          angle::EntryPoint entryPoint,
                          ShaderProgramID shaderPacked,
-                         GLenum pname,
+                         ShaderParameter pnamePacked,
                          const GLint *params);
 bool ValidateGetString(const Context *context, angle::EntryPoint entryPoint, GLenum name);
 bool ValidateGetTexParameterfv(const Context *context,

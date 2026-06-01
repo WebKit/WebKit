@@ -356,6 +356,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo forceLumaWorkaroundForSameTextureCopyTexImage2D = {
+        "forceLumaWorkaroundForSameTextureCopyTexImage2D",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo disableGPUSwitchingSupport = {
         "disableGPUSwitchingSupport",
         FeatureCategory::OpenGLWorkarounds,
@@ -664,6 +670,12 @@ struct FeaturesGL : FeatureSetBase
 
     FeatureInfo validateMaxPerStageUniformBlocksAtCompileTime = {
         "validateMaxPerStageUniformBlocksAtCompileTime",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo recreateMipmapLevelsBeforeGenerate = {
+        "recreateMipmapLevelsBeforeGenerate",
         FeatureCategory::OpenGLWorkarounds,
         &members,
     };

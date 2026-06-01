@@ -23,6 +23,11 @@
 namespace rx
 {
 
+namespace
+{
+typedef const char *(*PFNGLXGETSCREENDRIVERPROC)(Display *dpy, int scrNum);
+}
+
 void *FunctionsGLX::sLibHandle = nullptr;
 
 template <typename T>
@@ -65,7 +70,8 @@ struct FunctionsGLX::GLXFunctionTable
           getSyncValuesOMLPtr(nullptr),
           getMscRateOMLPtr(nullptr),
           bindTexImageEXTPtr(nullptr),
-          releaseTexImageEXTPtr(nullptr)
+          releaseTexImageEXTPtr(nullptr),
+          getScreenDriverPtr(nullptr)
     {}
 
     // GLX 1.0
@@ -116,6 +122,9 @@ struct FunctionsGLX::GLXFunctionTable
     // GLX_EXT_texture_from_pixmap
     PFNGLXBINDTEXIMAGEEXTPROC bindTexImageEXTPtr;
     PFNGLXRELEASETEXIMAGEEXTPROC releaseTexImageEXTPtr;
+
+    // Mesa-specific
+    PFNGLXGETSCREENDRIVERPROC getScreenDriverPtr;
 };
 
 FunctionsGLX::FunctionsGLX()
@@ -268,6 +277,9 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
         GET_PROC_OR_ERROR(&mFnPtrs->bindTexImageEXTPtr, glXBindTexImageEXT);
         GET_PROC_OR_ERROR(&mFnPtrs->releaseTexImageEXTPtr, glXReleaseTexImageEXT);
     }
+
+    // This command may be undefined on some systems but there is no extension string to check.
+    GetProc(getProc, &mFnPtrs->getScreenDriverPtr, "glXGetScreenDriver");
 
 #undef GET_FNPTR_OR_ERROR
 #undef GET_PROC_OR_ERROR
@@ -462,5 +474,14 @@ void FunctionsGLX::bindTexImageEXT(glx::Drawable drawable, int buffer, const int
 void FunctionsGLX::releaseTexImageEXT(glx::Drawable drawable, int buffer) const
 {
     mFnPtrs->releaseTexImageEXTPtr(mXDisplay, drawable, buffer);
+}
+
+const char *FunctionsGLX::getScreenDriver() const
+{
+    if (mFnPtrs->getScreenDriverPtr != nullptr)
+    {
+        return mFnPtrs->getScreenDriverPtr(mXDisplay, mXScreen);
+    }
+    return nullptr;
 }
 }  // namespace rx

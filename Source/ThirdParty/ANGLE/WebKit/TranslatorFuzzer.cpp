@@ -73,8 +73,6 @@ static const struct
     const char *flag;
 } allOutputs[] = {
     {SH_MSL_METAL_OUTPUT, "m"},          {SH_ESSL_OUTPUT, "e"},
-    {SH_GLSL_COMPATIBILITY_OUTPUT, "g"}, {SH_GLSL_130_OUTPUT, "g130"},
-    {SH_GLSL_140_OUTPUT, "g140"},        {SH_GLSL_150_CORE_OUTPUT, "g150"},
     {SH_GLSL_330_CORE_OUTPUT, "g330"},   {SH_GLSL_400_CORE_OUTPUT, "g400"},
     {SH_GLSL_410_CORE_OUTPUT, "g410"},   {SH_GLSL_420_CORE_OUTPUT, "g420"},
     {SH_GLSL_430_CORE_OUTPUT, "g430"},   {SH_GLSL_440_CORE_OUTPUT, "g440"},
@@ -253,12 +251,6 @@ ShShaderOutput resolveShaderOutput(ShShaderOutput output)
     {
         case 0x8B45:
             return SH_ESSL_OUTPUT;
-        case 0x8B46:
-            return SH_GLSL_COMPATIBILITY_OUTPUT;
-        case 0x8B47:
-            return SH_GLSL_130_OUTPUT;
-        case 0x8B80:
-            return SH_GLSL_140_OUTPUT;
         case 0x8B81:
             return SH_GLSL_150_CORE_OUTPUT;
         case 0x8B82:

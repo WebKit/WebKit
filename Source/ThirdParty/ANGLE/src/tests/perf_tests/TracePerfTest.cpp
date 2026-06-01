@@ -889,6 +889,7 @@ void TracePerfTest::initializeConfigParams(GPUTestConfig::API api)
     configParams.robustResourceInit    = mParams->traceInfo.isRobustResourceInitEnabled;
     configParams.bindGeneratesResource = mParams->traceInfo.isBindGeneratesResourcesEnabled;
     configParams.clientArraysEnabled   = mParams->traceInfo.areClientArraysEnabled;
+    configParams.extensionsEnabled     = mParams->traceInfo.areExtensionsEnabled;
 }
 
 TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)

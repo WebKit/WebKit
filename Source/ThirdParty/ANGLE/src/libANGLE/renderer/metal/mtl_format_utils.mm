@@ -195,6 +195,13 @@ bool Format::isViewCompatible(const Format &srcFormat) const
 
 bool Format::isPVRTC() const
 {
+    // Suppress `MTLPixelFormatPVRTC_*` deprecation warnings.
+    // These enumerations are still relied on in the code, and
+    // therefore cannot be removed.
+    // TODO (crbug.com/383994655): Remove deprecation supression
+    // once `MTLPixelFormatPVRTC_*` is no longer needed.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     switch (metalFormat)
     {
         case MTLPixelFormatPVRTC_RGB_2BPP:
@@ -209,6 +216,7 @@ bool Format::isPVRTC() const
         default:
             return false;
     }
+#pragma clang diagnostic pop
 }
 
 // FormatTable implementation

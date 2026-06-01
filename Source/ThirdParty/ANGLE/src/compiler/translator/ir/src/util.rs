@@ -95,6 +95,29 @@ pub fn calculate_function_decl_order(
     decl_order
 }
 
+// Check if a block has nothing but a `Merge(None)`.  It could also be a chain of `NextBlock`s
+// ending in `Merge(None)`.  If the blocks have any variables defined, they are ignored; the
+// variables are local a to block that doesn't use them.
+pub fn is_empty_block(block: &Block) -> bool {
+    let mut current_block = block;
+
+    loop {
+        if current_block.instructions.len() != 1 {
+            return false;
+        }
+
+        if let OpCode::Merge(None) = current_block.get_terminating_op() {
+            return true;
+        }
+
+        if let OpCode::NextBlock = current_block.get_terminating_op() {
+            current_block = current_block.merge_block.as_ref().unwrap();
+        } else {
+            return false;
+        }
+    }
+}
+
 struct DuplicateBlockContext<'a, 'b, 'c> {
     ir_meta: &'a mut IRMeta,
     variable_map: &'b mut HashMap<VariableId, Id>,
@@ -415,4 +438,350 @@ pub fn is_precision_applicable_to_type(ir_meta: &IRMeta, type_id: TypeId) -> boo
         base_type_id = id;
     }
     matches!(base_type_id, TYPE_ID_FLOAT | TYPE_ID_INT | TYPE_ID_UINT)
+}
+
+// Helper to walk back the instructions starting from an id, in search of some origin.
+//
+// For example, if a transformation encounters `OpLoad id` and wants to find out if `id`
+// corresponds to a uniform, it has to look into the `id`.  If it's a variable, it can check its
+// properties directly, but if it's a register it has to find out what instruction produces it.
+// For example, it could be `AccessArrayElement base index`, in which case it has to recursively
+// repeat this process until it arrives at the base variable.
+//
+// Also noteworthy is that this helper simplifies transformation by letting them generally be
+// oblivious to `Alias` instructions as it automatically skips over them.
+//
+// The register callback must return `None` if recursion needs to stop, or `Some(id)` to continue
+// exploring.
+pub fn trace_back<State, InspectConstant, InspectVariable, InspectRegister>(
+    ir_meta: &IRMeta,
+    state: &mut State,
+    id: Id,
+    inspect_constant: &mut InspectConstant,
+    inspect_variable: &mut InspectVariable,
+    inspect_register: &mut InspectRegister,
+) where
+    InspectConstant: FnMut(&mut State, ConstantId),
+    InspectVariable: FnMut(&mut State, VariableId),
+    InspectRegister: FnMut(&mut State, RegisterId, &OpCode) -> Option<Id>,
+{
+    let mut id = id;
+    loop {
+        id = match id {
+            Id::Constant(constant_id) => {
+                inspect_constant(state, constant_id);
+                break;
+            }
+            Id::Variable(variable_id) => {
+                inspect_variable(state, variable_id);
+                break;
+            }
+            Id::Register(register_id) => {
+                let instruction = ir_meta.get_instruction(register_id);
+                // Automatically skip over `Alias` instructions.
+                if let OpCode::Alias(alias_id) = instruction.op {
+                    alias_id.id
+                } else if let Some(to_inspect) =
+                    inspect_register(state, register_id, &instruction.op)
+                {
+                    to_inspect
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}
+
+// ESSL 100 Appendix A.4 Control Flow specifies the shape of supported `for` loops.  The format is:
+//
+//     for (type variable = constant; variable op constant; expression)
+//
+// Where:
+//
+// * `type` can only be `int` of `float`
+// * `op` can only be one of > >= < <= == or !=
+// * `expression` can only be one of:
+//   * variable++
+//   * variable--
+//   * variable += constant
+//   * variable -= constant
+//
+// For some outputs, we need to keep the `for` loops of this shape as `for` loops and not turn them
+// into `while` loops.  In particular:
+//
+// * ESSL 100 needs this to comply with the spec, as the output is passed to the OpenGL ES driver.
+// * HLSL needs this for D3D9.
+//
+// This function checks whether the block ends in loop in the above form.  If so, the information
+// needed to reconstruct the for loop is returned.
+pub struct TrivialLoopInfo {
+    // The members are mapped to a for loop as such:
+    //
+    //                for (int i = 0; i < 10; i++)
+    //                         ^   ^    ^  ^    ^
+    //                         |   |    |  |    |
+    //              loop_variable  |    |  |   ascending + increment_step
+    //           variable_initializer   | condition_comparator
+    //                              condition_op
+    pub loop_variable: VariableId,
+    pub variable_initializer: ConstantId,
+    pub condition_op: BinaryOpCode,
+    pub condition_comparator: ConstantId,
+    // True if expression is ++ or +=, false if -- or -=
+    pub ascending: bool,
+    // The constant step if expression is += or -=, implicitly 1 if None.
+    pub increment_step: Option<ConstantId>,
+}
+pub fn block_ends_in_trivial_for_loop(ir_meta: &IRMeta, block: &Block) -> Option<TrivialLoopInfo> {
+    // The block must end in a `Loop`.
+    if !matches!(block.get_terminating_op(), OpCode::Loop) || !block.has_loop_continue_block() {
+        return None;
+    }
+
+    // The instructions in the condition block must match:
+    //
+    //     r1 = Load v
+    //     r2 = Op r1 c
+    //     LoopIf r2
+    //
+    // Where `Op` is one of BinaryOpCode::{Equal, NotEqual, LessThan, GreaterThan, LessThanEqual,
+    // GreaterThanEqual}, `v` is a variable id and `c` is a constant id.
+    let loop_condition = block.get_loop_condition_block();
+    let (loop_variable, condition_op, condition_comparator) = match loop_condition.instructions[..]
+    {
+        [
+            BlockInstruction::Register(expect_load),
+            BlockInstruction::Register(expect_op),
+            BlockInstruction::Void(OpCode::LoopIf(expect_op_result)),
+        ] => {
+            let expect_load = ir_meta.get_instruction(expect_load);
+            let expect_op = ir_meta.get_instruction(expect_op);
+
+            // Extract loop variable `v`, condition operator `Op` and comparator constant `c` if
+            // the pattern matches the expectation.
+            match (&expect_load.op, &expect_op.op) {
+                (
+                    &OpCode::Load(expect_variable),
+                    &OpCode::Binary(
+                        expect_compare_op,
+                        expect_loaded_value,
+                        expect_comparator_constant,
+                    ),
+                ) if expect_variable.id.is_variable()
+                    && expect_loaded_value.id == Id::new_register(expect_load.result.id)
+                    && expect_op_result.id == Id::new_register(expect_op.result.id)
+                    && expect_comparator_constant.id.is_constant()
+                    && matches!(
+                        expect_compare_op,
+                        BinaryOpCode::Equal
+                            | BinaryOpCode::NotEqual
+                            | BinaryOpCode::LessThan
+                            | BinaryOpCode::GreaterThan
+                            | BinaryOpCode::LessThanEqual
+                            | BinaryOpCode::GreaterThanEqual
+                    ) =>
+                {
+                    (
+                        expect_variable.id.get_variable(),
+                        expect_compare_op,
+                        expect_comparator_constant.id.get_constant(),
+                    )
+                }
+                _ => {
+                    return None;
+                }
+            }
+        }
+        _ => {
+            return None;
+        }
+    };
+
+    // Check that the variable is indeed declared in this block, it's scoped to the `for` loop, and
+    // extract its initializer.
+    if !block.variables.contains(&loop_variable) {
+        return None;
+    }
+    let variable = ir_meta.get_variable(loop_variable);
+    let variable_initializer = if let Some(initializer) = variable.initializer
+        && variable.scope == VariableScope::ForLoopVariable
+    {
+        initializer
+    } else {
+        return None;
+    };
+
+    // The instructions in the continue block must match one of the following:
+    //
+    //     _ = IncDecOp v
+    //         Continue
+    //
+    // Where `IncDecOp` is one of UnaryOpCode::{PostfixIncrement, PostfixDecrement,
+    // PrefixIncrement, PrefixDecrement}, or:
+    //
+    //     r1 = Load v
+    //     r2 = StepOp r1 c
+    //          Store v r2
+    //          Continue
+    //
+    // Where `StepOp` is one of BinaryOpCode::{Add, Sub}, and `c` is the increment step.
+    //
+    // Extract whether the loop direction is ascending or descending, and in the second pattern
+    // above what the increment `c` is.
+    let loop_continue = block.get_loop_continue_block();
+    let (ascending, increment_step) = match loop_continue.instructions[..] {
+        [BlockInstruction::Register(expect_inc_dec), BlockInstruction::Void(OpCode::Continue)] => {
+            let expect_inc_dec = ir_meta.get_instruction(expect_inc_dec);
+            match expect_inc_dec.op {
+                // Note that while ESSL 100 requires postfix operators, we also detect prefix
+                // operators which are functionality identical in this case, to help with the other
+                // generators that need to detect this sort of `for` loop.
+                OpCode::Unary(expect_inc_dec_op, expect_loop_variable)
+                    if expect_loop_variable.id.is_variable()
+                        && expect_loop_variable.id.get_variable() == loop_variable
+                        && matches!(
+                            expect_inc_dec_op,
+                            UnaryOpCode::PrefixIncrement
+                                | UnaryOpCode::PrefixDecrement
+                                | UnaryOpCode::PostfixIncrement
+                                | UnaryOpCode::PostfixDecrement
+                        ) =>
+                {
+                    (
+                        matches!(
+                            expect_inc_dec_op,
+                            UnaryOpCode::PrefixIncrement | UnaryOpCode::PostfixIncrement
+                        ),
+                        None,
+                    )
+                }
+                _ => {
+                    return None;
+                }
+            }
+        }
+        [
+            BlockInstruction::Register(expect_load),
+            BlockInstruction::Register(expect_step),
+            BlockInstruction::Void(OpCode::Store(expect_loop_variable_store, expect_op_result)),
+            BlockInstruction::Void(OpCode::Continue),
+        ] => {
+            let expect_load = ir_meta.get_instruction(expect_load);
+            let expect_step = ir_meta.get_instruction(expect_step);
+            match (&expect_load.op, &expect_step.op) {
+                (
+                    &OpCode::Load(expect_loop_variable),
+                    &OpCode::Binary(expect_step_op, expect_loaded_value, expect_step_constant),
+                ) if expect_loop_variable.id.is_variable()
+                    && expect_loop_variable_store.id.is_variable()
+                    && expect_loop_variable.id.get_variable() == loop_variable
+                    && expect_loop_variable_store.id.get_variable() == loop_variable
+                    && expect_loaded_value.id == Id::new_register(expect_load.result.id)
+                    && expect_op_result.id == Id::new_register(expect_step.result.id)
+                    && expect_step_constant.id.is_constant()
+                    && matches!(expect_step_op, BinaryOpCode::Add | BinaryOpCode::Sub) =>
+                {
+                    (
+                        matches!(expect_step_op, BinaryOpCode::Add),
+                        expect_step_constant.id.get_if_constant(),
+                    )
+                }
+                _ => {
+                    return None;
+                }
+            }
+        }
+        _ => {
+            return None;
+        }
+    };
+
+    Some(TrivialLoopInfo {
+        loop_variable,
+        variable_initializer,
+        condition_op,
+        condition_comparator,
+        ascending,
+        increment_step,
+    })
+}
+
+// Transformations may need to know when variables are read from or written to.  Since read and
+// write can be done in a number of instructions, this helper can be used to avoid having to
+// enumerate all of them.
+#[derive(Copy, Clone, PartialEq)]
+pub enum PointerAccess {
+    Read,
+    Write,
+    ReadWrite,
+}
+pub fn inspect_pointer_access<State, OnAccess>(
+    ir_meta: &IRMeta,
+    state: &mut State,
+    opcode: &OpCode,
+    on_access: &OnAccess,
+) where
+    OnAccess: Fn(&mut State, TypedId, PointerAccess),
+{
+    match opcode {
+        // Read accesses
+        &OpCode::Load(pointer)
+        | &OpCode::Binary(BinaryOpCode::AtomicAdd, pointer, _)
+        | &OpCode::Binary(BinaryOpCode::AtomicMin, pointer, _)
+        | &OpCode::Binary(BinaryOpCode::AtomicMax, pointer, _)
+        | &OpCode::Binary(BinaryOpCode::AtomicAnd, pointer, _)
+        | &OpCode::Binary(BinaryOpCode::AtomicOr, pointer, _)
+        | &OpCode::Binary(BinaryOpCode::AtomicXor, pointer, _)
+        | &OpCode::Binary(BinaryOpCode::AtomicExchange, pointer, _) => {
+            on_access(state, pointer, PointerAccess::Read);
+        }
+
+        // Write accesses
+        &OpCode::Store(pointer, _)
+        | &OpCode::Binary(BinaryOpCode::Modf, _, pointer)
+        | &OpCode::Binary(BinaryOpCode::Frexp, _, pointer) => {
+            on_access(state, pointer, PointerAccess::Write);
+        }
+        OpCode::BuiltIn(BuiltInOpCode::UaddCarry, args)
+        | OpCode::BuiltIn(BuiltInOpCode::UsubBorrow, args) => {
+            on_access(state, args[2], PointerAccess::Write);
+        }
+        OpCode::BuiltIn(BuiltInOpCode::UmulExtended, args)
+        | OpCode::BuiltIn(BuiltInOpCode::ImulExtended, args) => {
+            on_access(state, args[3], PointerAccess::Write);
+            on_access(state, args[2], PointerAccess::Write);
+        }
+
+        // Read/write access
+        &OpCode::Unary(UnaryOpCode::PrefixIncrement, pointer)
+        | &OpCode::Unary(UnaryOpCode::PrefixDecrement, pointer)
+        | &OpCode::Unary(UnaryOpCode::PostfixIncrement, pointer)
+        | &OpCode::Unary(UnaryOpCode::PostfixDecrement, pointer) => {
+            on_access(state, pointer, PointerAccess::ReadWrite);
+        }
+
+        // Calls could read or write from variables depending on the parameter direction.
+        &OpCode::Call(function_id, ref args) => {
+            let param_directions =
+                ir_meta.get_function(function_id).params.iter().map(|param| param.direction);
+            args.iter().zip(param_directions).for_each(|(&arg, direction)| {
+                // `out` and `inout` parameters are always pointers.
+                match direction {
+                    FunctionParamDirection::Input => {
+                        if ir_meta.get_type(arg.type_id).is_pointer() {
+                            on_access(state, arg, PointerAccess::Read);
+                        }
+                    }
+                    FunctionParamDirection::InputOutput => {
+                        on_access(state, arg, PointerAccess::ReadWrite);
+                    }
+                    FunctionParamDirection::Output => {
+                        on_access(state, arg, PointerAccess::Write);
+                    }
+                };
+            });
+        }
+        _ => {}
+    };
 }

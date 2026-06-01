@@ -113,7 +113,6 @@ class CLContextVk : public CLContextImpl, public vk::Context
 
   private:
     void handleDeviceLost() const;
-    VkFormat getVkFormatFromCL(cl_image_format format);
 
     // mutex to synchronize the descriptor set allocations
     angle::SimpleMutex mDescriptorSetMutex;
@@ -150,6 +149,127 @@ class CLContextVk : public CLContextImpl, public vk::Context
         {CL_RGBA, CL_UNORM_INT8},     {CL_RGBA, CL_UNSIGNED_INT8}, {CL_RGBA, CL_SIGNED_INT8},
         {CL_RGBA, CL_UNSIGNED_INT16}, {CL_RGBA, CL_SIGNED_INT16},  {CL_RGBA, CL_HALF_FLOAT},
         {CL_RGBA, CL_UNSIGNED_INT32}, {CL_RGBA, CL_SIGNED_INT32},  {CL_RGBA, CL_FLOAT}};
+
+    // TODO: Keep minimum supported fmt table (so we can bail early)
+    // http://anglebug.com/488270265
+    static constexpr cl_image_format kSupportedFormats[] = {
+        // R
+        {CL_R, CL_SNORM_INT8},
+        {CL_R, CL_SNORM_INT16},
+        {CL_R, CL_UNORM_INT8},
+        {CL_R, CL_UNORM_INT16},
+
+        {CL_R, CL_SIGNED_INT8},
+        {CL_R, CL_SIGNED_INT16},
+        {CL_R, CL_SIGNED_INT32},
+        {CL_R, CL_UNSIGNED_INT8},
+        {CL_R, CL_UNSIGNED_INT16},
+        {CL_R, CL_UNSIGNED_INT32},
+
+        {CL_R, CL_HALF_FLOAT},
+        {CL_R, CL_FLOAT},
+
+        // A
+        {CL_A, CL_SNORM_INT8},
+        {CL_A, CL_SNORM_INT16},
+        {CL_A, CL_UNORM_INT8},
+        {CL_A, CL_UNORM_INT16},
+
+        {CL_A, CL_SIGNED_INT8},
+        {CL_A, CL_SIGNED_INT16},
+        {CL_A, CL_SIGNED_INT32},
+        {CL_A, CL_UNSIGNED_INT8},
+        {CL_A, CL_UNSIGNED_INT16},
+        {CL_A, CL_UNSIGNED_INT32},
+
+        {CL_A, CL_HALF_FLOAT},
+        {CL_A, CL_FLOAT},
+
+        // RG
+        {CL_RG, CL_SNORM_INT8},
+        {CL_RG, CL_SNORM_INT16},
+        {CL_RG, CL_UNORM_INT8},
+        {CL_RG, CL_UNORM_INT16},
+
+        {CL_RG, CL_SIGNED_INT8},
+        {CL_RG, CL_SIGNED_INT16},
+        {CL_RG, CL_SIGNED_INT32},
+        {CL_RG, CL_UNSIGNED_INT8},
+        {CL_RG, CL_UNSIGNED_INT16},
+        {CL_RG, CL_UNSIGNED_INT32},
+
+        {CL_RG, CL_HALF_FLOAT},
+        {CL_RG, CL_FLOAT},
+
+        // RGBA
+        {CL_RGBA, CL_SNORM_INT8},
+        {CL_RGBA, CL_SNORM_INT16},
+        {CL_RGBA, CL_UNORM_INT8},
+        {CL_RGBA, CL_UNORM_INT16},
+
+        {CL_RGBA, CL_SIGNED_INT8},
+        {CL_RGBA, CL_SIGNED_INT16},
+        {CL_RGBA, CL_SIGNED_INT32},
+        {CL_RGBA, CL_UNSIGNED_INT8},
+        {CL_RGBA, CL_UNSIGNED_INT16},
+        {CL_RGBA, CL_UNSIGNED_INT32},
+
+        {CL_RGBA, CL_HALF_FLOAT},
+        {CL_RGBA, CL_FLOAT},
+
+        // ARGB
+        {CL_ARGB, CL_SNORM_INT8},
+        {CL_ARGB, CL_UNORM_INT8},
+        {CL_ARGB, CL_SIGNED_INT8},
+        {CL_ARGB, CL_UNSIGNED_INT8},
+
+        // BGRA
+        {CL_BGRA, CL_SNORM_INT8},
+        {CL_BGRA, CL_UNORM_INT8},
+        {CL_BGRA, CL_SIGNED_INT8},
+        {CL_BGRA, CL_UNSIGNED_INT8},
+
+        // LUMINANCE
+        {CL_LUMINANCE, CL_SNORM_INT8},
+        {CL_LUMINANCE, CL_SNORM_INT16},
+        {CL_LUMINANCE, CL_UNORM_INT8},
+        {CL_LUMINANCE, CL_UNORM_INT16},
+
+        {CL_LUMINANCE, CL_SIGNED_INT8},
+        {CL_LUMINANCE, CL_SIGNED_INT16},
+        {CL_LUMINANCE, CL_SIGNED_INT32},
+        {CL_LUMINANCE, CL_UNSIGNED_INT8},
+        {CL_LUMINANCE, CL_UNSIGNED_INT16},
+        {CL_LUMINANCE, CL_UNSIGNED_INT32},
+
+        {CL_LUMINANCE, CL_HALF_FLOAT},
+        {CL_LUMINANCE, CL_FLOAT},
+
+        // INTENSITY
+        {CL_INTENSITY, CL_SNORM_INT8},
+        {CL_INTENSITY, CL_SNORM_INT16},
+        {CL_INTENSITY, CL_UNORM_INT8},
+        {CL_INTENSITY, CL_UNORM_INT16},
+
+        {CL_INTENSITY, CL_SIGNED_INT8},
+        {CL_INTENSITY, CL_SIGNED_INT16},
+        {CL_INTENSITY, CL_SIGNED_INT32},
+        {CL_INTENSITY, CL_UNSIGNED_INT8},
+        {CL_INTENSITY, CL_UNSIGNED_INT16},
+        {CL_INTENSITY, CL_UNSIGNED_INT32},
+
+        {CL_INTENSITY, CL_HALF_FLOAT},
+        {CL_INTENSITY, CL_FLOAT},
+
+        // RGB
+        // TODO: Add support for this format
+        // http://anglebug.com/488270265
+        {CL_RGB, CL_UNORM_INT_101010},
+
+        // DEPTH
+        {CL_DEPTH, CL_UNORM_INT16},
+        {CL_DEPTH, CL_FLOAT},
+    };
 
     friend class CLMemoryVk;
 };

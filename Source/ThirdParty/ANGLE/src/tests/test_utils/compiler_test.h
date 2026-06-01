@@ -61,7 +61,7 @@ class MatchOutputCodeTest : public testing::Test
 
     bool foundInGLSLCode(const char *stringToFind) const
     {
-        return foundInCode(SH_GLSL_COMPATIBILITY_OUTPUT, stringToFind);
+        return foundInCode(SH_GLSL_150_CORE_OUTPUT, stringToFind);
     }
 
     bool foundInCode(ShShaderOutput output, const char *stringToFind) const;

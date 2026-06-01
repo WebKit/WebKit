@@ -333,13 +333,6 @@ angle::Result CompileTask::postTranslate()
     return angle::Result::Continue;
 }
 
-template <typename T>
-void AppendHashValue(angle::base::SecureHashAlgorithm &hasher, T value)
-{
-    static_assert(std::is_fundamental<T>::value || std::is_enum<T>::value);
-    hasher.Update(&value, sizeof(T));
-}
-
 angle::JobThreadSafety GetTranslateTaskThreadSafety(const Context *context)
 {
     // The GL backend relies on the driver's internal parallel compilation, and thus does not use a
@@ -1016,28 +1009,28 @@ void Shader::setShaderKey(const Context *context,
                           const ShBuiltInResources &resources)
 {
     // Compute shader key.
-    angle::base::SecureHashAlgorithm hasher;
+    angle::BlobCacheHasher hasher;
     hasher.Init();
 
     // Start with the shader type and source.
-    AppendHashValue(hasher, mState.getShaderType());
-    hasher.Update(mState.getSource().c_str(), mState.getSource().length());
+    angle::UpdateHashWithValue(hasher, mState.getShaderType());
+    hasher.Update(mState.getSource().data(), mState.getSource().size());
 
     // Include the shader program version hash.
     hasher.Update(angle::GetANGLEShaderProgramVersion(),
                   angle::GetANGLEShaderProgramVersionHashSize());
 
-    AppendHashValue(hasher, Compiler::SelectShaderSpec(context->getState()));
-    AppendHashValue(hasher, outputType);
+    angle::UpdateHashWithValue(hasher, Compiler::SelectShaderSpec(context->getState()));
+    angle::UpdateHashWithValue(hasher, outputType);
     hasher.Update(reinterpret_cast<const uint8_t *>(&compileOptions), sizeof(compileOptions));
 
     // Include the ShBuiltInResources, which represent the extensions and constants used by the
     // shader.
     hasher.Update(reinterpret_cast<const uint8_t *>(&resources), sizeof(resources));
 
-    // Call the secure SHA hashing function.
+    // Get the hash.
     hasher.Final();
-    memcpy(mShaderHash.data(), hasher.Digest(), angle::base::kSHA1Length);
+    memcpy(mShaderHash.data(), hasher.Digest(), angle::kBlobCacheKeyLength);
 }
 
 bool WaitCompileJobUnlocked(const SharedCompileJob &compileJob)

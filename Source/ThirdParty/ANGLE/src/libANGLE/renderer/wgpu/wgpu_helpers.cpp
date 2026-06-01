@@ -200,7 +200,8 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
     // Create a texture view of the entire level, layers and all.
     ANGLE_TRY(createTextureView(levelGL, /*levelCount=*/1, /*layerIndex*/ 0,
                                 mTextureDescriptor.size.depthOrArrayLayers, textureView,
-                                WGPUTextureViewDimension_Undefined));
+                                WGPUTextureViewDimension_Undefined, WGPUTextureAspect_All,
+                                WGPUTextureFormat_Undefined));
     bool updateDepth      = false;
     bool updateStencil    = false;
     float depthValue      = 1;
@@ -611,10 +612,11 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
 angle::Result ImageHelper::createTextureViewSingleLevel(gl::LevelIndex targetLevel,
                                                         uint32_t layerIndex,
                                                         TextureViewHandle &textureViewOut,
-                                                        WGPUTextureAspect aspect)
+                                                        WGPUTextureAspect aspect,
+                                                        WGPUTextureFormat format)
 {
     return createTextureView(targetLevel, /*levelCount=*/1, layerIndex, /*arrayLayerCount=*/1,
-                             textureViewOut, WGPUTextureViewDimension_Undefined, aspect);
+                             textureViewOut, WGPUTextureViewDimension_Undefined, aspect, format);
 }
 
 angle::Result ImageHelper::createFullTextureView(TextureViewHandle &textureViewOut,
@@ -622,7 +624,8 @@ angle::Result ImageHelper::createFullTextureView(TextureViewHandle &textureViewO
 {
     return createTextureView(mFirstAllocatedLevel, mTextureDescriptor.mipLevelCount, 0,
                              mTextureDescriptor.size.depthOrArrayLayers, textureViewOut,
-                             desiredViewDimension);
+                             desiredViewDimension, WGPUTextureAspect_All,
+                             WGPUTextureFormat_Undefined);
 }
 
 angle::Result ImageHelper::createTextureView(
@@ -632,7 +635,8 @@ angle::Result ImageHelper::createTextureView(
     uint32_t arrayLayerCount,
     TextureViewHandle &textureViewOut,
     Optional<WGPUTextureViewDimension> desiredViewDimension,
-    WGPUTextureAspect aspect)
+    WGPUTextureAspect aspect,
+    WGPUTextureFormat format)
 {
     if (!isTextureLevelInAllocatedImage(targetLevel))
     {
@@ -670,14 +674,21 @@ angle::Result ImageHelper::createTextureView(
         textureViewDesc.dimension = desiredViewDimension.value();
     }
 
-    textureViewDesc.format = mTextureDescriptor.format;
-    if (aspect == WGPUTextureAspect_DepthOnly)
+    if (format != WGPUTextureFormat_Undefined)
     {
-        textureViewDesc.format = GetDepthOnlyFormat(mTextureDescriptor.format);
+        textureViewDesc.format = format;
     }
-    else if (aspect == WGPUTextureAspect_StencilOnly)
+    else
     {
-        textureViewDesc.format = GetStencilOnlyFormat(mTextureDescriptor.format);
+        textureViewDesc.format = mTextureDescriptor.format;
+        if (aspect == WGPUTextureAspect_DepthOnly)
+        {
+            textureViewDesc.format = GetDepthOnlyFormat(mTextureDescriptor.format);
+        }
+        else if (aspect == WGPUTextureAspect_StencilOnly)
+        {
+            textureViewDesc.format = GetStencilOnlyFormat(mTextureDescriptor.format);
+        }
     }
 
     textureViewOut = TextureViewHandle::Acquire(

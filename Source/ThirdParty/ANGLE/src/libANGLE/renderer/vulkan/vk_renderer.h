@@ -190,16 +190,20 @@ class Renderer : angle::NonCopyable
     {
         return mHostImageCopyProperties;
     }
-    const VkPhysicalDeviceFeatures &getPhysicalDeviceFeatures() const
-    {
-        return mPhysicalDeviceFeatures;
-    }
     const VkPhysicalDeviceShaderIntegerDotProductProperties &
     getPhysicalDeviceShaderIntegerDotProductProperties() const
     {
         return mShaderIntegerDotProductProperties;
     }
+    const VkPhysicalDeviceSubgroupProperties &getPhysicalDeviceSubgroupProperties() const
+    {
+        return mSubgroupProperties;
+    }
 
+    const VkPhysicalDeviceFeatures &getPhysicalDeviceFeatures() const
+    {
+        return mPhysicalDeviceFeatures;
+    }
     const VkPhysicalDeviceFeatures2KHR &getEnabledFeatures() const { return mEnabledFeatures; }
     VkDevice getDevice() const { return mDevice; }
 
@@ -659,10 +663,7 @@ class Renderer : angle::NonCopyable
 
     void requestAsyncCommandsAndGarbageCleanup(vk::ErrorContext *context);
 
-    VkDeviceSize getMaxMemoryAllocationSize() const
-    {
-        return mMaintenance3Properties.maxMemoryAllocationSize;
-    }
+    VkDeviceSize getMaxMemoryAllocationSize() const { return mMaxMemoryAllocationSize; }
 
     // Cleanup garbage and finish command batches from the queue if necessary in the event of an OOM
     // error.
@@ -717,6 +718,8 @@ class Renderer : angle::NonCopyable
     {
         return mMinRPWriteCommandCountToEarlySubmit;
     }
+
+    void logFeatures() const;
 
   private:
     angle::Result setupDevice(vk::ErrorContext *context,
@@ -925,6 +928,7 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceUnifiedImageLayoutsFeaturesKHR mUnifiedImageLayoutsFeatures;
     VkPhysicalDeviceShaderIntegerDotProductFeatures mShaderIntegerDotProductFeatures;
     VkPhysicalDeviceShaderIntegerDotProductProperties mShaderIntegerDotProductProperties;
+    VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures mShaderDemoteToHelperInvocationFeatures;
     VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT mPhysicalDeviceGlobalPriorityQueryFeatures;
     VkPhysicalDeviceExternalMemoryHostPropertiesEXT mExternalMemoryHostProperties;
     VkPhysicalDeviceBufferDeviceAddressFeaturesKHR mBufferDeviceAddressFeatures;
@@ -1112,6 +1116,9 @@ class Renderer : angle::NonCopyable
 
     // A placeholder descriptor set layout handle for layouts with no bindings.
     vk::DescriptorSetLayoutPtr mPlaceHolderDescriptorSetLayout;
+
+    // Allocation size limit for a single object.
+    VkDeviceSize mMaxMemoryAllocationSize;
 
     // Cached value for the buffer memory size limit.
     VkDeviceSize mMaxBufferMemorySizeLimit;

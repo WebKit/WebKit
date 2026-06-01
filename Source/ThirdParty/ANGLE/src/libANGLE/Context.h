@@ -719,9 +719,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     size_t getExtensionStringCount() const;
 
     bool isExtensionRequestable(const char *name) const;
-    bool isExtensionDisablable(const char *name) const;
     size_t getRequestableExtensionStringCount() const;
-    void setExtensionEnabled(const char *name, bool enabled);
     void reinitializeAfterExtensionsChanged();
 
     rx::ContextImpl *getImplementation() const { return mImplementation.get(); }
@@ -771,6 +769,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     const TextureCapsMap &getTextureCaps() const { return mState.getTextureCaps(); }
     const Extensions &getExtensions() const { return mState.getExtensions(); }
     const Limitations &getLimitations() const { return mState.getLimitations(); }
+    bool getExtensionsEnabled() const { return mExtensionsEnabled; }
     bool isGLES1() const;
 
     // To be used **only** directly by the entry points.
@@ -949,9 +948,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     void finishImmutable() const;
 
     const angle::PerfMonitorCounterGroupsInfo &getPerfMonitorCounterGroups() const;
-
-    // Ends the currently active pixel local storage session with GL_STORE_OP_STORE on all planes.
-    void endPixelLocalStorageImplicit();
 
     bool areBlobCacheFuncsSet() const;
 

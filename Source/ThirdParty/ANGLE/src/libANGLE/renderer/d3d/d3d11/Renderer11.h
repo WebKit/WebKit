@@ -354,7 +354,7 @@ class Renderer11 : public RendererD3D
                                          const gl::VertexBinding &binding,
                                          size_t count,
                                          GLsizei instances,
-                                         GLuint baseInstance,
+                                         uint64_t baseInstance,
                                          unsigned int *bytesRequiredOut) const override;
 
     angle::Result readFromAttachment(const gl::Context *context,

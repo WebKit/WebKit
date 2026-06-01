@@ -676,24 +676,16 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glCompressedCopyTextureCHROMIUM";
         case EntryPoint::GLCompressedTexImage2D:
             return "glCompressedTexImage2D";
-        case EntryPoint::GLCompressedTexImage2DRobustANGLE:
-            return "glCompressedTexImage2DRobustANGLE";
         case EntryPoint::GLCompressedTexImage3D:
             return "glCompressedTexImage3D";
         case EntryPoint::GLCompressedTexImage3DOES:
             return "glCompressedTexImage3DOES";
-        case EntryPoint::GLCompressedTexImage3DRobustANGLE:
-            return "glCompressedTexImage3DRobustANGLE";
         case EntryPoint::GLCompressedTexSubImage2D:
             return "glCompressedTexSubImage2D";
-        case EntryPoint::GLCompressedTexSubImage2DRobustANGLE:
-            return "glCompressedTexSubImage2DRobustANGLE";
         case EntryPoint::GLCompressedTexSubImage3D:
             return "glCompressedTexSubImage3D";
         case EntryPoint::GLCompressedTexSubImage3DOES:
             return "glCompressedTexSubImage3DOES";
-        case EntryPoint::GLCompressedTexSubImage3DRobustANGLE:
-            return "glCompressedTexSubImage3DRobustANGLE";
         case EntryPoint::GLCopyBufferSubData:
             return "glCopyBufferSubData";
         case EntryPoint::GLCopyImageSubData:
@@ -802,8 +794,6 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glDisable";
         case EntryPoint::GLDisableClientState:
             return "glDisableClientState";
-        case EntryPoint::GLDisableExtensionANGLE:
-            return "glDisableExtensionANGLE";
         case EntryPoint::GLDisableVertexAttribArray:
             return "glDisableVertexAttribArray";
         case EntryPoint::GLDisablei:
@@ -910,6 +900,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glEndPerfMonitorAMD";
         case EntryPoint::GLEndPixelLocalStorageANGLE:
             return "glEndPixelLocalStorageANGLE";
+        case EntryPoint::GLEndPixelLocalStorageImplicitANGLE:
+            return "glEndPixelLocalStorageImplicitANGLE";
         case EntryPoint::GLEndQuery:
             return "glEndQuery";
         case EntryPoint::GLEndQueryEXT:
@@ -1114,6 +1106,10 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glGetFramebufferPixelLocalStorageParameterivANGLE";
         case EntryPoint::GLGetFramebufferPixelLocalStorageParameterivRobustANGLE:
             return "glGetFramebufferPixelLocalStorageParameterivRobustANGLE";
+        case EntryPoint::GLGetFramebufferPixelLocalStorageParameteruivANGLE:
+            return "glGetFramebufferPixelLocalStorageParameteruivANGLE";
+        case EntryPoint::GLGetFramebufferPixelLocalStorageParameteruivRobustANGLE:
+            return "glGetFramebufferPixelLocalStorageParameteruivRobustANGLE";
         case EntryPoint::GLGetGraphicsResetStatus:
             return "glGetGraphicsResetStatus";
         case EntryPoint::GLGetGraphicsResetStatusEXT:

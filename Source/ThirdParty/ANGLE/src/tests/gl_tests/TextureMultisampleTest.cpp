@@ -1053,6 +1053,19 @@ TEST_P(TextureMultisampleArrayTest, InvalidTexParameteri)
     // Only valid base level on GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES is 0.
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES, GL_TEXTURE_BASE_LEVEL, 1);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    if (EnsureGLExtensionEnabled("GL_EXT_texture_filter_anisotropic"))
+    {
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
+
+    if (EnsureGLExtensionEnabled("GL_EXT_texture_sRGB_decode"))
+    {
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES, GL_TEXTURE_SRGB_DECODE_EXT,
+                        GL_DECODE_EXT);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
 }
 
 // Test a valid TexStorage3DMultisample call and check that the queried texture level parameters

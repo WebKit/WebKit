@@ -16,8 +16,11 @@
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/renderer/cl_types.h"
+#include "libANGLE/renderer/driver_utils.h"
 
 #include "libANGLE/cl_utils.h"
+
+#include "common/mathutil.h"
 
 namespace rx
 {
@@ -94,6 +97,16 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
                                                       // non-mandatory
                                                       CL_DEVICE_ATOMIC_SCOPE_WORK_ITEM},
     };
+
+    cl_uint maxNumSubGroups = 0u;
+    if (mRenderer->getFeatures().supportsClKhrSubgroups.enabled)
+    {
+        const uint32_t subgroupSize = mRenderer->getPhysicalDeviceSubgroupProperties().subgroupSize;
+        ASSERT(subgroupSize > 0);
+        maxNumSubGroups =
+            static_cast<uint32_t>(mInfoSizeT[cl::DeviceInfo::MaxWorkGroupSize]) / subgroupSize;
+    }
+
     mInfoUInt = {
         {cl::DeviceInfo::VendorID, props.vendorID},
         {cl::DeviceInfo::MaxReadImageArgs, cl::IMPLEMENATION_MAX_READ_IMAGES},
@@ -126,7 +139,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         // need that many and set it to minimum req for now.
         {cl::DeviceInfo::MaxSamplers, 16u},
         {cl::DeviceInfo::MaxConstantArgs, 8},
-        {cl::DeviceInfo::MaxNumSubGroups, 0},
+        {cl::DeviceInfo::MaxNumSubGroups, maxNumSubGroups},
         {cl::DeviceInfo::MaxComputeUnits, 4},
         {cl::DeviceInfo::MaxClockFrequency, 555},
         {cl::DeviceInfo::MaxWorkItemDimensions, 3},
@@ -153,7 +166,8 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::PreferredPlatformAtomicAlignment, 0},
         {cl::DeviceInfo::NonUniformWorkGroupSupport, CL_TRUE},
         {cl::DeviceInfo::GenericAddressSpaceSupport, CL_FALSE},
-        {cl::DeviceInfo::SubGroupIndependentForwardProgress, CL_FALSE},
+        {cl::DeviceInfo::SubGroupIndependentForwardProgress,
+         maxNumSubGroups > 0 ? CL_TRUE : CL_FALSE},
         {cl::DeviceInfo::WorkGroupCollectiveFunctionsSupport, CL_FALSE},
     };
 }
@@ -183,10 +197,12 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.image3D_MaxHeight = properties.limits.maxImageDimension3D;
     info.image3D_MaxDepth  = properties.limits.maxImageDimension3D;
     // Max number of pixels for a 1D image created from a buffer object.
-    info.imageMaxBufferSize        = properties.limits.maxTexelBufferElements;
-    info.imageMaxArraySize         = properties.limits.maxImageArrayLayers;
-    info.imagePitchAlignment       = 0u;
-    info.imageBaseAddressAlignment = 0u;
+    info.imageMaxBufferSize = properties.limits.maxTexelBufferElements;
+    info.imageMaxArraySize  = properties.limits.maxImageArrayLayers;
+    // The following are queried when image2d is created from buffer. We mimic its support for now
+    // by doing a copy and as such dont have alignment requirements.
+    info.imagePitchAlignment       = 1u;
+    info.imageBaseAddressAlignment = 1u;
 
     info.execCapabilities     = CL_EXEC_KERNEL;
     info.queueOnDeviceMaxSize = 0u;
@@ -293,6 +309,20 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
             cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_depth_images"});
     }
 
+    // cl_khr_image2d_from_buffer
+    if (info.version >= CL_MAKE_VERSION(3, 0, 0) && info.imageSupport)
+    {
+        versionedExtensionList.push_back(cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                                                         .name    = "cl_khr_image2d_from_buffer"});
+    }
+
+    // cl_khr_subgroups
+    if (mRenderer->getFeatures().supportsClKhrSubgroups.enabled)
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_subgroups"});
+    }
+
     info.initializeVersionedExtensions(std::move(versionedExtensionList));
 
     if (!mRenderer->getFeatures().supportsUniformBufferStandardLayout.enabled)
@@ -333,6 +363,12 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
                                                      .name    = "__opencl_c_atomic_order_seq_cst"});
     info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
                                                      .name    = "__opencl_c_atomic_scope_device"});
+
+    if (mRenderer->getFeatures().supportsClKhrSubgroups.enabled)
+    {
+        info.OpenCL_C_Features.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "__opencl_c_subgroups"});
+    }
 
     return info;
 }
@@ -408,28 +444,109 @@ angle::Result CLDeviceVk::createSubDevices(const cl_device_partition_property *p
 
 cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) const
 {
-    // Limit total work-group size to the Vulkan device's limit
-    uint32_t maxSize = static_cast<uint32_t>(mInfoSizeT.at(cl::DeviceInfo::MaxWorkGroupSize));
-    maxSize          = std::min(maxSize, 64u);
+    uint32_t subgroupSize = 0;
+    uint32_t maxSize      = static_cast<uint32_t>(mInfoSizeT.at(cl::DeviceInfo::MaxWorkGroupSize));
+    if (mRenderer->getFeatures().supportsClKhrSubgroups.enabled)
+    {
+        // query the renderer SIMD width
+        subgroupSize = mRenderer->getPhysicalDeviceSubgroupProperties().subgroupSize;
+    }
+    // adjust max to be at least one full subgroup
+    maxSize = std::max(subgroupSize, std::min(64u, maxSize));
 
+    if (getRenderer()->getFeatures().clBestUniformFitWGS.enabled)
+    {
+        return CalculateUniformFitWGS(ndrange, maxSize);
+    }
+    else
+    {
+        return CalculateSimplePow2WGS(ndrange, maxSize);
+    }
+}
+
+cl::WorkgroupSize CLDeviceVk::CalculateSimplePow2WGS(const cl::NDRange &ndrange,
+                                                     const uint32_t maxSize)
+{
+    // simplest strategy - start with always-valid GWS, increase by power-of-two until limits
     bool keepIncreasing         = false;
     cl::WorkgroupSize localSize = {1, 1, 1};
     do
     {
         keepIncreasing = false;
-        for (cl_uint i = 0; i < ndrange.workDimensions; i++)
+        for (uint32_t dim = 0; dim < ndrange.workDimensions; dim++)
         {
             cl::WorkgroupSize newLocalSize = localSize;
-            newLocalSize[i] *= 2;
+            newLocalSize[dim] *= 2;
 
-            if (newLocalSize[i] <= ndrange.globalWorkSize[i] &&
-                newLocalSize[0] * newLocalSize[1] * newLocalSize[2] <= maxSize)
+            uint32_t threadsInWorkgroup = newLocalSize[0] * newLocalSize[1] * newLocalSize[2];
+            if (newLocalSize[dim] <= ndrange.globalWorkSize[dim] && threadsInWorkgroup <= maxSize)
             {
                 localSize      = newLocalSize;
                 keepIncreasing = true;
             }
         }
     } while (keepIncreasing);
+    return localSize;
+}
+
+cl::WorkgroupSize CLDeviceVk::CalculateUniformFitWGS(const cl::NDRange &ndrange,
+                                                     const uint32_t maxSize)
+{
+    // uniform-fit strategy: prioritizes on ensuring calculated WGS is uniform to the given GWS.
+    // this tries to avoid non-uniform case which can be costly due to "chunking" dispatches into
+    // uniform regions where each new/unique WGS leads to a creation of a new compute pipeline
+    // (i.e. due to WGS being treated as a VK spec-constant)
+    cl::WorkgroupSize localSize = {std::min(ndrange.globalWorkSize[0], maxSize),
+                                   std::min(ndrange.globalWorkSize[1], maxSize),
+                                   std::min(ndrange.globalWorkSize[2], maxSize)};
+    uint32_t threadsInWorkgroup = localSize[2] * localSize[1] * localSize[0];
+
+    // 1st-pass: iterate the WGS (each dim) to ensure they each evenly divide into their GWS
+    while (threadsInWorkgroup > maxSize)
+    {
+        // check for dim with largest WGS on each try
+        uint32_t maxDim = 0;
+        for (uint32_t dim = 1; dim < ndrange.workDimensions; ++dim)
+        {
+            if (localSize[dim] > localSize[maxDim])
+            {
+                maxDim = dim;
+            }
+        }
+
+        if (localSize[maxDim] > 1)
+        {
+            --localSize[maxDim];  // back-off by one initially
+            while (localSize[maxDim] > 1 &&
+                   (ndrange.globalWorkSize[maxDim] % localSize[maxDim]) != 0)
+            {
+                --localSize[maxDim];
+            }
+        }
+        threadsInWorkgroup = localSize[2] * localSize[1] * localSize[0];
+    }
+
+    // 2nd-pass: if nothing worked so far, try pinning dim with the most threads (ignore others)
+    if (localSize == cl::WorkgroupSize{1, 1, 1})
+    {
+        uint32_t dimWithMostThreads = 0, currentSize = 1;
+        for (uint32_t dim = 0; dim < ndrange.workDimensions; ++dim)
+        {
+            if (currentSize < ndrange.globalWorkSize[dim])
+            {
+                currentSize        = ndrange.globalWorkSize[dim];
+                dimWithMostThreads = dim;
+            }
+        }
+        if (currentSize > maxSize)
+        {
+            // we tried our best to fit our WGS evenly into GWS, but it's not feasible - fall
+            // back to simpler pow2 generator
+            WARN() << "could not perform even-fit for WGS, falling back to simple pow2 WGS";
+            return CalculateSimplePow2WGS(ndrange, maxSize);
+        }
+        localSize[dimWithMostThreads] = currentSize;
+    }
 
     return localSize;
 }

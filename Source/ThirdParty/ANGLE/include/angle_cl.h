@@ -30,6 +30,7 @@ using ContextErrorCB = void(CL_CALLBACK *)(const char *errinfo,
                                            size_t cb,
                                            void *user_data);
 
+using ContextCB = void(CL_CALLBACK *)(cl_context context, void *user_data);
 using MemoryCB  = void(CL_CALLBACK *)(cl_mem memobj, void *user_data);
 using ProgramCB = void(CL_CALLBACK *)(cl_program program, void *user_data);
 using EventCB   = void(CL_CALLBACK *)(cl_event event, cl_int event_command_status, void *user_data);

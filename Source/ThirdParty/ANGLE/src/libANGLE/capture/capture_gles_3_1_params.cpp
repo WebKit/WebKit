@@ -235,21 +235,21 @@ void CaptureGetProgramResourceiv_params(const State &glState,
 void CaptureGetTexLevelParameterfv_params(const State &glState,
                                           TextureTarget targetPacked,
                                           GLint level,
-                                          GLenum pname,
+                                          TextureImageParameter pnamePacked,
                                           GLfloat *params,
                                           ParamCapture *paramCapture)
 {
-    CaptureMemory(params, sizeof(GLfloat), paramCapture);
+    paramCapture->readBufferSizeBytes = sizeof(GLfloat);
 }
 
 void CaptureGetTexLevelParameteriv_params(const State &glState,
                                           TextureTarget targetPacked,
                                           GLint level,
-                                          GLenum pname,
+                                          TextureImageParameter pnamePacked,
                                           GLint *params,
                                           ParamCapture *paramCapture)
 {
-    CaptureMemory(params, sizeof(GLint), paramCapture);
+    paramCapture->readBufferSizeBytes = sizeof(GLint);
 }
 
 void CaptureProgramUniform1fv_value(const State &glState,

@@ -16,6 +16,7 @@
 #include "common/bitset_utils.h"
 #include "libANGLE/Buffer.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/State.h"
 #include "libANGLE/VertexArray.h"
@@ -429,7 +430,7 @@ angle::Result VertexDataManager::storeDynamicAttribs(
     GLint start,
     size_t count,
     GLsizei instances,
-    GLuint baseInstance)
+    uint64_t baseInstance)
 {
     // Instantiating this class will ensure the streaming buffer is never left mapped.
     class StreamingBufferUnmapper final : NonCopyable
@@ -497,7 +498,7 @@ angle::Result VertexDataManager::reserveSpaceForAttrib(const gl::Context *contex
                                                        GLint start,
                                                        size_t count,
                                                        GLsizei instances,
-                                                       GLuint baseInstance)
+                                                       uint64_t baseInstance)
 {
     ASSERT(translatedAttrib.attribute && translatedAttrib.binding);
     const auto &attrib  = *translatedAttrib.attribute;
@@ -521,18 +522,23 @@ angle::Result VertexDataManager::reserveSpaceForAttrib(const gl::Context *contex
     {
         // Vertices do not apply the 'start' offset when the divisor is non-zero even when doing
         // a non-instanced draw call
-        GLint firstVertexIndex = binding.getDivisor() > 0
-                                     ? UnsignedCeilDivide(baseInstance, binding.getDivisor())
-                                     : start;
-        int64_t maxVertexCount =
-            static_cast<int64_t>(firstVertexIndex) + static_cast<int64_t>(totalCount);
+        size_t firstVertexIndex = binding.getDivisor() > 0
+                                      ? static_cast<size_t>(UnsignedCeilDivide64(
+                                            static_cast<uint64_t>(baseInstance),
+                                            static_cast<uint64_t>(binding.getDivisor())))
+                                      : static_cast<size_t>(start);
+        angle::CheckedNumeric<int64_t> checkedMaxVertexCount(firstVertexIndex);
+        checkedMaxVertexCount += totalCount;
+        ANGLE_CHECK(GetImplAs<ContextD3D>(context), checkedMaxVertexCount.IsValid(),
+                    gl::err::kInsufficientVertexBufferSize, GL_INVALID_OPERATION);
 
-        int64_t maxByte = GetMaxAttributeByteOffsetForDraw(attrib, binding, maxVertexCount);
+        int64_t maxVertexCount = checkedMaxVertexCount.ValueOrDie();
+        int64_t maxByte        = GetMaxAttributeByteOffsetForDraw(attrib, binding, maxVertexCount);
 
         ASSERT(bufferD3D->getSize() <= static_cast<size_t>(std::numeric_limits<int64_t>::max()));
         ANGLE_CHECK(GetImplAs<ContextD3D>(context),
                     maxByte <= static_cast<int64_t>(bufferD3D->getSize()),
-                    "Vertex buffer is not big enough for the draw call.", GL_INVALID_OPERATION);
+                    gl::err::kInsufficientVertexBufferSize, GL_INVALID_OPERATION);
     }
     return mStreamingBuffer.reserveVertexSpace(context, attrib, binding, totalCount, instances,
                                                baseInstance);
@@ -543,7 +549,7 @@ angle::Result VertexDataManager::storeDynamicAttrib(const gl::Context *context,
                                                     GLint start,
                                                     size_t count,
                                                     GLsizei instances,
-                                                    GLuint baseInstance)
+                                                    uint64_t baseInstance)
 {
     ASSERT(translated->attribute && translated->binding);
     const auto &attrib  = *translated->attribute;
@@ -556,8 +562,11 @@ angle::Result VertexDataManager::storeDynamicAttrib(const gl::Context *context,
     BufferD3D *storage = buffer ? GetImplAs<BufferD3D>(buffer) : nullptr;
 
     // Instanced vertices do not apply the 'start' offset
-    GLint firstVertexIndex =
-        (binding.getDivisor() > 0 ? UnsignedCeilDivide(baseInstance, binding.getDivisor()) : start);
+    size_t firstVertexIndex =
+        (binding.getDivisor() > 0 ? static_cast<size_t>(UnsignedCeilDivide64(
+                                        static_cast<uint64_t>(baseInstance),
+                                        static_cast<uint64_t>(binding.getDivisor())))
+                                  : static_cast<size_t>(start));
 
     // Compute source data pointer
     const uint8_t *sourceData = nullptr;
@@ -565,7 +574,7 @@ angle::Result VertexDataManager::storeDynamicAttrib(const gl::Context *context,
     if (buffer)
     {
         ANGLE_TRY(storage->getData(context, &sourceData));
-        sourceData += static_cast<int>(ComputeVertexAttributeOffset(attrib, binding));
+        sourceData += static_cast<size_t>(ComputeVertexAttributeOffset(attrib, binding));
     }
     else
     {

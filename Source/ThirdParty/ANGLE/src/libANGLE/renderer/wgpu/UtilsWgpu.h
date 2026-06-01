@@ -24,9 +24,12 @@ class RenderTargetWgpu;
 namespace webgpu
 {
 
+class ImageHelper;
+
 enum class WgpuPipelineOp : uint8_t
 {
     ImageCopy,
+    ColorBlit,
 };
 
 struct CopyVertex
@@ -76,11 +79,34 @@ struct ClearPipelineKey
     }
 };
 
+struct BlitKey
+{
+    WgpuPipelineOp op;
+    GLenum srcComponentType;
+    angle::FormatID dstActualFormatID;
+    uint32_t srcSamples;
+    bool dstIntentedFormatHasAlphaBits;
+    GLenum filter;
+    uint8_t stencilWriteMask;
+
+    bool operator<(const BlitKey &other) const
+    {
+        return std::tie(op, srcComponentType, dstActualFormatID, srcSamples,
+                        dstIntentedFormatHasAlphaBits, filter, stencilWriteMask) <
+               std::tie(other.op, other.srcComponentType, other.dstActualFormatID, other.srcSamples,
+                        other.dstIntentedFormatHasAlphaBits, other.filter, other.stencilWriteMask);
+    }
+};
+
 struct CachedPipeline
 {
     webgpu::RenderPipelineHandle pipeline;
     webgpu::BindGroupLayoutHandle bindGroupLayout;
 };
+
+using CopyPipelineCache  = std::map<CopyKey, CachedPipeline>;
+using BlitPipelineCache  = std::map<BlitKey, CachedPipeline>;
+using ClearPipelineCache = std::map<ClearPipelineKey, CachedPipeline>;
 
 class UtilsWgpu : angle::NonCopyable
 {
@@ -115,26 +141,80 @@ class UtilsWgpu : angle::NonCopyable
                             bool dstFlipY,
                             const angle::Format &srcFormat,
                             angle::FormatID dstIntendedFormatID,
-                            angle::FormatID dstActualFormatID);
+                            angle::FormatID dstActualFormatID,
+                            const gl::Rectangle *scissor);
+
+    angle::Result blit(ContextWgpu *context,
+                       webgpu::TextureViewHandle src,
+                       webgpu::TextureViewHandle dst,
+                       const gl::Rectangle &sourceArea,
+                       const gl::Rectangle &destArea,
+                       const WGPUExtent3D &srcSize,
+                       const WGPUExtent3D &dstSize,
+                       GLenum filter,
+                       bool srcFlipY,
+                       bool dstFlipY,
+                       uint32_t srcSamples,
+                       const angle::Format &srcFormat,
+                       angle::FormatID dstIntendedFormatID,
+                       angle::FormatID dstActualFormatID,
+                       const gl::Rectangle *scissor);
 
     angle::Result clear(ContextWgpu *context, ClearParams params);
 
   private:
     webgpu::ShaderModuleHandle getCopyShaderModule(ContextWgpu *context, const CopyKey &key);
+    webgpu::ShaderModuleHandle getBlitShaderModule(ContextWgpu *context, const BlitKey &key);
     webgpu::ShaderModuleHandle getClearShaderModule(ContextWgpu *context,
                                                     const ClearPipelineKey &key);
     webgpu::ShaderModuleHandle getShaderModule(ContextWgpu *context, const std::string &shader);
 
     angle::Result getCopyPipeline(ContextWgpu *context,
-                                  const CopyKey &key,
+                                  GLenum srcComponentType,
+                                  angle::FormatID dstFormatID,
                                   const webgpu::ShaderModuleHandle &shader,
                                   CachedPipeline *cachedPipelineOut);
+
+    angle::Result getBlitPipeline(ContextWgpu *context,
+                                  WgpuPipelineOp op,
+                                  GLenum srcComponentType,
+                                  angle::FormatID dstFormatID,
+                                  const webgpu::ShaderModuleHandle &shader,
+                                  CachedPipeline *cachedPipelineOut,
+                                  uint8_t stencilWriteMask);
+
     angle::Result getClearPipeline(ContextWgpu *context,
                                    const ClearPipelineKey &key,
                                    const CachedPipeline **cachedPipelineOut);
 
-    std::map<CopyKey, CachedPipeline> mCopyPipelineCache;
-    std::map<ClearPipelineKey, CachedPipeline> mClearPipelineCache;
+    angle::Result createPipeline(ContextWgpu *context,
+                                 WgpuPipelineOp op,
+                                 angle::FormatID dstFormatID,
+                                 const webgpu::ShaderModuleHandle &shader,
+                                 webgpu::BindGroupLayoutHandle bindGroupLayout,
+                                 uint8_t stencilWriteMask,
+                                 CachedPipeline *cachedPipelineOut);
+
+    // This method is intended for copying and blitting operations that use a simple quad
+    // and potentially take source textures/samplers as input.
+    angle::Result drawQuad(ContextWgpu *context,
+                           WgpuPipelineOp op,
+                           webgpu::TextureViewHandle dst,
+                           const WGPUExtent3D &dstSize,
+                           const CachedPipeline *cachedPipeline,
+                           const webgpu::BindGroupHandle &bindGroup,
+                           const gl::Rectangle &destArea,
+                           const gl::Rectangle &sourceArea,
+                           const WGPUExtent3D &srcSize,
+                           bool srcFlipY,
+                           bool dstFlipY,
+                           bool srcTextureCoordsNormalized,
+                           const gl::Rectangle *scissor,
+                           uint32_t stencilReference);
+
+    CopyPipelineCache mCopyPipelineCache;
+    BlitPipelineCache mBlitPipelineCache;
+    ClearPipelineCache mClearPipelineCache;
 };
 
 }  // namespace webgpu

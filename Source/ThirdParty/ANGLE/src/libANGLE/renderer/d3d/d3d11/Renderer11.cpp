@@ -2083,8 +2083,14 @@ angle::Result Renderer11::drawLineLoop(const gl::Context *context,
     {
         return angle::Result::Continue;
     }
-    unsigned int spaceNeeded =
-        static_cast<unsigned int>(sizeof(GLuint) * mScratchIndexDataBuffer.size());
+
+    uint64_t spaceNeeded64 = sizeof(GLuint) * mScratchIndexDataBuffer.size();
+    ANGLE_CHECK(GetImplAs<Context11>(context), spaceNeeded64 <= std::numeric_limits<int>::max(),
+                "Failed to create a 32-bit looping index buffer for "
+                "a GL_LINE_LOOP of <32-bit element type; too many indices required.",
+                GL_OUT_OF_MEMORY);
+    int spaceNeeded = static_cast<int>(spaceNeeded64);
+
     ANGLE_TRY(
         mLineLoopIB->reserveBufferSpace(context, spaceNeeded, gl::DrawElementsType::UnsignedInt));
 
@@ -2108,6 +2114,12 @@ angle::Result Renderer11::drawLineLoop(const gl::Context *context,
 
     if (instances > 0)
     {
+        // D3D11 requires that indexCount * instances fits in 32 bits.
+        ANGLE_CHECK(GetImplAs<Context11>(context),
+                    static_cast<uint64_t>(indexCount) * static_cast<uint64_t>(instances) <=
+                        std::numeric_limits<uint32_t>::max(),
+                    "Failed to draw: instance count * index count overflows 32 bits.",
+                    GL_OUT_OF_MEMORY);
         mDeviceContext->DrawIndexedInstanced(indexCount, instances, 0, baseVertex, 0);
     }
     else
@@ -2165,8 +2177,12 @@ angle::Result Renderer11::drawTriangleFan(const gl::Context *context,
     GetTriFanIndices(indexPointer, type, count, glState.isPrimitiveRestartEnabled(),
                      &mScratchIndexDataBuffer);
 
-    const unsigned int spaceNeeded =
-        static_cast<unsigned int>(mScratchIndexDataBuffer.size() * sizeof(unsigned int));
+    uint64_t spaceNeeded64 = mScratchIndexDataBuffer.size() * sizeof(unsigned int);
+    ANGLE_CHECK(GetImplAs<Context11>(context), spaceNeeded64 <= std::numeric_limits<int>::max(),
+                "Failed to create a 32-bit looping index buffer for "
+                "a GL_TRIANGLE_FAN of <32-bit element type; too many indices required.",
+                GL_OUT_OF_MEMORY);
+    int spaceNeeded = static_cast<int>(spaceNeeded64);
     ANGLE_TRY(mTriangleFanIB->reserveBufferSpace(context, spaceNeeded,
                                                  gl::DrawElementsType::UnsignedInt));
 
@@ -2188,6 +2204,12 @@ angle::Result Renderer11::drawTriangleFan(const gl::Context *context,
 
     if (instances > 0)
     {
+        // D3D11 requires that indexCount * instances fits in 32 bits.
+        ANGLE_CHECK(GetImplAs<Context11>(context),
+                    static_cast<uint64_t>(indexCount) * static_cast<uint64_t>(instances) <=
+                        std::numeric_limits<uint32_t>::max(),
+                    "Failed to draw: instance count * index count overflows 32 bits.",
+                    GL_OUT_OF_MEMORY);
         mDeviceContext->DrawIndexedInstanced(indexCount, instances, 0, baseVertex, 0);
     }
     else
@@ -3906,7 +3928,11 @@ angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
 
         // D3D11 needs depth-stencil CopySubresourceRegions to have a NULL pSrcBox
         // We also require complete framebuffer copies for depth-stencil blit.
-        D3D11_BOX *pSrcBox = wholeBufferCopy && readLayer == 0 ? nullptr : &readBox;
+        // For 3D source textures, always provide a srcBox to limit the copy to a single
+        // depth slice; a NULL pSrcBox would copy all depth slices of the source subresource
+        // which does not fit in a 2D destination.
+        D3D11_BOX *pSrcBox =
+            wholeBufferCopy && readLayer == 0 && !readTexture.is3D() ? nullptr : &readBox;
 
         mDeviceContext->CopySubresourceRegion(drawTexture.get(), drawSubresource, dstX, dstY, dstZ,
                                               readTexture.get(), readSubresource, pSrcBox);
@@ -4065,7 +4091,7 @@ angle::Result Renderer11::getVertexSpaceRequired(const gl::Context *context,
                                                  const gl::VertexBinding &binding,
                                                  size_t count,
                                                  GLsizei instances,
-                                                 GLuint baseInstance,
+                                                 uint64_t baseInstance,
                                                  unsigned int *bytesRequiredOut) const
 {
     if (!attrib.enabled)
@@ -4074,18 +4100,17 @@ angle::Result Renderer11::getVertexSpaceRequired(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    unsigned int elementCount  = 0;
+    size_t elementCount        = 0;
     const unsigned int divisor = binding.getDivisor();
     if (instances == 0 || divisor == 0)
     {
-        // This could be a clipped cast.
-        elementCount = gl::clampCast<unsigned int>(count);
+        elementCount = count;
     }
     else
     {
         // Round up to divisor, if possible
-        elementCount =
-            UnsignedCeilDivide(static_cast<unsigned int>(instances + baseInstance), divisor);
+        elementCount = static_cast<size_t>(UnsignedCeilDivide64(
+            static_cast<uint64_t>(instances) + baseInstance, static_cast<uint64_t>(divisor)));
     }
 
     ASSERT(elementCount > 0);
@@ -4096,11 +4121,13 @@ angle::Result Renderer11::getVertexSpaceRequired(const gl::Context *context,
     const d3d11::DXGIFormatSize &dxgiFormatInfo =
         d3d11::GetDXGIFormatSizeInfo(vertexFormatInfo.nativeFormat);
     unsigned int elementSize = dxgiFormatInfo.pixelBytes;
-    bool check = (elementSize > std::numeric_limits<unsigned int>::max() / elementCount);
-    ANGLE_CHECK(GetImplAs<Context11>(context), !check,
+
+    angle::CheckedNumeric<unsigned int> checkedByteCount =
+        angle::CheckedNumeric<size_t>(elementCount) * elementSize;
+    ANGLE_CHECK(GetImplAs<Context11>(context), checkedByteCount.IsValid(),
                 "New vertex buffer size would result in an overflow.", GL_OUT_OF_MEMORY);
 
-    *bytesRequiredOut = elementSize * elementCount;
+    *bytesRequiredOut = checkedByteCount.ValueOrDie();
     return angle::Result::Continue;
 }
 

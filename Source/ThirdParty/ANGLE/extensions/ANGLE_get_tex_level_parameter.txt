@@ -31,7 +31,7 @@ Dependencies
 
     OpenGL ES 2.0 is required.
 
-    This extension is written against the OpenGL ES 3.0.5 specification.
+    This extension is written against the OpenGL ES 3.0.6 specification.
 
 Overview
 
@@ -51,23 +51,34 @@ New Tokens
 
     Accepted by the <pname> parameter of GetTexLevelParameter{if}vANGLE:
 
-        TEXTURE_WIDTH                                     0x1000
-        TEXTURE_HEIGHT                                    0x1001
-        TEXTURE_DEPTH                                     0x8071
-        TEXTURE_INTERNAL_FORMAT                           0x1003
-        TEXTURE_RED_SIZE                                  0x805C
-        TEXTURE_GREEN_SIZE                                0x805D
-        TEXTURE_BLUE_SIZE                                 0x805E
-        TEXTURE_ALPHA_SIZE                                0x805F
-        TEXTURE_DEPTH_SIZE                                0x884A
-        TEXTURE_STENCIL_SIZE                              0x88F1
-        TEXTURE_SHARED_SIZE                               0x8C3F
-        TEXTURE_RED_TYPE                                  0x8C10
-        TEXTURE_GREEN_TYPE                                0x8C11
-        TEXTURE_BLUE_TYPE                                 0x8C12
-        TEXTURE_ALPHA_TYPE                                0x8C13
-        TEXTURE_DEPTH_TYPE                                0x8C16
-        TEXTURE_COMPRESSED                                0x86A1
+        TEXTURE_WIDTH_ANGLE                               0x1000
+        TEXTURE_HEIGHT_ANGLE                              0x1001
+        TEXTURE_DEPTH_ANGLE                               0x8071
+        TEXTURE_INTERNAL_FORMAT_ANGLE                     0x1003
+        TEXTURE_RED_SIZE_ANGLE                            0x805C
+        TEXTURE_GREEN_SIZE_ANGLE                          0x805D
+        TEXTURE_BLUE_SIZE_ANGLE                           0x805E
+        TEXTURE_ALPHA_SIZE_ANGLE                          0x805F
+        TEXTURE_DEPTH_SIZE_ANGLE                          0x884A
+        TEXTURE_STENCIL_SIZE_ANGLE                        0x88F1
+        TEXTURE_SHARED_SIZE_ANGLE                         0x8C3F
+        TEXTURE_RED_TYPE_ANGLE                            0x8C10
+        TEXTURE_GREEN_TYPE_ANGLE                          0x8C11
+        TEXTURE_BLUE_TYPE_ANGLE                           0x8C12
+        TEXTURE_ALPHA_TYPE_ANGLE                          0x8C13
+        TEXTURE_DEPTH_TYPE_ANGLE                          0x8C16
+        TEXTURE_COMPRESSED_ANGLE                          0x86A1
+        TEXTURE_SAMPLES_ANGLE                             0x9106
+        TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE              0x9107
+
+    (Note: these tokens are shared with OpenGL ES 3.1.)
+
+    Returned in <params> by GetTexLevelParameter{if}vANGLE:
+
+        UNSIGNED_NORMALIZED_ANGLE                         0x8C17
+        SIGNED_NORMALIZED_ANGLE                           0x8F9C
+
+    (Note: these tokens are shared with OpenGL ES 3.0.)
 
 Additions to Chapter 6 of the OpenGL ES 3.0.5 Specification (State and State
 Requests)
@@ -82,34 +93,38 @@ Requests)
                                             enum pname, T *params );
 
     place information about texture image parameter <pname> for level-of-detail
-    <level> of the specified target into <params>. <pname> must be one of the
-    symbolic values in table 6.11.
+    <level> of the specified <target> into <params>. <pname> must be one of the
+    symbolic values in table 6.10.
 
-    <target> may be one of TEXTURE_2D or one of the cube map face targets from
-    table 3.18, indicating the two-dimensional texture or one of the six distinct
-    2D images making up the cube map texture object. Otherwise an INVALID_ENUM is
-    generated.
+    <target> may be any of the cube map face targets from table 3.21 or any
+    texture target valid for the BindTexture command except TEXTURE_CUBE_MAP.
 
-    <level> determines which level-of-detail's state is returned. If <level>
-    is negative or larger than the maximum allowable level-of-detail, then an
-    INVALID_VALUE error is generated.
+    <level> determines which level-of-detail's state is returned. The maximum
+    value of <level> depends on the texture <target>:
 
-    Note that TEXTURE_CUBE_MAP is not a valid <target> parameter for
-    GetTexLevelParameter{if}vANGLE, because it does not specify a particular
-    cube map face.
+    * For cube map targets, the maximum value is log2 of the value of
+      MAX_CUBE_MAP_TEXTURE_SIZE.
 
-    For texture images with uncompressed internal formats, queries of
-    <pname> TEXTURE_RED_TYPE, TEXTURE_GREEN_TYPE, TEXTURE_BLUE_TYPE,
-    TEXTURE_ALPHA_TYPE, and TEXTURE_DEPTH_TYPE return the data type used
-    to store the component. Types NONE, SIGNED_NORMALIZED, UNSIGNED_-
+    * For the 3D texture target, the maximum value is log2 of the value of
+      MAX_3D_TEXTURE_SIZE.
+
+    * For targets that do not support mipmaps, the maximum value is zero.
+
+    * For all other texture targets, the maximum value is log2 of the value of
+      MAX_TEXTURE_SIZE.
+
+    For texture images with uncompressed internal formats, queries of <pname>
+    TEXTURE_RED_TYPE_ANGLE, TEXTURE_GREEN_TYPE_ANGLE, TEXTURE_BLUE_TYPE_ANGLE,
+    TEXTURE_ALPHA_TYPE_ANGLE, and TEXTURE_DEPTH_TYPE_ANGLE return the data type
+    used to store the component. Types NONE, SIGNED_NORMALIZED, UNSIGNED_-
     NORMALIZED, FLOAT, INT, and UNSIGNED_INT respectively indicate missing,
-    signed normalized fixed-point, unsigned normalized fixed-point,
-    floating-point, signed unnormalized integer, and unsigned unnormalized
-    integer components. Queries of <pname> TEXTURE_RED_SIZE, TEXTURE_GREEN_SIZE,
-    TEXTURE_BLUE_SIZE, TEXTURE_ALPHA_SIZE, TEXTURE_DEPTH_SIZE,
-    TEXTURE_STENCIL_SIZE, and TEXTURE_SHARED_SIZE return the actual resolutions
-    of the stored image components, not the resolutions specified when the image
-    was defined. Invalid <pname> generate an INVALID_ENUM error.
+    signed normalized fixed-point, unsigned normalized fixed-point, floating-
+    point, signed unnormalized integer, and unsigned unnormalized integer
+    components. Queries of <pname> TEXTURE_RED_SIZE_ANGLE, TEXTURE_GREEN_SIZE_-
+    ANGLE, TEXTURE_BLUE_SIZE_ANGLE, TEXTURE_ALPHA_SIZE_ANGLE, TEXTURE_DEPTH_-
+    SIZE_ANGLE, TEXTURE_STENCIL_SIZE_ANGLE, and TEXTURE_SHARED_SIZE_ANGLE return
+    the actual resolutions of the stored image components, not the resolutions
+    specified when the image was defined.
 
     For texture images with compressed internal formats, the types returned
     specify how components are interpreted after decompression, while the
@@ -119,49 +134,101 @@ Requests)
     compression algorithm is likely data-dependent, the returned component sizes
     should be treated only as rough approximations.
 
-    Queries of <pname> TEXTURE_INTERNAL_FORMAT, TEXTURE_WIDTH, TEXTURE_HEIGHT,
-    and TEXTURE_DEPTH return the internal format, width, height, and depth,
-    respectively, as specified when the image array was created.
+    Queries of <pname> TEXTURE_INTERNAL_FORMAT_ANGLE, TEXTURE_WIDTH_ANGLE,
+    TEXTURE_HEIGHT_ANGLE, and TEXTURE_DEPTH_ANGLE return the internal format,
+    width, height, and depth, respectively, as specified when the texture image
+    was created. Queries of <pname> TEXTURE_DEPTH_ANGLE return 1 if the created
+    image has neither 3D slices nor array layers.
+
+    Queries of <pname> TEXTURE_SAMPLES_ANGLE, and TEXTURE_FIXED_SAMPLE_-
+    LOCATIONS_ANGLE on multisample textures return the number of samples and
+    whether texture sample fixed locations are enabled, respectively.
+    For non-multisample textures, the default values in table 6.10 are returned.
 
 Errors
 
     The error INVALID_ENUM is generated by GetTexLevelParameter{if}vANGLE
-    if <target> is not one of TEXTURE_2D, TEXTURE_3D, TEXTURE_2D_ARRAY, one of
-    the cube map face targets from table 3.18, or TEXTURE_2D_MULTISAMPLE_ANGLE.
+    if <target> is not one of the texture targets described above.
 
     The error INVALID_VALUE is generated by GetTexLevelParameter{if}vANGLE
     if <level> is negative or larger than the maximum allowable level-of-detail.
 
     The error INVALID_ENUM is generated by GetTexLevelParameter{if}vANGLE
-    if <value> is not one of TEXTURE_RED_TYPE, TEXTURE_GREEN_TYPE,
-    TEXTURE_BLUE_TYPE, TEXTURE_ALPHA_TYPE, TEXTURE_DEPTH_TYPE,
-    TEXTURE_DEPTH_SIZE, TEXTURE_STENCIL_SIZE, TEXTURE_SHARED_SIZE,
-    TEXTURE_WIDTH, TEXTURE_HEIGHT, TEXTURE_DEPTH, TEXTURE_INTERNAL_FORMAT,
-    TEXTURE_RED_SIZE, TEXTURE_GREEN_SIZE, TEXTURE_BLUE_SIZE, TEXTURE_ALPHA_SIZE,
-    or TEXTURE_COMPRESSED.
+    if <pname> is not one of the symbolic values in table 6.10.
+
+Interactions with OpenGL ES 3.1
+
+    If this extension is exposed on OpenGL ES 3.1 or higher context versions,
+    the GetTexLevelParameter{if}vANGLE commands become identical to the core
+    GetTexLevelParameter{if}v commands.
+
+Interactions with OpenGL ES 3.0
+
+    If this extension is exposed on OpenGL ES 3.0, which does not support
+    multisample textures, queries with the TEXTURE_SAMPLES_ANGLE and
+    TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE parameters are still valid.
+
+    If multisample textures are supported via additional extensions, such as
+    ANGLE_texture_multisample, queries with these parameters return
+    corresponding parameter values for multisample textures.
+
+Interactions with OpenGL ES 2.0
+
+    If this extension is exposed on OpenGL ES 2.0, which does not support
+    multisample textures, 2D array and 3D textures, depth textures, combined
+    depth-stencil textures, and the shared-exponent internal format, queries
+    with the TEXTURE_SAMPLES_ANGLE, TEXTURE_FIXED_SAMPLE_LOCATIONS_ANGLE,
+    TEXTURE_DEPTH_ANGLE, TEXTURE_DEPTH_SIZE_ANGLE, TEXTURE_STENCIL_SIZE_ANGLE,
+    and TEXTURE_SHARED_SIZE_ANGLE parameters are still valid.
+
+    If 3D textures are supported via additional extensions, such as
+    OES_texture_3d, queries with the TEXTURE_DEPTH_ANGLE parameter return
+    corresponding depth values for 3D textures.
+
+    If depth textures are supported via additional extensions, such as
+    OES_depth_texture, queries with the TEXTURE_DEPTH_SIZE_ANGLE and
+    TEXTURE_DEPTH_TYPE_ANGLE parameters return corresponding resolutions
+    and types of the depth component.
+
+    If combined depth-stencil textures are supported via additional extensions,
+    such as OES_packed_depth_stencil, queries with the TEXTURE_STENCIL_SIZE_-
+    ANGLE parameter return corresponding resolutions of the stencil
+    component.
+
+    If the shared-exponent internal format is supported via additional
+    extensions, such as APPLE_texture_packed_float, queries with the TEXTURE_-
+    SHARED_SIZE_ANGLE parameter return corresponding resolutions of the
+    shared-exponent component.
+
+    If this extension is exposed on OpenGL ES 2.0, the enums denoting the
+    normalized component types can be taken from this extension as they are not
+    defined in OpenGL ES 2.0 headers.
 
 New State
 
     (add new table 6.10, Textures (state per texture image), renumber subsequent tables)
 
-                                                              Initial
-    Get Value                Type   Get Command                Value   Description                  Sec.
-    ----------------------   ----   -------------------        ------  ---------------------------  ------
-    TEXTURE_WIDTH             Z+    GetTexLevelParameterANGLE  0       Specified width              3.8
-    TEXTURE_HEIGHT            Z+    GetTexLevelParameterANGLE  0       Specified height (2D/3D)     3.8
-    TEXTURE_DEPTH             Z+    GetTexLevelParameterANGLE  0       Specified depth (3D)         3.8
-    TEXTURE_INTERNAL_FORMAT   E     GetTexLevelParameterANGLE  RGBA    Internal format              3.8
-                                                               or R8   (see section 3.8.14)
-    TEXTURE_x_SIZE            6xZ+  GetTexLevelParameterANGLE  0       Component resolution (x is   3.8
-                                                                       RED, GREEN, BLUE, ALPHA,
-                                                                       DEPTH, or STENCIL)
-    TEXTURE_SHARED_SIZE       Z+    GetTexLevelParameterANGLE  0       Shared exponent field        3.8
-                                                                       resolution
-    TEXTURE_x_TYPE            E     GetTexLevelParameterANGLE  NONE    Component type (x is RED,    6.1.4
-                                                                       GREEN, BLUE, ALPHA, or
-                                                                       DEPTH)
-    TEXTURE_COMPRESSED        B     GetTexLevelParameterANGLE  FALSE   True if image has a          3.8.6
-                                                                       compressed internal format
+                                                                      Initial
+    Get Value                      Type   Get Command                  Value   Description                  Sec.
+    -----------------------------  ----   --------------------------- -------  ---------------------------  ------
+    TEXTURE_WIDTH_ANGLE             Z+    GetTexLevelParameterivANGLE  0       Specified width              3.8
+    TEXTURE_HEIGHT_ANGLE            Z+    GetTexLevelParameterivANGLE  0       Specified height (2D/3D)     3.8
+    TEXTURE_DEPTH_ANGLE             Z+    GetTexLevelParameterivANGLE  0       Specified depth (3D)         3.8
+    TEXTURE_INTERNAL_FORMAT_ANGLE   E     GetTexLevelParameterivANGLE  RGBA    Internal format              3.8
+                                                                               (see section 3.8.14)
+    TEXTURE_x_SIZE_ANGLE            6xZ+  GetTexLevelParameterivANGLE  0       Component resolution (x is   3.8
+                                                                               RED, GREEN, BLUE, ALPHA,
+                                                                               DEPTH, or STENCIL)
+    TEXTURE_SHARED_SIZE_ANGLE       Z+    GetTexLevelParameterivANGLE  0       Shared exponent field        3.8
+                                                                               resolution
+    TEXTURE_x_TYPE_ANGLE            E     GetTexLevelParameterivANGLE  NONE    Component type (x is RED,    6.1.4
+                                                                               GREEN, BLUE, ALPHA, or
+                                                                               DEPTH)
+    TEXTURE_COMPRESSED_ANGLE        B     GetTexLevelParameterivANGLE  FALSE   True if image has a          3.8.6
+                                                                               compressed internal format
+    TEXTURE_SAMPLES_ANGLE           Z+    GetTexLevelParameterivANGLE  0       Number of samples per texel
+    TEXTURE_FIXED_SAMPLE_-          B     GetTexLevelParameterivANGLE  TRUE    Whether the image uses
+    LOCATIONS_ANGLE                                                            a fixed sample pattern
 
 Issues
     None

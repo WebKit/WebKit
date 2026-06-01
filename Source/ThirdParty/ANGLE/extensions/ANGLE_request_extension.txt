@@ -26,7 +26,7 @@ Status
 
 Version
 
-    Version 2, October 4, 2019
+    Version 3, March 4, 2026
 
 Number
 
@@ -41,13 +41,11 @@ Dependencies
 Overview
 
     This extension allows the client to query extensions that can be enabled and
-    explicitly request that an extension be enabled or disabled.
+    explicitly request that an extension be enabled.
 
 New Procedures and Functions
 
-    void RequestExtension(const char *name)
-
-    void DisableExtension(const char *name)
+    void RequestExtensionANGLE(const char *name)
 
 New Tokens
 
@@ -77,17 +75,15 @@ Additions to the OpenGL ES 3.0 Specification
     + extension should be returned. <index> may range from zero to the value of
     + NUM_EXTENSIONS and NUM_REQUESTABLE_EXTENSIONS_ANGLE minus one"
 
-    The commands
+    The command
 
        void RequestExtension(const char *name)
-       void DisableExtension(const char *name)
 
-    enable or disable the requestable OpenGL ES extension named <name>. If the
-    requested extension was not requestable or disablable, INVALID_OPERATION is
-    generated. Not all requestable extensions can be disabled. There is
-    currently no query for disablable extensions.  This operation is not thread
-    safe, and the application is responsible for ensuring no other context in
-    the share group is accessed by another thread during this operation.
+    enable the requestable OpenGL ES extension named <name>. If the requested
+    extension was not requestable, INVALID_OPERATION is generated. This
+    operation is not thread safe, and the application is responsible for
+    ensuring no other context in the share group is accessed by another thread
+    during this operation.
 
 New State
 
@@ -123,3 +119,4 @@ Revision History
     ----  -------------  ---------  ----------------------------------------
       1    Nov 28, 2016  geofflang  Initial version
       2    Oct 4, 2019   jdarpinian Add DisableExtension
+      3    Mar 4, 2026   geofflang  Remove DisableExtension

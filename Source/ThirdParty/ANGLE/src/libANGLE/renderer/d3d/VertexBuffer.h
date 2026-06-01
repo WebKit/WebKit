@@ -50,7 +50,7 @@ class VertexBuffer : angle::NonCopyable
                                                 const gl::VertexAttribute &attrib,
                                                 const gl::VertexBinding &binding,
                                                 gl::VertexAttribType currentValueType,
-                                                GLint start,
+                                                size_t start,
                                                 size_t count,
                                                 GLsizei instances,
                                                 unsigned int offset,
@@ -102,7 +102,7 @@ class VertexBufferInterface : angle::NonCopyable
                                    const gl::VertexBinding &binding,
                                    size_t count,
                                    GLsizei instances,
-                                   GLuint baseInstance,
+                                   uint64_t baseInstance,
                                    unsigned int *spaceInBytesOut) const;
     BufferFactoryD3D *const mFactory;
     VertexBuffer *mVertexBuffer;
@@ -122,10 +122,10 @@ class StreamingVertexBufferInterface : public VertexBufferInterface
                                         const gl::VertexAttribute &attrib,
                                         const gl::VertexBinding &binding,
                                         gl::VertexAttribType currentValueType,
-                                        GLint start,
+                                        size_t start,
                                         size_t count,
                                         GLsizei instances,
-                                        GLuint baseInstance,
+                                        uint64_t baseInstance,
                                         unsigned int *outStreamOffset,
                                         const uint8_t *sourceData);
 
@@ -134,7 +134,7 @@ class StreamingVertexBufferInterface : public VertexBufferInterface
                                      const gl::VertexBinding &binding,
                                      size_t count,
                                      GLsizei instances,
-                                     GLuint baseInstance);
+                                     uint64_t baseInstance);
 
   private:
     angle::Result reserveSpace(const gl::Context *context, unsigned int size);
@@ -154,7 +154,7 @@ class StaticVertexBufferInterface : public VertexBufferInterface
     angle::Result storeStaticAttribute(const gl::Context *context,
                                        const gl::VertexAttribute &attrib,
                                        const gl::VertexBinding &binding,
-                                       GLint start,
+                                       size_t start,
                                        GLsizei count,
                                        GLsizei instances,
                                        const uint8_t *sourceData);

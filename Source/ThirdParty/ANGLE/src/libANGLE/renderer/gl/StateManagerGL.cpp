@@ -166,7 +166,8 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mClearStencil(0),
       mFramebufferSRGBAvailable(extensions.sRGBWriteControlEXT),
       mFramebufferSRGBEnabled(false),
-      mHasSeparateFramebufferBindings(mFunctions->isAtLeastGL(gl::Version(3, 0)) ||
+      // Note: GL 3.2 is required for desktop GL
+      mHasSeparateFramebufferBindings(functions->standard == STANDARD_GL_DESKTOP ||
                                       mFunctions->isAtLeastGLES(gl::Version(3, 0))),
       mDitherEnabled(true),
       mTextureCubemapSeamlessEnabled(false),
@@ -2794,8 +2795,7 @@ void StateManagerGL::setLogicOp(gl::LogicalOperation opcode)
 
 void StateManagerGL::setTextureCubemapSeamlessEnabled(bool enabled)
 {
-    // TODO(jmadill): Also check for seamless extension.
-    if (!mFunctions->isAtLeastGL(gl::Version(3, 2)))
+    if (mFunctions->standard != STANDARD_GL_DESKTOP)
     {
         return;
     }

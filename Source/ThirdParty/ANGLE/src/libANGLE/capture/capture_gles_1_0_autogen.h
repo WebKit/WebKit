@@ -116,7 +116,7 @@ angle::CallCapture CaptureGetClipPlanex(const State &glState,
 angle::CallCapture CaptureGetFixedv(const State &glState,
                                     bool isCallValid,
                                     GLenum pname,
-                                    GLfixed *params);
+                                    GLfixed *data);
 angle::CallCapture CaptureGetLightfv(const State &glState,
                                      bool isCallValid,
                                      GLenum light,
@@ -416,10 +416,10 @@ void CaptureGetClipPlanex_equation(const State &glState,
                                    GLenum plane,
                                    GLfixed *equation,
                                    angle::ParamCapture *paramCapture);
-void CaptureGetFixedv_params(const State &glState,
-                             GLenum pname,
-                             GLfixed *params,
-                             angle::ParamCapture *paramCapture);
+void CaptureGetFixedv_data(const State &glState,
+                           GLenum pname,
+                           GLfixed *data,
+                           angle::ParamCapture *paramCapture);
 void CaptureGetLightfv_params(const State &glState,
                               GLenum light,
                               LightParameter pnamePacked,

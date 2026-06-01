@@ -40,8 +40,10 @@
                         GLchar *label);                                                            \
     void getObjectPtrLabel(const void *ptr, GLsizei bufSize, GLsizei *length, GLchar *label);      \
     void getPointerv(GLenum pname, void **params);                                                 \
-    void getSamplerParameterIiv(SamplerID samplerPacked, GLenum pname, GLint *params);             \
-    void getSamplerParameterIuiv(SamplerID samplerPacked, GLenum pname, GLuint *params);           \
+    void getSamplerParameterIiv(SamplerID samplerPacked, SamplerParameter pnamePacked,             \
+                                GLint *params);                                                    \
+    void getSamplerParameterIuiv(SamplerID samplerPacked, SamplerParameter pnamePacked,            \
+                                 GLuint *params);                                                  \
     void getTexParameterIiv(TextureType targetPacked, GLenum pname, GLint *params);                \
     void getTexParameterIuiv(TextureType targetPacked, GLenum pname, GLuint *params);              \
     void getnUniformfv(ShaderProgramID programPacked, UniformLocation locationPacked,              \
@@ -56,8 +58,10 @@
     void pushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message);          \
     void readnPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type,  \
                      GLsizei bufSize, void *data);                                                 \
-    void samplerParameterIiv(SamplerID samplerPacked, GLenum pname, const GLint *param);           \
-    void samplerParameterIuiv(SamplerID samplerPacked, GLenum pname, const GLuint *param);         \
+    void samplerParameterIiv(SamplerID samplerPacked, SamplerParameter pnamePacked,                \
+                             const GLint *param);                                                  \
+    void samplerParameterIuiv(SamplerID samplerPacked, SamplerParameter pnamePacked,               \
+                              const GLuint *param);                                                \
     void texBuffer(TextureType targetPacked, GLenum internalformat, BufferID bufferPacked);        \
     void texBufferRange(TextureType targetPacked, GLenum internalformat, BufferID bufferPacked,    \
                         GLintptr offset, GLsizeiptr size);                                         \

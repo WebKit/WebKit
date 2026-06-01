@@ -144,12 +144,6 @@ void BuiltInFunctionEmulator::markBuiltInFunctionsForEmulation(TIntermNode *root
     root->traverse(&marker);
 }
 
-void BuiltInFunctionEmulator::cleanup()
-{
-    mFunctions.clear();
-    mFunctionDependencies.clear();
-}
-
 void BuiltInFunctionEmulator::addFunctionMap(BuiltinQueryFunc queryFunc)
 {
     mQueryFunctions.push_back(queryFunc);

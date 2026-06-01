@@ -398,24 +398,24 @@ CallCapture CaptureGetClipPlanex(const State &glState,
     return CallCapture(angle::EntryPoint::GLGetClipPlanex, std::move(paramBuffer));
 }
 
-CallCapture CaptureGetFixedv(const State &glState, bool isCallValid, GLenum pname, GLfixed *params)
+CallCapture CaptureGetFixedv(const State &glState, bool isCallValid, GLenum pname, GLfixed *data)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addEnumParam("pname", GLESEnum::GetPName, ParamType::TGLenum, pname);
 
-    ParamCapture paramsParam("params", ParamType::TGLfixedPointer);
+    ParamCapture dataParam("data", ParamType::TGLfixedPointer);
     if (isCallValid)
     {
-        InitParamValue(ParamType::TGLfixedPointer, params, &paramsParam.value);
-        CaptureGetFixedv_params(glState, pname, params, &paramsParam);
+        InitParamValue(ParamType::TGLfixedPointer, data, &dataParam.value);
+        CaptureGetFixedv_data(glState, pname, data, &dataParam);
     }
     else
     {
         InitParamValue(ParamType::TGLfixedPointer, static_cast<GLfixed *>(nullptr),
-                       &paramsParam.value);
+                       &dataParam.value);
     }
-    paramBuffer.addParam(std::move(paramsParam));
+    paramBuffer.addParam(std::move(dataParam));
 
     return CallCapture(angle::EntryPoint::GLGetFixedv, std::move(paramBuffer));
 }

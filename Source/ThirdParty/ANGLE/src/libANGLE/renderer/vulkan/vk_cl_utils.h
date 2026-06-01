@@ -15,6 +15,8 @@
 #include "libANGLE/CLBitField.h"
 #include "libANGLE/cl_types.h"
 
+#include "libANGLE/renderer/vulkan/CLMemoryVk.h"
+
 #include "vulkan/vulkan_core.h"
 
 namespace rx
@@ -23,6 +25,12 @@ namespace cl_vk
 {
 std::vector<VkBufferCopy> CalculateRectCopyRegions(const cl::BufferRect &srcRect,
                                                    const cl::BufferRect &dstRect);
+VkBufferImageCopy CalculateBufferImageCopyRegion(const size_t bufferOffset,
+                                                 const uint32_t rowPitch,
+                                                 const uint32_t slicePitch,
+                                                 const cl::Offset &origin,
+                                                 const cl::Extents &region,
+                                                 CLImageVk *imageVk);
 
 VkExtent3D GetExtent(const cl::Extents &extent);
 VkOffset3D GetOffset(const cl::Offset &offset);
@@ -30,7 +38,7 @@ VkImageType GetImageType(cl::MemObjectType memObjectType);
 VkImageViewType GetImageViewType(cl::MemObjectType memObjectType);
 VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags);
 VkBufferUsageFlags GetBufferUsageFlags(cl::MemFlags memFlags, bool physicalAddressing);
-
+VkComponentMapping GetChannelComponentMapping(cl_channel_order order);
 }  // namespace cl_vk
 }  // namespace rx
 

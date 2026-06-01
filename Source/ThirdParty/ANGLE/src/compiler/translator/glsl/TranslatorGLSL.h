@@ -18,9 +18,6 @@ class TranslatorGLSL : public TCompiler
     TranslatorGLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
 
   protected:
-    void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
-                                     const ShCompileOptions &compileOptions) override;
-
     [[nodiscard]] bool translate(TIntermBlock *root,
                                  const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics) override;

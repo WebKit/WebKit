@@ -157,6 +157,7 @@ class ImageTest : public ANGLETest<>
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
         setConfigDepthBits(24);
+        setPbuffer(true);
     }
 
     const char *getVS() const
@@ -3749,6 +3750,70 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
     destroyAndroidHardwareBuffer(ycrcbSource);
     eglDestroyImageKHR(window->getDisplay(), yv12Image);
     destroyAndroidHardwareBuffer(yv12Source);
+}
+
+// Testing source AHB EGL images, target 2D external texture, cycling through YUV dataspaces.
+TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    // Create YCbCr BT601 source and image but without initial data
+    AHardwareBuffer *ycbcrBT601Source;
+    EGLImageKHR ycbcrBT601Image;
+    createEGLImageAndroidHardwareBufferSource(2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420,
+                                              kDefaultAHBYUVUsage, kDefaultAttribs, {},
+                                              &ycbcrBT601Source, &ycbcrBT601Image);
+    EXPECT_NE(ycbcrBT601Source, nullptr);
+    EXPECT_NE(ycbcrBT601Image, EGL_NO_IMAGE_KHR);
+
+    // Create YCbCr BT709 source and image but without initial data
+    //
+    // There is no API for creating an AHB with a specific dataspace, but Android[1] specifies
+    // that YCbCr buffers smaller than 720p may be assumed to be BT601, while buffers at least
+    // 720p may be assumed to be BT709. So we create a 720p image and hope the gralloc
+    // implementation will pick the correct dataspace.
+    //
+    // [1] hardware/interfaces/graphics/common/aidl/android/hardware/graphics/common/Dataspace.aidl
+    AHardwareBuffer *ycbcrBT709Source;
+    EGLImageKHR ycbcrBT709Image;
+    createEGLImageAndroidHardwareBufferSource(1280, 720, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420,
+                                              kDefaultAHBYUVUsage, kDefaultAttribs, {},
+                                              &ycbcrBT709Source, &ycbcrBT709Image);
+    EXPECT_NE(ycbcrBT709Source, nullptr);
+    EXPECT_NE(ycbcrBT709Image, EGL_NO_IMAGE_KHR);
+
+    // Create a texture target to bind the egl image
+    GLTexture target;
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, target);
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind YCbCr BT601 image
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, ycbcrBT601Image);
+    // Draw while sampling should result in no EGL/GL errors
+    glUseProgram(mTextureExternalProgram);
+    glUniform1i(mTextureExternalUniformLocation, 0);
+    drawQuad(mTextureExternalProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind YCbCr BT709 image
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, ycbcrBT709Image);
+    // Draw while sampling should result in no EGL/GL errors
+    glUseProgram(mTextureExternalProgram);
+    glUniform1i(mTextureExternalUniformLocation, 0);
+    drawQuad(mTextureExternalProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), ycbcrBT601Image);
+    destroyAndroidHardwareBuffer(ycbcrBT601Source);
+    eglDestroyImageKHR(window->getDisplay(), ycbcrBT709Image);
+    destroyAndroidHardwareBuffer(ycbcrBT709Source);
 }
 
 // Testing source AHB EGL images, target 2D external texture, cycling through RGB and YUV sources.

@@ -79,10 +79,18 @@ bool PruneEmptyCasesTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
     // blocks are marked for pruning.
     size_t i                       = statements->size();
     size_t lastNoOpInStatementList = i;
+
     while (i > 0)
     {
         --i;
         TIntermNode *statement = statements->at(i);
+
+        // Ignore the last |break| for the purposes of this pruning
+        if (i + 1 == statements->size() && statement->getAsBranchNode() != nullptr &&
+            statement->getAsBranchNode()->getFlowOp() == EOpBreak)
+        {
+            continue;
+        }
         if (statement->getAsCaseNode() || IsEmptyBlock(statement))
         {
             lastNoOpInStatementList = i;
@@ -111,7 +119,24 @@ bool PruneEmptyCasesTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
     }
     if (lastNoOpInStatementList < statements->size())
     {
-        statements->erase(statements->begin() + lastNoOpInStatementList, statements->end());
+        // The extra cases can only be removed if there is no |default|, otherwise dropping them
+        // changes the cases that land in |default|.
+        bool hasDefault = false;
+        for (i = 0; i < lastNoOpInStatementList; ++i)
+        {
+            TIntermNode *statement = statements->at(i);
+            if (statement->getAsCaseNode() != nullptr &&
+                !statement->getAsCaseNode()->hasCondition())
+            {
+                hasDefault = true;
+                break;
+            }
+        }
+
+        if (!hasDefault)
+        {
+            statements->erase(statements->begin() + lastNoOpInStatementList, statements->end());
+        }
     }
 
     return true;

@@ -629,20 +629,20 @@ CallCapture CaptureGetTexLevelParameterfv(const State &glState,
                                           bool isCallValid,
                                           TextureTarget targetPacked,
                                           GLint level,
-                                          GLenum pname,
+                                          TextureImageParameter pnamePacked,
                                           GLfloat *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureTarget, targetPacked);
     paramBuffer.addValueParam("level", ParamType::TGLint, level);
-    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("pnamePacked", ParamType::TTextureImageParameter, pnamePacked);
 
     ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
     if (isCallValid)
     {
         InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
-        CaptureGetTexLevelParameterfv_params(glState, targetPacked, level, pname, params,
+        CaptureGetTexLevelParameterfv_params(glState, targetPacked, level, pnamePacked, params,
                                              &paramsParam);
     }
     else
@@ -659,20 +659,20 @@ CallCapture CaptureGetTexLevelParameteriv(const State &glState,
                                           bool isCallValid,
                                           TextureTarget targetPacked,
                                           GLint level,
-                                          GLenum pname,
+                                          TextureImageParameter pnamePacked,
                                           GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureTarget, targetPacked);
     paramBuffer.addValueParam("level", ParamType::TGLint, level);
-    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("pnamePacked", ParamType::TTextureImageParameter, pnamePacked);
 
     ParamCapture paramsParam("params", ParamType::TGLintPointer);
     if (isCallValid)
     {
         InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-        CaptureGetTexLevelParameteriv_params(glState, targetPacked, level, pname, params,
+        CaptureGetTexLevelParameteriv_params(glState, targetPacked, level, pnamePacked, params,
                                              &paramsParam);
     }
     else

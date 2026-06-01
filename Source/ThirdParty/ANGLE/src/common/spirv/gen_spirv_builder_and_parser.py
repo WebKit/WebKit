@@ -191,8 +191,14 @@ class Writer:
         self.path_prefix = os.path.dirname(os.path.realpath(__file__)) + os.path.sep
         self.grammar = load_grammar(self.path_prefix + SPIRV_GRAMMAR_FILE)
 
-        # List of extensions needed by ANGLE
-        cherry_picked_extensions = {'SPV_EXT_fragment_shader_interlock'}
+        # List of extensions needed by ANGLE.
+        #
+        # * SPV_EXT_fragment_shader_interlock is exposed by VK_EXT_fragment_shader_interlock.
+        # * SPV_EXT_demote_to_helper_invocation is exposed by
+        #   VK_EXT_shader_demote_to_helper_invocation.
+        cherry_picked_extensions = {
+            'SPV_EXT_fragment_shader_interlock', 'SPV_EXT_demote_to_helper_invocation'
+        }
 
         # If an instruction has a parameter of these types, the instruction is ignored
         self.unsupported_kinds = set(['LiteralSpecConstantOpInteger'])

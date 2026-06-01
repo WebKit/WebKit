@@ -91,6 +91,14 @@
             ]
         },
         {
+            "name": "use_large_size_for_dynamic_buffers",
+            "category": "Workarounds",
+            "description": [
+                "Increase the size of the dynamic buffers used as streaming vertex buffers to allow more suballocation and reduce the allocation handle count."
+            ],
+            "issue": "http://issuetracker.google.com/485671640"
+        },
+        {
             "name": "supports_renderpass2",
             "category": "Features",
             "description": [
@@ -408,6 +416,14 @@
             "issue": "http://issuetracker.google.com/200067929"
         },
         {
+            "name": "prefer_GPU_for_copy_buffer_sub_data",
+            "category": "Features",
+            "description": [
+                "Prefer use GPU to do dirty region buffer update for glCopyBufferSubData."
+            ],
+            "issue": "https://issues.angleproject.org/issues/479982202"
+        },
+        {
             "name": "persistently_mapped_buffers",
             "category": "Features",
             "description": [
@@ -583,6 +599,14 @@
                 "if use the oldSwapchain pointer."
             ],
             "issue": "http://anglebug.com/42262606"
+        },
+        {
+            "name": "disable_submit_commands_on_sync_status_check_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Disable implicit submission of commands in contexts of the sharegroup during ",
+                "GLSync status check. Used in some end2end tests."
+            ]
         },
         {
             "name": "force_texture_lod_offset_1",
@@ -1083,14 +1107,6 @@
                 "sample qualifier"
             ],
             "issue": "http://anglebug.com/42265369"
-        },
-        {
-            "name": "explicitly_cast_mediump_float_to_16_bit",
-            "category": "Workarounds",
-            "description": [
-                "Explicitly cast mediump floating point values to 16 bit"
-            ],
-            "issue": "https://issuetracker.google.com/274859104"
         },
         {
             "name": "force_continuous_refresh_on_shared_present",
@@ -2176,6 +2192,21 @@
             "description": [
                 "Enable the use of the cl_khr_subgroups OpenCL extension."
             ]
+        },
+        {
+            "name": "cl_best_uniform_fit_WGS",
+            "category": "Features",
+            "description": [
+                "Optimization feature (for when OpenCL driver chooses WGS) to attempt best-fit WGS for the given global work size."
+            ]
+        },
+        {
+            "name": "supports_shader_demote_to_helper_invocation",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_shader_demote_to_helper_invocation extension"
+            ],
+            "issue": "http://anglebug.com/490910899"
         }
     ]
 }

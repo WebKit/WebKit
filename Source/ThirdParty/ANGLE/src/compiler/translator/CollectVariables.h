@@ -32,8 +32,6 @@ void CollectVariables(TIntermBlock *root,
                       TSymbolTable *symbolTable,
                       GLenum shaderType,
                       const TExtensionBehavior &extensionBehavior,
-                      const ShBuiltInResources &resources,
-                      int tessControlShaderOutputVertices,
                       bool transformFloatUniformToFP16);
 }  // namespace sh
 

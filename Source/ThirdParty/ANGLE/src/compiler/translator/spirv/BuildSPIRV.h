@@ -320,8 +320,11 @@ enum class SPIRVExtensions
     // GL_EXT_fragment_shading_rate / SPV_KHR_fragment_shading_rate
     FragmentShadingRate = 2,
 
-    InvalidEnum = 3,
-    EnumCount   = 3,
+    // SPV_EXT_demote_to_helper_invocation
+    DemoteToHelperInvocation = 3,
+
+    InvalidEnum = 4,
+    EnumCount   = 4,
 };
 
 // Helper class to construct SPIR-V

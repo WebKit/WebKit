@@ -13,6 +13,7 @@
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
+#include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -240,6 +241,13 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                     reflectionData.specConstantIDs[SpecConstantType::WorkDimension] =
                         reflectionData.spvIntLookup[spvInstr.words[5]];
                     reflectionData.specConstantsUsed[SpecConstantType::WorkDimension] = true;
+                    break;
+                }
+                case NonSemanticClspvReflectionSpecConstantSubgroupMaxSize:
+                {
+                    reflectionData.specConstantIDs[SpecConstantType::SubgroupMaxSize] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantsUsed[SpecConstantType::SubgroupMaxSize] = true;
                     break;
                 }
                 case NonSemanticClspvReflectionSpecConstantGlobalOffset:
@@ -951,6 +959,8 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                     if (clspvRet != CLSPV_SUCCESS)
                     {
                         ERR() << "OpenCL build failed with: ClspvError(" << clspvRet << ")!";
+                        ERR() << "Clspv option: " << processedOptions;
+                        ERR() << "Build log: " << std::endl << deviceProgramData.buildLog;
                         deviceProgramData.buildStatus = CL_BUILD_ERROR;
                         return false;
                     }
@@ -992,6 +1002,8 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                     if (clspvRet != CLSPV_SUCCESS)
                     {
                         ERR() << "OpenCL build failed with: ClspvError(" << clspvRet << ")!";
+                        ERR() << "Clspv option: " << processedOptions;
+                        ERR() << "Build log: " << std::endl << deviceProgramData.buildLog;
                         deviceProgramData.buildStatus = CL_BUILD_ERROR;
                         return false;
                     }

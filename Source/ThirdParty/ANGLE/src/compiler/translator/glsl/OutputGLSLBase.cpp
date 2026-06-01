@@ -13,6 +13,7 @@
 #include "angle_gl.h"
 #include "common/debug.h"
 #include "common/mathutil.h"
+#include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/util.h"
 
@@ -383,7 +384,7 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
                 break;
         }
     }
-    if (sh::IsGLSL130OrNewer(mOutput))
+    if (sh::IsGLSL150OrNewer(mOutput))
     {
         switch (qualifier)
         {
@@ -407,7 +408,7 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
         // gl_ClipDistance / gl_CullDistance require different qualifiers based on shader type.
         case EvqClipDistance:
         case EvqCullDistance:
-            return (sh::IsGLSL130OrNewer(mOutput) || mShaderVersion > 100)
+            return (sh::IsGLSL150OrNewer(mOutput) || mShaderVersion > 100)
                        ? (mShaderType == GL_FRAGMENT_SHADER ? "in" : "out")
                        : "varying";
 
@@ -1522,13 +1523,6 @@ bool TOutputGLSLBase::needsToWriteLayoutQualifier(const TType &type)
 
     if (type.getBasicType() == EbtInterfaceBlock)
     {
-        if (type.getQualifier() == EvqPixelLocalEXT)
-        {
-            // We only use per-member EXT_shader_pixel_local_storage formats, so the PLS interface
-            // block will never have a layout qualifier.
-            ASSERT(layoutQualifier.imageInternalFormat == EiifUnspecified);
-            return false;
-        }
         return true;
     }
 

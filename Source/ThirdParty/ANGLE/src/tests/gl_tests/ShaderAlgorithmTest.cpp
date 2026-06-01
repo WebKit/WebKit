@@ -28,7 +28,7 @@ class ShaderAlgorithmTest : public ANGLETest<>
 TEST_P(ShaderAlgorithmTest, rgb_to_hsl_vertex_shader)
 {
     const char kVS[] = R"(attribute highp vec3 a_position;
-attribute highp vec3 a_unitCoords;
+attribute mediump vec3 a_unitCoords;
 varying mediump vec3 v_color;
 
 void main()

@@ -369,7 +369,7 @@ class Renderer9 : public RendererD3D
                                          const gl::VertexBinding &binding,
                                          size_t count,
                                          GLsizei instances,
-                                         GLuint baseInstance,
+                                         uint64_t baseInstance,
                                          unsigned int *bytesRequiredOut) const override;
 
     angle::Result copyToRenderTarget(const gl::Context *context,

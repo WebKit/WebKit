@@ -265,6 +265,8 @@ IGNORED_INCLUDES = {
     b'contrib/qat/deflate_qat.h',
     # Behind #if defined(TRACY_ENABLE) in third_party/vulkan-validation-layers/src/layers/vulkan/generated/chassis.cpp
     b'profiling/profiling.h',
+    # Behind #ifdef HAVE_S390X_VX in third_party/zlib/crc32.c
+    b'contrib/crc32vx/crc32_vx_hooks.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

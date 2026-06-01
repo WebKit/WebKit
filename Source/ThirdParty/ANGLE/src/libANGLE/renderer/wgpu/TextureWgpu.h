@@ -15,12 +15,16 @@
 #include "libANGLE/renderer/wgpu/RenderTargetWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 
+#include <deque>
+#include <vector>
+
 namespace rx
 {
 
 class TextureWgpu : public TextureImpl, public angle::ObserverInterface
 {
   public:
+    using RenderTargetLevels = std::vector<std::deque<RenderTargetWgpu>>;
     TextureWgpu(const gl::TextureState &state);
     ~TextureWgpu() override;
 
@@ -259,8 +263,7 @@ class TextureWgpu : public TextureImpl, public angle::ObserverInterface
     // - First dimension: only RenderToTextureImageIndex::Default for now.
     // - Second dimension: level
     // - Third dimension: layer
-    gl::RenderToTextureImageMap<std::vector<std::vector<RenderTargetWgpu>>>
-        mSingleLayerRenderTargets;
+    gl::RenderToTextureImageMap<RenderTargetLevels> mSingleLayerRenderTargets;
 };
 
 }  // namespace rx

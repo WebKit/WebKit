@@ -222,61 +222,23 @@ TEST_P(GetTexLevelParameterTest, Queries)
     {
         GLint depth = -1;
         glGetTexLevelParameterivANGLE(GL_TEXTURE_2D, 0, GL_TEXTURE_DEPTH, &depth);
-        if (getClientMajorVersion() < 3)
-        {
-            EXPECT_GL_ERROR(GL_INVALID_ENUM);
-            if (EnsureGLExtensionEnabled("GL_OES_texture_3d"))
-            {
-                glGetTexLevelParameterivANGLE(GL_TEXTURE_2D, 0, GL_TEXTURE_DEPTH, &depth);
-                EXPECT_GL_NO_ERROR();
-                EXPECT_EQ(depth, 1);
-            }
-        }
-        else
-        {
-            EXPECT_GL_NO_ERROR();
-            EXPECT_EQ(depth, 1);
-        }
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(depth, 1);
     }
 
-    if (getClientMajorVersion() >= 3)
     {
         GLint samples = -1;
         glGetTexLevelParameterivANGLE(GL_TEXTURE_2D, 0, GL_TEXTURE_SAMPLES, &samples);
-        if (getClientMinorVersion() < 1)
-        {
-            EXPECT_GL_ERROR(GL_INVALID_ENUM);
-        }
-        else
-        {
-            EXPECT_GL_NO_ERROR();
-            EXPECT_EQ(samples, 0);
-        }
+        EXPECT_GL_NO_ERROR();
+        EXPECT_EQ(samples, 0);
+    }
 
+    {
         GLint fixedLocations = 0;
         glGetTexLevelParameterivANGLE(GL_TEXTURE_2D, 0, GL_TEXTURE_FIXED_SAMPLE_LOCATIONS,
                                       &fixedLocations);
-        if (getClientMinorVersion() < 1)
-        {
-            EXPECT_GL_ERROR(GL_INVALID_ENUM);
-        }
-        else
-        {
-            EXPECT_GL_NO_ERROR();
-            EXPECT_TRUE(fixedLocations);
-        }
-
-        if (getClientMinorVersion() < 1 && EnsureGLExtensionEnabled("GL_ANGLE_texture_multisample"))
-        {
-            glGetTexLevelParameterivANGLE(GL_TEXTURE_2D, 0, GL_TEXTURE_SAMPLES, &samples);
-            EXPECT_GL_NO_ERROR();
-            EXPECT_EQ(samples, 0);
-
-            glGetTexLevelParameterivANGLE(GL_TEXTURE_2D, 0, GL_TEXTURE_FIXED_SAMPLE_LOCATIONS,
-                                          &fixedLocations);
-            EXPECT_GL_NO_ERROR();
-            EXPECT_TRUE(fixedLocations);
-        }
+        EXPECT_GL_NO_ERROR();
+        EXPECT_TRUE(fixedLocations);
     }
 }
 

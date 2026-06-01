@@ -9611,9 +9611,6 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory,
 
     setupPrograms();
 
-    constexpr GLsizei kWidth  = 4;
-    constexpr GLsizei kHeight = 4;
-
     GLfloat depthValue = 0.0f;
     // draw to depth depth buffer and keep data valid
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -9627,7 +9624,7 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory,
     EXPECT_EQ(1u, getPerfCounters().tileMemoryImages);
     EXPECT_EQ(0u, getPerfCounters().fallbackFromTileMemory);
     // Submit
-    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
     // depthStencil should not be using tile memory
     EXPECT_EQ(0u, getPerfCounters().tileMemoryImages);
     EXPECT_EQ(1u, getPerfCounters().fallbackFromTileMemory);
@@ -9636,7 +9633,7 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory,
     glClear(GL_COLOR_BUFFER_BIT);
     // Verify depth buffer has correct value
     drawQuadToVerifyDepthValue(drawGreen, drawRed, depthValue);
-    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
 }
 
 class VulkanPerformanceCounterTest_Dither : public VulkanPerformanceCounterTest

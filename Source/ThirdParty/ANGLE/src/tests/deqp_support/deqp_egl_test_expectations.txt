@@ -133,6 +133,21 @@
 42267029 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = FAIL
 42267029 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = FAIL
 
+// Pixel 10
+448972978 PIXEL10 GLES : dEQP-EGL.functional.get_frame_timestamps.* = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.* = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.thread_cleanup.* = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_1010102_colorspace_default = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_1010102_colorspace_p3_passthrough = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_8888_colorspace_p3 = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_8888_colorspace_srgb = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_888_colorspace_p3 = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_888_colorspace_srgb = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_1010102_colorspace_default = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_1010102_colorspace_p3_passthrough = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_888_colorspace_p3 = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_888_colorspace_srgb = FAIL
+
 // ES 1 tests
 42261015 WIN : dEQP-EGL.functional.color_clears.single_context.gles1* = FAIL
 42261015 WIN : dEQP-EGL.functional.color_clears.multi_context.gles1* = FAIL

@@ -303,10 +303,9 @@ struct UniformSortComparator
 
 }  // anonymous namespace
 
-bool IsGLSL130OrNewer(ShShaderOutput output)
+bool IsGLSL150OrNewer(ShShaderOutput output)
 {
-    return (output == SH_GLSL_130_OUTPUT || output == SH_GLSL_140_OUTPUT ||
-            output == SH_GLSL_150_CORE_OUTPUT || output == SH_GLSL_330_CORE_OUTPUT ||
+    return (output == SH_GLSL_150_CORE_OUTPUT || output == SH_GLSL_330_CORE_OUTPUT ||
             output == SH_GLSL_400_CORE_OUTPUT || output == SH_GLSL_410_CORE_OUTPUT ||
             output == SH_GLSL_420_CORE_OUTPUT || output == SH_GLSL_430_CORE_OUTPUT ||
             output == SH_GLSL_440_CORE_OUTPUT || output == SH_GLSL_450_CORE_OUTPUT);
@@ -320,8 +319,7 @@ bool IsGLSL420OrNewer(ShShaderOutput output)
 
 bool IsGLSL410OrOlder(ShShaderOutput output)
 {
-    return (output == SH_GLSL_130_OUTPUT || output == SH_GLSL_140_OUTPUT ||
-            output == SH_GLSL_150_CORE_OUTPUT || output == SH_GLSL_330_CORE_OUTPUT ||
+    return (output == SH_GLSL_150_CORE_OUTPUT || output == SH_GLSL_330_CORE_OUTPUT ||
             output == SH_GLSL_400_CORE_OUTPUT || output == SH_GLSL_410_CORE_OUTPUT);
 }
 
@@ -416,7 +414,6 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
     : mShaderType(type),
       mShaderSpec(spec),
       mOutputType(output),
-      mBuiltInFunctionEmulator(),
       mDiagnostics(mInfoSink.info),
       mSourcePath(nullptr),
       mVariablesCollected(false),
@@ -1003,39 +1000,33 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
                 return false;
             }
         }
-    }
 
-    if (mShaderType == GL_FRAGMENT_SHADER && mShaderVersion == 100 && mResources.EXT_draw_buffers &&
-        mResources.MaxDrawBuffers > 1 &&
-        IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers))
-    {
-        if (!EmulateGLFragColorBroadcast(this, root, mResources.MaxDrawBuffers,
-                                         mResources.MaxDualSourceDrawBuffers, &mOutputVariables,
-                                         &mSymbolTable, mShaderVersion))
+        if (mShaderType == GL_FRAGMENT_SHADER && mShaderVersion == 100 &&
+            mResources.EXT_draw_buffers && mResources.MaxDrawBuffers > 1 &&
+            IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers))
         {
-            return false;
+            if (!EmulateGLFragColorBroadcast(this, root, mResources.MaxDrawBuffers,
+                                             mResources.MaxDualSourceDrawBuffers, &mSymbolTable,
+                                             mShaderVersion))
+            {
+                return false;
+            }
         }
-    }
 
-    if (!useIR)
-    {
         if (!sortUniforms(root))
         {
             return false;
         }
-    }
 
-    // Needs to run before SimplifyLoopConditions to be able to detect |for| loops correctly.
-    if (compileOptions.ensureLoopForwardProgress)
-    {
-        if (!EnsureLoopForwardProgress(this, root))
+        // Needs to run before SimplifyLoopConditions to be able to detect |for| loops correctly.
+        if (compileOptions.ensureLoopForwardProgress)
         {
-            return false;
+            if (!EnsureLoopForwardProgress(this, root))
+            {
+                return false;
+            }
         }
-    }
 
-    if (!useIR)
-    {
         if (compileOptions.simplifyLoopConditions)
         {
             if (!SimplifyLoopConditions(this, root, &getSymbolTable()))
@@ -1099,11 +1090,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    GetGlobalPoolAllocator()->lock();
-    initBuiltInFunctionEmulator(&mBuiltInFunctionEmulator, compileOptions);
-    GetGlobalPoolAllocator()->unlock();
-    mBuiltInFunctionEmulator.markBuiltInFunctionsForEmulation(root);
-
     collectVariables(root);
 
     if (compileOptions.useUnusedStandardSharedBlocks)
@@ -1138,11 +1124,10 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // For the MSL output, keep the inactive fragment outputs, but remove them otherwise.
     if (compileOptions.removeInactiveVariables)
     {
-        const bool removeFragmentOutputs = mOutputType != SH_MSL_METAL_OUTPUT;
-
-        if (!RemoveInactiveInterfaceVariables(
-                this, root, &getSymbolTable(), getAttributes(), getInputVaryings(),
-                getOutputVariables(), getUniforms(), getInterfaceBlocks(), removeFragmentOutputs))
+        if (!RemoveInactiveInterfaceVariables(this, root, &getSymbolTable(), getAttributes(),
+                                              getInputVaryings(), getOutputVariables(),
+                                              getUniforms(), getInterfaceBlocks(),
+                                              !compileOptions.retainInactiveFragmentOutputs))
         {
             return false;
         }
@@ -1239,18 +1224,15 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
                 return false;
             }
         }
-    }
 
-    if (getShaderType() == GL_FRAGMENT_SHADER && compileOptions.clampFragDepth)
-    {
-        if (!ClampFragDepth(this, root, &getSymbolTable()))
+        if (compileOptions.clampFragDepth)
         {
-            return false;
+            if (!ClampFragDepth(this, root, &getSymbolTable()))
+            {
+                return false;
+            }
         }
-    }
 
-    if (!useIR)
-    {
         if (compileOptions.rewriteRepeatedAssignToSwizzled)
         {
             if (!sh::RewriteRepeatedAssignToSwizzled(this, root))
@@ -1285,23 +1267,22 @@ ShCompileOptions TCompiler::adjustOptions(const ShCompileOptions &compileOptions
     // Disable options that are not applicable.
     if (mShaderType == GL_COMPUTE_SHADER)
     {
-        compileOptions.initOutputVariables = false;
+        compileOptions.initOutputVariables                     = false;
         compileOptions.initializeBuiltinsForInstancedMultiview = false;
     }
     if (mShaderType != GL_VERTEX_SHADER)
     {
-        compileOptions.initGLPosition = false;
+        compileOptions.initGLPosition                  = false;
         compileOptions.emulateGLDrawID                 = false;
         compileOptions.emulateGLBaseVertexBaseInstance = false;
         // Note: technically clamping gl_PointSize should be done in the last pre-rasterization
         // stage, but is currently only done in the vertex shader.
         compileOptions.clampPointSize = false;
     }
-
-    // gl_Position should always be written in GLSL compatibility output mode.
-    if (mOutputType == SH_GLSL_COMPATIBILITY_OUTPUT && mShaderType == GL_VERTEX_SHADER)
+    if (mShaderType != GL_FRAGMENT_SHADER)
     {
-        compileOptions.initGLPosition = true;
+        compileOptions.clampFragDepth = false;
+        compileOptions.retainInactiveFragmentOutputs = false;
     }
 
 #if !defined(ANGLE_IR)
@@ -1555,7 +1536,7 @@ void TCompiler::collectVariables(TIntermBlock *root)
     CollectVariables(root, &mAttributes, &mOutputVariables, &mUniforms, &mInputVaryings,
                      &mOutputVaryings, &mSharedVariables, &mUniformBlocks, &mShaderStorageBlocks,
                      mResources.UserVariableNamePrefix, mResources.HashFunction, &mSymbolTable,
-                     mShaderType, mExtensionBehavior, mResources, mTessControlShaderOutputVertices,
+                     mShaderType, mExtensionBehavior,
                      mCompileOptions.transformFloatUniformTo16Bits);
     collectInterfaceBlocks();
     mVariablesCollected = true;
@@ -1607,8 +1588,6 @@ void TCompiler::clearResults()
     mTessEvaluationShaderInputVertexSpacingType = EtetUndefined;
     mTessEvaluationShaderInputOrderingType      = EtetUndefined;
     mTessEvaluationShaderInputPointType         = EtetUndefined;
-
-    mBuiltInFunctionEmulator.cleanup();
 
     mNameMap.clear();
 
@@ -1877,11 +1856,6 @@ const char *TCompiler::getSourcePath() const
 const ShBuiltInResources &TCompiler::getResources() const
 {
     return mResources;
-}
-
-const BuiltInFunctionEmulator &TCompiler::getBuiltInFunctionEmulator() const
-{
-    return mBuiltInFunctionEmulator;
 }
 
 bool TCompiler::isVaryingDefined(const char *varyingName)

@@ -20,7 +20,7 @@ Documentation of OpenGL ES and EGL features, caps and formats and required exten
 |Transform feedback|3.0|[GL_EXT_transform_feedback](GL_EXT_transform_feedback) or [GL_EXT_transform_feedback2](http://developer.download.nvidia.com/opengl/specs/GL_EXT_transform_feedback2.txt) or [GL_ARB_transform_feedback3](https://www.opengl.org/registry/specs/ARB/transform_feedback3.txt)|3.0|--||
 |Sampler object|3.3|[GL_ARB_sampler_objects](https://www.opengl.org/registry/specs/ARB/sampler_objects.txt)|3.0|--||
 |Occlusion query|1.5|[GL_ARB_occlusion_query](https://www.opengl.org/registry/specs/ARB/occlusion_query.txt)|2.0|--||
-|Timer query|3.3|[GL_ARB_timer_query](https://www.opengl.org/registry/specs/ARB/timer_query.txt)|--|[GL_EXT_disjoint_timer_query](https://www.khronos.org/registry/gles/extensions/EXT/EXT_disjoint_timer_query.txt)||
+|Timer query|3.3|[GL_ARB_timer_query](https://www.opengl.org/registry/specs/ARB/timer_query.txt)|2.0|[GL_EXT_disjoint_timer_query](https://www.khronos.org/registry/gles/extensions/EXT/EXT_disjoint_timer_query.txt)||
 |Vertex array object|3.0|[GL_ARB_vertex_array_object](https://www.opengl.org/registry/specs/ARB/vertex_array_object.txt)|3.0|[GL_OES_vertex_array_object](https://www.khronos.org/registry/gles/extensions/OES/OES_vertex_array_object.txt)|Can be emulated but costsmany extra API calls.  Virtualized contexts also require some kind of emulation of the default attribute state.|
 |Anisotropic filtering|--|[GL_EXT_texture_filter_anisotropic](https://www.opengl.org/registry/specs/EXT/texture_filter_anisotropic.txt)|--|[GL_EXT_texture_filter_anisotropic](https://www.opengl.org/registry/specs/EXT/texture_filter_anisotropic.txt)|Ubiquitous extension.|
 

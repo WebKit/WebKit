@@ -18,7 +18,6 @@
 
 #include "common/PackedEnums.h"
 #include "common/span.h"
-#include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "compiler/translator/CallDAG.h"
 #include "compiler/translator/Diagnostics.h"
 #include "compiler/translator/ExtensionBehavior.h"
@@ -46,7 +45,7 @@ using SpecConstUsageBits = angle::PackedEnumBitSet<vk::SpecConstUsage, uint32_t>
 //
 // Helper function to check if the shader type is GLSL.
 //
-bool IsGLSL130OrNewer(ShShaderOutput output);
+bool IsGLSL150OrNewer(ShShaderOutput output);
 bool IsGLSL420OrNewer(ShShaderOutput output);
 bool IsGLSL410OrOlder(ShShaderOutput output);
 
@@ -236,10 +235,6 @@ class TCompiler : public TShHandleBase
     const TExtensionBehavior &getExtensionBehavior() const;
 
   protected:
-    // Add emulated functions to the built-in function emulator.
-    virtual void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
-                                             const ShCompileOptions &compileOptions)
-    {}
     // Translate to object code. May generate performance warnings through the diagnostics.
     [[nodiscard]] virtual bool translate(TIntermBlock *root,
                                          const ShCompileOptions &compileOptions,
@@ -247,8 +242,6 @@ class TCompiler : public TShHandleBase
     const char *getSourcePath() const;
     // Relies on collectVariables having been called.
     bool isVaryingDefined(const char *varyingName);
-
-    const BuiltInFunctionEmulator &getBuiltInFunctionEmulator() const;
 
     virtual bool shouldFlattenPragmaStdglInvariantAll() = 0;
 
@@ -333,8 +326,6 @@ class TCompiler : public TShHandleBase
     TSymbolTable mSymbolTable;
     // Built-in extensions with default behavior.
     TExtensionBehavior mExtensionBehavior;
-
-    BuiltInFunctionEmulator mBuiltInFunctionEmulator;
 
     // Results of compilation.
     int mShaderVersion;

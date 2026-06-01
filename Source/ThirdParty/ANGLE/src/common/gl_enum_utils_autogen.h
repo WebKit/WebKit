@@ -174,6 +174,7 @@ enum class GLESEnum
     TextureEnvParameter,
     TextureEnvTarget,
     TextureGenParameter,
+    TextureImageParameterName,
     TextureLayout,
     TextureMagFilter,
     TextureMinFilter,

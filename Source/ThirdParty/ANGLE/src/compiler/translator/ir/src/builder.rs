@@ -289,7 +289,8 @@ impl CFGBuilder {
 
         // If the condition of the if is a constant, it can be constant-folded.
         let mut if_block = self.interm_blocks.pop().unwrap();
-        let if_condition = if_block.block.get_terminating_op().get_if_condition().id.get_constant();
+        let if_condition =
+            if_block.block.get_terminating_op().get_if_condition().id.get_if_constant();
 
         match if_condition {
             Some(condition) => {
@@ -449,7 +450,7 @@ impl CFGBuilder {
             .get_merge_chain_terminating_op()
             .get_loop_condition()
             .id
-            .get_constant();
+            .get_if_constant();
 
         match loop_condition {
             Some(condition) if condition == CONSTANT_ID_FALSE => {
@@ -586,7 +587,7 @@ impl CFGBuilder {
     }
 
     fn begin_case(&mut self, value: TypedId) {
-        self.begin_case_impl(value.id.get_constant());
+        self.begin_case_impl(value.id.get_if_constant());
     }
 
     fn begin_default(&mut self) {
@@ -606,7 +607,7 @@ impl CFGBuilder {
 
         // If the expression is constant, but no matching cases (or default) exists, the switch is
         // a no-op.
-        if let Some(switch_expr) = switch_expr.id.get_constant() {
+        if let Some(switch_expr) = switch_expr.id.get_if_constant() {
             // First check if there's an exact match
             let any_exact = switch_cases
                 .iter()
@@ -1038,6 +1039,16 @@ impl Builder {
         self.ir.meta.declare_const_variable(Name::new_temp(""), type_id, precision)
     }
 
+    // Rescope a temporary variable to a `for` loop variable declared in its initializer
+    // expression.  This is nearly identically treated as a `Local` variable, except it's easier to
+    // identify its scope by the generators, since the variable declaration is otherwise moved to
+    // the block leading to the `for` loop.
+    pub fn rescope_as_for_loop_variable(&mut self, variable_id: VariableId) {
+        let variable = self.ir.meta.get_variable_mut(variable_id);
+        debug_assert!(variable.scope == VariableScope::Local);
+        variable.scope = VariableScope::ForLoopVariable;
+    }
+
     // In GLSL, it's possible to mark a variable as invariant or precise in a separate line,
     // especially useful for built-ins that are otherwise not necessarily declared explicitly.
     // The following allow these declarations to add invariant and precise decorations.
@@ -1461,7 +1472,7 @@ impl Builder {
     // Called when a constant expression used as an array size is evaluated.  The result is found
     // on the stack, but is not used by an instruction; it's returned to the parser instead.
     pub fn pop_array_size(&mut self) -> u32 {
-        let size_id = self.interm_ids.pop().unwrap().id.get_constant().unwrap();
+        let size_id = self.interm_ids.pop().unwrap().id.get_constant();
         // Use get_index() because the expression may either be int or uint, both of which are
         // acceptable; get_index() returns a u32 for either case.
         self.ir.meta.get_constant(size_id).value.get_index()
@@ -2962,7 +2973,6 @@ pub mod ffi {
         TessEvaluationOut,
         TessCoord,
         SpecConst,
-        PixelLocalEXT,
     }
 
     #[derive(Copy, Clone)]
@@ -3179,6 +3189,7 @@ pub mod ffi {
             name: &'static str,
             ast_type: &ASTType,
         ) -> VariableId;
+        fn rescope_as_for_loop_variable(self: &mut BuilderWrapper, variable_id: VariableId);
         fn mark_variable_invariant(self: &mut BuilderWrapper, variable_id: VariableId);
         fn mark_variable_precise(self: &mut BuilderWrapper, variable_id: VariableId);
         fn new_function(
@@ -3602,9 +3613,7 @@ fn builder_finish(mut builder: Box<BuilderWrapper>) -> Box<IR> {
 
     // Propagate precision to constant
     let mut ir = builder.builder.take_ir();
-    transform::propagate_precision::run(&mut ir);
-
-    validate_in_debug_build_only!(&ir);
+    transform::run!(propagate_precision, &mut ir);
 
     Box::new(ir)
 }
@@ -3947,7 +3956,9 @@ impl BuilderWrapper {
             ffi::ASTQualifier::SampleMask => Some(BuiltIn::SampleMask),
             ffi::ASTQualifier::NumSamples => Some(BuiltIn::NumSamples),
             ffi::ASTQualifier::NumWorkGroups => Some(BuiltIn::NumWorkGroups),
-            ffi::ASTQualifier::WorkGroupSize => Some(BuiltIn::WorkGroupSize),
+            ffi::ASTQualifier::WorkGroupSize => {
+                panic!("Internal error: gl_WorkGroupSize should be constant folded")
+            }
             ffi::ASTQualifier::WorkGroupID => Some(BuiltIn::WorkGroupID),
             ffi::ASTQualifier::LocalInvocationID => Some(BuiltIn::LocalInvocationID),
             ffi::ASTQualifier::GlobalInvocationID => Some(BuiltIn::GlobalInvocationID),
@@ -3964,7 +3975,6 @@ impl BuilderWrapper {
             ffi::ASTQualifier::TessLevelInner => Some(BuiltIn::TessLevelInner),
             ffi::ASTQualifier::TessCoord => Some(BuiltIn::TessCoord),
             ffi::ASTQualifier::BoundingBox => Some(BuiltIn::BoundingBoxOES),
-            ffi::ASTQualifier::PixelLocalEXT => Some(BuiltIn::PixelLocalEXT),
             _ => None,
         }
     }
@@ -4095,7 +4105,6 @@ impl BuilderWrapper {
             }
             ffi::ASTQualifier::PatchIn => vec![Decoration::Input, Decoration::Patch],
 
-            ffi::ASTQualifier::PixelLocalEXT => unimplemented!(),
             _ => panic!("Internal error: Unexpected qualifier"),
         });
 
@@ -4241,13 +4250,18 @@ impl BuilderWrapper {
     }
 
     fn get_struct_type_id(&mut self, struct_info: &ffi::ASTStruct) -> ffi::TypeId {
+        let is_internal = struct_info.is_internal;
+        let is_part_of_interface = !is_internal && struct_info.is_at_global_scope;
+
         let fields = struct_info
             .fields
             .iter()
             .map(|field| {
                 Field::new(
-                    if struct_info.is_internal {
+                    if is_internal {
                         Name::new_exact(field.name)
+                    } else if is_part_of_interface {
+                        Name::new_interface(field.name)
                     } else {
                         Name::new_temp(field.name)
                     },
@@ -4258,26 +4272,18 @@ impl BuilderWrapper {
             })
             .collect::<Vec<_>>();
 
-        let (name, specialization) = if struct_info.is_interface_block {
-            (
-                if struct_info.is_internal {
-                    Name::new_exact(struct_info.name)
-                } else {
-                    Name::new_interface(struct_info.name)
-                },
-                StructSpecialization::InterfaceBlock,
-            )
+        let name = if is_internal {
+            Name::new_exact(struct_info.name)
+        } else if is_part_of_interface {
+            Name::new_interface(struct_info.name)
         } else {
-            (
-                if struct_info.is_internal {
-                    Name::new_exact(struct_info.name)
-                } else if struct_info.is_at_global_scope {
-                    Name::new_interface(struct_info.name)
-                } else {
-                    Name::new_temp(struct_info.name)
-                },
-                StructSpecialization::Struct,
-            )
+            Name::new_temp(struct_info.name)
+        };
+
+        let specialization = if struct_info.is_interface_block {
+            StructSpecialization::InterfaceBlock
+        } else {
+            StructSpecialization::Struct
         };
 
         self.builder.ir().meta.get_struct_type_id(name, fields, specialization).into()
@@ -4473,6 +4479,10 @@ impl BuilderWrapper {
             )
         }
         .into()
+    }
+
+    fn rescope_as_for_loop_variable(&mut self, variable_id: ffi::VariableId) {
+        self.builder.rescope_as_for_loop_variable(variable_id.into());
     }
 
     fn mark_variable_invariant(&mut self, variable_id: ffi::VariableId) {

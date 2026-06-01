@@ -1679,6 +1679,11 @@ void ANGLETestBase::setRobustResourceInit(bool enabled)
     mFixture->configParams.robustResourceInit = enabled;
 }
 
+void ANGLETestBase::setPbuffer(bool enabled)
+{
+    mFixture->configParams.pbuffer = enabled;
+}
+
 void ANGLETestBase::setMutableRenderBuffer(bool enabled)
 {
     mFixture->configParams.mutableRenderBuffer = enabled;

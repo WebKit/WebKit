@@ -249,7 +249,25 @@ angle::Result FramebufferWgpu::clearBufferfv(const gl::Context *context,
                                              GLint drawbuffer,
                                              const GLfloat *values)
 {
-    return angle::Result::Continue;
+    bool clearDepth       = false;
+    float clearDepthValue = 0.0;
+
+    gl::DrawBufferMask clearColorBuffers;
+    gl::ColorF clearColorValue;
+
+    if (buffer == GL_DEPTH)
+    {
+        clearDepth      = true;
+        clearDepthValue = values[0];
+    }
+    else
+    {
+        clearColorBuffers.set(drawbuffer);
+        clearColorValue = gl::ColorF(values[0], values[1], values[2], values[3]);
+    }
+
+    return clearImpl(context, clearColorBuffers, clearDepth, /*clearStencil=*/false,
+                     clearColorValue, clearDepthValue, /*clearStencilValue=*/0);
 }
 
 angle::Result FramebufferWgpu::clearBufferuiv(const gl::Context *context,
@@ -257,7 +275,15 @@ angle::Result FramebufferWgpu::clearBufferuiv(const gl::Context *context,
                                               GLint drawbuffer,
                                               const GLuint *values)
 {
-    return angle::Result::Continue;
+    gl::DrawBufferMask clearColorBuffers;
+    gl::ColorF clearColorValue;
+
+    clearColorBuffers.set(drawbuffer);
+    clearColorValue = gl::ColorF(gl::bitCast<float>(values[0]), gl::bitCast<float>(values[1]),
+                                 gl::bitCast<float>(values[2]), gl::bitCast<float>(values[3]));
+
+    return clearImpl(context, clearColorBuffers, /*clearDepth=*/false, /*clearStencil=*/false,
+                     clearColorValue, /*clearDepthValue=*/0.0, /*clearStencilValue=*/0);
 }
 
 angle::Result FramebufferWgpu::clearBufferiv(const gl::Context *context,
@@ -265,7 +291,26 @@ angle::Result FramebufferWgpu::clearBufferiv(const gl::Context *context,
                                              GLint drawbuffer,
                                              const GLint *values)
 {
-    return angle::Result::Continue;
+    bool clearStencil          = false;
+    uint32_t clearStencilValue = 0;
+
+    gl::DrawBufferMask clearColorBuffers;
+    gl::ColorF clearColorValue;
+
+    if (buffer == GL_STENCIL)
+    {
+        clearStencil      = true;
+        clearStencilValue = static_cast<uint32_t>(values[0]);
+    }
+    else
+    {
+        clearColorBuffers.set(drawbuffer);
+        clearColorValue = gl::ColorF(gl::bitCast<float>(values[0]), gl::bitCast<float>(values[1]),
+                                     gl::bitCast<float>(values[2]), gl::bitCast<float>(values[3]));
+    }
+
+    return clearImpl(context, clearColorBuffers, /*clearDepth=*/false, clearStencil,
+                     clearColorValue, /*clearDepthValue=*/0.0, clearStencilValue);
 }
 
 angle::Result FramebufferWgpu::clearBufferfi(const gl::Context *context,
@@ -274,7 +319,8 @@ angle::Result FramebufferWgpu::clearBufferfi(const gl::Context *context,
                                              GLfloat depth,
                                              GLint stencil)
 {
-    return angle::Result::Continue;
+    return clearImpl(context, gl::DrawBufferMask(), /*clearDepth=*/true, /*clearStencil=*/true,
+                     gl::ColorF(), depth, static_cast<uint32_t>(stencil));
 }
 
 angle::Result FramebufferWgpu::readPixels(const gl::Context *context,
@@ -352,6 +398,16 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
     bool srcFlipY                  = readFBOWgpu->flipY();
     bool dstFlipY                  = flipY();
 
+    const gl::Rectangle *scissor = nullptr;
+    if (context->getState().isScissorTestEnabled())
+    {
+        scissor = &context->getState().getScissor();
+    }
+
+    // Flush any deferred clears on the read and draw framebuffers.
+    ANGLE_TRY(readFBOWgpu->flushDeferredClears(contextWgpu));
+    ANGLE_TRY(flushDeferredClears(contextWgpu));
+
     if (blitColor)
     {
         RenderTargetWgpu *readRenderTarget = readFBOWgpu->getReadPixelsRenderTarget();
@@ -373,7 +429,9 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
             }
             else
             {
-                UNIMPLEMENTED();
+                ANGLE_TRY(blitWithShader(context, readRenderTarget, drawRenderTarget, sourceArea,
+                                         destArea, filter, srcFlipY, dstFlipY,
+                                         WGPUTextureAspect_All, scissor));
             }
         }
     }
@@ -459,6 +517,10 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
                 ANGLE_TRY(mRenderTargetCache.update(context, mState, dirtyBits));
                 break;
             case gl::Framebuffer::DIRTY_BIT_DRAW_BUFFERS:
+                // The context needs to set the render pipeline to mask out the disabled draw
+                // buffers, or reset the color masks of the now-enabled draw buffers.
+                contextWgpu->updatePipelineColorMasks();
+                break;
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_WIDTH:
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_HEIGHT:
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_SAMPLES:
@@ -486,6 +548,13 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
 
                 ANGLE_TRY(
                     mRenderTargetCache.updateColorRenderTarget(context, mState, colorIndexGL));
+
+                // Window system framebuffer only have one color attachment and its property should
+                // never change unless via DIRTY_BIT_DRAW_BUFFERS bit.
+                if (!mState.isDefault())
+                {
+                    contextWgpu->updatePipelineColorMasks();
+                }
 
                 // Update the current color texture formats let the context know if this framebuffer
                 // is bound for draw
@@ -809,6 +878,13 @@ bool FramebufferWgpu::formatsAndSizesMatchForDirectCopy(const gl::Context *conte
     webgpu::ImageHelper *srcImage = readRenderTarget->getImage();
     webgpu::ImageHelper *dstImage = drawRenderTarget->getImage();
 
+    WGPUTextureFormat wgpuFormat = srcImage->toWgpuTextureFormat();
+    if (wgpuFormat == WGPUTextureFormat_Depth24Plus ||
+        wgpuFormat == WGPUTextureFormat_Depth24PlusStencil8)
+    {
+        return false;
+    }
+
     bool formatsMatch      = srcImage->getActualFormatID() == dstImage->getActualFormatID();
     bool srcIsMultisampled = srcImage->getSamples() > 1;
 
@@ -839,16 +915,13 @@ angle::Result FramebufferWgpu::blitWithDirectCopy(ContextWgpu *contextWgpu,
                                                   bool dstFlipY,
                                                   WGPUTextureAspect aspect)
 {
-    webgpu::ImageHelper *srcImage = readRenderTarget->getImage();
-    webgpu::ImageHelper *dstImage = drawRenderTarget->getImage();
+    webgpu::ImageHelper *srcImage;
+    webgpu::ImageHelper *dstImage;
+    WGPUExtent3D srcLevelSize;
+    WGPUExtent3D dstLevelSize;
 
-    ANGLE_TRY(srcImage->flushStagedUpdates(contextWgpu));
-    ANGLE_TRY(dstImage->flushStagedUpdates(contextWgpu));
-
-    WGPUExtent3D srcLevelSize =
-        srcImage->getLevelSize(srcImage->toWgpuLevel(readRenderTarget->getGlLevel()));
-    WGPUExtent3D dstLevelSize =
-        dstImage->getLevelSize(dstImage->toWgpuLevel(drawRenderTarget->getGlLevel()));
+    ANGLE_TRY(getBlitImageAndSize(contextWgpu, readRenderTarget, &srcImage, &srcLevelSize));
+    ANGLE_TRY(getBlitImageAndSize(contextWgpu, drawRenderTarget, &dstImage, &dstLevelSize));
 
     gl::Box sourceBox(sourceArea.x, sourceArea.y, 0, sourceArea.width, sourceArea.height, 1);
     if (srcFlipY)
@@ -868,6 +941,78 @@ angle::Result FramebufferWgpu::blitWithDirectCopy(ContextWgpu *contextWgpu,
     ANGLE_TRY(dstImage->CopyImage(contextWgpu, srcImage, dstIndex, dstOffset,
                                   readRenderTarget->getGlLevel(), readRenderTarget->getLayer(),
                                   sourceBox, aspect));
+
+    return angle::Result::Continue;
+}
+
+angle::Result FramebufferWgpu::blitWithShader(const gl::Context *context,
+                                              RenderTargetWgpu *readRenderTarget,
+                                              RenderTargetWgpu *drawRenderTarget,
+                                              const gl::Rectangle &sourceArea,
+                                              const gl::Rectangle &destArea,
+                                              GLenum filter,
+                                              bool srcFlipY,
+                                              bool dstFlipY,
+                                              WGPUTextureAspect aspect,
+                                              const gl::Rectangle *scissor)
+{
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+    webgpu::ImageHelper *srcImage;
+    webgpu::ImageHelper *dstImage;
+    WGPUExtent3D srcLevelSize;
+    WGPUExtent3D dstLevelSize;
+
+    ANGLE_TRY(getBlitImageAndSize(contextWgpu, readRenderTarget, &srcImage, &srcLevelSize));
+    ANGLE_TRY(getBlitImageAndSize(contextWgpu, drawRenderTarget, &dstImage, &dstLevelSize));
+
+    webgpu::TextureViewHandle dstView;
+    angle::FormatID dstViewFormatID = dstImage->getActualFormatID();
+
+    // Handle GL_FRAMEBUFFER_SRGB
+    if (!context->getState().getFramebufferSRGB() && angle::Format::Get(dstViewFormatID).isSRGB)
+    {
+        // If sRGB is disabled but the texture is sRGB, we need to write to a linear view.
+        dstViewFormatID = dstImage->getIntendedFormatID();
+
+        ANGLE_TRY(dstImage->createTextureViewSingleLevel(
+            drawRenderTarget->getGlLevel(), drawRenderTarget->getLayer(), dstView,
+            WGPUTextureAspect_All, webgpu::GetWgpuTextureFormatFromFormatID(dstViewFormatID)));
+    }
+    else
+    {
+        ANGLE_TRY(dstImage->createTextureViewSingleLevel(
+            drawRenderTarget->getGlLevel(), drawRenderTarget->getLayer(), dstView,
+            WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
+    }
+
+    const angle::Format &srcAngleFormat = angle::Format::Get(srcImage->getIntendedFormatID());
+
+    // Fallback to regular shader-based blit
+    webgpu::TextureViewHandle srcView;
+    ANGLE_TRY(srcImage->createTextureViewSingleLevel(readRenderTarget->getGlLevel(),
+                                                     readRenderTarget->getLayer(), srcView, aspect,
+                                                     WGPUTextureFormat_Undefined));
+
+    ANGLE_TRY(contextWgpu->getUtils()->blit(
+        contextWgpu, srcView, dstView, sourceArea, destArea, srcLevelSize, dstLevelSize, filter,
+        srcFlipY, dstFlipY, srcImage->getSamples(), srcAngleFormat, dstImage->getIntendedFormatID(),
+        dstViewFormatID, scissor));
+
+    return angle::Result::Continue;
+}
+
+angle::Result FramebufferWgpu::getBlitImageAndSize(ContextWgpu *contextWgpu,
+                                                   RenderTargetWgpu *renderTarget,
+                                                   webgpu::ImageHelper **imageOut,
+                                                   WGPUExtent3D *levelSizeOut)
+{
+    webgpu::ImageHelper *image = renderTarget->getImage();
+
+    ANGLE_TRY(image->flushStagedUpdates(contextWgpu));
+
+    *imageOut = image;
+
+    *levelSizeOut = image->getLevelSize(image->toWgpuLevel(renderTarget->getGlLevel()));
 
     return angle::Result::Continue;
 }

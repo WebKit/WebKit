@@ -988,13 +988,13 @@ void GL_APIENTRY GL_GetClipPlanex(GLenum plane, GLfixed *equation)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
-void GL_APIENTRY GL_GetFixedv(GLenum pname, GLfixed *params)
+void GL_APIENTRY GL_GetFixedv(GLenum pname, GLfixed *data)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     ANGLE_UNSAFE_TODO(EVENT(context, GLGetFixedv,
-                            "context = %d, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-                            GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)params));
+                            "context = %d, pname = %s, data = 0x%016" PRIxPTR "", CID(context),
+                            GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1008,7 +1008,7 @@ void GL_APIENTRY GL_GetFixedv(GLenum pname, GLfixed *params)
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
                 isCallValid =
-                    ValidateGetFixedv(context, angle::EntryPoint::GLGetFixedv, pname, params);
+                    ValidateGetFixedv(context, angle::EntryPoint::GLGetFixedv, pname, data);
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
 #endif
@@ -1020,9 +1020,9 @@ void GL_APIENTRY GL_GetFixedv(GLenum pname, GLfixed *params)
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->getFixedv(pname, params);
+            context->getFixedv(pname, data);
         }
-        ANGLE_CAPTURE_GL(GetFixedv, isCallValid, context, pname, params);
+        ANGLE_CAPTURE_GL(GetFixedv, isCallValid, context, pname, data);
     }
     else
     {

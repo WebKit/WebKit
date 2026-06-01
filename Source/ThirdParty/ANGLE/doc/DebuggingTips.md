@@ -181,6 +181,21 @@ To show only Vulkan api calls without verbose parameter details set the environm
 
 ### Vulkan Call Logging on Android
 
+On Android, we need to tell platform where to find the libVkLayer_lunarg_api_dump.so:
+
+1. If the libVkLayer_lunarg_api_dump.so is packaged inside the apk itself. For example: the test apk `angle_end2end_tests-debug.apk` itself contains the `lib/arm64-v8a/libVkLayer_lunarg_api_dump.so`, then no extra action is needed.
+
+2. If we are [sideloading ANGLE debuggable apk](DevSetupAndroid.md#selecting-angle-as-the-opengl-es-driver) for another app, for example, `com.example.app`, the app `com.example.app` itself does not contain `libVkLayer_lunarg_api_dump.so` inside its' `lib/` directory, then we need to run the following commands to tell Android platform to find `libVkLayer_lunarg_api_dump.so` in the ANGLE debuggable apk `org.chromium.angle`:
+
+```
+adb shell settings put global enable_gpu_debug_layers 1
+adb shell settings put global gpu_debug_app com.example.app
+adb shell settings put global gpu_debug_layers VK_LAYER_LUNARG_api_dump
+adb shell settings put global gpu_debug_layer_app org.chromium.angle
+```
+
+For more details, please refer to [Vulkan validation layers on Android](https://developer.android.com/ndk/guides/graphics/validation-layer#enable-debugging)
+
 Activate Vulkan call logging on Android by setting this Android debug property  that is
 automatically deleted at the next reboot:
 ```

@@ -81,7 +81,7 @@
                                   GLint *precision);                                               \
     void getShaderSource(ShaderProgramID shaderPacked, GLsizei bufSize, GLsizei *length,           \
                          GLchar *source);                                                          \
-    void getShaderiv(ShaderProgramID shaderPacked, GLenum pname, GLint *params);                   \
+    void getShaderiv(ShaderProgramID shaderPacked, ShaderParameter pnamePacked, GLint *params);    \
     const GLubyte *getString(GLenum name);                                                         \
     void getTexParameterfv(TextureType targetPacked, GLenum pname, GLfloat *params);               \
     void getTexParameteriv(TextureType targetPacked, GLenum pname, GLint *params);                 \

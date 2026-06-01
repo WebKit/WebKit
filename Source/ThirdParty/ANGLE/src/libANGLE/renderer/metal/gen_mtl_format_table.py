@@ -198,6 +198,28 @@ def wrap_actual_same_gl_type(str):
     return '' if str == 'true' else f'this->actualSameGLType = {str};'
 
 
+# Returns either the header or footer of a deprecation warning
+# suppression block depending on if `pixel_format` is a deprecated
+# format and if it the first or last pixel format being added.
+# TODO(crbug.com/383994655) Remove function when
+# 'MTLPixelFormatPVRTC_RGB_*' is no longer supported.
+def maybe_add_deprecation_warning_supression(is_deprecated_pixel_format,
+                                             deprecated_format_previously_found):
+    output = ''
+    if is_deprecated_pixel_format and not deprecated_format_previously_found:
+        # Begin the deprecation suppression block.
+        output += "#pragma clang diagnostic push\n"
+        output += "#pragma clang diagnostic ignored \"-Wdeprecated-declarations\"\n"
+    if not is_deprecated_pixel_format and deprecated_format_previously_found:
+        # End the deprecation suppression block.
+        output += "#pragma clang diagnostic pop\n"
+    return output
+
+
+# Returns a bool indicating whether `pixel_format` has been deprecated in iOS 18.0+.
+def is_format_deprecated(pixel_format):
+    return 'MTLPixelFormatPVRTC_RGB' in pixel_format
+
 # NOTE(hqle): This is a modified version of the get_vertex_copy_function() function in
 # src/libANGLE/renderer/angle_format.py
 # - Return value is a tuple {copy_function, default_alpha_value, have_same_gl_type}.
@@ -496,7 +518,15 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
 
     # iOS specific
     switch_data += "#elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST\n"
+    # Tracks whether the pixel format family being added to `switch_data` is deprecated.
+    section_contains_deprecated_format = False
     for angle_format in sorted(ios_specific_map.keys()):
+        # Add deprecation warnings around MTLPixelFormatPVRTC_* enums.
+        format_is_deprecated = is_format_deprecated(ios_specific_map[angle_format])
+        switch_data += maybe_add_deprecation_warning_supression(
+            format_is_deprecated, section_contains_deprecated_format)
+        section_contains_deprecated_format = format_is_deprecated
+
         switch_data += gen_image_map_switch_simple_case(angle_format, angle_format, angle_to_gl,
                                                         ios_specific_map)
     for angle_format in sorted(ios_override.keys()):
@@ -538,6 +568,12 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
                                                              angle_to_gl, ios_angle_to_mtl,
                                                              mac_override_es3)
             else:
+                # Add deprecation warnings around MTLPixelFormatPVRTC_* enums.
+                format_is_deprecated = is_format_deprecated(ios_specific_map[angle_format])
+                switch_data += maybe_add_deprecation_warning_supression(
+                    format_is_deprecated, section_contains_deprecated_format)
+                section_contains_deprecated_format = format_is_deprecated
+
                 # ASTC sRGB or PVRTC1
                 switch_data += gen_image_map_switch_simple_case(angle_format, angle_format,
                                                                 angle_to_gl, ios_specific_map)
@@ -585,6 +621,8 @@ def gen_image_mtl_to_angle_switch_string(image_table):
 
     # iOS + macOS 11.0+ specific
     switch_data += "#if TARGET_OS_IPHONE || (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))\n"
+    # Tracks whether the pixel format family being added to `switch_data` is deprecated.
+    section_contains_deprecated_format = False
     for angle_format in sorted(ios_specific_map.keys()):
         # ETC1_R8G8B8_UNORM_BLOCK is a duplicated of ETC2_R8G8B8_UNORM_BLOCK
         if angle_format == 'ETC1_R8G8B8_UNORM_BLOCK':
@@ -592,6 +630,12 @@ def gen_image_mtl_to_angle_switch_string(image_table):
         # Do not re-emit formats that are in the general Mac table
         if angle_format in mac_specific_map.keys():
             continue
+        # Add deprecation warnings around MTLPixelFormatPVRTC_* enums.
+        format_is_deprecated = is_format_deprecated(ios_specific_map[angle_format])
+        switch_data += maybe_add_deprecation_warning_supression(
+            format_is_deprecated, section_contains_deprecated_format)
+        section_contains_deprecated_format = format_is_deprecated
+
         switch_data += case_image_mtl_to_angle_template.format(
             mtl_format=ios_specific_map[angle_format], angle_format=angle_format)
     for angle_format in sorted(astc_tpl_map.keys()):
@@ -681,6 +725,8 @@ def gen_mtl_format_caps_init_string(map_image):
 
     def caps_to_cpp(caps_table):
         init_str = ''
+        # Tracks whether the pixel format family being added to `init_str` is deprecated.
+        section_contains_deprecated_format = False
         for mtl_format in sorted(caps_table.keys()):
             caps = caps_table[mtl_format]
             filterable = cap_to_param(caps, 'filterable')
@@ -690,6 +736,12 @@ def gen_mtl_format_caps_init_string(map_image):
             blendable = cap_to_param(caps, 'blendable')
             multisample = cap_to_param(caps, 'multisample')
             resolve = cap_to_param(caps, 'resolve')
+
+            # Add deprecation warnings around MTLPixelFormatPVRTC_* enums.
+            format_is_deprecated = is_format_deprecated(mtl_format)
+            init_str += maybe_add_deprecation_warning_supression(
+                format_is_deprecated, section_contains_deprecated_format)
+            section_contains_deprecated_format = format_is_deprecated
 
             init_str += "    setFormatCaps({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7});\n\n".format(
                 mtl_format, filterable, writable, blendable, multisample, resolve, colorRenderable,

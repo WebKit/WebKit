@@ -32,6 +32,14 @@ class Kernel final : public _cl_kernel, public Object
                                    void *value,
                                    size_t *valueSizeRet) const;
 
+    angle::Result getSubWorkGroupInfo(cl_device_id in_device,
+                                      KernelSubGroupInfo param_namePacked,
+                                      size_t input_value_size,
+                                      const void *input_value,
+                                      size_t param_value_size,
+                                      void *param_value,
+                                      size_t *param_value_size_ret) const;
+
     angle::Result getArgInfo(cl_uint argIndex,
                              KernelArgInfo name,
                              size_t valueSize,

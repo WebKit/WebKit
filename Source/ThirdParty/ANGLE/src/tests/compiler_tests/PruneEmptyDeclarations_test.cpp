@@ -20,9 +20,7 @@ namespace
 class PruneEmptyDeclarationsTest : public MatchOutputCodeTest
 {
   public:
-    PruneEmptyDeclarationsTest()
-        : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
-    {}
+    PruneEmptyDeclarationsTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_150_CORE_OUTPUT) {}
 };
 
 TEST_F(PruneEmptyDeclarationsTest, EmptyDeclarationStartsDeclaratorList)

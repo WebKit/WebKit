@@ -156,6 +156,22 @@ class FramebufferWgpu : public FramebufferImpl
                                      bool dstFlipY,
                                      WGPUTextureAspect aspect);
 
+    angle::Result blitWithShader(const gl::Context *context,
+                                 RenderTargetWgpu *readRenderTarget,
+                                 RenderTargetWgpu *drawRenderTarget,
+                                 const gl::Rectangle &sourceArea,
+                                 const gl::Rectangle &destArea,
+                                 GLenum filter,
+                                 bool srcFlipY,
+                                 bool dstFlipY,
+                                 WGPUTextureAspect aspect,
+                                 const gl::Rectangle *scissor);
+
+    angle::Result getBlitImageAndSize(ContextWgpu *contextWgpu,
+                                      RenderTargetWgpu *renderTarget,
+                                      webgpu::ImageHelper **imageOut,
+                                      WGPUExtent3D *levelSizeOut);
+
     RenderTargetCache<RenderTargetWgpu> mRenderTargetCache;
     webgpu::PackedRenderPassDescriptor mCurrentRenderPassDesc;
 

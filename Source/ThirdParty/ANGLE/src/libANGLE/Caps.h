@@ -91,10 +91,8 @@ using ExtensionBool = bool Extensions::*;
 
 struct ExtensionInfo
 {
-    // If this extension can be enabled or disabled  with glRequestExtension
-    // (GL_ANGLE_request_extension)
+    // If this extension can be enabled with glRequestExtension from GL_ANGLE_request_extension
     bool Requestable = false;
-    bool Disablable  = false;
 
     // Pointer to a boolean member of the Extensions struct
     ExtensionBool ExtensionsMember = nullptr;
@@ -155,9 +153,6 @@ struct Limitations
 
     // ASTC texture support is emulated.
     bool emulatedAstc = false;
-
-    // No compressed TEXTURE_3D support.
-    bool noCompressedTexture3D = false;
 
     // D3D does not support compressed textures where the base mip level is not a multiple of 4
     bool compressedBaseMipLevelMultipleOfFour = false;

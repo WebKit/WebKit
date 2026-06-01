@@ -17,12 +17,15 @@
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
+#include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLDevice.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
+
 #include "spirv/unified1/NonSemanticClspvReflection.h"
 
 #include <algorithm>
@@ -313,7 +316,8 @@ angle::Result CLKernelVk::createInfo(CLKernelImpl::Info *info) const
     for (auto i = 0u; i < ctx.getDevices().size(); ++i)
     {
         auto &workGroup     = info->workGroups[i];
-        const auto deviceVk = &ctx.getDevices()[i]->getImpl<CLDeviceVk>();
+        const auto device   = &ctx.getDevices()[i];
+        const auto deviceVk = &device->get()->getImpl<CLDeviceVk>();
         deviceProgramData   = mProgram->getDeviceProgramData(ctx.getDevices()[i]->getNative());
         if (deviceProgramData == nullptr)
         {
@@ -340,6 +344,16 @@ angle::Result CLKernelVk::createInfo(CLKernelImpl::Info *info) const
         else
         {
             workGroup.compileWorkGroupSize = {0, 0, 0};
+        }
+
+        if (device->get()->getInfo().khrSubgroups)
+        {
+            workGroup.subGroupSizeForNDRange =
+                mContext->getRenderer()->getPhysicalDeviceSubgroupProperties().subgroupSize;
+        }
+        else
+        {
+            workGroup.subGroupSizeForNDRange = 0;
         }
     }
 
@@ -391,6 +405,14 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
             case SpecConstantType::GlobalOffsetZ:
                 specConstantData.push_back(ndrange.globalWorkOffset[2]);
                 break;
+            case SpecConstantType::SubgroupMaxSize:
+            {
+                // We should only be here if cl_khr_subgroups is supported
+                ASSERT(device.getInfo().khrSubgroups);
+                specConstantData.push_back(
+                    mContext->getRenderer()->getPhysicalDeviceSubgroupProperties().subgroupSize);
+                break;
+            }
             default:
                 UNIMPLEMENTED();
                 continue;

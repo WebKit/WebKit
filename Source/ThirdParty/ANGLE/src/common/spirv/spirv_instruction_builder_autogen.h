@@ -1128,6 +1128,8 @@ void WritePtrNotEqual(Blob *blob,
                       IdRef operand2);
 void WriteBeginInvocationInterlockEXT(Blob *blob);
 void WriteEndInvocationInterlockEXT(Blob *blob);
+void WriteDemoteToHelperInvocation(Blob *blob);
+void WriteIsHelperInvocationEXT(Blob *blob, IdResultType idResultType1, IdResult idResult2);
 
 }  // namespace spirv
 }  // namespace angle

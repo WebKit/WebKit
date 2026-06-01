@@ -841,8 +841,6 @@ bool IsOutputGLSL(ShShaderOutput output)
 {
     switch (output)
     {
-        case SH_GLSL_130_OUTPUT:
-        case SH_GLSL_140_OUTPUT:
         case SH_GLSL_150_CORE_OUTPUT:
         case SH_GLSL_330_CORE_OUTPUT:
         case SH_GLSL_400_CORE_OUTPUT:
@@ -851,7 +849,6 @@ bool IsOutputGLSL(ShShaderOutput output)
         case SH_GLSL_430_CORE_OUTPUT:
         case SH_GLSL_440_CORE_OUTPUT:
         case SH_GLSL_450_CORE_OUTPUT:
-        case SH_GLSL_COMPATIBILITY_OUTPUT:
             return true;
         default:
             break;

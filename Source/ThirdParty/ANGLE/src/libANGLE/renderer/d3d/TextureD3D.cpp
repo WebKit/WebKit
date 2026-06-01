@@ -768,11 +768,16 @@ angle::Result TextureD3D::setBaseLevel(const gl::Context *context, GLuint baseLe
 
     // When the base level changes, the texture storage might not be valid anymore, since it could
     // have been created based on the dimensions of the previous specified level range.
+    // For immutable textures (created via glTexStorage*D), the storage already covers all mip
+    // levels with the correct dimensions, so it should never be released on base level change.
+    // getLevelZeroWidth() can compute incorrect dimensions for NPOT textures because
+    // (width >> N) << N != width when width is not a power of two, which would cause a spurious
+    // dimension mismatch and lead to recreating the storage with wrong dimensions.
     const int newStorageWidth  = std::max(1, getLevelZeroWidth());
     const int newStorageHeight = std::max(1, getLevelZeroHeight());
     const int newStorageDepth  = std::max(1, getLevelZeroDepth());
     const int newStorageFormat = getBaseLevelInternalFormat();
-    if (mTexStorage &&
+    if (mTexStorage && !isImmutable() &&
         (newStorageWidth != oldStorageWidth || newStorageHeight != oldStorageHeight ||
          newStorageDepth != oldStorageDepth || newStorageFormat != oldStorageFormat))
     {

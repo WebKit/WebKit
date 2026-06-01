@@ -67,6 +67,27 @@ TEST_P(RequestExtensionTest, Queries)
     }
 }
 
+// Test that capture/replay succeeds when requesting an extension marks textures as dirty
+TEST_P(RequestExtensionTest, ReplayTextureInitState)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_request_extension"));
+
+    // This extension is chosen because it's requestable and always supported.
+    ASSERT_TRUE(IsGLExtensionRequestable("GL_OES_vertex_array_object"));
+
+    // Do not use RAII so that the texture is not deleted.
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    ASSERT_GL_NO_ERROR();
+
+    // In the capture context created with extensions disabled, this command marks all textures
+    // as dirty. If the replay context is created with extensions enabled, this command would
+    // be skipped and the texture state at the end of the frame would not match.
+    glRequestExtensionANGLE("GL_OES_vertex_array_object");
+    EXPECT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(RequestExtensionTest);

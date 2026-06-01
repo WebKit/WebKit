@@ -97,6 +97,9 @@ struct AccessChain
     // Whether all indices are literal.  Avoids looping through indices to determine this
     // information.
     bool areAllIndicesLiteral = true;
+    // Whether accessing gl_HelperInvocation.  With SPV_EXT_demote_to_helper_invocation, it's
+    // replaced with OpIsHelperInvocationEXT instead of OpLoad.
+    bool isHelperInvocation = false;
     // The number of components in the vector, if vector and swizzle is used.  This is cached to
     // avoid a type look up when handling swizzles.
     uint8_t swizzledVectorComponentCount = 0;
@@ -177,6 +180,15 @@ bool operator==(const BuiltInResultStruct &a, const BuiltInResultStruct &b)
 bool IsAccessChainRValue(const AccessChain &accessChain)
 {
     return accessChain.storageClass == spv::StorageClassMax;
+}
+
+bool IsAccessChainHelperInvocation(const AccessChain &accessChain)
+{
+    // Special case for SPV_EXT_demote_to_helper_invocation, where the HelperInvocation built-in is
+    // ignored and OpIsHelperInvocationEXT is used instead.  Once SPIR-V 1.6 is generated,
+    // OpIsHelperInvocationEXT should be removed along with this function, and the HelperInvocation
+    // variable declared as Volatile instead.
+    return accessChain.isHelperInvocation;
 }
 
 // A traverser that generates SPIR-V as it walks the AST.
@@ -993,6 +1005,8 @@ spirv::IdRef OutputSPIRVTraverser::accessChainLoad(NodeData *data,
 
     spirv::IdRef loadResult = data->baseId;
 
+    ASSERT(!(IsAccessChainHelperInvocation(accessChain) && IsAccessChainRValue(accessChain)));
+
     if (IsAccessChainRValue(accessChain))
     {
         if (data->idList.size() > 0)
@@ -1031,6 +1045,15 @@ spirv::IdRef OutputSPIRVTraverser::accessChainLoad(NodeData *data,
                                  accessChain.preSwizzleTypeId, loadResult, accessChainId, nullptr);
             }
         }
+    }
+    else if (IsAccessChainHelperInvocation(accessChain))
+    {
+        // Special case for SPV_EXT_demote_to_helper_invocation, where the HelperInvocation built-in
+        // is ignored.  Once SPIR-V 1.6 is generated, OpIsHelperInvocationEXT should be removed and
+        // the HelperInvocation variable declared as Volatile instead.
+        loadResult = mBuilder.getNewId(decorations);
+        spirv::WriteIsHelperInvocationEXT(mBuilder.getSpirvCurrentFunctionBlock(),
+                                          accessChain.preSwizzleTypeId, loadResult);
     }
     else
     {
@@ -5052,6 +5075,16 @@ void OutputSPIRVTraverser::visitSymbol(TIntermSymbol *node)
         case EvqCullDistance:
             mBuilder.addCapability(spv::CapabilityCullDistance);
             break;
+        case EvqHelperInvocation:
+            if (mCompileOptions.useDemoteToHelperInvocation)
+            {
+                // When SPV_EXT_demote_to_helper_invocation is used, reads from HelperInvocation are
+                // replaced by OpIsHelperInvocationEXT.
+                mNodeData.back().accessChain.isHelperInvocation = true;
+                mBuilder.addCapability(spv::CapabilityDemoteToHelperInvocationEXT);
+                mBuilder.addExtension(SPIRVExtensions::DemoteToHelperInvocation);
+            }
+            break;
         default:
             break;
     }
@@ -6168,7 +6201,6 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
     TIntermSymbol *symbol = sequence.front()->getAsSymbolNode();
     spirv::IdRef initializerId;
     bool initializeWithDeclaration = false;
-    bool needsQuantizeTo16         = false;
 
     // Handle declarations with initializer.
     if (symbol == nullptr)
@@ -6217,35 +6249,6 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
         {
             // Otherwise generate code to load from right hand side expression.
             initializerId = accessChainLoad(&mNodeData.back(), symbol->getType(), nullptr);
-
-            // Workaround for issuetracker.google.com/274859104
-            // ARM SpirV compiler may utilize the RelaxedPrecision of mediump float,
-            // and chooses to not cast mediump float to 16 bit. This causes deqp test
-            // dEQP-GLES2.functional.shaders.algorithm.rgb_to_hsl_vertex failed.
-            // The reason is that GLSL shader code expects below condition to be true:
-            // mediump float a == mediump float b;
-            // However, the condition is false after translating to SpirV
-            // due to one of them is 32 bit, and the other is 16 bit.
-            // To resolve the deqp test failure, we will add an OpQuantizeToF16
-            // SpirV instruction to explicitly cast mediump float scalar or mediump float
-            // vector to 16 bit, if the right-hand-side is a highp float.
-            if (mCompileOptions.castMediumpFloatTo16Bit)
-            {
-                const TType leftType            = assign->getLeft()->getType();
-                const TType rightType           = assign->getRight()->getType();
-                const TPrecision leftPrecision  = leftType.getPrecision();
-                const TPrecision rightPrecision = rightType.getPrecision();
-                const bool isLeftScalarFloat    = leftType.isScalarFloat();
-                const bool isLeftVectorFloat = leftType.isVector() && !leftType.isVectorArray() &&
-                                               leftType.getBasicType() == EbtFloat;
-
-                if (leftPrecision == TPrecision::EbpMedium &&
-                    rightPrecision == TPrecision::EbpHigh &&
-                    (isLeftScalarFloat || isLeftVectorFloat))
-                {
-                    needsQuantizeTo16 = true;
-                }
-            }
         }
 
         // Clean up the initializer data.
@@ -6304,17 +6307,6 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     if (!initializeWithDeclaration && initializerId.valid())
     {
-        // If not initializing at the same time as the declaration, issue a store
-        if (needsQuantizeTo16)
-        {
-            // Insert OpQuantizeToF16 instruction to explicitly cast mediump float to 16 bit before
-            // issuing an OpStore instruction.
-            const spirv::IdRef quantizeToF16Result =
-                mBuilder.getNewId(mBuilder.getDecorations(symbol->getType()));
-            spirv::WriteQuantizeToF16(mBuilder.getSpirvCurrentFunctionBlock(), typeId,
-                                      quantizeToF16Result, initializerId);
-            initializerId = quantizeToF16Result;
-        }
         spirv::WriteStore(mBuilder.getSpirvCurrentFunctionBlock(), variableId, initializerId,
                           nullptr);
     }
@@ -6648,8 +6640,19 @@ bool OutputSPIRVTraverser::visitBranch(Visit visit, TIntermBranch *node)
     switch (node->getFlowOp())
     {
         case EOpKill:
-            spirv::WriteKill(mBuilder.getSpirvCurrentFunctionBlock());
-            mBuilder.terminateCurrentFunctionBlock();
+            if (mCompileOptions.useDemoteToHelperInvocation)
+            {
+                spirv::WriteDemoteToHelperInvocation(mBuilder.getSpirvCurrentFunctionBlock());
+                mBuilder.addCapability(spv::CapabilityDemoteToHelperInvocationEXT);
+                mBuilder.addExtension(SPIRVExtensions::DemoteToHelperInvocation);
+                // Note: this is not a branch instruction, so the block is not terminated.  The GLSL
+                // block will end right after this, which automatically terminates this block.
+            }
+            else
+            {
+                spirv::WriteKill(mBuilder.getSpirvCurrentFunctionBlock());
+                mBuilder.terminateCurrentFunctionBlock();
+            }
             break;
         case EOpBreak:
             spirv::WriteBranch(mBuilder.getSpirvCurrentFunctionBlock(),

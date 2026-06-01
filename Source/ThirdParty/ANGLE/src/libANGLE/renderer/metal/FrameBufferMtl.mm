@@ -18,6 +18,7 @@
 
 #include "common/MemoryBuffer.h"
 #include "common/angleutils.h"
+#include "common/base/anglebase/numerics/checked_math.h"
 #include "common/debug.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
@@ -77,14 +78,18 @@ angle::Result CopyTextureSliceLevelToTempBuffer(const gl::Context *context,
     const mtl::Format &metalFormat   = contextMtl->getPixelFormat(formatId);
     const angle::Format &angleFormat = metalFormat.actualAngleFormat();
 
-    uint32_t width       = srcTexture->width(mipNativeLevel);
-    uint32_t height      = srcTexture->height(mipNativeLevel);
-    uint32_t sizeInBytes = width * height * angleFormat.pixelBytes;
+    uint32_t width                                  = srcTexture->width(mipNativeLevel);
+    uint32_t height                                 = srcTexture->height(mipNativeLevel);
+    angle::base::CheckedNumeric<size_t> sizeInBytes = width;
+    sizeInBytes *= height;
+    sizeInBytes *= angleFormat.pixelBytes;
+
+    ANGLE_CHECK_GL_MATH(contextMtl, sizeInBytes.IsValid());
 
     mtl::BufferRef tempBuffer;
     ANGLE_TRY(mtl::Buffer::MakeBufferWithStorageMode(
-        contextMtl, mtl::Buffer::getStorageModeForSharedBuffer(contextMtl), sizeInBytes, nullptr,
-        &tempBuffer));
+        contextMtl, mtl::Buffer::getStorageModeForSharedBuffer(contextMtl),
+        sizeInBytes.ValueOrDie(), nullptr, &tempBuffer));
 
     gl::Rectangle region(0, 0, width, height);
     uint32_t bytesPerRow = angleFormat.pixelBytes * width;

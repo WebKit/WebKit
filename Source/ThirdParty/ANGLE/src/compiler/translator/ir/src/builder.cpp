@@ -244,6 +244,14 @@ VariableId Builder::declareTempVariable(const ImmutableString &name,
     return mBuilder->declare_temp_variable(Str(name), MakeASTType(type, typeId));
 }
 
+void Builder::rescopeAsForLoopVariable(VariableId id)
+{
+    if (!mHasError)
+    {
+        mBuilder->rescope_as_for_loop_variable(id);
+    }
+}
+
 void Builder::markVariableInvariant(VariableId id)
 {
     if (!mHasError)

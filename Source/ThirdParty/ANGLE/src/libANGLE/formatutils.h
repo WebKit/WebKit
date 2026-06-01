@@ -341,6 +341,11 @@ struct Format
 const InternalFormat &GetSizedInternalFormatInfo(GLenum internalFormat);
 const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, GLenum type);
 
+// ES2 requires that format is equal to internal format at all glTex*Image2D entry points and the
+// implementation can decide the true, sized, internal format. The ES2FormatMap determines the
+// internal format for all valid format and type combinations.
+GLenum GetSizedFormatInternal(GLenum format, GLenum type);
+
 // Strip sizing information from an internal format.  Doesn't necessarily validate that the internal
 // format is valid.
 GLenum GetUnsizedFormat(GLenum internalFormat);
@@ -453,100 +458,81 @@ const VertexFormat &GetVertexFormatFromID(angle::FormatID vertexFormatID);
 size_t GetVertexFormatSize(angle::FormatID vertexFormatID);
 angle::FormatID ConvertFormatSignedness(const angle::Format &format);
 
-ANGLE_INLINE bool IsS3TCFormat(const GLenum format)
+ANGLE_INLINE constexpr bool IsS3TCFormat(const GLenum format)
 {
-    switch (format)
-    {
-        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-        case GL_COMPRESSED_SRGB_S3TC_DXT1_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT:
-            return true;
+    // Two groups of four consecutive values each, starting at multiples of 4.
+    return ((format & ~3) == GL_COMPRESSED_RGB_S3TC_DXT1_EXT) ||
+           ((format & ~3) == GL_COMPRESSED_SRGB_S3TC_DXT1_EXT);
+}
+static_assert(IsS3TCFormat(GL_COMPRESSED_RGB_S3TC_DXT1_EXT), "0x83F0");
+static_assert(IsS3TCFormat(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT), "0x83F1");
+static_assert(IsS3TCFormat(GL_COMPRESSED_RGBA_S3TC_DXT3_EXT), "0x83F2");
+static_assert(IsS3TCFormat(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT), "0x83F3");
+static_assert(IsS3TCFormat(GL_COMPRESSED_SRGB_S3TC_DXT1_EXT), "0x8C4C");
+static_assert(IsS3TCFormat(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT), "0x8C4D");
+static_assert(IsS3TCFormat(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT), "0x8C4E");
+static_assert(IsS3TCFormat(GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT), "0x8C4F");
+static_assert(!IsS3TCFormat(0x83EF) && !IsS3TCFormat(0x83F4), "invalid");
+static_assert(!IsS3TCFormat(0x8C4B) && !IsS3TCFormat(0x8C50), "invalid");
 
-        default:
-            return false;
-    }
+ANGLE_INLINE constexpr bool IsRGTCFormat(const GLenum format)
+{
+    return (format >= GL_COMPRESSED_RED_RGTC1_EXT &&
+            format <= GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT);
+}
+static_assert(IsRGTCFormat(GL_COMPRESSED_RED_RGTC1_EXT), "0x8DBB");
+static_assert(IsRGTCFormat(GL_COMPRESSED_SIGNED_RED_RGTC1_EXT), "0x8DBC");
+static_assert(IsRGTCFormat(GL_COMPRESSED_RED_GREEN_RGTC2_EXT), "0x8DBD");
+static_assert(IsRGTCFormat(GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT), "0x8DBE");
+static_assert(!IsRGTCFormat(0x8DBA) && !IsRGTCFormat(0x8DBF), "invalid");
+
+ANGLE_INLINE constexpr bool IsBPTCFormat(const GLenum format)
+{
+    // Four consecutive values starting at a multiple of 4.
+    return ((format & ~3) == GL_COMPRESSED_RGBA_BPTC_UNORM_EXT);
+}
+static_assert(IsBPTCFormat(GL_COMPRESSED_RGBA_BPTC_UNORM_EXT), "0x8E8C");
+static_assert(IsBPTCFormat(GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT), "0x8E8D");
+static_assert(IsBPTCFormat(GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT), "0x8E8E");
+static_assert(IsBPTCFormat(GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT), "0x8E8F");
+static_assert(!IsBPTCFormat(0x8E8B) && !IsBPTCFormat(0x8E90), "invalid");
+
+ANGLE_INLINE constexpr bool IsASTC2DFormat(const GLenum format)
+{
+    return (format >= GL_COMPRESSED_RGBA_ASTC_4x4_KHR &&
+            format <= GL_COMPRESSED_RGBA_ASTC_12x12_KHR) ||
+           (format >= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR &&
+            format <= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR);
 }
 
-ANGLE_INLINE bool IsRGTCFormat(const GLenum format)
+ANGLE_INLINE constexpr bool IsASTC3DFormat(const GLenum format)
 {
-    switch (format)
-    {
-        case GL_COMPRESSED_RED_RGTC1_EXT:
-        case GL_COMPRESSED_SIGNED_RED_RGTC1_EXT:
-        case GL_COMPRESSED_RED_GREEN_RGTC2_EXT:
-        case GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT:
-            return true;
-
-        default:
-            return false;
-    }
+    return (format >= GL_COMPRESSED_RGBA_ASTC_3x3x3_OES &&
+            format <= GL_COMPRESSED_RGBA_ASTC_6x6x6_OES) ||
+           (format >= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES &&
+            format <= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES);
 }
 
-ANGLE_INLINE bool IsBPTCFormat(const GLenum format)
+ANGLE_INLINE constexpr bool IsETC1Format(const GLenum format)
 {
-    switch (format)
-    {
-        case GL_COMPRESSED_RGBA_BPTC_UNORM_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT:
-        case GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT:
-        case GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT:
-            return true;
-
-        default:
-            return false;
-    }
+    return (format == GL_ETC1_RGB8_OES);
 }
 
-ANGLE_INLINE bool IsASTC2DFormat(const GLenum format)
+ANGLE_INLINE constexpr bool IsETC2EACFormat(const GLenum format)
 {
-    if ((format >= GL_COMPRESSED_RGBA_ASTC_4x4_KHR &&
-         format <= GL_COMPRESSED_RGBA_ASTC_12x12_KHR) ||
-        (format >= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR &&
-         format <= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR))
-    {
-        return true;
-    }
-    return false;
+    return (format >= GL_COMPRESSED_R11_EAC && format <= GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC);
 }
-
-ANGLE_INLINE bool IsETC1Format(const GLenum format)
-{
-    switch (format)
-    {
-        case GL_ETC1_RGB8_OES:
-            return true;
-
-        default:
-            return false;
-    }
-}
-
-ANGLE_INLINE bool IsETC2EACFormat(const GLenum format)
-{
-    // ES 3.1, Table 8.19
-    switch (format)
-    {
-        case GL_COMPRESSED_R11_EAC:
-        case GL_COMPRESSED_SIGNED_R11_EAC:
-        case GL_COMPRESSED_RG11_EAC:
-        case GL_COMPRESSED_SIGNED_RG11_EAC:
-        case GL_COMPRESSED_RGB8_ETC2:
-        case GL_COMPRESSED_SRGB8_ETC2:
-        case GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
-        case GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
-        case GL_COMPRESSED_RGBA8_ETC2_EAC:
-        case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
-            return true;
-
-        default:
-            return false;
-    }
-}
+static_assert(IsETC2EACFormat(GL_COMPRESSED_R11_EAC), "0x9270");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_SIGNED_R11_EAC), "0x9271");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_RG11_EAC), "0x9272");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_SIGNED_RG11_EAC), "0x9273");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_RGB8_ETC2), "0x9274");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_SRGB8_ETC2), "0x9275");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2), "0x9276");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2), "0x9277");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_RGBA8_ETC2_EAC), "0x9278");
+static_assert(IsETC2EACFormat(GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC), "0x9279");
+static_assert(!IsETC2EACFormat(0x926F) && !IsETC2EACFormat(0x927A), "invalid");
 
 ANGLE_INLINE constexpr bool IsPVRTC1Format(const GLenum format)
 {

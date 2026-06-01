@@ -1923,15 +1923,11 @@ bool IsTextureUpdate(CallCapture &call)
     {
         case EntryPoint::GLCompressedCopyTextureCHROMIUM:
         case EntryPoint::GLCompressedTexImage2D:
-        case EntryPoint::GLCompressedTexImage2DRobustANGLE:
         case EntryPoint::GLCompressedTexImage3D:
         case EntryPoint::GLCompressedTexImage3DOES:
-        case EntryPoint::GLCompressedTexImage3DRobustANGLE:
         case EntryPoint::GLCompressedTexSubImage2D:
-        case EntryPoint::GLCompressedTexSubImage2DRobustANGLE:
         case EntryPoint::GLCompressedTexSubImage3D:
         case EntryPoint::GLCompressedTexSubImage3DOES:
-        case EntryPoint::GLCompressedTexSubImage3DRobustANGLE:
         case EntryPoint::GLCopyTexImage2D:
         case EntryPoint::GLCopyTexSubImage2D:
         case EntryPoint::GLCopyTexSubImage3D:
@@ -4181,25 +4177,45 @@ void CaptureShareGroupMidExecutionSetup(
 
         GLenum internalformat = renderbuffer->getFormat().info->internalFormat;
 
-        if (renderbuffer->getSamples() > 0)
+        // Depending on the multisampling mode, we have to issue different commands
+        switch (renderbuffer->getMultisamplingMode())
         {
-            // Note: We could also use extensions if available.
-            for (std::vector<CallCapture> *calls : rbGenCalls)
-            {
-                Capture(calls,
-                        CaptureRenderbufferStorageMultisample(
-                            replayState, true, GL_RENDERBUFFER, renderbuffer->getSamples(),
-                            internalformat, renderbuffer->getWidth(), renderbuffer->getHeight()));
-            }
-        }
-        else
-        {
-            for (std::vector<CallCapture> *calls : rbGenCalls)
-            {
-                Capture(calls, framebufferFuncs.renderbufferStorage(
-                                   replayState, true, GL_RENDERBUFFER, internalformat,
-                                   renderbuffer->getWidth(), renderbuffer->getHeight()));
-            }
+            case gl::MultisamplingMode::Regular:
+                if (renderbuffer->getSamples() > 0)
+                {
+                    for (std::vector<CallCapture> *calls : rbGenCalls)
+                    {
+                        Capture(calls, CaptureRenderbufferStorageMultisample(
+                                           replayState, true, GL_RENDERBUFFER,
+                                           renderbuffer->getSamples(), internalformat,
+                                           renderbuffer->getWidth(), renderbuffer->getHeight()));
+                    }
+                }
+                else
+                {
+                    for (std::vector<CallCapture> *calls : rbGenCalls)
+                    {
+                        Capture(calls, framebufferFuncs.renderbufferStorage(
+                                           replayState, true, GL_RENDERBUFFER, internalformat,
+                                           renderbuffer->getWidth(), renderbuffer->getHeight()));
+                    }
+                }
+                break;
+            case gl::MultisamplingMode::MultisampledRenderToTexture:
+                // Note we use getState().getSamples() here because MSRTT means this reports as
+                // single sampled, but was created with <n> samples internally, and we have to
+                // recreate that.
+                for (std::vector<CallCapture> *calls : rbGenCalls)
+                {
+                    Capture(calls, CaptureRenderbufferStorageMultisampleEXT(
+                                       replayState, true, GL_RENDERBUFFER,
+                                       renderbuffer->getState().getSamples(), internalformat,
+                                       renderbuffer->getWidth(), renderbuffer->getHeight()));
+                }
+                break;
+            default:
+                UNREACHABLE();
+                break;
         }
 
         // TODO: Capture renderbuffer contents. http://anglebug.com/42262323
@@ -4411,47 +4427,49 @@ void CaptureShareGroupMidExecutionSetup(
         gl::SamplerState defaultSamplerState;
         if (sampler->getMinFilter() != defaultSamplerState.getMinFilter())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_MIN_FILTER,
-                                         sampler->getMinFilter()));
+            cap(CaptureSamplerParameteri(replayState, true, samplerID,
+                                         gl::SamplerParameter::MinFilter, sampler->getMinFilter()));
         }
         if (sampler->getMagFilter() != defaultSamplerState.getMagFilter())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_MAG_FILTER,
-                                         sampler->getMagFilter()));
+            cap(CaptureSamplerParameteri(replayState, true, samplerID,
+                                         gl::SamplerParameter::MagFilter, sampler->getMagFilter()));
         }
         if (sampler->getWrapS() != defaultSamplerState.getWrapS())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_WRAP_S,
+            cap(CaptureSamplerParameteri(replayState, true, samplerID, gl::SamplerParameter::WrapS,
                                          sampler->getWrapS()));
         }
         if (sampler->getWrapR() != defaultSamplerState.getWrapR())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_WRAP_R,
+            cap(CaptureSamplerParameteri(replayState, true, samplerID, gl::SamplerParameter::WrapR,
                                          sampler->getWrapR()));
         }
         if (sampler->getWrapT() != defaultSamplerState.getWrapT())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_WRAP_T,
+            cap(CaptureSamplerParameteri(replayState, true, samplerID, gl::SamplerParameter::WrapT,
                                          sampler->getWrapT()));
         }
         if (sampler->getMinLod() != defaultSamplerState.getMinLod())
         {
-            cap(CaptureSamplerParameterf(replayState, true, samplerID, GL_TEXTURE_MIN_LOD,
+            cap(CaptureSamplerParameterf(replayState, true, samplerID, gl::SamplerParameter::MinLod,
                                          sampler->getMinLod()));
         }
         if (sampler->getMaxLod() != defaultSamplerState.getMaxLod())
         {
-            cap(CaptureSamplerParameterf(replayState, true, samplerID, GL_TEXTURE_MAX_LOD,
+            cap(CaptureSamplerParameterf(replayState, true, samplerID, gl::SamplerParameter::MaxLod,
                                          sampler->getMaxLod()));
         }
         if (sampler->getCompareMode() != defaultSamplerState.getCompareMode())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_COMPARE_MODE,
+            cap(CaptureSamplerParameteri(replayState, true, samplerID,
+                                         gl::SamplerParameter::CompareMode,
                                          sampler->getCompareMode()));
         }
         if (sampler->getCompareFunc() != defaultSamplerState.getCompareFunc())
         {
-            cap(CaptureSamplerParameteri(replayState, true, samplerID, GL_TEXTURE_COMPARE_FUNC,
+            cap(CaptureSamplerParameteri(replayState, true, samplerID,
+                                         gl::SamplerParameter::CompareFunc,
                                          sampler->getCompareFunc()));
         }
     }
@@ -8907,6 +8925,7 @@ void FrameCaptureShared::writeJSON(const gl::Context *context)
     json.addBool("IsBindGeneratesResourcesEnabled", glState.isBindGeneratesResourceEnabled());
     json.addBool("IsWebGLCompatibilityEnabled", glState.isWebGL());
     json.addBool("IsRobustResourceInitEnabled", glState.isRobustResourceInitEnabled());
+    json.addBool("AreExtensionsEnabled", context->getExtensionsEnabled());
     json.endGroup();
 
     json.startGroup("BinaryMetadata");
@@ -9445,9 +9464,9 @@ gl::Program *GetProgramForCapture(const gl::State &glState, gl::ShaderProgramID 
 }
 
 void CaptureGetActiveUniformBlockivParameters(const gl::State &glState,
-                                              gl::ShaderProgramID handle,
-                                              gl::UniformBlockIndex uniformBlockIndex,
-                                              GLenum pname,
+                                              gl::ShaderProgramID programPacked,
+                                              gl::UniformBlockIndex uniformBlockIndexPacked,
+                                              gl::UniformBlockParameter pnamePacked,
                                               ParamCapture *paramCapture)
 {
     int numParams = 1;
@@ -9457,13 +9476,14 @@ void CaptureGetActiveUniformBlockivParameters(const gl::State &glState,
     // active uniform indices for the uniform block identified by uniformBlockIndex is
     // returned. The number of elements that will be written to params is the value of
     // UNIFORM_BLOCK_ACTIVE_UNIFORMS for uniformBlockIndex
-    if (pname == GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES)
+    if (pnamePacked == gl::UniformBlockParameter::ActiveUniformIndices)
     {
-        gl::Program *program = GetProgramForCapture(glState, handle);
-        if (program)
+        gl::Program *programObject = GetProgramForCapture(glState, programPacked);
+        if (programObject != nullptr)
         {
-            gl::QueryActiveUniformBlockiv(program, uniformBlockIndex,
-                                          GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &numParams);
+            gl::QueryActiveUniformBlockiv(programObject, uniformBlockIndexPacked,
+                                          gl::UniformBlockParameter::ActiveUniforms, nullptr,
+                                          &numParams);
         }
     }
 

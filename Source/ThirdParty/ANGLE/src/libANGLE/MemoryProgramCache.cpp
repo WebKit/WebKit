@@ -42,21 +42,22 @@ namespace
 // we believe is compressed data.
 static constexpr size_t kMaxUncompressedProgramSize = 10 * 1024 * 1024;
 
-void WriteProgramBindings(BinaryOutputStream *stream, const ProgramBindings &bindings)
+void AppendProgramBindings(angle::BlobCacheHasher &hasher, const ProgramBindings &bindings)
 {
     for (const auto &binding : bindings.getStableIterationMap())
     {
-        stream->writeString(binding.first);
-        stream->writeInt(binding.second);
+        hasher.Update(binding.first.data(), binding.first.size());
+        angle::UpdateHashWithValue(hasher, binding.second);
     }
 }
 
-void WriteProgramAliasedBindings(BinaryOutputStream *stream, const ProgramAliasedBindings &bindings)
+void AppendProgramAliasedBindings(angle::BlobCacheHasher &hasher,
+                                  const ProgramAliasedBindings &bindings)
 {
     for (const auto &binding : bindings.getStableIterationMap())
     {
-        stream->writeString(binding.first);
-        stream->writeInt(binding.second.location);
+        hasher.Update(binding.first.data(), binding.first.size());
+        angle::UpdateHashWithValue(hasher, binding.second.location);
     }
 }
 
@@ -70,8 +71,11 @@ void MemoryProgramCache::ComputeHash(const Context *context,
                                      const Program *program,
                                      egl::BlobCache::Key *hashOut)
 {
-    // Compute the program hash. Start with the shader hashes.
-    BinaryOutputStream hashStream;
+    // Compute the program hash.
+    angle::BlobCacheHasher hasher;
+    hasher.Init();
+
+    // Start with the shader hashes.
     ShaderBitSet shaders;
     for (ShaderType shaderType : AllShaderTypes())
     {
@@ -79,37 +83,41 @@ void MemoryProgramCache::ComputeHash(const Context *context,
         if (shader)
         {
             shaders.set(shaderType);
-            shader->writeShaderKey(&hashStream);
+            hasher.Update(&shader->getShaderHash(), sizeof(egl::BlobCache::Key));
         }
     }
-
-    hashStream.writeInt(shaders.bits());
+    angle::UpdateHashWithValue(hasher, shaders.bits());
 
     // Add some ANGLE metadata and Context properties, such as version and back-end.
-    hashStream.writeString(angle::GetANGLEShaderProgramVersion());
-    hashStream.writeInt(angle::GetANGLESHVersion());
-    hashStream.writeInt(context->getClientVersion().getMajor());
-    hashStream.writeInt(context->getClientVersion().getMinor());
-    hashStream.writeString(reinterpret_cast<const char *>(context->getString(GL_RENDERER)));
+    hasher.Update(angle::GetANGLEShaderProgramVersion(),
+                  angle::GetANGLEShaderProgramVersionHashSize());
+    angle::UpdateHashWithValue(hasher, angle::GetANGLESHVersion());
+    angle::UpdateHashWithValue(hasher, context->getClientVersion().getMajor());
+    angle::UpdateHashWithValue(hasher, context->getClientVersion().getMinor());
+    const char *rendererString = reinterpret_cast<const char *>(context->getString(GL_RENDERER));
+    ASSERT(rendererString != nullptr);
+    hasher.Update(rendererString, strlen(rendererString));
 
     // Hash pre-link program properties.
-    WriteProgramBindings(&hashStream, program->getAttributeBindings());
-    WriteProgramAliasedBindings(&hashStream, program->getUniformLocationBindings());
-    WriteProgramAliasedBindings(&hashStream, program->getFragmentOutputLocations());
-    WriteProgramAliasedBindings(&hashStream, program->getFragmentOutputIndexes());
+    AppendProgramBindings(hasher, program->getAttributeBindings());
+    AppendProgramAliasedBindings(hasher, program->getUniformLocationBindings());
+    AppendProgramAliasedBindings(hasher, program->getFragmentOutputLocations());
+    AppendProgramAliasedBindings(hasher, program->getFragmentOutputIndexes());
     for (const std::string &transformFeedbackVaryingName :
          program->getState().getTransformFeedbackVaryingNames())
     {
-        hashStream.writeString(transformFeedbackVaryingName);
+        hasher.Update(transformFeedbackVaryingName.data(), transformFeedbackVaryingName.size());
     }
-    hashStream.writeInt(program->getTransformFeedbackBufferMode());
+    angle::UpdateHashWithValue(hasher, program->getTransformFeedbackBufferMode());
 
     // Include the status of FrameCapture, which adds source strings to the binary
-    hashStream.writeBool(context->getShareGroup()->getFrameCaptureShared()->enabled());
+    angle::UpdateHashWithValue(hasher,
+                               context->getShareGroup()->getFrameCaptureShared()->enabled());
 
-    // Call the secure SHA hashing function.
-    std::vector<uint8_t> programKey = hashStream.takeData();
-    angle::base::SHA1HashBytes(programKey.data(), programKey.size(), hashOut->data());
+    // Get the hash
+    ASSERT(hashOut);
+    hasher.Final();
+    memcpy(hashOut->data(), hasher.Digest(), angle::kBlobCacheKeyLength);
 }
 
 angle::Result MemoryProgramCache::getProgram(const Context *context,
@@ -215,7 +223,9 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
         // tracked by http://anglebug.com/42261225. This issue has since been closed, but removing
         // this still causes a test failure.
         auto *platform = ANGLEPlatformCurrent();
-        platform->cacheProgram(platform, programHash, compressedData.size(), compressedData.data());
+        angle::ProgramKeyType key = {};
+        memcpy(key.data(), programHash.data(), angle::kBlobCacheKeyLength);
+        platform->cacheProgram(platform, key, compressedData.size(), compressedData.data());
     }
 
     mBlobCache.put(context, programHash, std::move(compressedData));

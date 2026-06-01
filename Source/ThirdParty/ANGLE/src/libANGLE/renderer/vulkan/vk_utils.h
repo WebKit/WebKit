@@ -1712,6 +1712,7 @@ enum class RenderPassClosureReason
 enum class QueueSubmitReason
 {
     // Flush/Finish/Wait
+    EGLBindTexImage,
     EGLSwapBuffers,
     EGLWaitClient,
     GLFinish,

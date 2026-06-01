@@ -41,8 +41,6 @@ enum class CacheGetResult
 class BlobCache final : angle::NonCopyable
 {
   public:
-    // 160-bit SHA-1 hash key used for hasing a program.  BlobCache opts in using fixed keys for
-    // simplicity and efficiency.
     static constexpr size_t kKeyLength = angle::kBlobCacheKeyLength;
     using Key                          = angle::BlobCacheKey;
     using Value                        = angle::BlobCacheValue;

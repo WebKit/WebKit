@@ -18,9 +18,6 @@ mod ffi {
     enum OutputLanguage {
         Null,
         Essl,
-        GlslCompatibility,
-        Glsl130,
-        Glsl140,
         Glsl150Core,
         Glsl330Core,
         Glsl400Core,
@@ -99,8 +96,9 @@ mod ffi {
 
     // Limits corresponding to ShBuiltInResources
     struct Limits {
+        max_draw_buffers: u32,
+        max_dual_source_draw_buffers: u32,
         max_combined_draw_buffers_and_pixel_local_storage_planes: u32,
-
         min_point_size: f32,
         max_point_size: f32,
     }
@@ -196,12 +194,16 @@ mod ffi {
         // If the flag is enabled, gl_PointSize is clamped to the maximum point size specified in
         // ShBuiltInResources in vertex shaders.
         clamp_point_size: bool,
+        // Clamp gl_FragDepth to the range [0.0, 1.0].
+        clamp_frag_depth: bool,
 
         // Whether the ANGLE_pixel_local_storage extension has been used and there are PLS uniforms
         // to rewrite.
         rewrite_pixel_local_storage: bool,
         pls_options: PixelLocalStorageOptions,
-        // TODO(http://anglebug.com/349994211): equivalent to ShCompileOptions flags
+
+        // MSL: Ensure all loops execute side-effects or terminate.
+        ensure_loop_forward_progress: bool,
     }
 
     // TODO(http://anglebug.com/349994211): Equivalent to sh::ShaderVariable, to be done after
@@ -275,12 +277,67 @@ unsafe fn generate_ast(
     // these two transforms.
     common_post_variable_collection_transforms(&mut ir, options);
 
+    // Generator-specific transformations and codegen.  Note that currently no codegen is actually
+    // implemented from IR, so these would only do transformations and the common IR->AST generator
+    // is used for all.
+    match options.output {
+        OutputLanguage::Null => output::null::generate(&mut ir, options),
+        OutputLanguage::Essl => {
+            #[cfg(angle_enable_essl)]
+            output::essl::generate(&mut ir, options);
+            #[cfg(not(angle_enable_essl))]
+            panic!("Internal error: ESSL generator is not built");
+        }
+        OutputLanguage::Glsl150Core
+        | OutputLanguage::Glsl330Core
+        | OutputLanguage::Glsl400Core
+        | OutputLanguage::Glsl410Core
+        | OutputLanguage::Glsl420Core
+        | OutputLanguage::Glsl430Core
+        | OutputLanguage::Glsl440Core
+        | OutputLanguage::Glsl450Core => {
+            #[cfg(angle_enable_glsl)]
+            output::glsl::generate(&mut ir, options);
+            #[cfg(not(angle_enable_glsl))]
+            panic!("Internal error: GLSL generator is not built");
+        }
+        OutputLanguage::Hlsl3 | OutputLanguage::Hlsl41 => {
+            #[cfg(angle_enable_hlsl)]
+            output::hlsl::generate(&mut ir, options);
+            #[cfg(not(angle_enable_hlsl))]
+            panic!("Internal error: HLSL generator is not built");
+        }
+        OutputLanguage::Spirv => {
+            #[cfg(angle_enable_spirv)]
+            output::spirv::generate(&mut ir, options);
+            #[cfg(not(angle_enable_spirv))]
+            panic!("Internal error: SPIR-V generator is not built");
+        }
+        OutputLanguage::Msl => {
+            #[cfg(angle_enable_msl)]
+            output::msl::generate(&mut ir, options);
+            #[cfg(not(angle_enable_msl))]
+            panic!("Internal error: MSL generator is not built");
+        }
+        OutputLanguage::Wgsl => {
+            #[cfg(angle_enable_wgsl)]
+            output::wgsl::generate(&mut ir, options);
+            #[cfg(not(angle_enable_wgsl))]
+            panic!("Internal error: WGSL generator is not built");
+        }
+        _ => panic!("Internal error: Invalid generator"),
+    };
+
+    // Run dead-code elimination again before generating output, so that any stray instructions the
+    // transformations might have left around are removed.
+    transform::run!(dead_code_eliminate, &mut ir);
+
     // Passes required before AST can be generated:
-    transform::dealias::run(&mut ir);
-    transform::astify::run(&mut ir);
+    transform::run!(dealias, &mut ir);
+    let uncached_registers_with_side_effect = transform::run!(astify, &mut ir);
 
     let mut ast_gen = output::legacy::Generator::new(compiler, options);
-    let mut generator = ast::Generator::new(*ir);
+    let mut generator = ast::Generator::new(*ir, uncached_registers_with_side_effect);
     let ast = generator.generate(&mut ast_gen);
 
     ffi::Output { ast, variables: vec![] }
@@ -294,7 +351,7 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
         && (options.extensions.EXT_shader_framebuffer_fetch
             || options.extensions.EXT_shader_framebuffer_fetch_non_coherent)
     {
-        transform::remove_unused_framebuffer_fetch::run(ir);
+        transform::run!(remove_unused_framebuffer_fetch, ir);
     }
 
     // For now, rewrite pixel local storage before collecting variables or any operations on images.
@@ -313,7 +370,7 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
             array_of_array_of_sampler_or_image: false,
             pixel_local_storage: true,
         };
-        transform::monomorphize_unsupported_functions::run(ir, &transform_options);
+        transform::run!(monomorphize_unsupported_functions, ir, &transform_options);
 
         let transform_options = transform::rewrite_pixel_local_storage::Options {
             pls: options.pls_options,
@@ -325,7 +382,7 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
             pass_highp_to_pack_unorm_snorm_built_ins: options
                 .pass_highp_to_pack_unorm_snorm_built_ins,
         };
-        transform::rewrite_pixel_local_storage::run(ir, &transform_options);
+        transform::run!(rewrite_pixel_local_storage, ir, &transform_options);
     }
 
     if options.emulate_instanced_multiview
@@ -335,7 +392,7 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
             shader_type: ir.meta.get_shader_type(),
             select_viewport_layer: options.select_viewport_layer_in_emulated_multiview,
         };
-        transform::emulate_instanced_multiview::run(ir, &transform_options);
+        transform::run!(emulate_instanced_multiview, ir, &transform_options);
     }
 
     let emulate_draw_id = options.emulate_draw_id && options.extensions.ANGLE_multi_draw;
@@ -347,17 +404,29 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
             emulate_base_vertex_instance,
             add_base_vertex_to_vertex_id: options.add_base_vertex_to_vertex_id,
         };
-        transform::emulate_multi_draw::run(ir, &transform_options);
+        transform::run!(emulate_multi_draw, ir, &transform_options);
+    }
+
+    if ir.meta.get_shader_type() == ShaderType::Fragment
+        && options.shader_version == 100
+        && options.extensions.EXT_draw_buffers
+        && options.limits.max_draw_buffers > 1
+    {
+        let transform_options = transform::broadcast_fragcolor::Options {
+            max_draw_buffers: options.limits.max_draw_buffers,
+            max_dual_source_draw_buffers: options.limits.max_dual_source_draw_buffers,
+        };
+        transform::run!(broadcast_fragcolor, ir, &transform_options);
     }
 
     // Sort uniforms based on their precisions and data types for better packing.
-    transform::sort_uniforms::run(ir);
+    transform::run!(sort_uniforms, ir);
 }
 
 fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
     // Basic dead-code-elimination to avoid outputting variables, constants and types that are not
     // used by the shader.
-    transform::prune_unused_variables::run(ir);
+    transform::run!(dead_code_eliminate, ir);
 
     // Run after unused variables are removed, initialize local and output variables if necessary.
     if options.initialize_uninitialized_variables {
@@ -367,40 +436,20 @@ fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
             initializer_allowed_on_non_constant_global_variables: options
                 .initializer_allowed_on_non_constant_global_variables,
         };
-        transform::initialize_uninitialized_variables::run(ir, &transform_options);
+        transform::run!(initialize_uninitialized_variables, ir, &transform_options);
     }
 
     if options.clamp_point_size {
-        transform::clamp_point_size::run(
+        transform::run!(
+            clamp_point_size,
             ir,
             options.limits.min_point_size,
             options.limits.max_point_size,
         );
     }
 
-    // Note: this is a per-generator transformation, not really "common", so it should be moved to
-    // the right section when the IR part of the compilation actually starts to deviate per
-    // generator.  For now, this is run here to test the transformation.
-    {
-        let transform_options = transform::monomorphize_unsupported_functions::Options {
-            // Samplers in structs are unsupported by most generators.
-            // TODO(http://anglebug.com/349994211): The HLSL generator should also take advantage
-            // of this transformation, instead of dealing with samplers-in-structs independently.
-            struct_containing_samplers: matches!(
-                options.output,
-                OutputLanguage::Spirv | OutputLanguage::Msl | OutputLanguage::Wgsl
-            ),
-            // http://anglebug.com/42265954: The ESSL spec has a bug with images as function
-            // arguments. The recommended workaround is to inline functions that accept image
-            // arguments.
-            image: options.shader_version >= 310,
-            atomic_counter: options.shader_version >= 310
-                && matches!(options.output, OutputLanguage::Spirv),
-            array_of_array_of_sampler_or_image: options.shader_version >= 310
-                && matches!(options.output, OutputLanguage::Spirv),
-            pixel_local_storage: false,
-        };
-        transform::monomorphize_unsupported_functions::run(ir, &transform_options);
+    if options.clamp_frag_depth {
+        transform::run!(clamp_frag_depth, ir);
     }
 }
 

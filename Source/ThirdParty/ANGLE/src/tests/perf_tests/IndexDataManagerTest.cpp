@@ -66,7 +66,7 @@ class MockBufferFactoryD3D : public rx::BufferFactoryD3D
                                      const gl::VertexBinding &,
                                      size_t,
                                      GLsizei,
-                                     GLuint,
+                                     uint64_t,
                                      unsigned int *));
 
     // Dependency injection

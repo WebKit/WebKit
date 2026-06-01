@@ -14,6 +14,8 @@
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/renderer/CLContextImpl.h"
 
+#include <stack>
+
 namespace cl
 {
 
@@ -28,6 +30,8 @@ class Context final : public _cl_context, public Object
                           size_t valueSize,
                           void *value,
                           size_t *valueSizeRet) const;
+
+    angle::Result setDestructorCallback(ContextCB pfnNotify, void *userData);
 
     cl_command_queue createCommandQueueWithProperties(cl_device_id device,
                                                       const cl_queue_properties *properties);
@@ -65,7 +69,7 @@ class Context final : public _cl_context, public Object
                                            MemObjectType imageType,
                                            cl_uint numEntries,
                                            cl_image_format *imageFormats,
-                                           cl_uint *numImageFormats);
+                                           cl_uint *numImageFormats) const;
 
     cl_sampler createSamplerWithProperties(const cl_sampler_properties *properties);
 
@@ -125,6 +129,8 @@ class Context final : public _cl_context, public Object
                                                         const void *handle);
 
   private:
+    using CallbackData = std::pair<ContextCB, void *>;
+
     Context(Platform &platform,
             PropArray &&properties,
             DevicePtrs &&devices,
@@ -145,6 +151,8 @@ class Context final : public _cl_context, public Object
     void *const mUserData;
     rx::CLContextImpl::Ptr mImpl;
     DevicePtrs mDevices;
+
+    angle::SynchronizedValue<std::stack<CallbackData>> mDestructorCallbacks;
 
     friend class Object;
 };

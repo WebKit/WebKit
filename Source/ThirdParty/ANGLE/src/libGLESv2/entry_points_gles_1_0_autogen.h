@@ -45,7 +45,7 @@ ANGLE_EXPORT void GL_APIENTRY
 GL_Frustumx(GLfixed l, GLfixed r, GLfixed b, GLfixed t, GLfixed n, GLfixed f);
 ANGLE_EXPORT void GL_APIENTRY GL_GetClipPlanef(GLenum plane, GLfloat *equation);
 ANGLE_EXPORT void GL_APIENTRY GL_GetClipPlanex(GLenum plane, GLfixed *equation);
-ANGLE_EXPORT void GL_APIENTRY GL_GetFixedv(GLenum pname, GLfixed *params);
+ANGLE_EXPORT void GL_APIENTRY GL_GetFixedv(GLenum pname, GLfixed *data);
 ANGLE_EXPORT void GL_APIENTRY GL_GetLightfv(GLenum light, GLenum pname, GLfloat *params);
 ANGLE_EXPORT void GL_APIENTRY GL_GetLightxv(GLenum light, GLenum pname, GLfixed *params);
 ANGLE_EXPORT void GL_APIENTRY GL_GetMaterialfv(GLenum face, GLenum pname, GLfloat *params);

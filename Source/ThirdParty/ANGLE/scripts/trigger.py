@@ -15,10 +15,11 @@
 #
 # Steps:
 #   1. Visit https://ci.chromium.org/p/angle/g/ci/console and find a builder with a similar OS and configuration.
-#      Replicating GN args exactly is not necessary. For example, linux-test:
-#         https://ci.chromium.org/p/angle/builders/ci/linux-test
+#      Replicating GN args exactly is not necessary. For example,
+#      angle-linux-x64-intel-uhd630-rel:
+#         https://ci.chromium.org/ui/p/angle/builders/ci/angle-linux-x64-intel-uhd630-rel
 #   2. Find a recent green build from the builder, for example:
-#         https://ci.chromium.org/ui/p/angle/builders/ci/linux-test/2443/overview
+#         https://ci.chromium.org/ui/p/angle/builders/ci/angle-linux-x64-intel-uhd630-rel/15/overview
 #   3. Find a test step shard that matches your test and intended target. For example, angle_unittests on Intel:
 #         https://chromium-swarm.appspot.com/task?id=5d6eecdda8e82210
 #   4. Now run this script without arguments to print the help message. For example:

@@ -190,7 +190,8 @@ class ImageHelper : public angle::Subject
     angle::Result createTextureViewSingleLevel(gl::LevelIndex targetLevel,
                                                uint32_t layerIndex,
                                                TextureViewHandle &textureViewOut,
-                                               WGPUTextureAspect aspect = WGPUTextureAspect_All);
+                                               WGPUTextureAspect aspect,
+                                               WGPUTextureFormat format);
     angle::Result createFullTextureView(TextureViewHandle &textureViewOut,
                                         WGPUTextureViewDimension desiredViewDimension);
     angle::Result createTextureView(gl::LevelIndex targetLevel,
@@ -199,7 +200,8 @@ class ImageHelper : public angle::Subject
                                     uint32_t arrayLayerCount,
                                     TextureViewHandle &textureViewOut,
                                     Optional<WGPUTextureViewDimension> desiredViewDimension,
-                                    WGPUTextureAspect aspect = WGPUTextureAspect_All);
+                                    WGPUTextureAspect aspect,
+                                    WGPUTextureFormat format);
     LevelIndex toWgpuLevel(gl::LevelIndex levelIndexGl) const;
     gl::LevelIndex toGlLevel(LevelIndex levelIndexWgpu) const;
     bool isTextureLevelInAllocatedImage(gl::LevelIndex textureLevel) const;

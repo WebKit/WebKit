@@ -3815,6 +3815,21 @@ void WriteEndInvocationInterlockEXT(Blob *blob)
 
     (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpEndInvocationInterlockEXT);
 }
+void WriteDemoteToHelperInvocation(Blob *blob)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpDemoteToHelperInvocation);
+}
+void WriteIsHelperInvocationEXT(Blob *blob, IdResultType idResultType1, IdResult idResult2)
+{
+    const size_t startSize = blob->size();
+    blob->push_back(0);
+    blob->push_back(idResultType1);
+    blob->push_back(idResult2);
+    (*blob)[startSize] = MakeLengthOp(blob->size() - startSize, spv::OpIsHelperInvocationEXT);
+}
 
 }  // namespace spirv
 }  // namespace angle

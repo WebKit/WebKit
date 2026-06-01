@@ -37,17 +37,19 @@ void TOutputGLSL::visitSymbol(TIntermSymbol *node)
         return;
     }
 
+    ASSERT(sh::IsGLSL150OrNewer(getShaderOutput()));
+
     // Some built-ins get a special translation.
     const ImmutableString &name = node->getName();
     if (name == "gl_FragDepthEXT")
     {
         out << "gl_FragDepth";
     }
-    else if (name == "gl_FragColor" && sh::IsGLSL130OrNewer(getShaderOutput()))
+    else if (name == "gl_FragColor")
     {
         out << "webgl_FragColor";
     }
-    else if (name == "gl_FragData" && sh::IsGLSL130OrNewer(getShaderOutput()))
+    else if (name == "gl_FragData")
     {
         out << "webgl_FragData";
     }
@@ -79,27 +81,14 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
         }
         else
         {
-            // For GLSL 130+, use "texture" instead of "texture2D" to match the translation
+            // Use "texture" instead of "texture2D" to match the translation
             // of samplerVideoWEBGL to sampler2D and the GLSL version's texture function naming.
-            return sh::IsGLSL130OrNewer(getShaderOutput()) ? ImmutableString("texture")
-                                                           : ImmutableString("texture2D");
+            ASSERT(sh::IsGLSL150OrNewer(getShaderOutput()));
+            return ImmutableString("texture");
         }
     }
 
-    static const char *simpleRename[]       = {"texture2DLodEXT",
-                                               "texture2DLod",
-                                               "texture2DProjLodEXT",
-                                               "texture2DProjLod",
-                                               "textureCubeLodEXT",
-                                               "textureCubeLod",
-                                               "texture2DGradEXT",
-                                               "texture2DGradARB",
-                                               "texture2DProjGradEXT",
-                                               "texture2DProjGradARB",
-                                               "textureCubeGradEXT",
-                                               "textureCubeGradARB",
-                                               nullptr,
-                                               nullptr};
+    ASSERT(sh::IsGLSL150OrNewer(getShaderOutput()));
     static const char *legacyToCoreRename[] = {
         "texture2D", "texture", "texture2DProj", "textureProj", "texture2DLod", "textureLod",
         "texture2DProjLod", "textureProjLod", "texture2DRect", "texture", "texture2DRectProj",
@@ -111,14 +100,12 @@ ImmutableString TOutputGLSL::translateTextureFunction(const ImmutableString &nam
         "texture", "texture3DProj", "textureProj", "texture3DLod", "textureLod", "texture3DProjLod",
         "textureProjLod", "shadow2DEXT", "texture", "shadow2DProjEXT", "textureProj", nullptr,
         nullptr};
-    const char **mapping =
-        (sh::IsGLSL130OrNewer(getShaderOutput())) ? legacyToCoreRename : simpleRename;
 
-    for (int i = 0; mapping[i] != nullptr; i += 2)
+    for (int i = 0; legacyToCoreRename[i] != nullptr; i += 2)
     {
-        if (name == mapping[i])
+        if (name == legacyToCoreRename[i])
         {
-            return ImmutableString(mapping[i + 1]);
+            return ImmutableString(legacyToCoreRename[i + 1]);
         }
     }
 

@@ -18,10 +18,9 @@
 #include "compiler/translator/hlsl/ASTMetadataHLSL.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
-class BuiltInFunctionEmulator;
-
 namespace sh
 {
+class BuiltInFunctionEmulator;
 class ImageFunctionHLSL;
 class ResourcesHLSL;
 class StructureHLSL;

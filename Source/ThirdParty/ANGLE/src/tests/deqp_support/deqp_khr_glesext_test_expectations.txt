@@ -6,3 +6,6 @@
 
 42264522 PIXEL4ORXL VULKAN : KHR-GLESEXT.draw_elements_base_vertex_tests.valid_active_tf = SKIP
 
+// Pixel 10
+486844704 PIXEL10 VULKAN : KHR-GLESEXT.fragment_shading_rate.complex.primitive_replace_keep_msaa_256x256 = FAIL
+

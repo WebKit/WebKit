@@ -44,10 +44,10 @@
     void getProgramResourceiv(ShaderProgramID programPacked, GLenum programInterface,              \
                               GLuint index, GLsizei propCount, const GLenum *props, GLsizei count, \
                               GLsizei *length, GLint *params);                                     \
-    void getTexLevelParameterfv(TextureTarget targetPacked, GLint level, GLenum pname,             \
-                                GLfloat *params);                                                  \
-    void getTexLevelParameteriv(TextureTarget targetPacked, GLint level, GLenum pname,             \
-                                GLint *params);                                                    \
+    void getTexLevelParameterfv(TextureTarget targetPacked, GLint level,                           \
+                                TextureImageParameter pnamePacked, GLfloat *params);               \
+    void getTexLevelParameteriv(TextureTarget targetPacked, GLint level,                           \
+                                TextureImageParameter pnamePacked, GLint *params);                 \
     GLboolean isProgramPipeline(ProgramPipelineID pipelinePacked) const;                           \
     void memoryBarrier(GLbitfield barriers);                                                       \
     void memoryBarrierByRegion(GLbitfield barriers);                                               \

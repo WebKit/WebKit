@@ -22,12 +22,6 @@ using namespace angle;
 
 namespace gl
 {
-
-// ES2 requires that format is equal to internal format at all glTex*Image2D entry points and the
-// implementation can decide the true, sized, internal format. The ES2FormatMap determines the
-// internal format for all valid format and type combinations.
-GLenum GetSizedFormatInternal(GLenum format, GLenum type);
-
 namespace
 {
 bool CheckedMathResult(const CheckedNumeric<GLuint> &value, GLuint *resultOut)

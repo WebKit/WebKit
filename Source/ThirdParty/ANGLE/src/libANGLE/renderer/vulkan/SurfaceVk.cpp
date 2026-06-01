@@ -800,11 +800,13 @@ egl::Error OffscreenSurfaceVk::querySurfacePointerANGLE(EGLint /*attribute*/, vo
     return egl::Error(EGL_BAD_CURRENT_SURFACE);
 }
 
-egl::Error OffscreenSurfaceVk::bindTexImage(const gl::Context * /*context*/,
+egl::Error OffscreenSurfaceVk::bindTexImage(const gl::Context *context,
                                             gl::Texture * /*texture*/,
                                             EGLint /*buffer*/)
 {
-    return egl::NoError();
+    ContextVk *contextVk = vk::GetImpl(context);
+    ASSERT(contextVk);
+    return angle::ResultToEGL(contextVk->onBindTexImage());
 }
 
 egl::Error OffscreenSurfaceVk::releaseTexImage(const gl::Context * /*context*/, EGLint /*buffer*/)
@@ -848,14 +850,15 @@ angle::Result OffscreenSurfaceVk::initializeContents(const gl::Context *context,
     {
         case GL_BACK:
             ASSERT(mColorAttachment.image.valid());
-            mColorAttachment.image.stageRobustResourceClear(imageIndex);
+            mColorAttachment.image.stageRobustResourceClear(imageIndex, VK_IMAGE_ASPECT_COLOR_BIT);
             ANGLE_TRY(mColorAttachment.image.flushAllStagedUpdates(contextVk));
             break;
 
         case GL_DEPTH:
         case GL_STENCIL:
             ASSERT(mDepthStencilAttachment.image.valid());
-            mDepthStencilAttachment.image.stageRobustResourceClear(imageIndex);
+            mDepthStencilAttachment.image.stageRobustResourceClear(
+                imageIndex, mDepthStencilAttachment.image.getAspectFlags());
             ANGLE_TRY(mDepthStencilAttachment.image.flushAllStagedUpdates(contextVk));
             break;
 
@@ -3306,7 +3309,14 @@ egl::Error WindowSurfaceVk::bindTexImage(const gl::Context *context,
                                          gl::Texture *texture,
                                          EGLint buffer)
 {
-    return egl::NoError();
+    // EGL 1.5 spec, 3.6.1: Binding a Surface to a OpenGL ES Texture
+    //     ...
+    //     The texture target, the texture format and the size of the texture components are
+    //     derived from attributes of the specified surface, which must be a pbuffer ...
+    //
+    // It is invalid to call "eglBindTexImage" on a window surface
+    UNREACHABLE();
+    return egl::Error(EGL_BAD_SURFACE);
 }
 
 egl::Error WindowSurfaceVk::releaseTexImage(const gl::Context *context, EGLint buffer)
@@ -3597,14 +3607,15 @@ angle::Result WindowSurfaceVk::initializeContents(const gl::Context *context,
             vk::ImageHelper *image =
                 hasAncillaryColor() ? &mAncillaryColorImage
                                     : mSwapchainImages[mCurrentSwapchainImageIndex].image.get();
-            image->stageRobustResourceClear(imageIndex);
+            image->stageRobustResourceClear(imageIndex, VK_IMAGE_ASPECT_COLOR_BIT);
             ANGLE_TRY(image->flushAllStagedUpdates(contextVk));
             break;
         }
         case GL_DEPTH:
         case GL_STENCIL:
             ASSERT(mDepthStencilImage.valid());
-            mDepthStencilImage.stageRobustResourceClear(gl::ImageIndex::Make2D(0));
+            mDepthStencilImage.stageRobustResourceClear(gl::ImageIndex::Make2D(0),
+                                                        mDepthStencilImage.getAspectFlags());
             ANGLE_TRY(mDepthStencilImage.flushAllStagedUpdates(contextVk));
             break;
         default:

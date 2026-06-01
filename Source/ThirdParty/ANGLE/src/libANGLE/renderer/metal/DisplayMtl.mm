@@ -1209,11 +1209,6 @@ void DisplayMtl::initializeTextureCaps() const
     mNativeExtensions.depthBufferFloat2NV = false;
 }
 
-void DisplayMtl::initializeLimitations()
-{
-    mNativeLimitations.noVertexAttributeAliasing = true;
-}
-
 void DisplayMtl::initializeFeatures()
 {
     bool isOSX       = TARGET_OS_OSX;

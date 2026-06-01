@@ -105,8 +105,16 @@ class GraphicsDriverUniforms
         {
             mAllDirtyBits.set(DIRTY_BIT_EMULATED_TRANSFORM_FEEDBACK);
         }
+        mMaxUniformDataSize = kPushConstantOffsets[mAllDirtyBits.last() + 1];
 
         mDirtyBits = mAllDirtyBits;
+    }
+
+    void copyGraphicsDriverUniformsData(const GraphicsDriverUniforms &other)
+    {
+        memcpy(&mUniformData, &other.mUniformData, mMaxUniformDataSize);
+        // By default we should not need to call pushConstants
+        mDirtyBits.reset();
     }
 
     void updateDepthRange(float nearPlane, float farPlane)
@@ -115,25 +123,35 @@ class GraphicsDriverUniforms
         mDirtyBits.set(DIRTY_BIT_DEPTH_RANGE);
     }
 
-    void updateRenderArea(int width, int height)
+    bool updateRenderArea(int width, int height)
     {
         static_assert(gl::IMPLEMENTATION_MAX_FRAMEBUFFER_SIZE <= 0xFFFF,
                       "Not enough bits for render area");
         static_assert(gl::IMPLEMENTATION_MAX_RENDERBUFFER_SIZE <= 0xFFFF,
                       "Not enough bits for render area");
 
+        uint32_t prevRenderArea = mUniformData.renderArea;
         uint16_t renderAreaWidth, renderAreaHeight;
         SetBitField(renderAreaWidth, width);
         SetBitField(renderAreaHeight, height);
         mUniformData.renderArea = renderAreaHeight << 16 | renderAreaWidth;
+
+        if (prevRenderArea == mUniformData.renderArea)
+        {
+            // No change.
+            return false;
+        }
+
         mDirtyBits.set(DIRTY_BIT_RENDER_AREA);
+        return true;
     }
 
-    void updateflipXY(SurfaceRotation rotation,
+    bool updateflipXY(SurfaceRotation rotation,
                       bool viewportFlipped,
                       uint32_t numSamples,
                       uint32_t layeredFramebuffer)
     {
+        bool dirty = false;
         bool flipX = false;
         bool flipY = false;
         // Y-axis flipping only comes into play with the default framebuffer (i.e. a swapchain
@@ -164,14 +182,27 @@ class GraphicsDriverUniforms
                 break;
         }
 
-        mUniformData.flipXY = MakeFlipUniform(flipX, flipY, viewportFlipped);
-        mDirtyBits.set(DIRTY_BIT_FLIP_XY);
+        uint32_t flipXY = MakeFlipUniform(flipX, flipY, viewportFlipped);
+        if (flipXY != mUniformData.flipXY)
+        {
+            mUniformData.flipXY = flipXY;
+            mDirtyBits.set(DIRTY_BIT_FLIP_XY);
+            dirty = true;
+        }
 
+        const uint32_t prevUint32Misc = mUniformData.uint32Misc;
         const uint32_t swapXY = IsRotatedAspectRatio(rotation);
         SetBitField(mUniformData.misc.swapXY, swapXY);
         SetBitField(mUniformData.misc.numSamples, numSamples);
         SetBitField(mUniformData.misc.layeredFramebuffer, layeredFramebuffer);
-        mDirtyBits.set(DIRTY_BIT_MISC);
+
+        if (prevUint32Misc != mUniformData.uint32Misc)
+        {
+            mDirtyBits.set(DIRTY_BIT_MISC);
+            dirty = true;
+        }
+
+        return dirty;
     }
 
     void updateAtomicCounterBufferOffset(vk::Renderer *renderer,
@@ -216,26 +247,18 @@ class GraphicsDriverUniforms
     }
 
     void setAllDirtyBits() { mDirtyBits = mAllDirtyBits; }
+    bool isAllDataDirty() { return mDirtyBits == mAllDirtyBits; }
 
     // Update push constant driver uniforms.
+    template <typename CommandBufferT>
     void pushConstants(vk::Renderer *renderer,
                        const vk::PipelineLayout &pipelineLayout,
-                       vk::RenderPassCommandBuffer *commandBuffer)
+                       CommandBufferT *commandBuffer)
     {
         if (mDirtyBits.none())
         {
             return;
         }
-
-        static constexpr std::array<uint32_t, DirtyBitType::EnumCount + 1> kPushConstantOffsets = {
-            offsetof(struct UniformData, depthRange),
-            offsetof(struct UniformData, renderArea),
-            offsetof(struct UniformData, flipXY),
-            offsetof(struct UniformData, misc),
-            offsetof(struct UniformData, dither),
-            offsetof(struct UniformData, acbBufferOffsets),
-            offsetof(struct UniformData, xfbBufferOffsets),
-            sizeof(struct UniformData)};
 
         // Push constant data from first dirty bit to the last dirty bit
         DirtyBitType firstDirtyBit = mDirtyBits.first();
@@ -358,6 +381,16 @@ class GraphicsDriverUniforms
     // GraphicsDriverUniforms plus extended size are within that limit.
     static_assert(sizeof(UniformData) <= 128, "Only 128 bytes are guaranteed for push constants");
 
+    static constexpr std::array<uint32_t, DirtyBitType::EnumCount + 1> kPushConstantOffsets = {
+        offsetof(struct UniformData, depthRange),
+        offsetof(struct UniformData, renderArea),
+        offsetof(struct UniformData, flipXY),
+        offsetof(struct UniformData, misc),
+        offsetof(struct UniformData, dither),
+        offsetof(struct UniformData, acbBufferOffsets),
+        offsetof(struct UniformData, xfbBufferOffsets),
+        sizeof(struct UniformData)};
+
     struct UniformData mUniformData;
 
     // Track which constant is dirty
@@ -365,6 +398,8 @@ class GraphicsDriverUniforms
     // All possible dirty bits. Note that depends on feature bit, it may not be all bits in the
     // DirtyBits.
     DirtyBits mAllDirtyBits;
+
+    uint32_t mMaxUniformDataSize;
 };
 
 struct ComputeDriverUniforms

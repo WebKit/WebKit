@@ -64,8 +64,8 @@
                                    UniformBlockIndex uniformBlockIndexPacked, GLsizei bufSize,     \
                                    GLsizei *length, GLchar *uniformBlockName);                     \
     void getActiveUniformBlockiv(ShaderProgramID programPacked,                                    \
-                                 UniformBlockIndex uniformBlockIndexPacked, GLenum pname,          \
-                                 GLint *params);                                                   \
+                                 UniformBlockIndex uniformBlockIndexPacked,                        \
+                                 UniformBlockParameter pnamePacked, GLint *params);                \
     void getActiveUniformsiv(ShaderProgramID programPacked, GLsizei uniformCount,                  \
                              const GLuint *uniformIndices, GLenum pname, GLint *params);           \
     void getBufferParameteri64v(BufferBinding targetPacked, BufferParam pnamePacked,               \
@@ -79,10 +79,12 @@
                              GLint *params);                                                       \
     void getProgramBinary(ShaderProgramID programPacked, GLsizei bufSize, GLsizei *length,         \
                           GLenum *binaryFormat, void *binary);                                     \
-    void getQueryObjectuiv(QueryID idPacked, GLenum pname, GLuint *params);                        \
-    void getQueryiv(QueryType targetPacked, GLenum pname, GLint *params);                          \
-    void getSamplerParameterfv(SamplerID samplerPacked, GLenum pname, GLfloat *params);            \
-    void getSamplerParameteriv(SamplerID samplerPacked, GLenum pname, GLint *params);              \
+    void getQueryObjectuiv(QueryID idPacked, QueryObjectParameter pnamePacked, GLuint *params);    \
+    void getQueryiv(QueryType targetPacked, QueryParameter pnamePacked, GLint *params);            \
+    void getSamplerParameterfv(SamplerID samplerPacked, SamplerParameter pnamePacked,              \
+                               GLfloat *params);                                                   \
+    void getSamplerParameteriv(SamplerID samplerPacked, SamplerParameter pnamePacked,              \
+                               GLint *params);                                                     \
     const GLubyte *getStringi(GLenum name, GLuint index);                                          \
     void getSynciv(SyncID syncPacked, GLenum pname, GLsizei count, GLsizei *length,                \
                    GLint *values);                                                                 \
@@ -113,10 +115,12 @@
     void renderbufferStorageMultisample(GLenum target, GLsizei samples, GLenum internalformat,     \
                                         GLsizei width, GLsizei height);                            \
     void resumeTransformFeedback();                                                                \
-    void samplerParameterf(SamplerID samplerPacked, GLenum pname, GLfloat param);                  \
-    void samplerParameterfv(SamplerID samplerPacked, GLenum pname, const GLfloat *param);          \
-    void samplerParameteri(SamplerID samplerPacked, GLenum pname, GLint param);                    \
-    void samplerParameteriv(SamplerID samplerPacked, GLenum pname, const GLint *param);            \
+    void samplerParameterf(SamplerID samplerPacked, SamplerParameter pnamePacked, GLfloat param);  \
+    void samplerParameterfv(SamplerID samplerPacked, SamplerParameter pnamePacked,                 \
+                            const GLfloat *param);                                                 \
+    void samplerParameteri(SamplerID samplerPacked, SamplerParameter pnamePacked, GLint param);    \
+    void samplerParameteriv(SamplerID samplerPacked, SamplerParameter pnamePacked,                 \
+                            const GLint *param);                                                   \
     void texImage3D(TextureTarget targetPacked, GLint level, GLint internalformat, GLsizei width,  \
                     GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type,       \
                     const void *pixels);                                                           \

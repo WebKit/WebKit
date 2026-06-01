@@ -1179,6 +1179,137 @@ TEST_P(WebGLCompatibilityTest, EnableRGB8RGBA8Extension)
     }
 }
 
+// Test for GL_ANGLE_rgbx_internal_format extension.
+TEST_P(WebGLCompatibilityTest, ANGLE_rgbx_internal_format)
+{
+    if (IsGLExtensionRequestable("GL_ANGLE_rgbx_internal_format"))
+    {
+        glRequestExtensionANGLE("GL_ANGLE_rgbx_internal_format");
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Skip test if extension not available
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_rgbx_internal_format"));
+
+    // Create a texture with GL_RGBX8_ANGLE using glTexStorage2D
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    GLubyte pixelData[4] = {255, 0, 0, 255};
+
+    // This should succeed as per the extension spec.
+    if (getClientMajorVersion() >= 3)
+    {
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBX8_ANGLE, 1, 1);
+    }
+    else
+    {
+        if (IsGLExtensionRequestable("GL_EXT_texture_storage"))
+        {
+            glRequestExtensionANGLE("GL_EXT_texture_storage");
+        }
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
+        glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBX8_ANGLE, 1, 1);
+    }
+    EXPECT_GL_NO_ERROR();
+
+    // Test allowed glTexSubImage2D combinations
+    // 1. format = GL_RGB, type = GL_UNSIGNED_BYTE
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+    EXPECT_GL_NO_ERROR();
+
+    // 2. format = GL_RGBA, type = GL_UNSIGNED_BYTE
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+    EXPECT_GL_NO_ERROR();
+
+    // Test disallowed glTexSubImage2D combination (e.g., GL_ALPHA, GL_UNSIGNED_BYTE)
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_ALPHA, GL_UNSIGNED_BYTE, pixelData);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that glTexSubImage2D works with GL_BGRA_EXT on a texture created with GL_BGRA8_EXT,
+// and that sampling from it works correctly with non-opaque alpha and larger size.
+TEST_P(WebGLCompatibilityTest, TexSubImage2DBGRASampledStorage)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888") &&
+                       !IsGLExtensionEnabled("GL_APPLE_texture_format_BGRA8888"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_texture_storage"));
+
+    // Create a 2x2 texture with GL_BGRA8_EXT using glTexStorage2DEXT
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    if (getClientMajorVersion() >= 3)
+    {
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_BGRA8_EXT, 2, 2);
+    }
+    else
+    {
+        glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_BGRA8_EXT, 2, 2);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    // Red pixels with alpha = 123. BGRA: B=0, G=0, R=255, A=123
+    GLubyte pixelData[16] = {0, 0, 255, 123, 0, 0, 255, 123, 0, 0, 255, 123, 0, 0, 255, 123};
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pixelData);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(program);
+    GLint textureLoc = glGetUniformLocation(program, essl1_shaders::Texture2DUniform());
+    glUniform1i(textureLoc, 0);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the color is red with alpha 123.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255, 0, 0, 123));
+}
+
+// Test that glTexSubImage2D works with GL_BGRA_EXT on a texture created with glTexImage2D
+// using GL_BGRA_EXT, which is common in WebGL.
+TEST_P(WebGLCompatibilityTest, TexSubImage2DBGRASampledNonStorage)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888") &&
+                       !IsGLExtensionEnabled("GL_APPLE_texture_format_BGRA8888"));
+
+    // Create a 2x2 texture with GL_BGRA_EXT using glTexImage2D
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, 2, 2, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Red pixels with alpha = 123. BGRA: B=0, G=0, R=255, A=123
+    GLubyte pixelData[16] = {0, 0, 255, 123, 0, 0, 255, 123, 0, 0, 255, 123, 0, 0, 255, 123};
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pixelData);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(program);
+    GLint textureLoc = glGetUniformLocation(program, essl1_shaders::Texture2DUniform());
+    glUniform1i(textureLoc, 0);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the color is red with alpha 123.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255, 0, 0, 123));
+}
+
 // Test enabling the GL_ANGLE_framebuffer_blit extension
 TEST_P(WebGLCompatibilityTest, EnableFramebufferBlitExtension)
 {

@@ -43,11 +43,6 @@ bool TExtensionGLSL::visitAggregate(Visit, TIntermAggregate *node)
 
 void TExtensionGLSL::checkOperator(TIntermOperator *node)
 {
-    if (mTargetVersion < GLSL_VERSION_130)
-    {
-        return;
-    }
-
     switch (node->getOp())
     {
         case EOpAbs:

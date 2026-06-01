@@ -105,6 +105,7 @@ fn is_initializer_allowed(
         && built_in.is_none()
         && decorations.decorations.is_empty()
         && (variable.scope == VariableScope::Local
+            || variable.scope == VariableScope::ForLoopVariable
             || options.initializer_allowed_on_non_constant_global_variables
             || variable.is_const)
 }

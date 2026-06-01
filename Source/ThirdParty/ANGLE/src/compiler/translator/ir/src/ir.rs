@@ -6,6 +6,7 @@
 
 use super::instruction;
 use std::collections::{HashMap, HashSet};
+use std::hash::{Hash, Hasher};
 
 // Strong types for ids that refer to constants, registers, variables, types etc.  They are used to
 // look information up in different tables.  In all cases, 0 means no applicable ID.
@@ -122,11 +123,9 @@ pub const TEMP_VARIABLE_PREFIX: &str = "t";
 pub const TEMP_FUNCTION_PREFIX: &str = "f";
 pub const TEMP_STRUCT_PREFIX: &str = "s";
 pub const TEMP_STRUCT_FIELD_PREFIX: &str = "m";
-// Make sure ANGLE symbols start with this to avoid collision with the user symbol prefixes above.
-pub const ANGLE_SYMBOL_PREFIX: &str = "ANGLE";
 
 // An ID that can be referred to by an operand of an instruction.
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub enum Id {
     Register(RegisterId),
@@ -164,10 +163,19 @@ impl Id {
         }
     }
 
-    pub fn get_constant(&self) -> Option<ConstantId> {
+    pub fn get_if_constant(&self) -> Option<ConstantId> {
         match self {
             &Id::Constant(id) => Some(id),
             _ => None,
+        }
+    }
+
+    pub fn get_constant(&self) -> ConstantId {
+        match self {
+            &Id::Constant(id) => id,
+            _ => {
+                panic!("Internal error: unexpected non-constant id");
+            }
         }
     }
 
@@ -804,6 +812,76 @@ impl OpCode {
             _ => panic!("Internal error: Expected switch"),
         };
     }
+
+    // Whether an instruction is considered to have a side effect.  These instructions must execute
+    // exactly once; i.e. cannot be dead-code eliminated even if their result is never used, and
+    // cannot be evaluated twice in the generated output.
+    //
+    // Branch instructions are excluded, as they always have a side effect (flow control).
+    pub fn has_side_effect(&self) -> bool {
+        matches!(
+            self,
+            // TODO(http://anglebug.com/349994211): for now, assume every function call has a side
+            // effect.  This can be optimized with a prepass going over functions and checking if
+            // they have side effect.  AST assumes user functions have side effects, and mostly
+            // uses isKnownNotToHaveSideEffects for built-ins, which are separately
+            // checked here.  Some internal transformations mark a function as no-side
+            // effect, but no real benefit comes from that IMO.  This is probably fine
+            // as-is.
+            OpCode::Call(..)
+            // Instructions that produce a register:
+            | OpCode::Unary(UnaryOpCode::PrefixIncrement, _)
+            | OpCode::Unary(UnaryOpCode::PrefixDecrement, _)
+            | OpCode::Unary(UnaryOpCode::PostfixIncrement, _)
+            | OpCode::Unary(UnaryOpCode::PostfixDecrement, _)
+            | OpCode::Unary(UnaryOpCode::AtomicCounter, _)
+            | OpCode::Unary(UnaryOpCode::AtomicCounterIncrement, _)
+            | OpCode::Unary(UnaryOpCode::AtomicCounterDecrement, _)
+            | OpCode::Unary(UnaryOpCode::PixelLocalLoadANGLE, _)
+            | OpCode::Binary(BinaryOpCode::Modf, _, _)
+            | OpCode::Binary(BinaryOpCode::Frexp, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicAdd, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicMin, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicMax, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicAnd, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicOr, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicXor, _, _)
+            | OpCode::Binary(BinaryOpCode::AtomicExchange, _, _)
+            | OpCode::BuiltIn(BuiltInOpCode::UaddCarry, _)
+            | OpCode::BuiltIn(BuiltInOpCode::UsubBorrow, _)
+            | OpCode::BuiltIn(BuiltInOpCode::UmulExtended, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImulExtended, _)
+            | OpCode::BuiltIn(BuiltInOpCode::AtomicCompSwap, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageLoad, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAdd, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMin, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMax, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAnd, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicOr, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicXor, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicExchange, _)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicCompSwap, _)
+            // Void instructions:
+            | OpCode::Store(..)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageStore, _)
+            | OpCode::BuiltIn(BuiltInOpCode::PixelLocalStoreANGLE, _)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrier, _)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierAtomicCounter, _)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierBuffer, _)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierImage, _)
+            | OpCode::BuiltIn(BuiltInOpCode::Barrier, _)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierShared, _)
+            | OpCode::BuiltIn(BuiltInOpCode::GroupMemoryBarrier, _)
+            | OpCode::BuiltIn(BuiltInOpCode::EmitVertex, _)
+            | OpCode::BuiltIn(BuiltInOpCode::EndPrimitive, _)
+            | OpCode::BuiltIn(BuiltInOpCode::BeginInvocationInterlockNV, _)
+            | OpCode::BuiltIn(BuiltInOpCode::EndInvocationInterlockNV, _)
+            | OpCode::BuiltIn(BuiltInOpCode::BeginFragmentShaderOrderingINTEL, _)
+            | OpCode::BuiltIn(BuiltInOpCode::BeginInvocationInterlockARB, _)
+            | OpCode::BuiltIn(BuiltInOpCode::EndInvocationInterlockARB, _)
+            | OpCode::BuiltIn(BuiltInOpCode::LoopForwardProgress, _)
+        )
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -1013,6 +1091,10 @@ impl Block {
         self.set_sub_block1(block);
     }
 
+    pub fn has_if_true_block(&self) -> bool {
+        self.block1.is_some()
+    }
+
     pub fn set_if_false_block(&mut self, block: Block) {
         self.set_sub_block2(block);
     }
@@ -1021,13 +1103,31 @@ impl Block {
         debug_assert!(self.loop_condition.is_none());
         self.loop_condition = Some(Box::new(block));
     }
+    pub fn get_loop_condition_block(&self) -> &Block {
+        self.loop_condition.as_ref().unwrap()
+    }
 
     pub fn set_loop_body_block(&mut self, block: Block) {
         self.set_sub_block1(block);
     }
+    pub fn get_loop_body_block(&self) -> &Block {
+        self.block1.as_ref().unwrap()
+    }
+    pub fn get_loop_body_block_mut(&mut self) -> &mut Block {
+        self.block1.as_mut().unwrap()
+    }
+    pub fn has_loop_body_block(&self) -> bool {
+        self.block1.is_some()
+    }
 
     pub fn set_loop_continue_block(&mut self, block: Block) {
         self.set_sub_block2(block);
+    }
+    pub fn has_loop_continue_block(&self) -> bool {
+        self.block2.is_some()
+    }
+    pub fn get_loop_continue_block(&self) -> &Block {
+        self.block2.as_ref().unwrap()
     }
 
     pub fn set_switch_case_blocks(&mut self, blocks: Vec<Block>) {
@@ -1367,7 +1467,7 @@ impl Constant {
 }
 
 // Where a name came from.  This affects how it is output.
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub enum NameSource {
     // A name in the shader itself, which corresponds to an interface variable (input, output,
@@ -1384,7 +1484,7 @@ pub enum NameSource {
 }
 
 // A name associated with a variable, struct, struct field etc.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Name {
     // This is a slice into the shader source, a static name, or otherwise an empty string.  Either
@@ -1423,6 +1523,7 @@ impl Name {
 pub enum VariableScope {
     Global,
     Local,
+    ForLoopVariable,
     FunctionParam,
 }
 
@@ -1521,7 +1622,6 @@ pub enum BuiltIn {
     SampleMask,
     NumSamples,
     NumWorkGroups,
-    WorkGroupSize,
     WorkGroupID,
     LocalInvocationID,
     GlobalInvocationID,
@@ -1540,7 +1640,6 @@ pub enum BuiltIn {
     TessLevelInner,
     TessCoord,
     BoundingBoxOES,
-    PixelLocalEXT,
 }
 
 // Whether a function parameter is `in`, `out` or `inout`.
@@ -1703,7 +1802,6 @@ pub enum Decoration {
     // Corresponding to GLSL qualifiers with the same name
     Invariant,
     Precise,
-    Interpolant,
     Smooth,
     Flat,
     NoPerspective,
@@ -1721,8 +1819,6 @@ pub enum Decoration {
     PushConstant,
     NonCoherent,
     Yuv,
-    // TODO(http://anglebug.com/349994211): handle __pixel_localEXT, likely in combination with
-    // Input/Output/InputOutput
     // Indicates that a variable (excluding built-ins) is an input to the shader
     Input,
     // Indicates that a variable (excluding built-ins) is an output of the shader
@@ -1750,6 +1846,8 @@ pub enum Decoration {
     Depth(Depth),
     // Internal format declared on storage images
     ImageInternalFormat(ImageInternalFormat),
+    // Used internally to implement OES_shader_multisample_interpolation for Metal.
+    Interpolant,
     // Used internally to implement ANGLE_pixel_local_storage, indicates a D3D 11.3 Rasterizer
     // Order Views (ROV) and Metal raster_order_groups.
     RasterOrdered,
@@ -1788,6 +1886,44 @@ impl Decorations {
         self.decorations.contains(&query)
     }
 }
+
+// For decorations with data, macros are needed to simplify querying and extracting them.
+//
+// has_decoration: Similar to Decorations::has, but for enums with data.  For example:
+//
+//     has_decoration!(decoration, Decoration::Location) // returns a bool
+//
+// get_decoration: Get a decoration matching a variant.  For example:
+//
+//     get_decoration!(decoration, Decoration::Location) // returns Some(Location(l)) or None
+//
+// get_decoration_value: Get the value inside a decoration matching a variant.  For example:
+//
+//     get_decoration_value!(decoration, Decoration::Location) // returns Some(l) or None
+macro_rules! has_decoration {
+    ($decorations:expr, $variant:path) => {
+        $decorations.decorations.iter().any(|decoration| matches!(decoration, $variant(..)))
+    };
+}
+macro_rules! get_decoration {
+    ($decorations:expr, $variant:path) => {
+        $decorations
+            .decorations
+            .iter()
+            .find(|decoration| matches!(decoration, $variant(..)))
+            .copied()
+    };
+}
+macro_rules! get_decoration_value {
+    ($decorations:expr, $variant:path) => {
+        $decorations.decorations.iter().find_map(|decoration| {
+            if let $variant(value) = decoration { Some(*value) } else { None }
+        })
+    };
+}
+pub(crate) use get_decoration;
+pub(crate) use get_decoration_value;
+pub(crate) use has_decoration;
 
 #[derive(Eq, PartialEq, Hash, Copy, Clone)]
 #[cfg_attr(debug_assertions, derive(Debug))]
@@ -1891,6 +2027,94 @@ pub enum Type {
     DeadCodeEliminated,
 }
 
+impl PartialEq for Type {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Type::Scalar(basic_type_1), Type::Scalar(basic_type_2)) => {
+                basic_type_1 == basic_type_2
+            }
+            (
+                Type::Image(basic_image_type_1, image_type_1),
+                Type::Image(basic_image_type_2, image_type_2),
+            ) => basic_image_type_1 == basic_image_type_2 && image_type_1 == image_type_2,
+            // https://registry.khronos.org/OpenGL/specs/es/3.2/GLSL_ES_Specification_3.20.html#structures
+            // Two structure types are the same if they have the same name
+            // However, the GLSL parser code will assign an empty string for the struct name if it
+            // is declared in the following way: struct
+            // {
+            //     int field;
+            // }s;
+            // This means if the GLSL shader code declares 2 struct types:
+            // struct
+            // {
+            //     int field;
+            // }s1;
+            //
+            // struct
+            // {
+            //     int field;
+            // }s2;
+            // In IR, both will ends up with the same Struct Name.
+            // In this case, we should treat them as different types even if the struct Name are
+            // equal.
+            (Type::Struct(name1, _, _), Type::Struct(name2, _, _)) => name1 == name2,
+            (
+                Type::Vector(scalar_type_id_1, vector_size_1),
+                Type::Vector(scalar_type_id_2, vector_size_2),
+            ) => scalar_type_id_1 == scalar_type_id_2 && vector_size_1 == vector_size_2,
+            (
+                Type::Matrix(vector_type_id_1, matrix_size_1),
+                Type::Matrix(vector_type_id_2, matrix_size_2),
+            ) => vector_type_id_1 == vector_type_id_2 && matrix_size_1 == matrix_size_2,
+            (
+                Type::Array(element_type_id_1, array_size_1),
+                Type::Array(element_type_id_2, array_size_2),
+            ) => element_type_id_1 == element_type_id_2 && array_size_1 == array_size_2,
+            (Type::UnsizedArray(element_type_id_1), Type::UnsizedArray(element_type_id_2)) => {
+                element_type_id_1 == element_type_id_2
+            }
+            (Type::Pointer(pointed_type_id_1), Type::Pointer(pointed_type_id_2)) => {
+                pointed_type_id_1 == pointed_type_id_2
+            }
+            (Type::DeadCodeEliminated, Type::DeadCodeEliminated) => true,
+            _ => false,
+        }
+    }
+}
+
+impl Eq for Type {}
+
+impl Hash for Type {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        core::mem::discriminant(self).hash(state);
+        match self {
+            Type::Scalar(basic_type) => basic_type.hash(state),
+            Type::Image(image_basic_type, image_type) => {
+                image_basic_type.hash(state);
+                image_type.hash(state);
+            }
+            // https://registry.khronos.org/OpenGL/specs/es/3.2/GLSL_ES_Specification_3.20.html#structures
+            // Two structure types are the same if they have the same name
+            Type::Struct(name, _, _) => name.hash(state),
+            Type::Vector(scalar_type_id, vector_size) => {
+                scalar_type_id.hash(state);
+                vector_size.hash(state);
+            }
+            Type::Matrix(vector_type_id, matrix_size) => {
+                vector_type_id.hash(state);
+                matrix_size.hash(state);
+            }
+            Type::Array(element_type_id, array_size) => {
+                element_type_id.hash(state);
+                array_size.hash(state);
+            }
+            Type::UnsizedArray(element_type_id) => element_type_id.hash(state),
+            Type::Pointer(pointed_type_id) => pointed_type_id.hash(state),
+            Type::DeadCodeEliminated => {}
+        }
+    }
+}
+
 impl Type {
     pub fn new_void() -> Type {
         Type::Scalar(BasicType::Void)
@@ -1966,6 +2190,18 @@ impl Type {
     pub fn is_struct(&self) -> bool {
         matches!(self, Type::Struct(..))
     }
+
+    pub fn is_struct_with_empty_name(&self) -> bool {
+        match self {
+            Type::Struct(struct_name, _, _) => struct_name.name.is_empty(),
+            _ => false,
+        }
+    }
+
+    pub fn is_struct_interface_block(&self) -> bool {
+        matches!(self, Type::Struct(_, _, StructSpecialization::InterfaceBlock))
+    }
+
     fn is_struct_containing_samplers_helper(&self, ir_meta: &IRMeta) -> bool {
         // The parser puts samplers at the end of the struct, so check the fields from the back for
         // any sampler or struct that contains samplers.  Samplers in struct are only valid in ESSL
@@ -2912,6 +3148,22 @@ impl IRMeta {
             .find(|&id| matches!(self.get_variable(*id).built_in, Some(value) if value == built_in))
             .copied()
     }
+    pub fn declare_built_in_variable(
+        &mut self,
+        type_id: TypeId,
+        precision: Precision,
+        built_in: BuiltIn,
+    ) -> (VariableId, TypedId) {
+        self.declare_variable(
+            Name::new_exact(""),
+            type_id,
+            precision,
+            Decorations::new_none(),
+            Some(built_in),
+            None,
+            VariableScope::Global,
+        )
+    }
     // If already declared, return a built-in variable, otherwise declare it.  Used by
     // transformations to reference a built-in that the shader might not have originally used.
     //
@@ -2931,15 +3183,7 @@ impl IRMeta {
                 _ => panic!("Internal error: Unexpected built-in declared by transformations"),
             };
 
-            self.declare_variable(
-                Name::new_exact(""),
-                type_id,
-                precision,
-                Decorations::new_none(),
-                Some(built_in),
-                None,
-                VariableScope::Global,
-            )
+            self.declare_built_in_variable(type_id, precision, built_in)
         }
     }
     // Declare a global variable to cache the contents of an interface variable.  The original
@@ -3176,3 +3420,12 @@ impl IR {
         main_entry.append_code(block);
     }
 }
+
+// Helper macro to run validation on the IR
+macro_rules! validate {
+    ($ir:expr) => {
+        #[cfg(debug_assertions)]
+        $crate::validator::validate($ir);
+    };
+}
+pub(crate) use validate;

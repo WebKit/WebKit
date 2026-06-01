@@ -51,9 +51,11 @@ angle_white_box_perf_tests_sources = [
   "perf_tests/AstcDecompressorPerf.cpp",
   "perf_tests/BitSetIteratorPerf.cpp",
   "perf_tests/CompilerPerf.cpp",
+  "perf_tests/ComputeGenericHashPerf.cpp",
   "perf_tests/EGLInitializePerf.cpp",  # Uses ANGLEGetDisplayPlatform, a
                                        # non-standard EP.
   "perf_tests/ResultPerf.cpp",
+  "perf_tests/StreamingHasherPerf.cpp",
 ]
 
 angle_white_box_perf_tests_vulkan_sources =

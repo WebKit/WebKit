@@ -103,8 +103,10 @@ angle::Result FenceNVSyncGL::finish(const gl::Context *context)
 // static
 bool FenceNVSyncGL::Supported(const FunctionsGL *functions)
 {
-    return functions->isAtLeastGL(gl::Version(3, 2)) ||
-           functions->isAtLeastGLES(gl::Version(3, 0)) || functions->hasGLExtension("GL_ARB_sync");
+    // GL 3.2 is required for desktop GL
+    ASSERT(functions->standard != STANDARD_GL_DESKTOP || functions->isAtLeastGL(gl::Version(3, 2)));
+    return functions->standard == STANDARD_GL_DESKTOP ||
+           functions->isAtLeastGLES(gl::Version(3, 0));
 }
 
 }  // namespace rx

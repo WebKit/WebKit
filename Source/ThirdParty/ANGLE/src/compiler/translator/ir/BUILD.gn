@@ -16,25 +16,52 @@ angle_translator_ir_sources = [
   "src/ir.rs",
   "src/lib.rs",
   "src/output.rs",
-  "src/output/glsl.rs",
   "src/output/legacy.rs",
+  "src/output/null.rs",
   "src/transform.rs",
   "src/transform/astify.rs",
+  "src/transform/broadcast_fragcolor.rs",
+  "src/transform/clamp_frag_depth.rs",
   "src/transform/clamp_point_size.rs",
+  "src/transform/dead_code_eliminate.rs",
   "src/transform/dealias.rs",
   "src/transform/emulate_instanced_multiview.rs",
   "src/transform/emulate_multi_draw.rs",
   "src/transform/initialize_uninitialized_variables.rs",
   "src/transform/monomorphize_unsupported_functions.rs",
   "src/transform/propagate_precision.rs",
-  "src/transform/prune_unused_variables.rs",
   "src/transform/remove_unused_framebuffer_fetch.rs",
   "src/transform/rewrite_pixel_local_storage.rs",
   "src/transform/sort_uniforms.rs",
   "src/traverser.rs",
   "src/util.rs",
-  "src/validator.rs",
 ]
+
+if (angle_debug_layers_enabled) {
+  angle_translator_ir_sources += [ "src/validator.rs" ]
+}
+
+if (angle_enable_essl) {
+  angle_translator_ir_sources += [ "src/output/essl.rs" ]
+}
+if (angle_enable_glsl) {
+  angle_translator_ir_sources += [ "src/output/glsl.rs" ]
+}
+if (angle_enable_hlsl) {
+  angle_translator_ir_sources += [ "src/output/hlsl.rs" ]
+}
+if (angle_enable_msl) {
+  angle_translator_ir_sources += [
+    "src/output/msl.rs",
+    "src/transform/msl/ensure_loop_forward_progress.rs",
+  ]
+}
+if (angle_enable_vulkan) {
+  angle_translator_ir_sources += [ "src/output/spirv.rs" ]
+}
+if (angle_enable_wgpu) {
+  angle_translator_ir_sources += [ "src/output/wgsl.rs" ]
+}
 
 if (angle_ir) {
   config("gen_src_include") {
@@ -49,11 +76,60 @@ if (angle_ir) {
     allow_unsafe = true
 
     sources = angle_translator_ir_sources
+
+    # Set flags based on which of the outputs in `ShShaderOutput` is supported.
+    # If any generator is not built, transformations specific to it and its
+    # code generator are excluded from build.
+    rustflags = []
+    if (angle_enable_essl) {
+      rustflags += [
+        "--cfg",
+        "angle_enable_essl",
+      ]
+    }
+    if (angle_enable_glsl) {
+      rustflags += [
+        "--cfg",
+        "angle_enable_glsl",
+      ]
+    }
+    if (angle_enable_hlsl) {
+      rustflags += [
+        "--cfg",
+        "angle_enable_hlsl",
+      ]
+    }
+    if (angle_enable_msl) {
+      rustflags += [
+        "--cfg",
+        "angle_enable_msl",
+      ]
+    }
+    if (angle_enable_vulkan) {
+      rustflags += [
+        "--cfg",
+        "angle_enable_spirv",
+      ]
+    }
+    if (angle_enable_wgpu) {
+      rustflags += [
+        "--cfg",
+        "angle_enable_wgsl",
+      ]
+    }
+
     cxx_bindings = [
       "src/builder.rs",
       "src/compile.rs",
       "src/output/legacy.rs",
     ]
+
+    # dcheck_always_on automatically sets -Cdebug-assertions, but ANGLE builds
+    # could technically set that to false but enable asserts via
+    # angle_assert_always_on.
+    if (angle_assert_always_on) {
+      rustflags += [ "-Cdebug-assertions" ]
+    }
 
     configs += [
       "$angle_root:internal_config",

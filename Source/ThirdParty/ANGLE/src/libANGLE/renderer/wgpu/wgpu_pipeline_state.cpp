@@ -187,10 +187,17 @@ void RenderPipelineDesc::setCullMode(gl::CullFaceMode cullMode, bool cullFaceEna
     SetBitField(mPrimitiveState.cullMode, gl_wgpu::GetCullMode(cullMode, cullFaceEnabled));
 }
 
-void RenderPipelineDesc::setColorWriteMask(size_t colorIndex, bool r, bool g, bool b, bool a)
+bool RenderPipelineDesc::setColorWriteMask(size_t colorIndex, bool r, bool g, bool b, bool a)
 {
     PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
-    SetBitField(colorTarget.writeMask, gl_wgpu::GetColorWriteMask(r, g, b, a));
+    uint32_t newWriteMask = static_cast<uint32_t>(gl_wgpu::GetColorWriteMask(r, g, b, a));
+    if (colorTarget.writeMask == newWriteMask)
+    {
+        return false;
+    }
+
+    SetBitField(colorTarget.writeMask, newWriteMask);
+    return true;
 }
 
 bool RenderPipelineDesc::setVertexAttribute(size_t attribIndex, PackedVertexAttribute &newAttrib)

@@ -51,19 +51,19 @@ class PixelLocalStoragePlane : angle::NonCopyable, public angle::ObserverInterfa
     // texture that was attached to it.
     bool isDeinitialized() const;
 
+    // Getters for external queries
     GLenum getInternalformat() const { return mInternalformat; }
+    GLuint getTextureName() const { return mMemoryless ? 0 : mTextureID.value; }
+    GLuint getTextureLevel() const { return mMemoryless ? 0 : mTextureImageIndex.getLevelIndex(); }
+    GLint getTextureLayer() const { return mMemoryless ? 0 : mTextureImageIndex.getLayerIndex(); }
+    GLbitfield getUsage() const { return mUsage; }
+
     bool isMemoryless() const { return mMemoryless; }
     TextureID getTextureID() const { return mTextureID; }
-    GLbitfield getUsage() const { return mUsage; }
     bool isAlwaysNoncoherent() const
     {
         return mUsage & GL_PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_ANGLE;
     }
-
-    // Implements glGetIntegeri_v() for GL_PIXEL_LOCAL_FORMAT_ANGLE,
-    // GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE,
-    // GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, GL_PIXEL_LOCAL_USAGE_ANGLE
-    GLint getIntegeri(GLenum target) const;
 
     // If this plane is texture backed, stores the bound texture image's {width, height, 0} to
     // Extents and returns true. Otherwise returns false, meaning the plane is either deinitialized

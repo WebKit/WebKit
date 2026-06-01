@@ -416,8 +416,6 @@ void OutputHLSL::output(TIntermNode *treeRoot, TInfoSinkBase &objSink)
     objSink << mHeader.c_str();
     objSink << mBody.c_str();
     objSink << mFooter.c_str();
-
-    builtInFunctionEmulator.cleanup();
 }
 
 const std::map<std::string, unsigned int> &OutputHLSL::getUniformBlockRegisterMap() const

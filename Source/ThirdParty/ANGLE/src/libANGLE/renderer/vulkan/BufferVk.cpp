@@ -989,10 +989,15 @@ angle::Result BufferVk::updateBuffer(ContextVk *contextVk,
 {
     // To copy on the CPU, destination must be host-visible.  The source should also be either a CPU
     // pointer or other a host-visible buffer that is not being written to by the GPU.
+    // 1. For glBufferData and glBufferSubData, the source is a CPU pointer.
+    // 2. For glCopyBufferSubData, the source is not a CPU pointer. shouldCopyOnCPU depends on
+    //    whether the source buffer is host-visible and not being written by the GPU, together with
+    //    the value of preferGPUForCopyBufferSubData.
     const bool shouldCopyOnCPU =
         mBuffer.isHostVisible() &&
         (dataSource.data != nullptr ||
-         ShouldUseCPUToCopyData(contextVk, *dataSource.buffer, updateSize, bufferSize));
+         (ShouldUseCPUToCopyData(contextVk, *dataSource.buffer, updateSize, bufferSize) &&
+          !contextVk->getRenderer()->getFeatures().preferGPUForCopyBufferSubData.enabled));
 
     if (shouldCopyOnCPU)
     {

@@ -13,6 +13,7 @@
 #include "common/log_utils.h"
 
 #include <cstddef>
+#include <cstdint>
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/vk_cl_utils.h"
@@ -38,56 +39,6 @@ namespace rx
 {
 namespace
 {
-cl_int NormalizeFloatValue(float value, float maximum)
-{
-    if (value < 0)
-    {
-        return 0;
-    }
-    if (value > 1.f)
-    {
-        return static_cast<cl_int>(maximum);
-    }
-    float valueToRound = (value * maximum);
-
-    if (fabsf(valueToRound) < 0x1.0p23f)
-    {
-        constexpr float magic[2] = {0x1.0p23f, -0x1.0p23f};
-        float magicVal           = magic[valueToRound < 0.0f];
-        valueToRound += magicVal;
-        valueToRound -= magicVal;
-    }
-
-    return static_cast<cl_int>(valueToRound);
-}
-
-angle::FormatID CLImageFormatToAngleFormat(cl_image_format format)
-{
-    switch (format.image_channel_order)
-    {
-        case CL_R:
-        case CL_LUMINANCE:
-        case CL_INTENSITY:
-            return angle::Format::CLRFormatToID(format.image_channel_data_type);
-        case CL_RG:
-            return angle::Format::CLRGFormatToID(format.image_channel_data_type);
-        case CL_RGB:
-            return angle::Format::CLRGBFormatToID(format.image_channel_data_type);
-        case CL_RGBA:
-            return angle::Format::CLRGBAFormatToID(format.image_channel_data_type);
-        case CL_BGRA:
-            return angle::Format::CLBGRAFormatToID(format.image_channel_data_type);
-        case CL_sRGBA:
-            return angle::Format::CLsRGBAFormatToID(format.image_channel_data_type);
-        case CL_DEPTH:
-            return angle::Format::CLDEPTHFormatToID(format.image_channel_data_type);
-        case CL_DEPTH_STENCIL:
-            return angle::Format::CLDEPTHSTENCILFormatToID(format.image_channel_data_type);
-        default:
-            return angle::FormatID::NONE;
-    }
-}
-
 bool GetExternalMemoryHandleInfo(const cl_mem_properties *properties,
                                  VkExternalMemoryHandleTypeFlagBits *vkExtMemoryHandleType,
                                  int32_t *fd)
@@ -708,13 +659,16 @@ angle::Result CLImageVk::copyStagingToFromWithPitch(void *hostPtr,
 CLImageVk::CLImageVk(const cl::Image &image)
     : CLMemoryVk(image),
       mExtent(cl::GetExtentFromDescriptor(image.getDescriptor())),
-      mAngleFormat(CLImageFormatToAngleFormat(image.getFormat())),
+      mAngleFormat(cl::GetImageAngleFormat(image.getFormat())),
       mStagingBuffer(nullptr),
-      mImageViewType(cl_vk::GetImageViewType(image.getDescriptor().type))
+      mImageViewType(cl_vk::GetImageViewType(image.getDescriptor().type)),
+      mIsImage2DFromBuffer(false)
 {
     if (image.getParent())
     {
         mParent = &image.getParent()->getImpl<CLMemoryVk>();
+        mIsImage2DFromBuffer =
+            cl::Is2DImage(image.getType()) && cl::IsBufferType(mParent->getType());
     }
 }
 
@@ -751,14 +705,25 @@ angle::Result CLImageVk::createFromBuffer()
 
 angle::Result CLImageVk::create(void *hostPtr)
 {
+    // There will be a parent memory object in the following cases
+    // - image1d_buffer
+    // - image2d_from_buffer
+    // - image2d from image2d
     if (mParent)
     {
         if (getType() == cl::MemObjectType::Image1D_Buffer)
         {
             return createFromBuffer();
         }
+        else if (mIsImage2DFromBuffer)
+        {
+            // Request for image2d_from_buffer - nothing to do for now
+            // We would liked to create this as a buffer view as well, clspv for now cannot mark
+            // this usage with texel buffer descriptor type usage.
+        }
         else
         {
+            // image2d from image2d is unimplemented at the moment
             UNIMPLEMENTED();
             ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
         }
@@ -770,37 +735,41 @@ angle::Result CLImageVk::create(void *hostPtr)
                                                getVkImageUsageFlags(), 1, (uint32_t)getArraySize()),
                             CL_OUT_OF_RESOURCES);
 
-    if (mMemory.getFlags().intersects(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
+    if (getFlags().intersects(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {
-        ASSERT(hostPtr);
-
-        if (getDescriptor().rowPitch == 0 && getDescriptor().slicePitch == 0)
+        // in case of image2d from buffer, hostptr flag could be inherited from parent flags
+        if (!mIsImage2DFromBuffer)
         {
-            ANGLE_CL_IMPL_TRY_ERROR(copyStagingFrom(hostPtr, 0, getSize()), CL_OUT_OF_RESOURCES);
-        }
-        else
-        {
-            ANGLE_TRY(copyStagingToFromWithPitch(
-                hostPtr, {mExtent.width, mExtent.height, mExtent.depth}, getDescriptor().rowPitch,
-                getDescriptor().slicePitch, StagingBufferCopyDirection::ToStagingBuffer));
-        }
-        VkBufferImageCopy copyRegion{};
-        copyRegion.bufferOffset      = 0;
-        copyRegion.bufferRowLength   = 0;
-        copyRegion.bufferImageHeight = 0;
-        copyRegion.imageExtent =
-            cl_vk::GetExtent(getExtentForCopy({mExtent.width, mExtent.height, mExtent.depth}));
-        copyRegion.imageOffset      = cl_vk::GetOffset(cl::kOffsetZero);
-        copyRegion.imageSubresource = getSubresourceLayersForCopy(
-            cl::kOffsetZero, {mExtent.width, mExtent.height, mExtent.depth}, getType(),
-            ImageCopyWith::Buffer);
+            ASSERT(hostPtr);
 
-        // copy over the hostptr bits here to image in a one-off copy cmd
+            if (getDescriptor().rowPitch == 0 && getDescriptor().slicePitch == 0)
+            {
+                ANGLE_CL_IMPL_TRY_ERROR(copyStagingFrom(hostPtr, 0, getSize()),
+                                        CL_OUT_OF_RESOURCES);
+            }
+            else
+            {
+                ANGLE_TRY(copyStagingToFromWithPitch(
+                    hostPtr, {mExtent.width, mExtent.height, mExtent.depth},
+                    getDescriptor().rowPitch, getDescriptor().slicePitch,
+                    StagingBufferCopyDirection::ToStagingBuffer));
+            }
+        }
+
+        // copy over the hostptr bits/parent buffer here to image in a one-off copy cmd
         CLBufferVk *stagingBuffer = nullptr;
         ANGLE_TRY(getOrCreateStagingBuffer(&stagingBuffer));
         ASSERT(stagingBuffer);
+        VkBufferImageCopy copyRegion = cl_vk::CalculateBufferImageCopyRegion(
+            mIsImage2DFromBuffer ? getParent<CLBufferVk>()->getOffset() : 0,
+            mIsImage2DFromBuffer ? static_cast<uint32_t>(getRowPitch()) : 0, 0, cl::kOffsetZero,
+            getImageExtent(), this);
         ANGLE_CL_IMPL_TRY_ERROR(
-            mImage.copyToBufferOneOff(mContext, &stagingBuffer->getBuffer(), copyRegion),
+            mImage.copyToBufferOneOff(mContext,
+                                      mIsImage2DFromBuffer
+                                          ? &static_cast<CLBufferVk *>(mParent)->getBuffer()
+                                          : &stagingBuffer->getBuffer(),
+                                      copyRegion),
             CL_OUT_OF_RESOURCES);
     }
 
@@ -825,11 +794,8 @@ angle::Result CLImageVk::initImageViewImpl()
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount     = static_cast<uint32_t>(getArraySize());
 
-    // no swizzle support for now
-    viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-    viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-    viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-    viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    // apply CL order swizzle here OR We can do swizzle in shaders for read/write
+    viewInfo.components = cl_vk::GetChannelComponentMapping(getFormat().image_channel_order);
 
     VkImageViewUsageCreateInfo imageViewUsageCreateInfo = {};
     imageViewUsageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
@@ -853,131 +819,9 @@ bool CLImageVk::containsHostMemExtension()
                      "VK_EXT_external_memory_host") != enabledDeviceExtensions.end();
 }
 
-void CLImageVk::packPixels(const void *fillColor, PixelColor *packedColor)
-{
-    size_t channelCount = cl::GetChannelCount(getFormat().image_channel_order);
-
-    switch (getFormat().image_channel_data_type)
-    {
-        case CL_UNORM_INT8:
-        {
-            float *srcVector = static_cast<float *>(const_cast<void *>(fillColor));
-            if (getFormat().image_channel_order == CL_BGRA)
-            {
-                packedColor->u8[0] =
-                    static_cast<unsigned char>(NormalizeFloatValue(srcVector[2], 255.f));
-                packedColor->u8[1] =
-                    static_cast<unsigned char>(NormalizeFloatValue(srcVector[1], 255.f));
-                packedColor->u8[2] =
-                    static_cast<unsigned char>(NormalizeFloatValue(srcVector[0], 255.f));
-                packedColor->u8[3] =
-                    static_cast<unsigned char>(NormalizeFloatValue(srcVector[3], 255.f));
-            }
-            else
-            {
-                for (unsigned int i = 0; i < channelCount; i++)
-                {
-                    packedColor->u8[i] =
-                        static_cast<unsigned char>(NormalizeFloatValue(srcVector[i], 255.f));
-                }
-            }
-            break;
-        }
-        case CL_SIGNED_INT8:
-        {
-            int *srcVector = static_cast<int *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->s8[i] = static_cast<char>(std::clamp(srcVector[i], -128, 127));
-            }
-            break;
-        }
-        case CL_UNSIGNED_INT8:
-        {
-            unsigned int *srcVector = static_cast<unsigned int *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->u8[i] = static_cast<unsigned char>(
-                    std::clamp(static_cast<unsigned int>(srcVector[i]),
-                               static_cast<unsigned int>(0), static_cast<unsigned int>(255)));
-            }
-            break;
-        }
-        case CL_UNORM_INT16:
-        {
-            float *srcVector = static_cast<float *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->u16[i] =
-                    static_cast<unsigned short>(NormalizeFloatValue(srcVector[i], 65535.f));
-            }
-            break;
-        }
-        case CL_SIGNED_INT16:
-        {
-            int *srcVector = static_cast<int *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->s16[i] = static_cast<short>(std::clamp(srcVector[i], -32768, 32767));
-            }
-            break;
-        }
-        case CL_UNSIGNED_INT16:
-        {
-            unsigned int *srcVector = static_cast<unsigned int *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->u16[i] = static_cast<unsigned short>(
-                    std::clamp(static_cast<unsigned int>(srcVector[i]),
-                               static_cast<unsigned int>(0), static_cast<unsigned int>(65535)));
-            }
-            break;
-        }
-        case CL_HALF_FLOAT:
-        {
-            float *srcVector = static_cast<float *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->fp16[i] = cl_half_from_float(srcVector[i], CL_HALF_RTE);
-            }
-            break;
-        }
-        case CL_SIGNED_INT32:
-        {
-            int *srcVector = static_cast<int *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->s32[i] = static_cast<int>(srcVector[i]);
-            }
-            break;
-        }
-        case CL_UNSIGNED_INT32:
-        {
-            unsigned int *srcVector = static_cast<unsigned int *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->u32[i] = static_cast<unsigned int>(srcVector[i]);
-            }
-            break;
-        }
-        case CL_FLOAT:
-        {
-            float *srcVector = static_cast<float *>(const_cast<void *>(fillColor));
-            for (unsigned int i = 0; i < channelCount; i++)
-            {
-                packedColor->fp32[i] = srcVector[i];
-            }
-            break;
-        }
-        default:
-            UNIMPLEMENTED();
-            break;
-    }
-}
-
 angle::Result CLImageVk::fillImageWithColor(const cl::Offset &origin,
                                             const cl::Extents &region,
-                                            PixelColor *packedColor)
+                                            cl::PixelColor packedColor)
 {
     size_t elementSize = getElementSize();
     cl::BufferRect stagingBufferRect{
@@ -998,7 +842,7 @@ angle::Result CLImageVk::fillImageWithColor(const cl::Offset &origin,
             uint8_t *pixelPtr          = ptrBase + stagingBufferOffset;
             for (size_t x = 0; x < region.width; x++)
             {
-                memcpy(pixelPtr, packedColor, elementSize);
+                memcpy(pixelPtr, &packedColor, elementSize);
                 pixelPtr += elementSize;
             }
         }
@@ -1176,8 +1020,7 @@ angle::Result CLImageVk::getBufferView(const vk::BufferView **viewOut)
 
     return mBufferViews.getView(
         mContext, parent->getBuffer(), parent->getOffset(),
-        mContext->getRenderer()->getFormat(CLImageFormatToAngleFormat(getFormat())), viewOut,
-        nullptr);
+        mContext->getRenderer()->getFormat(cl::GetImageAngleFormat(getFormat())), viewOut, nullptr);
 }
 
 }  // namespace rx

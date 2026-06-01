@@ -37,6 +37,18 @@
 // ES 3.2 tests are skipped on SwS.
 376899587 VULKAN SWIFTSHADER : */ES3_2* = SKIP
 
+// sRGB vs SKIP_DECODE vs texelFetch bugs
+493505759 VULKAN : SRGBTextureTestES3.SRGBDecodeTexelFetchArrayInconsistent/* = SKIP
+493505759 VULKAN : SRGBTextureTestES3.SRGBDecodeTexelFetchInHelper/* = SKIP
+493505759 VULKAN : SRGBTextureTestES3.SRGBDecodeTexelFetchWithSamplerInStruct/* = SKIP
+493505759 LINUX INTEL OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetchArrayInconsistent/* = SKIP
+493505759 LINUX AMD OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetchArrayInconsistent/* = SKIP
+493505759 WIN INTEL OPENGL : SRGBTextureTestES31.SRGBDecodeTexelFetchArrayDynamicIndex/* = SKIP
+493505759 PIXEL4ORXL GLES : SRGBTextureTestES3.SRGBDecodeTexelFetchArrayInconsistent/* = SKIP
+493505759 PIXEL10 GLES : SRGBTextureTestES3.SRGBDecodeTexelFetchArrayInconsistent/* = SKIP
+493505759 PIXEL10 GLES : SRGBTextureTestES3.SRGBDecodeTexelFetchInHelper/* = SKIP
+493505759 PIXEL10 GLES : SRGBTextureTestES3.SRGBDecodeTexelFetchWithSamplerInStruct/* = SKIP
+
 // Advanced blend ops currently fail on Windows/Intel.
 376899587 WIN INTEL VULKAN : AdvancedBlendTest.*/* = SKIP
 
@@ -158,6 +170,7 @@
 42266866 WIN INTEL OPENGL : GLSLTest_ES3.LargeInterfaceBlockArray/* = SKIP
 42266866 WIN INTEL OPENGL : GLSLTest_ES3.LargeInterfaceBlockNestedArray/* = SKIP
 463961767 WIN INTEL OPENGL : EGLSurfacelessContextTest.Switcheroo/* = SKIP
+494350632 WIN INTEL OPENGL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
 
 // Failures on Intel Alder Lake S UHD Graphics 770 (8086:4680-31.0.101.5333)
 352085732 WIN INTEL OPENGL : GeometryShaderTest.LayeredFramebufferClear2DArrayColor/* = SKIP
@@ -208,7 +221,6 @@
 42264596 LINUX INTEL VULKAN : SimpleStateChangeTestES31.DrawThenUpdateUBOThenDrawThenDrawIndexed/* = SKIP
 // Crashes when compiling the shader
 42264699 LINUX INTEL OPENGL : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
-1230024 LINUX AMD GLES : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
 1230024 LINUX AMD OPENGL : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
 42264716 LINUX AMD OPENGL : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
 42264479 LINUX NVIDIA VULKAN : MultithreadingTest.MultiContextClear/* = SKIP
@@ -260,12 +272,14 @@
 448658624 NVIDIA OpenGL : GLSLTest_ES31.ConstantPrecisionPropagation/* = SKIP
 448658624 NVIDIA GLES : GLSLTest_ES31.ConstantPrecisionPropagation/* = SKIP
 42265449 LINUX NVIDIA OpenGL : MipmapTestES31.GenerateLowerMipsWithDraw/* = SKIP
-42265775 LINUX NVIDIA OpenGL : CopyTexImageTest.RGBAToRGB/ES2_OpenGL_EmulateCopyTexImage2DFromRenderbuffers = SKIP
+42265775 LINUX NVIDIA OpenGL : CopyTexImageTest.RGBAToRGB/*_EmulateCopyTexImage2DFromRenderbuffers = SKIP
 42265842 LINUX NVIDIA OpenGL : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
 42266866 NVIDIA OPENGL : GLSLTest_ES3.LargeInterfaceBlockArray/* = SKIP
 42266866 NVIDIA OPENGL : GLSLTest_ES3.LargeInterfaceBlockNestedArray/* = SKIP
 42266866 NVIDIA GLES : GLSLTest_ES3.LargeInterfaceBlockArray/* = SKIP
 42266866 NVIDIA GLES : GLSLTest_ES3.LargeInterfaceBlockNestedArray/* = SKIP
+496616811 NVIDIA OPENGL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
+496616811 NVIDIA GLES : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
 // Nvidia sees same matrix type with different layouts as different types
 42262474 NVIDIA OPENGL : GLSLTest_ES31.TernaryOnStructsInDifferentBlockStorages/* = SKIP
 42262474 NVIDIA OPENGL : GLSLTest_ES31.TernaryOnMatricesInDifferentBlockStorages/* = SKIP
@@ -279,6 +293,8 @@
 435228814 NVIDIA GLES : RobustBufferAccessBehaviorTest.DynamicBufferCrash/* = SKIP
 435228814 NVIDIA OPENGL : RobustBufferAccessBehaviorTest.DynamicBufferCrash/* = SKIP
 464010023 NVIDIA GLES : BlitFramebufferANGLETest.* = SKIP
+// Demote-to-helper for discard incorrect derivatives
+491363839 NVIDIA VULKAN : GLSLTest_ES31.HelperInvocationsAfterDiscard/* = SKIP
 
 // Nvidia Vulkan
 42265709 NVIDIA VULKAN : GLSLTest_ES31.TessellationControlShaderMatrixCopyBug/* = SKIP
@@ -388,11 +404,12 @@
 410601694 MAC NVIDIA OPENGL : Texture2DTestES3.SampleThenAddLevel0ThenSampleAgain/* = SKIP
 410601694 MAC AMD OPENGL : Texture2DTestES3.SampleThenAddLevel0ThenSampleAgain/* = SKIP
 409821658 MAC NVIDIA OPENGL : SRGBTextureTestES3.SRGBSkipEncodeAndDecodeInGenerateMipmap/ES3_OpenGL* = SKIP
-435683799 MAC OPENGL : CopyTexImageTest.MixedCubeMapFormats/ES2_OpenGL* = SKIP
+435683799 MAC OPENGL : CopyTexImageTest.MixedCubeMapFormats/* = SKIP
 448658625 MAC OPENGL : GLSLTest_ES3.SwitchConstantFoldWithVariables/* = SKIP
 448658630 MAC OPENGL : GLSLTestLoops.ForContinueInConstSwitch/* = SKIP
 448658630 MAC OPENGL : GLSLTestLoops.ForContinueInSwitchComplex/* = SKIP
 475587478 MAC OPENGL : VertexAttributeTestES3.MaxAttribsWithBuiltInAttribs/* = SKIP
+494270619 MAC OPENGL : BaseInstanceOverflowTest.BaseInstanceOverflow/* = SKIP
 
 // BlitFramebufferTest.ScissoredMultisampleStencil failures
 42262159 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
@@ -407,6 +424,9 @@
 42266214 MAC APPLE OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetch/* = SKIP
 42266214 MAC APPLE OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetchArray/* = SKIP
 42266214 MAC APPLE OPENGL : SRGBTextureTestES3.SRGBSkipEncodeAndDecodeInGenerateMipmap/* = SKIP
+42266214 MAC APPLE OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetchArrayInconsistent/* = SKIP
+42266214 MAC APPLE OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetchInHelper/* = SKIP
+42266214 MAC APPLE OPENGL : SRGBTextureTestES3.SRGBDecodeTexelFetchWithSamplerInStruct/* = SKIP
 42266214 MAC APPLE OPENGL : Texture2DTestES3.SampleThenAddLevel0ThenSampleAgain/* = SKIP
 42266214 MAC APPLE OPENGL : TextureUploadFormatTest_ES3.AllWithPBO/* = SKIP
 
@@ -455,10 +475,13 @@
 464927523 METAL : GLSLTest_ES3_PackUnpackEmulation.PackSnorm2x16/* = SKIP
 464927523 METAL : GLSLTest_ES3_PackUnpackEmulation.PackUnorm2x16/* = SKIP
 42266214 MAC APPLE METAL : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
+494392011 MAC METAL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
+494341324 MAC OPENGL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
+496604559 MAC METAL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
 
 // The workaround is not intended to be enabled in this configuration so
 // skip it as the failure is likely a driver bug.
-40096747 PIXEL4ORXL GLES : CopyTexImageTestES3.CopyTexSubImageFromTexture3D/ES3_OpenGLES_EmulateCopyTexImage2D = SKIP
+40096747 PIXEL4ORXL GLES : CopyTexImageTest.CopyTexImageFromTexture3D/*_EmulateCopyTexImage2D = SKIP
 
 // Confirmed driver bug
 352496176 PIXEL4ORXL GLES : CopyTexImageTestES3.CopyTexSubImage3DFromTexture3D/* = SKIP
@@ -529,6 +552,11 @@
 448658631 WIN D3D11 : GLSLTestLoops.ForContinueInSwitchComplex/* = SKIP
 448658631 WIN D3D11 : GLSLTest_ES3.SwitchConstantFold/* = SKIP
 448658631 WIN D3D11 : GLSLTest_ES3.SwitchConstantFoldWithVariables/* = SKIP
+494938700 WIN D3D11 : CopyTexImageTest.CopyTexImageFromTexture3D/* = SKIP
+494938700 WIN D3D11 : CopyTexImageTest.CopyTexSubImageFromTexture3D/* = SKIP
+496259841 WIN D3D11 : RobustResourceInitTestES3.InvalidateThenReadBack/* = SKIP
+496259841 WIN D3D11 : RobustResourceInitTestES3.DrawThenInvalidateThenReadBack/* = SKIP
+496259841 WIN D3D11 : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
 
 // Android
 42264624 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
@@ -554,6 +582,19 @@
 // Test is not suitable for GLES.
 444335354 ANDROID GLES : ImageTestES3.RGBXAHBUploadDataRGBA/* = SKIP
 
+// CopyTexImageLumaWorkaroundTestES3 known failures across platforms
+488042710 QUALCOMM VULKAN : CopyTexImageLumaWorkaroundTestES3.SameTextureDifferentLevelLuminanceAlpha/* = SKIP
+488042710 QUALCOMM VULKAN : CopyTexImageLumaWorkaroundTestES3.DifferentCubeFacesLuminanceAlpha/* = SKIP
+488042710 QUALCOMM VULKAN : CopyTexImageLumaWorkaroundTestES3.DifferentTexturesBothLuminanceAlpha/* = SKIP
+492439208 QUALCOMM GLES : CopyTexImageLumaWorkaroundTestES3.DifferentCubeFacesLuminanceAlpha/* = SKIP
+
+// Cubemap incompleteness on Desktop GL per spec
+492439210 OPENGL : CopyTexImageLumaWorkaroundTestES3.DifferentCubeFacesLuminanceAlpha/* = SKIP
+// Windows NVIDIA driver crash and FBO incompleteness
+492439210 WIN NVIDIA GLES : CopyTexImageLumaWorkaroundTestES3.DifferentCubeFacesLuminanceAlpha/* = SKIP
+// Incorrect pixel values on Windows GL for same-texture copies
+492462323 WIN OPENGL : CopyTexImageLumaWorkaroundTestES3.SameTextureDifferentLevelLuminanceAlpha/* = SKIP
+
 // Nexus 5X expectations.
 42264673 NEXUS5X GLES : GLSLTest_ES31.StructAndArrayEqualOperator/* = SKIP
 42264717 NEXUS5X GLES : GLSLTest_ES31.BuiltInsWithOutParameters/* = SKIP
@@ -569,7 +610,7 @@
 42265770 PIXEL4ORXL GLES : BlitFramebufferTest.Blit2DArray/* = SKIP
 42265770 PIXEL4ORXL GLES : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP
 42265770 PIXEL4ORXL GLES : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP
-42264513 PIXEL4ORXL GLES : CopyTexImageTest.CopyTexSubImageFrom3DTexureOES/* = SKIP
+42264513 PIXEL4ORXL GLES : CopyTexImageTest.CopyTexSubImageFromTexture3D/* = SKIP
 42264513 PIXEL4ORXL GLES : CubeMapTextureTest.SampleCoordinateTransform/* = SKIP
 42265301 PIXEL4ORXL GLES : GLSLTest_ES31.StructAndArrayEqualOperator/* = SKIP
 452919815 PIXEL4ORXL GLES : GLSLTest_ES3.VaryingAnonymousStructEquality/* = SKIP
@@ -887,6 +928,404 @@
 
 465140993 PIXEL6 VULKAN : GLSLTest_ES3_PackUnpackEmulation.PackHalf2x16/* = SKIP
 465140993 PIXEL6 VULKAN : GLSLTest_ES3_PackUnpackEmulation.PackSnorm2x16/* = SKIP
+491488984 PIXEL6 VULKAN : GLSLTest_ES31.HelperInvocationsAfterDiscard/* = SKIP
+
+// Pixel 10 expectations.
+480069042 PIXEL10 GLES : AtomicCounterBufferTest31.DependentAtomicCounterBufferChange/* = SKIP
+480069042 PIXEL10 GLES : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
+480069042 PIXEL10 GLES : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = SKIP
+480069042 PIXEL10 GLES : BlitFramebufferTest.BlitStencilToDefault/* = SKIP
+480069042 PIXEL10 GLES : BlitFramebufferTest.FlippedBlits/* = SKIP
+480069042 PIXEL10 GLES : ClearTestES3.DrawAfterClearWithGaps/* = SKIP
+480069042 PIXEL10 GLES : ClearTestES3.MaskedIndexedClearMultipleAttachments/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.Clear2DRGB/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.Clear2DRGBA4/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.Depth24Stencil8Texture/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.Depth32FStencilTexture/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.Depth32FTexture/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.DepthTexture/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.Luma/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTest.LumaAlphaFloat/* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_R11F_G11F_B10F_GL_RGB_GL_FLOAT_GL_TEXTURE_CUBE_MAP = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_R16F_GL_RED_GL_FLOAT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_R16F_GL_RED_GL_HALF_FLOAT_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_R32F_GL_RED_GL_FLOAT_GL_TEXTURE_CUBE_MAP = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_RG16_EXT_GL_RG_GL_UNSIGNED_SHORT_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_RGB10_A2_GL_RGBA_GL_UNSIGNED_INT_2_10_10_10_REV_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_RGB5_A1_GL_RGBA_GL_UNSIGNED_INT_2_10_10_10_REV_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_RGB5_A1_GL_RGBA_GL_UNSIGNED_SHORT_5_5_5_1_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_RGBA16_EXT_GL_RGBA_GL_UNSIGNED_SHORT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.Clear/ES3_1_OpenGLES__GL_RGBA4_GL_RGBA_GL_UNSIGNED_SHORT_4_4_4_4_GL_TEXTURE_2D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__*_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__*_GL_TEXTURE_CUBE_MAP = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__*_GL_TEXTURE_CUBE_MAP_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__GL_R16F_GL_RED_GL_FLOAT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__GL_RGB5_A1_GL_RGBA_GL_UNSIGNED_INT_2_10_10_10_REV_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__GL_RGBA16_EXT_GL_RGBA_GL_UNSIGNED_SHORT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Renderable.ClearMultisample/ES3_1_OpenGLES__GL_RGBA4_GL_RGBA_GL_UNSIGNED_SHORT_4_4_4_4_GL_TEXTURE_2D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_ALPHA_GL_ALPHA_GL_UNSIGNED_BYTE_GL_TEXTURE_2D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_LUMINANCE_ALPHA_GL_LUMINANCE_ALPHA_GL_UNSIGNED_BYTE_GL_TEXTURE_CUBE_MAP = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_LUMINANCE_GL_LUMINANCE_GL_UNSIGNED_BYTE_GL_TEXTURE_CUBE_MAP_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_R8_SNORM_GL_RED_GL_BYTE_GL_TEXTURE_CUBE_MAP_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RG16_SNORM_EXT_GL_RG_GL_SHORT_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RG8_SNORM_GL_RG_GL_BYTE_GL_TEXTURE_2D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGB16F_GL_RGB_GL_FLOAT_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGB16UI_GL_RGB_INTEGER_GL_UNSIGNED_SHORT_GL_TEXTURE_CUBE_MAP_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGB16_EXT_GL_RGB_GL_UNSIGNED_SHORT_GL_TEXTURE_CUBE_MAP_ARRAY = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGB32F_GL_RGB_GL_FLOAT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGB32I_GL_RGB_INTEGER_GL_INT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGB9_E5_* = SKIP
+480069042 PIXEL10 GLES : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_OpenGLES__GL_RGBA16_SNORM_EXT_GL_RGBA_GL_SHORT_GL_TEXTURE_3D = SKIP
+480069042 PIXEL10 GLES : ClipControlTest.OriginPointCoord/*_OpenGLES = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.AtomicFunctionsInNonInitializerSingleAssignment/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.AtomicFunctionsInitializerWithUnsigned/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.AtomicFunctionsReturnWithMultipleTypes/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.AtomicFunctionsReturnWithUnsigned/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTexture/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTexture3D/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithMixTextureTypes/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithNonZeroBaseTexture2D/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithNonZeroBaseTexture2DArray/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithOneLayerTexture2DArray/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithOneLayerTexture3D/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithOneLayerTextureCube/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithTexture2D/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithTexture2DArray/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithTexture3D/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.BindImageTextureWithTextureCube/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.DispatchComputeIndirect/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.GroupMemoryBarrierAndBarrierTest/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.ImageArrayUnusedElement/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.ImageArrayWithoutBindingQualifier/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.ImageLoadMipmapSlice/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.ImageSizeMipmapSlice/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.ImageStoreMipmapSlice/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.LoadImageThenStore/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.NonArraySharedVariable/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.NonStructArrayAsSharedVariable/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.SamplingAndImageReadWrite/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.ShaderStorageBlocksStructLength/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.StoreImageThenLoad/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.StructArrayAsSharedVariable/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.UniformBuffer/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.UniformDirty/* = SKIP
+480069042 PIXEL10 GLES : ComputeShaderTest.UseAsUBOThenUpdateThenDispatchComputeIndirect/* = SKIP
+480069042 PIXEL10 GLES : CopyTextureTest.IncompleteCubeMap/* = SKIP
+480069042 PIXEL10 GLES : CopyTextureVariationsTest.CopySubTexture/ES2_OpenGLES__BGRAToSRGBA* = SKIP
+480069042 PIXEL10 GLES : CopyTextureVariationsTest.CopySubTexture/ES2_OpenGLES__RGBAToSRGBA* = SKIP
+480069042 PIXEL10 GLES : CopyTextureVariationsTest.CopySubTexture/ES2_OpenGLES__RGBToSRGBA* = SKIP
+480069042 PIXEL10 GLES : CopyTextureVariationsTest.CopyTexture/ES2_OpenGLES__BGRAToSRGBA* = SKIP
+480069042 PIXEL10 GLES : CopyTextureVariationsTest.CopyTexture/ES2_OpenGLES__RGBAToSRGBA* = SKIP
+480069042 PIXEL10 GLES : CopyTextureVariationsTest.CopyTexture/ES2_OpenGLES__RGBToSRGBA* = SKIP
+480069042 PIXEL10 GLES : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
+480069042 PIXEL10 GLES : DepthStencilFormatsTestES31.DrawReadDrawDispatch/* = SKIP
+480069042 PIXEL10 GLES : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
+480069042 PIXEL10 GLES : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
+480069042 PIXEL10 GLES : DepthStencilTestES3.StencilTestStateThenFramebufferClearThenStencilAttached/* = SKIP
+480069042 PIXEL10 GLES : EGLContextCompatibilityTest.PbufferDifferentConfig/OpenGLES_R5G5B5A1D24S8_R8G8B8D24 = SKIP
+480069042 PIXEL10 GLES : EGLSurfaceTest.ClearThenPreserve/* = SKIP
+480069042 PIXEL10 GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = SKIP
+480069042 PIXEL10 GLES : EGLSurfaceTest.PreserveThenBlend/* = SKIP
+480069042 PIXEL10 GLES : EGLSurfaceTest.ResizeAfterSwap/* = SKIP
+480069042 PIXEL10 GLES : EGLSurfaceTest.ResizeBeforeDraw/* = SKIP
+480069042 PIXEL10 GLES : FramebufferFetchES31.ProgramPipeline_Coherent/* = SKIP
+480069042 PIXEL10 GLES : FramebufferTest_ES31.ClearTextureEXT2DMSBlocks/* = SKIP
+480069042 PIXEL10 GLES : FramebufferTest_ES31.ClearTextureEXT2DMSDS/* = SKIP
+480069042 PIXEL10 GLES : FramebufferTest_ES31.ClearTextureEXT2DMSDSPartial/* = SKIP
+480069042 PIXEL10 GLES : FramebufferTest_ES31.DepthStencilResolveThenDrawWithoutResolve/* = SKIP
+480069042 PIXEL10 GLES : FramebufferTest_ES31.MixesMultisampleTextureRenderbuffer/* = SKIP
+480069042 PIXEL10 GLES : FramebufferTest_ES31.MultisampleDepthStencilResolveMultipleTimesWithDrawInBetween/* = SKIP
+480069042 PIXEL10 GLES : GLSLConstantFoldingTest_ES31.NamedArrayOfArrayIndex/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest.NestedStructsWithSamplersAsFunctionArg/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest.SwizzledChainedAssign/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES3.CompoundMultiplyMatrixValidNonSquareDimensions/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES3.VaryingAnonymousStructEquality/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition2/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition3/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES3.VaryingStructWithInlineDefinition2/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.BuiltInsWithOutParameters/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.ConsecutiveArraysOfArraysImage/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.ConstantPrecisionPropagation/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.IOBlockArray/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.MixOfAllResources/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.StructAndArrayEqualOperator/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.TernaryOnStructsInDifferentBlockStorages/* = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
+480069042 PIXEL10 GLES : GLSLValidationTest_ES3.FragDepthInvariant/* = SKIP
+480069042 PIXEL10 GLES : GLSLValidationTest_ES3.MissingReturnStructOfArrays/* = SKIP
+480069042 PIXEL10 GLES : GLSLValidationTest_ES31.SeparateDeclaratorsOfNamelessStructType/* = SKIP
+480069042 PIXEL10 GLES : GLSLValidationTest_ES31.StructBothInvariantAndNot/* = SKIP
+480069042 PIXEL10 GLES : GLSLValidationTest_ES31.StructBothInvariantAndNot2/* = SKIP
+480069042 PIXEL10 GLES : GLSLValidationTest_ES31.ValidatePerVertexGeometryShader/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.ImplicitSizedArrayMatchesExplicitSizedArray/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.ImplicitSizedArrayMatchesExplicitSizedArray2/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferClear2DArrayColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferClear3DColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferMidRenderClear2DArrayColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferMidRenderClear3DColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferPreRenderClear2DArrayColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferPreRenderClear3DColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferPreRenderDoubleClear2DArrayColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LayeredFramebufferPreRenderDoubleClear3DColor/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.LinkValidationOnGeometryShaderLayouts/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.RedeclareGlIn/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.RedeclareGlInBeforeInputSize/* = SKIP
+480069042 PIXEL10 GLES : GeometryShaderTest.RedeclareGlInBeforeInputSizeButUnused/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.MipLevels/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.Source3DTargetExternal/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.SourceNativeClientBufferTargetExternal/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.SourceYUVAHBTargetExternalRGBSampleInitData/* = SKIP
+480069042 PIXEL10 GLES : ImageTest.ValidationImageBase/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.ClearYUVAHB/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.ClearYUVAHBWithDepth/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.PartialClearYUVAHB/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RGBAAHBUploadDataColorspace/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RGBXAHBImportOcclusionQueryNotCounted/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RGBXAHBImportPreservesData_Colorspace/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RGBXAHBImportThenClear/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RGBXAHBImportThenClearThenDraw/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RGBXAHBUploadDataColorspace/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RenderToYUVAHB/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.RenderToYUVAHBWithDepth/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.Source3DTargetExternalESSL3/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.SourceAHBTargetTexture2DGenerateMipmap/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.SourceYUVAHBTargetExternalCopySrc/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.SourceYUVAHBTargetExternalYUVFetchSamplerExternalOES/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.SourceYUVAHBTargetExternalYUVFetchVSSamplerExternalOES/* = SKIP
+480069042 PIXEL10 GLES : ImageTestES3.SourceYUVAHBTargetExternalYUVSampleLinearFiltering/* = SKIP
+480069042 PIXEL10 GLES : IncompleteTextureTestES3.IntegerType/* = SKIP
+480069042 PIXEL10 GLES : IncompleteTextureTestES3.UnsignedIntegerType/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES31Test.RenderbufferDrawCopyThenBlendAllAttachmentsMixed/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferClearThenBlitDepthStencil/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferColorAttachment1/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferColorAttachments0And3/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferDepthStencilClearThenDraw/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferDrawCopyDrawAttachDepthStencilClearThenDraw/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferDrawCopyDrawAttachInvalidatedThenDraw/* = SKIP
+480069042 PIXEL10 GLES : MSRTTES3Test.RenderbufferReadPixelsTest/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.DepthReadWriteToggleWithStartedRenderPass/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferClearDrawCopyThenBlendSameProgram/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferClearThenBlend/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferColorAttachmentMultisampleDrawTest/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferCopyTexImageTest/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferCopyTexSubImageTest/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferDrawCopyDrawThenMaskedClear/* = SKIP
+480069042 PIXEL10 GLES : MSRTTTest.RenderbufferDrawCopyThenBlend/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.DefineValidExtraLevelAndUseItLater/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.GenerateMipmapAfterModifyingBaseLevel/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.GenerateMipmapAfterSingleLevelDraw/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.GenerateMipmapFromInitDataThenRender/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.GenerateMipmapFromRenderedImage/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.MipMapGenerationD3D9Bug/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.MipmapsForTexture3DOES/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.RenderOntoLevelZeroAfterGenerateMipmap/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.TextureCubeGeneralLevelZero/* = SKIP
+480069042 PIXEL10 GLES : MipmapTest.TextureCubeRenderToLevelZero/* = SKIP
+480069042 PIXEL10 GLES : MipmapTestES3.GenerateMipmapLargeTexture/* = SKIP
+480069042 PIXEL10 GLES : MipmapTestES3.GenerateMipmapPartialLevels/* = SKIP
+480069042 PIXEL10 GLES : MipmapTestES3.GenerateMipmapPreservesOutOfRangeMips/* = SKIP
+480069042 PIXEL10 GLES : MultisampleTest.ContentPresevedAfterInterruption/* = SKIP
+480069042 PIXEL10 GLES : MultisampledRenderToTextureWithAdvancedBlendTest.RenderbufferClearThenDraw/* = SKIP
+480069042 PIXEL10 GLES : MultisampledRenderToTextureWithAdvancedBlendTest.RenderbufferLoadThenDraw/* = SKIP
+480069042 PIXEL10 GLES : MultithreadingTestES3.SharedSrgbTextureMultipleContexts/* = SKIP
+480069042 PIXEL10 GLES : MultithreadingTestES3.SimultaneousUploadAndDraw/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImage/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageAfterTexImage/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageAlreadyBound/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageAndRedefineTexture/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageOverwrite/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageOverwriteNoCrashOnReleaseTexImage/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageOverwriteReleasesOrphanedPbuffer/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImagePbufferDestroyWhileBound/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImagePbufferReleaseWhileBoundToFBOColorBuffer/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.BindTexImageReleaseViaTextureDestroy/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.ClearAndBindTexImageSrgb/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.ClearAndBindTexImageSrgbSkipDecode/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.TextureSizeReset/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.UseAsFramebufferColorThenDeferredDestroy/* = SKIP
+480069042 PIXEL10 GLES : PbufferTest.UseAsFramebufferColorThenDestroy/* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.BlendColorMaskAndClear/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.Coherency/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.Coherency_noncoherent/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.ColorAttachment0Workaround/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.CopyTexSubImage/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.DrawCommandValidation/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.DrawStateReset/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.FlushFinishSync/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.ForgetBarrier/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.FragmentReject_depth/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.FragmentReject_stencil/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.FragmentReject_viewport/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.FunctionArguments/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.Interrupt/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.LoadAfterStore/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.LoadOnly/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.LoadOps/* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.MaxCombinedDrawBuffersAndPLSPlanes/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.MemorylessStorage/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.MipMapLevels/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.PLSWithSamplers/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.ParallelFramebufferFetch/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.ProgramCache/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.R32/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.R32_noncoherent/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.RGBA8/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.RGBA8_always_noncoherent/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.RGBA8_noncoherent/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.RasterizerDiscard/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.Texture2DArrayMultipleLayers/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.TextureCubeFaces/* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.TextureCubeMultipleFaces/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTest.TextureLevelsAndLayers/ES3_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTestES31.DrawStateReset/ES3_1_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTestES31.EarlyFragmentTests/* = SKIP
+480069042 PIXEL10 GLES : PixelLocalStorageTestES31.TextureCubeArrayFaces/ES3_1_OpenGLES_EmulatePixelLocalStorage_* = SKIP
+480069042 PIXEL10 GLES : ProgramBinaryES31Test.ImageTextureBinding/* = SKIP
+480069042 PIXEL10 GLES : ProgramInterfaceTestES31.GetBufferVariableProperties/* = SKIP
+480069042 PIXEL10 GLES : ReadPixelsPBONVTest.DynamicPBO/* = SKIP
+480069042 PIXEL10 GLES : ReadPixelsPBONVTest.SubDataPreservesContents/* = SKIP
+480069042 PIXEL10 GLES : ReadPixelsPBOTest.SmallRowLength/* = SKIP
+480069042 PIXEL10 GLES : ReadPixelsPBOTest.SubDataOffsetPreservesContents/* = SKIP
+480069042 PIXEL10 GLES : ReadPixelsTextureNorm16PBOTest.R16_RED/* = SKIP
+480069042 PIXEL10 GLES : ReadPixelsTextureNorm16PBOTest.RG16_RG/* = SKIP
+480069042 PIXEL10 GLES : RobustResourceInitTestES3.BindTexImage/* = SKIP
+480069042 PIXEL10 GLES : RobustResourceInitTestES31.ImageTextureInit_R32UI/* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferDefaultLinearTest.BlitFromSrgbFbo/* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferDefaultSrgbTest.BlitFromLinearFbo/* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferDefaultSrgbTest.BlitFromSrgbFbo/* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferTest.MultipleFramebuffers/* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferTest.NegativeLifetimeTracking/* = SKIP
+480069042 PIXEL10 GLES : SRGBTextureTestES3.SRGBFormatCombinationValidation/* = SKIP
+480069042 PIXEL10 GLES : SampleVariablesTest.NumSamples/* = SKIP
+480069042 PIXEL10 GLES : SampleVariablesTest.SampleID/* = SKIP
+480069042 PIXEL10 GLES : SampleVariablesTest.SampleMask/* = SKIP
+480069042 PIXEL10 GLES : SampleVariablesTest.SampleMaskIn/* = SKIP
+480069042 PIXEL10 GLES : SamplerArrayAsFunctionParameterTest.SamplerArrayAsFunctionParameter/* = SKIP
+480069042 PIXEL10 GLES : SamplerInStructArrayAsFunctionParameterTest.SamplerInStructArrayAsFunctionParameter/* = SKIP
+480069042 PIXEL10 GLES : ShaderStorageBufferTest31.LoadAndStoreBooleanVarAndVec2/* = SKIP
+480069042 PIXEL10 GLES : ShaderStorageBufferTest31.LoadAndStoreBooleanVec3/* = SKIP
+480069042 PIXEL10 GLES : ShaderStorageBufferTest31.UnsizedArrayLength/* = SKIP
+480069042 PIXEL10 GLES : ShaderStorageBufferTest31.VectorDataInMatrixInSSBOWithRowMajorQualifier/* = SKIP
+480069042 PIXEL10 GLES : ShaderStorageBufferTest31.VectorSwizzleInRowMajorMatrixTest/* = SKIP
+480069042 PIXEL10 GLES : ShadowSamplerFunctionTextureCubeArrayTest.Test/ES3_1_OpenGLES__TextureBias_Mipmapped = SKIP
+480069042 PIXEL10 GLES : SimpleStateChangeTestES31.DrawWithImageTextureThenDrawAgain/* = SKIP
+480069042 PIXEL10 GLES : SimpleUniformTestES3.TernarySelectAnArrayThenIndex/* = SKIP
+480069042 PIXEL10 GLES : SimpleUniformTestES3.UseUniformStructOutsideOfUniformAddressSpace/* = SKIP
+480069042 PIXEL10 GLES : StateChangeRenderTest.DepthRangeUpdates/* = SKIP
+480069042 PIXEL10 GLES : Texture2DArrayTestES3.ClearThenTexSubImageWithOverlappingLayersThenDrawAndRead/* = SKIP
+480069042 PIXEL10 GLES : Texture2DFloatTestES3.TextureFloatSampleLegacyTest/* = SKIP
+480069042 PIXEL10 GLES : Texture2DFloatTestES3.TextureHalfFloatLinearLegacyTest/* = SKIP
+480069042 PIXEL10 GLES : Texture2DFloatTestES3.TextureHalfFloatSampleLegacyTest/* = SKIP
+480069042 PIXEL10 GLES : Texture2DNorm16TestES3.TextureNorm16R16RenderTest/* = SKIP
+480069042 PIXEL10 GLES : Texture2DNorm16TestES3.TextureNorm16RG16RenderTest/* = SKIP
+480069042 PIXEL10 GLES : Texture2DNorm16TestES3.TextureNorm16RGBA16RenderTest/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTest.DefineMultipleLevelsWithoutMipmapping/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTest.PBOWithMultipleDraws/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTestES3.DepthTexturesWithMipmaps/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTestES3.DrawWithLevelZeroUndefined/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTestES3.DrawWithLevelsOutsideRangeUndefined/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTestES3.TextureFormatChangesWithBaseLevel/* = SKIP
+480069042 PIXEL10 GLES : Texture2DTestES3.UnpackOverlappingRowsFromUnpackBuffer/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES2.CopySubImageAlpha/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES2.CopySubImageLuminance/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES2.CopySubImageRGBA/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES2.DefineTexture2DArrayShouldFail/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES2.Luminance/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES2.RGBA/* = SKIP
+480069042 PIXEL10 GLES : Texture3DTestES3.PixelUnpackParamsChangeTexImage/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.RGBANorm16EXT/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.RGBANorm16OES/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.RGNorm16EXT/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.RGNorm16OES/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.RNorm16EXT/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.RNorm16OES/* = SKIP
+480069042 PIXEL10 GLES : TextureBufferTestES31.UseAsXFBThenAsTextureBuffer/* = SKIP
+480069042 PIXEL10 GLES : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsFloat/* = SKIP
+480069042 PIXEL10 GLES : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsVec2/* = SKIP
+480069042 PIXEL10 GLES : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsVec3/* = SKIP
+480069042 PIXEL10 GLES : UniformBufferTest.Std140UniformBlockWithPerMemberColumnMajorQualifier/* = SKIP
+480069042 PIXEL10 GLES : WebGLCompatibilityTest.GenerateMipmapUnsizedFloatingPointTexture/* = SKIP
+480069042 PIXEL10 GLES : CopyTexImageLumaWorkaroundTestES3.DifferentCubeFacesLuminanceAlpha/ES3_OpenGLES_ForceLumaWorkaroundForSameTextureCopyTexImage2D = SKIP
+480069042 PIXEL10 GLES : GLSLTest_ES31.IOBlockInvariantAll/* = SKIP
+
+480069042 PIXEL10 VULKAN : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_Vulkan*__GL_RG16_SNORM_EXT_GL_RG_GL_SHORT_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 VULKAN : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_Vulkan*__GL_RGB32UI_GL_RGB_INTEGER_GL_UNSIGNED_INT_GL_TEXTURE_2D_ARRAY = SKIP
+480069042 PIXEL10 VULKAN : EGLBufferAgeTest.ValidateDamageRegion/* = SKIP
+480069042 PIXEL10 VULKAN : EGLProtectedContentTest.ProtectedContextWithProtectedTextureFromAndroidNativeBuffer/* = SKIP
+480069042 PIXEL10 VULKAN : EGLSurfaceTest.SurfaceFixedRateCompression/* = SKIP
+480069042 PIXEL10 VULKAN : ExternalBufferTestES31.BufferSubData/* = SKIP
+480069042 PIXEL10 VULKAN : ExternalBufferTestES31.DispatchCompute/* = SKIP
+480069042 PIXEL10 VULKAN : ExternalBufferTestES31.MapBuffer/* = SKIP
+480069042 PIXEL10 VULKAN : ExternalBufferTestES31.MapBufferDoesNotCauseOrphaning/* = SKIP
+480069042 PIXEL10 VULKAN : ExternalBufferTestES31.SubDataDoesNotCauseOrphaning/* = SKIP
+480069042 PIXEL10 VULKAN : ExternalBufferTestES31.getBufferParameter/* = SKIP
+480069042 PIXEL10 VULKAN : FramebufferTest_ES31.DepthStencilResolveThenDrawWithoutResolve/* = SKIP
+480069042 PIXEL10 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerDynamicIndexEXT/* = SKIP
+480069042 PIXEL10 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerDynamicIndexOES/* = SKIP
+480069042 PIXEL10 VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerInStructDynamicIndex/* = SKIP
+480069042 PIXEL10 VULKAN : GLSLTest_ES31.PrecisionAdjustmentInTessellationControlShader/ES3_1_Vulkan_ForceInitShaderVariables = SKIP
+480069042 PIXEL10 VULKAN : GLSLTest_ES31.PrecisionAdjustmentInTessellationControlShaderWithBarrier/ES3_1_Vulkan_ForceInitShaderVariables = SKIP
+480069042 PIXEL10 VULKAN : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTest.SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTest.SourceNativeClientBufferTargetExternal/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTest.SourceNativeClientBufferTargetExternal_Colorspace/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleInitData/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.ClearYUVAHB/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.ClearYUVAHBWithDepth/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.PartialClearYUVAHB/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.PartialRenderToYUVAHB/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.RenderToYUVAHB/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.RenderToYUVAHBWithDepth/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3_Colorspace/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.SourceYUVAHBTargetExternalCopySrc/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.SourceYUVAHBTargetExternalYUVFetchSamplerExternalOES/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.SourceYUVAHBTargetExternalYUVFetchVSSamplerExternalOES/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.SourceYUVAHBTargetExternalYUVSampleLinearFiltering/* = SKIP
+480069042 PIXEL10 VULKAN : ImageTestES3.YUVValidation/* = SKIP
+480069042 PIXEL10 VULKAN : MSRTTES3Test.RenderbufferDrawStencilThenUnresolveStencil/* = SKIP
+480069042 PIXEL10 VULKAN : MSRTTES3Test.RenderbufferUnresolveColorAndStencilThenTwoColors/* = SKIP
+480069042 PIXEL10 VULKAN : MultithreadingTest.MultiContextClear/* = SKIP
+480069042 PIXEL10 VULKAN : MultithreadingTest.MultiContextCreateAndDeleteResources/* = SKIP
+480069042 PIXEL10 VULKAN : MultithreadingTest.MultiContextDraw/* = SKIP
+480069042 PIXEL10 VULKAN : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = SKIP
+480069042 PIXEL10 VULKAN : MultithreadingTestES3.SimultaneousUploadAndDraw/* = SKIP
+480069042 PIXEL10 VULKAN : MultiviewMSRTTES3Test.ColorAndDepthAttachment/* = SKIP
+480069042 PIXEL10 VULKAN : ProgramPipelineTest31.LinkedImageUniforms/* = SKIP
+480069042 PIXEL10 VULKAN : ShadowSamplerFunctionTextureCubeArrayTest.Test/*_TextureBias_* = SKIP
+480069042 PIXEL10 VULKAN : SixteenBppTextureDitheringTestES3.RGBA5551/* = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.LineWidth/* = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/*_Vulkan = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_EnableParallelCompileAndLink_VaryingsRequireMatchingPrecisionInSpirv = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoSupportsIndexTypeUint8 = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoUseDepthWriteEnableDynamicState = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoUsePrimitiveRestartEnableDynamicState = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoUseVertexInputBindingStrideDynamicState = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.StencilWriteMaskVsDiscard/ES3_Vulkan_NoUseDepthWriteEnableDynamicState = SKIP
+480069042 PIXEL10 VULKAN : TextureFixedRateCompressionTest.RenderToTexture/* = SKIP
+480069042 PIXEL10 VULKAN : TextureTestES31.LinkedImageUniforms/* = SKIP
+480069042 PIXEL10 VULKAN : TextureTestES31.Texture2DArrayChangeLayerLevel/* = SKIP
+480069042 PIXEL10 VULKAN : TextureTestES31.Texture2DChangeLevel/* = SKIP
+480069042 PIXEL10 VULKAN : TextureTestES31.Texture2DLayered/* = SKIP
+480069042 PIXEL10 VULKAN : TextureTestES31.Texture2DTo2DArraySwitch/* = SKIP
+480069042 PIXEL10 VULKAN : TransformFeedbackTest.MultiContext/* = SKIP
+480069042 PIXEL10 VULKAN : TransformFeedbackTestES32.PrimitivesGeneratedVsRasterizerDiscard/* = SKIP
+480069042 PIXEL10 VULKAN : TransformFeedbackTestES32.PrimitivesGeneratedVsRasterizerDiscardAndFramebufferChange/* = SKIP
+480069042 PIXEL10 VULKAN : VulkanExternalImageTest.TextureFormatCompatChromiumWithFlagsFd/* = SKIP
+480069042 PIXEL10 VULKAN : VulkanImageTest.PixelTestDrawQuad/ES3_Vulkan_EnableParallelCompileAndLink_VaryingsRequireMatchingPrecisionInSpirv = SKIP
+480069042 PIXEL10 VULKAN : VulkanPerformanceCounterTest.RenderToTextureDepthStencilTextureShouldNotLoad/* = SKIP
+480069042 PIXEL10 VULKAN : VulkanPerformanceCounterTest_DepthStencilLoadStoreOps.MultisampleDepthStencilResolveSeparately/* = SKIP
+480069042 PIXEL10 VULKAN : VulkanPerformanceCounterTest_DepthStencilLoadStoreOps.RenderToTextureDepthStencilRenderbufferShouldNotLoad/* = SKIP
+480069042 PIXEL10 VULKAN : VulkanPerformanceCounterTest_DepthStencilLoadStoreOps.RenderToTextureUninitializedAndUnusedDepthStencil/* = SKIP
+491488985 PIXEL10 VULKAN : GLSLTest_ES31.HelperInvocationsAfterDiscard/* = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
 40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
@@ -926,6 +1365,11 @@
 474583528 IOS METAL : PixelLocalStorageTest.Texture2DArrayMultipleLayers/ES3_Metal_EmulatePixelLocalStorage* = SKIP
 40096838 IOS METAL : PixelLocalStorageTest.TextureCubeFaces/* = SKIP
 474583528 IOS METAL : PixelLocalStorageTest.TextureCubeMultipleFaces/ES3_Metal_EmulatePixelLocalStorage* = SKIP
+
+40096838 IOS METAL : PixelLocalStorageTest.Coherency_always_noncoherent/ES3_Metal_EmulatePixelLocalStorage* = SKIP
+40096838 IOS METAL : PixelLocalStorageTest.R32_always_noncoherent/ES3_Metal_EmulatePixelLocalStorage* = SKIP
+40096838 IOS METAL : PixelLocalStorageTest.RGBA8_always_noncoherent/ES3_Metal_EmulatePixelLocalStorage* = SKIP
+
 40096874 IOS METAL : PixelLocalStorageTest.TextureLevelsAndLayers/* = SKIP
 40096874 IOS METAL : PointSpritesTest.PointSizeAboveMaxIsClamped/* = SKIP
 40096874 IOS METAL : RobustBufferAccessWebGL2ValidationStateChangeTest.BindZeroSizeBufferThenDeleteBufferBug/* = SKIP
@@ -1044,9 +1488,6 @@
 // Metal internal compiler error
 42265076 MAC AMD METAL : ProgramBinaryES3Test.SaveAndLoadDetachedShaders/* = SKIP
 
-// Issue with the ANGLE workaround for a driver bug.
-402810076 MAC AMD METAL : PixelLocalStorageTest.ColorAttachment0Workaround/* = SKIP
-
 // GLES1 failures introduced during ubershader optimization
 42265148 MAC INTEL OPENGL : BootAnimationTest.DefaultBootAnimation/* = SKIP
 42265148 MAC INTEL OPENGL : DrawTextureTest.Basic/* = SKIP
@@ -1155,6 +1596,26 @@
 42266575 WIN OpenGL : RGBTextureBufferTestES31.*/* = SKIP
 42266575 WIN GLES : RGBTextureBufferTestES31.*/* = SKIP
 42266575 LINUX NVIDIA OpenGL : RGBTextureBufferTestES31.*/* = SKIP
+
+// Virtualized contexts on multiple contexts not supported on Win (wgl)
+491346041 WIN OpenGL : EGLContextStateTest.MultipleThreads/* = SKIP
+491346041 WIN GLES : EGLContextStateTest.MultipleThreads/* = SKIP
+
+// Failing on Desktop GL Linux when contexts are devirtualized
+40096700 LINUX OPENGL : MultithreadingTestES3.SharedSrgbTextureMultipleContexts/* = SKIP
+40096700 LINUX OPENGL : MultithreadingTestES3.SimultaneousUploadAndDraw/* = SKIP
+40096700 LINUX OPENGL : MultithreadingTestES3.SimultaneousBufferBind/* = SKIP
+40096700 LINUX OPENGL : MultithreadingTestES3.SimultaneousBufferBindAndGen/* = SKIP
+40096700 LINUX OPENGL : MultithreadingTestES3.UniformBlockBinding/* = SKIP
+
+// Test does not yet support devirtualized contexts.
+40096700 LINUX OPENGL : EGLContextSharingTest.DeleteReaderOfSharedTexture/* = SKIP
+
+// Failing on Intel Linux
+40096700 LINUX OPENGL INTEL : MultithreadingTestES3.CreateNewContextAfterTextureUploadOnMainThread/* = SKIP
+40096700 LINUX OPENGL INTEL : MultithreadingTestES3.MultithreadFenceDraw/* = SKIP
+40096700 LINUX OPENGL INTEL : MultithreadingTestES3.MultithreadFenceTexImage/* = SKIP
+40096700 LINUX OPENGL INTEL : MultithreadingTestES3.RenderThenSampleInNewContextWithDifferentPriority/* = SKIP
 
 42266091 WIN INTEL : *EmulateCopyTexImage2DFromRenderbuffers* = SKIP
 
@@ -1841,6 +2302,15 @@
 // Can't use a uniform struct outside of uniform address space.
 376553328 WGPU : SimpleUniformTestES3.UseUniformStructOutsideOfUniformAddressSpace/* = SKIP
 42267012 WGPU : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB* = SKIP
+42267012 WGPU : ClearTestES3.TextureArrayRGB8/* = SKIP
+42267012 WGPU : ClearTestES3.ClearAndReadPixels3DTexture/* = SKIP
+42267012 WGPU : ClearTestES3.DrawAfterClearWithGaps/* = SKIP
+42267012 WGPU : ClearTestES3.*WithBlit*/* = SKIP
+// Some tests use too many attachments
+483423899 WGPU : ClearTestES3.ClearStencilAfterDraw/* = SKIP
+483423899 WGPU : ClearTestES3.ClearMaxAttachments*/* = SKIP
+// Shader compilation failure
+42267012 WGPU : ClearTestES3.MidRenderPassClearWithGaps/* = SKIP
 42266974 WGPU : Texture2DTest.Tex* = SKIP
 42266974 WGPU : Texture2DTest.Upload* = SKIP
 42266974 WGPU : Texture2DTest.*Superseding* = SKIP
@@ -1867,19 +2337,31 @@
 42266907 WGPU : AttributeLayoutNonIndexed.Test/* = SKIP
 42266907 WGPU : BindUniformLocationTest.Compositor/* = SKIP
 42266907 WGPU : BlendPackedTest.RGB565/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitColorToDefault/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitColorWithFlip/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.ReverseColorBlit/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.ScissoredBlit/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.ReverseScissoredBlit/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.OversizedBlit/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.ReverseOversizedBlit/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitWithMissingAttachments/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthDefaultToUser/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitPartialColor/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitDifferentSizes/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitStencil/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.BlitWithMissingAttachments/* = SKIP
+42266907 WGPU : BlitFramebufferTest.*Multisample* = SKIP
+42266907 WGPU : BlitFramebufferTest.*Multisampled* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitStencilToDefault/* = SKIP
+42266907 WGPU : BlitFramebufferTest.NonZeroBaseDestination* = SKIP
+42266907 WGPU : BlitFramebufferTest.NonZeroBaseSourceStencil/* = SKIP
+42266907 WGPU : BlitFramebufferTest.NonZeroBaseSource/* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitSRGBToRGBOversizedSourceArea/* = SKIP
+42266907 WGPU : BlitFramebufferTest.drawBlitAndDrawAgain/* = SKIP
+42266907 WGPU : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP
+42266907 WGPU : BlitFramebufferTest.FlippedBlits/* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = SKIP
+42266907 WGPU : BlitFramebufferTest.*Resolve* = SKIP
+42266907 WGPU : BlitFramebufferTest.Blit3D/* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitStencilScissoredScaled/* = SKIP
+42266907 WGPU : BlitFramebufferTest.Blit2DArray* = SKIP
+42266907 WGPU : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP
+42266907 WGPU : BlitFramebufferTest.Blit2ArrayTo3D/* = SKIP
+42266907 WGPU : BlitFramebufferTest.BlitFramebufferStencilClipNoIntersection/* = SKIP
+42266907 WGPU : BlitFramebufferTest.OOBWrite/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.TexSubImageOnTextureBoundToFrambuffer/* = SKIP
 42266907 WGPU : SRGBFramebufferDefaultLinearTest.Blit*LinearFbo/* = SKIP
 42266907 WGPU : DebugMarkerTest.Rendering/* = SKIP
@@ -2060,6 +2542,8 @@
 42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexSubImage2D/* = SKIP
 42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexImage2D/* = SKIP
 
+
+
 // 42267100 failures are due to the shader (which uses textures) failing to compile
 42267100 WGPU : Texture2DTest.NegativeAPISubImage* = SKIP
 42267100 WGPU : Texture2DTest.ZeroSizedUploads* = SKIP
@@ -2122,15 +2606,18 @@
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.UseAsUBOThenUpdateThenUByteIndexIndirectBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : MultiDrawIndirectTest.MultiDrawArraysIndirect/* = SKIP
 362486580 LINUX NVIDIA OPENGL : MultiDrawIndirectTest.MultiDrawElementsIndirect/* = SKIP
+362486580 LINUX NVIDIA OPENGL : SampleMultisampleInterpolationTest31.SampleShadingThenSimpleDraw/* = SKIP
 362486580 LINUX NVIDIA OPENGL : UniformBufferTest31.UniformBufferBindings/* = SKIP
 
 362486580 LINUX NVIDIA VULKAN : ClearTextureEXTTestES31Renderable.Clear/*__GL_RGB5_A1_GL_RGBA_GL_UNSIGNED_INT_2_10_10_10_REV_* = SKIP
 362486580 LINUX NVIDIA VULKAN : EGLSurfaceTest.ResizeBeforeMakeCurrent*/* = SKIP
+362486580 LINUX NVIDIA VULKAN : EGLSurfaceTest.ResizeLargeWindow/* = SKIP
 362486580 LINUX NVIDIA VULKAN : EXTBlendFuncExtendedDrawTestES31.UseProgramPipeline/* = SKIP
 362486580 LINUX NVIDIA VULKAN : EXTBlendFuncExtendedDrawTestES31.UseTwoProgramStages/* = SKIP
 362486580 LINUX NVIDIA VULKAN : FramebufferTestWithFormatFallback.R4G4B4A4_OutOfRangeStagedUpdateReformated/* = SKIP
 362486580 LINUX NVIDIA VULKAN : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
 362486580 LINUX NVIDIA VULKAN : InstancingTestES31.UpdateAttribBindingByVertexAttribDivisor/* = SKIP
+362486580 LINUX NVIDIA VULKAN : LineLoopIndirectTest.UseAsUBOThenUpdateThenUByteIndexIndirectBuffer/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SimpleStateChangeTestES31.MultipleVertexArrayObjectRendering/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SixteenBppTextureTest.RGBA5551Validation/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SixteenBppTextureTestES3.RGB5A1UploadRGB10A2/* = SKIP
@@ -2274,6 +2761,8 @@
 // When the IR prunes cases that do not match the constant switch expression, and there is only the `default` case left,
 // the d3d compiler miscompiles the shader it seems.
 349994211 IR D3D11 : GLSLTest_ES3.SwitchWithConstantExpr/* = SKIP
+/// IR's use of `while` and `if (!condition) break` instead of `for(..)` makes the HLSL generator think the loops are discontinuous, and as a result it drops the derivative built-ins!
+349994211 IR D3D11 : GLSLTest_ES3.DerivativeInLoopWithUniformBranch/* = SKIP
 // The workaround in b/274859104 is not applied because the IR does not generate non-constant initializers
 274859104 IR PIXEL6 VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = SKIP
 // Turning short-circuit && to if/else leads to incorrect evaluation on the Pixel 4 compiler

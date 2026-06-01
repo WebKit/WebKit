@@ -52,8 +52,7 @@ class CollectVariablesTest : public testing::Test
 
     virtual void initTranslator(const ShBuiltInResources &resources)
     {
-        mTranslator.reset(
-            new TranslatorGLSL(mShaderType, SH_GLES3_SPEC, SH_GLSL_COMPATIBILITY_OUTPUT));
+        mTranslator.reset(new TranslatorGLSL(mShaderType, SH_GLES3_SPEC, SH_GLSL_150_CORE_OUTPUT));
         ASSERT_TRUE(mTranslator->Init(resources));
     }
 
@@ -174,7 +173,7 @@ class CollectVariablesTestES31 : public CollectVariablesTest
     void initTranslator(const ShBuiltInResources &resources) override
     {
         mTranslator.reset(
-            new TranslatorGLSL(mShaderType, SH_GLES3_1_SPEC, SH_GLSL_COMPATIBILITY_OUTPUT));
+            new TranslatorGLSL(mShaderType, SH_GLES3_1_SPEC, SH_GLSL_150_CORE_OUTPUT));
         ASSERT_TRUE(mTranslator->Init(resources));
     }
 };
@@ -230,7 +229,7 @@ class CollectFragmentVariablesEXTGeometryShaderTest : public CollectVariablesEXT
     void initTranslator(const ShBuiltInResources &resources)
     {
         mTranslator.reset(
-            new TranslatorGLSL(mShaderType, SH_GLES3_1_SPEC, SH_GLSL_COMPATIBILITY_OUTPUT));
+            new TranslatorGLSL(mShaderType, SH_GLES3_1_SPEC, SH_GLSL_150_CORE_OUTPUT));
         ASSERT_TRUE(mTranslator->Init(resources));
     }
 };

@@ -1538,6 +1538,12 @@ inline constexpr unsigned int UnsignedCeilDivide(unsigned int value, unsigned in
     return (divided + ((value % divisor == 0) ? 0 : 1));
 }
 
+inline constexpr uint64_t UnsignedCeilDivide64(uint64_t value, uint64_t divisor)
+{
+    uint64_t divided = value / divisor;
+    return (divided + ((value % divisor == 0) ? 0 : 1));
+}
+
 #if defined(__has_builtin)
 #    define ANGLE_HAS_BUILTIN(x) __has_builtin(x)
 #else

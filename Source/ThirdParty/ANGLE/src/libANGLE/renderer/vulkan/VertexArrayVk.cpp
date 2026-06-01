@@ -402,7 +402,7 @@ void CalculateOffsetAndVertexCountForDirtyRange(BufferVk *bufferVk,
 
     GLint64 srcLength = bufferVk->getSize() - srcOffset;
 
-    // Adjust offset to the begining of the dirty range
+    // Adjust offset to the beginning of the dirty range
     if (dirtyRange.low() > srcOffset)
     {
         size_t vertexCountToSkip = (static_cast<size_t>(dirtyRange.low()) - srcOffset) / srcStride;

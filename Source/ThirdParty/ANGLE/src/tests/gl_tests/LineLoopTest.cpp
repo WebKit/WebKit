@@ -546,6 +546,46 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test an edge case in the D3D11 backend where a large index array of GL_UNSIGNED_BYTE
+// drawn as a GL_LINE_LOOP is widened to 32-bits internally and overflows.
+// Disabled because it slow and triggers an internal error.
+TEST_P(LineLoopTestES3, DISABLED_LargeLoopUnsignedByte)
+{
+    size_t count = 805306368;
+
+    glLinkProgram(mProgram);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLBuffer ebo;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count, nullptr, GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawElements(GL_LINE_LOOP, count, GL_UNSIGNED_BYTE, 0);
+    EXPECT_GL_ERROR(GL_OUT_OF_MEMORY);
+}
+
+// Test an edge case in the D3D11 backend where a large index array of GL_UNSIGNED_BYTE
+// drawn as a GL_TRIANGLE_FAN is widened to 32-bits internally and overflows.
+// Disabled because it slow and triggers an internal error.
+TEST_P(LineLoopTestES3, DISABLED_LargeFanUnsignedByte)
+{
+    size_t count = 805306368;
+
+    glLinkProgram(mProgram);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLBuffer ebo;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count, nullptr, GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawElements(GL_TRIANGLE_FAN, count, GL_UNSIGNED_BYTE, 0);
+    EXPECT_GL_ERROR(GL_OUT_OF_MEMORY);
+}
+
 // Tests an edge case with a very large line loop element count.
 // Disabled because it is slow and triggers an internal error.
 TEST_P(LineLoopTest, DISABLED_DrawArraysWithLargeCount)

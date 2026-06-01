@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 401
+#define ANGLE_SH_VERSION 407
 
 enum ShShaderSpec
 {
@@ -50,10 +50,6 @@ enum ShShaderOutput
     SH_ESSL_OUTPUT,
 
     // GLSL output only supported in some configurations.
-    SH_GLSL_COMPATIBILITY_OUTPUT,
-    // Note: GL introduced core profiles in 1.5.
-    SH_GLSL_130_OUTPUT,
-    SH_GLSL_140_OUTPUT,
     SH_GLSL_150_CORE_OUTPUT,
     SH_GLSL_330_CORE_OUTPUT,
     SH_GLSL_400_CORE_OUTPUT,
@@ -209,7 +205,8 @@ struct ShCompileOptions
     // This flag works around bug in Intel Mac drivers related to abs(i) where i is an integer.
     uint64_t emulateAbsIntFunction : 1;
 
-    uint64_t unused : 1;
+    // Whether SPV_EXT_demote_to_helper_invocation can be used.
+    uint64_t useDemoteToHelperInvocation : 1;
 
     // This flag ensures all indirect (expression-based) array indexing is clamped to the bounds of
     // the array. This ensures, for example, that you cannot read off the end of a uniform, whether
@@ -413,13 +410,10 @@ struct ShCompileOptions
     // ceil()ed instead.
     uint64_t roundOutputAfterDithering : 1;
 
-    // issuetracker.google.com/274859104 add OpQuantizeToF16 instruction to cast
-    // mediump floating-point values to 16 bit. ARM compiler utilized RelaxedPrecision
-    // to minimize type case and keep a mediump float as 32 bit when assigning it with
-    // a highp floating-point value. It is possible that GLSL shader code is comparing
-    // two meiump values, but ARM compiler is comparing a 32 bit value with a 16 bit value,
-    // causing the comparison to fail.
-    uint64_t castMediumpFloatTo16Bit : 1;
+    // placeholder bit for removed castMediumpFloatTo16Bit option. This is needed because chromium
+    // fuzzer needs the ShCompileOptions memory layout remains unchanged to be able to map the bugs
+    // filed.
+    uint64_t unused3 : 1;
 
     // anglebug.com/42265995: packUnorm4x8 fails on Pixel 4 if it is not passed a highp vec4.
     // TODO(anglebug.com/42265995): This workaround is currently only applied for pixel local
@@ -469,8 +463,10 @@ struct ShCompileOptions
     // Whether to preserve denorm floats in the lexer or convert to zero
     uint64_t preserveDenorms : 1;
 
-    // Whether inactive shader variables from the output.
+    // Whether inactive shader variables should be removed from the output.  For some backends,
+    // inactive fragment outputs should still be retained.
     uint64_t removeInactiveVariables : 1;
+    uint64_t retainInactiveFragmentOutputs : 1;
 
     // Ensure all loops execute side-effects or terminate.
     uint64_t ensureLoopForwardProgress : 1;

@@ -593,6 +593,11 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
         featureMacros.push_back("__opencl_c_integer_dot_product_input_4x8bit_packed");
     }
 
+    if (device->getFrontendObject().getInfo().khrSubgroups)
+    {
+        featureMacros.push_back("__opencl_c_subgroups");
+    }
+
     if (!rteModes.empty())
     {
         options += " --rounding-mode-rte=";

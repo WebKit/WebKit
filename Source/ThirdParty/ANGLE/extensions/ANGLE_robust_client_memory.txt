@@ -137,31 +137,6 @@ New Procedures and Functions
                                   enum format, enum type, sizei bufSize,
                                   const void *pixels);
 
-    void CompressedTexImage2DRobustANGLE(enum target, int level,
-                                         enum internalformat, sizei width,
-                                         sizei height, int border,
-                                         sizei imageSize, sizei bufSize,
-                                         const void* data);
-
-    void CompressedTexSubImage2DRobustANGLE(enum target, int level, int xoffset,
-                                            int yoffset, sizei width,
-                                            sizei height, enum format,
-                                            sizei imageSize, sizei bufSize,
-                                            const void* data);
-
-    void CompressedTexImage3DRobustANGLE(enum target, int level,
-                                         enum internalformat, sizei width,
-                                         sizei height, sizei depth, int border,
-                                         sizei imageSize, sizei bufSize,
-                                         const void* data);
-
-    void CompressedTexSubImage3DRobustANGLE(enum target, int level, int xoffset,
-                                            int yoffset, int zoffset,
-                                            sizei width, sizei height,
-                                            sizei depth, enum format,
-                                            sizei imageSize, sizei bufSize,
-                                            const void* data);
-
     void TexImage3DRobustANGLE(enum target, int level, int internalformat,
                                sizei width, sizei height, sizei depth,
                                int border, enum format, enum type,
@@ -259,6 +234,12 @@ New Procedures and Functions
                                                                sizei *length,
                                                                int *params);
 
+    void GetFramebufferPixelLocalStorageParameteruivRobustANGLE(int plane,
+                                                                enum pname,
+                                                                sizei paramCount,
+                                                                sizei *length,
+                                                                uint *params);
+
 New Tokens
 
     None
@@ -330,9 +311,7 @@ Interactions with OpenGL ES 3.0 and OES_mapbuffer
 Interactions with OpenGL ES 3.0 and OES_texture_3d
 
     If neither OpenGL ES 3.0, nor OES_texture_3d are supported, remove all
-    references to CompressedTexImage3DRobustANGLE,
-    CompressedTexSubImage3DRobustANGLE, TexImage3DRobustANGLE, and
-    TexSubImage3DRobustANGLE.
+    references to TexImage3DRobustANGLE and TexSubImage3DRobustANGLE.
 
 Interactions with OpenGL ES 3.0, EXT_disjoint_timer_query, and
 EXT_occlusion_query_boolean
@@ -362,8 +341,7 @@ Interactions with ANGLE_shader_pixel_local_storage
 
     If ANGLE_shader_pixel_local_storage is not supported,
     remove all references to
-    GetFramebufferPixelLocalStorageParameterfvRobustANGLE and
-    GetFramebufferPixelLocalStorageParameterivRobustANGLE.
+    GetFramebufferPixelLocalStorageParameter{f,i,ui}vRobustANGLE.
 
 Issues
 

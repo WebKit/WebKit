@@ -248,8 +248,13 @@ angle::Result SyncHelper::serverWait(ContextVk *contextVk)
 
 angle::Result SyncHelper::getStatus(ErrorContext *context, ContextVk *contextVk, bool *signaledOut)
 {
-    // Submit commands if it was deferred on the context that issued the sync object
-    ANGLE_TRY(submitSyncIfDeferred(contextVk, RenderPassClosureReason::SyncObjectClientWait));
+    ASSERT(context);
+    if (!context->getFeatures().disableSubmitCommandsOnSyncStatusCheckForTesting.enabled)
+    {
+        // Submit commands if it was deferred on the context that issued the sync object
+        ANGLE_TRY(submitSyncIfDeferred(contextVk, RenderPassClosureReason::SyncObjectClientWait));
+    }
+
     ASSERT(mUse.valid());
     Renderer *renderer = context->getRenderer();
     if (renderer->hasResourceUseFinished(mUse))

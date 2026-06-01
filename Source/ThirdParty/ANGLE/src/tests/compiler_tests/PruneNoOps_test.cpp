@@ -20,7 +20,7 @@ namespace
 class PruneNoOpsTest : public MatchOutputCodeTest
 {
   public:
-    PruneNoOpsTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT) {}
+    PruneNoOpsTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_GLSL_150_CORE_OUTPUT) {}
 };
 
 // Test that a switch statement with a constant expression without a matching case is pruned.

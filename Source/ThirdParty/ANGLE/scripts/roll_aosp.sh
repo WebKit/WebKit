@@ -79,6 +79,12 @@ function generate_Android_bp_file() {
             "build_angle_end2end_tests_library = true"
             "build_angle_trace_tests = false"
 
+            # This has no effect in Android.bp file, but is listed here to make the point.
+            # The actual flags are added in generate_android_bp.py file.
+            # Enable link time optimization.
+            #"use_thin_lto = true"
+            #"thin_lto_enable_optimizations = true"
+
             # Uncomment when we are ready to test IR in Android
             # "angle_ir = true"
         )
@@ -90,6 +96,16 @@ function generate_Android_bp_file() {
                 "angle_enable_trace_android_logcat = true"
             )
         fi
+
+        # This has no effect in Android.bp file, but is listed here to make the point.
+        # The actual flags are added in generate_android_bp.py file.
+        # Disable CFI.
+        #if [[ "$abi" == "arm64" ]]; then
+        #    gn_args=(
+        #        "${gn_args[@]}"
+        #        "arm_control_flow_integrity = \"none\""
+        #    )
+        #fi
 
         gn gen ${GN_OUTPUT_DIRECTORY} --args="${gn_args[*]}"
         gn desc ${GN_OUTPUT_DIRECTORY} --format=json "*" > ${GN_OUTPUT_DIRECTORY}/desc.$abi.json

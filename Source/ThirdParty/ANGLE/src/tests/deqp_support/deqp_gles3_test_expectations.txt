@@ -156,7 +156,6 @@
 
 // Failed after dEQP roll
 42262862 WIN D3D11 : dEQP-GLES3.functional.negative_api.buffer.renderbuffer_storage_multisample = FAIL
-479884535 : dEQP-GLES3.functional.texture.compressed.astc.block_size_remainder.* = SKIP
 
 // Basic line transform feedback tests flaky on Windows.
 40644650 WIN D3D11 : dEQP-GLES3.functional.transform_feedback.basic_types.interleaved.lines.* = FAIL
@@ -816,6 +815,26 @@
 42265027 PIXEL4ORXL GLES : dEQP-GLES3.functional.transform_feedback.random_full_array_capture.* = FAIL
 42266310 PIXEL4ORXL GLES : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_* = FAIL
 
+// Pixel 10
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.fbo.blit.default_framebuffer.srgb8_alpha8 = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.fbo.blit.default_framebuffer.srgb8_alpha8_linear_out_of_bounds_blit_to_default = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.fbo.blit.default_framebuffer.srgb8_alpha8_linear_scale_blit_to_default = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.fbo.blit.default_framebuffer.srgb8_alpha8_nearest_scale_blit_to_default = FAIL
+449087811 PIXEL10 GLES : dEQP-GLES3.functional.shaders.fragdata.valid_dynamic_index = FAIL
+449087811 PIXEL10 GLES : dEQP-GLES3.functional.shaders.fragdata.valid_uniform_index = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.array_member_dynamic_index_fragment = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.array_member_dynamic_index_vertex = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.array_member_fragment = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.array_member_vertex = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.dynamic_loop_nested_struct_array_fragment = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.dynamic_loop_nested_struct_array_vertex = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.loop_nested_struct_array_fragment = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.loop_nested_struct_array_vertex = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_dynamic_index_fragment = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_dynamic_index_vertex = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_fragment = FAIL
+449120558 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.nested_struct_array_vertex = FAIL
+
 42265203 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES3.functional.shaders.random.all_features.fragment.26 = FAIL
 42265203 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES3.functional.shaders.random.all_features.fragment.31 = FAIL
 
@@ -973,7 +992,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.value.assigned.
 
 // Translator IR failures
 /// IR's use of `while` and `if (!condition) break` instead of `for(..)` makes the HLSL generator think the loops are discontinous, and as a result it drops the derivative built-ins!
-349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.derivate.*_loop* = SKIP
+349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.derivate.*.uniform_loop* = SKIP
 // Untriaged failures with HLSL
 349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.switch.default_label_static_* = SKIP
 349994211 IR D3D11 NVIDIA : dEQP-GLES3.functional.shaders.switch.default_not_last_static_* = SKIP

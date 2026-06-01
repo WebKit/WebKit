@@ -375,6 +375,26 @@ MatrixType FromGLenum<MatrixType>(GLenum from);
 GLenum ToGLenum(MatrixType from);
 std::ostream &operator<<(std::ostream &os, MatrixType value);
 
+enum class PlaneParameter : uint8_t
+{
+    InternalFormat        = 0,
+    TextureName           = 1,
+    TextureLevel          = 2,
+    TextureLayer          = 3,
+    Usage                 = 4,
+    ClearValueFloat       = 5,
+    ClearValueInt         = 6,
+    ClearValueUnsignedInt = 7,
+
+    InvalidEnum = 8,
+    EnumCount   = 8,
+};
+
+template <>
+PlaneParameter FromGLenum<PlaneParameter>(GLenum from);
+GLenum ToGLenum(PlaneParameter from);
+std::ostream &operator<<(std::ostream &os, PlaneParameter value);
+
 enum class PointParameter : uint8_t
 {
     PointSizeMin             = 0,
@@ -420,6 +440,34 @@ ProvokingVertexConvention FromGLenum<ProvokingVertexConvention>(GLenum from);
 GLenum ToGLenum(ProvokingVertexConvention from);
 std::ostream &operator<<(std::ostream &os, ProvokingVertexConvention value);
 
+enum class QueryObjectParameter : uint8_t
+{
+    QueryResult          = 0,
+    QueryResultAvailable = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+template <>
+QueryObjectParameter FromGLenum<QueryObjectParameter>(GLenum from);
+GLenum ToGLenum(QueryObjectParameter from);
+std::ostream &operator<<(std::ostream &os, QueryObjectParameter value);
+
+enum class QueryParameter : uint8_t
+{
+    QueryCounterBits = 0,
+    CurrentQuery     = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+template <>
+QueryParameter FromGLenum<QueryParameter>(GLenum from);
+GLenum ToGLenum(QueryParameter from);
+std::ostream &operator<<(std::ostream &os, QueryParameter value);
+
 enum class QueryType : uint8_t
 {
     AnySamples                         = 0,
@@ -437,6 +485,49 @@ template <>
 QueryType FromGLenum<QueryType>(GLenum from);
 GLenum ToGLenum(QueryType from);
 std::ostream &operator<<(std::ostream &os, QueryType value);
+
+enum class SamplerParameter : uint8_t
+{
+    MagFilter     = 0,
+    MinFilter     = 1,
+    WrapS         = 2,
+    WrapT         = 3,
+    WrapR         = 4,
+    MinLod        = 5,
+    MaxLod        = 6,
+    CompareMode   = 7,
+    CompareFunc   = 8,
+    BorderColor   = 9,
+    MaxAnisotropy = 10,
+    SrgbDecode    = 11,
+
+    InvalidEnum = 12,
+    EnumCount   = 12,
+};
+
+template <>
+SamplerParameter FromGLenum<SamplerParameter>(GLenum from);
+GLenum ToGLenum(SamplerParameter from);
+std::ostream &operator<<(std::ostream &os, SamplerParameter value);
+
+enum class ShaderParameter : uint8_t
+{
+    ShaderType                   = 0,
+    DeleteStatus                 = 1,
+    CompileStatus                = 2,
+    InfoLogLength                = 3,
+    ShaderSourceLength           = 4,
+    CompletionStatus             = 5,
+    TranslatedShaderSourceLength = 6,
+
+    InvalidEnum = 7,
+    EnumCount   = 7,
+};
+
+template <>
+ShaderParameter FromGLenum<ShaderParameter>(GLenum from);
+GLenum ToGLenum(ShaderParameter from);
+std::ostream &operator<<(std::ostream &os, ShaderParameter value);
 
 enum class ShaderType : uint8_t
 {
@@ -575,6 +666,42 @@ TextureEnvTarget FromGLenum<TextureEnvTarget>(GLenum from);
 GLenum ToGLenum(TextureEnvTarget from);
 std::ostream &operator<<(std::ostream &os, TextureEnvTarget value);
 
+enum class TextureImageParameter : uint8_t
+{
+    Width                  = 0,
+    Height                 = 1,
+    Depth                  = 2,
+    InternalFormat         = 3,
+    RedSize                = 4,
+    GreenSize              = 5,
+    BlueSize               = 6,
+    AlphaSize              = 7,
+    DepthSize              = 8,
+    StencilSize            = 9,
+    SharedSize             = 10,
+    RedType                = 11,
+    GreenType              = 12,
+    BlueType               = 13,
+    AlphaType              = 14,
+    DepthType              = 15,
+    Compressed             = 16,
+    Samples                = 17,
+    FixedSampleLocations   = 18,
+    BufferDataStoreBinding = 19,
+    BufferOffset           = 20,
+    BufferSize             = 21,
+    MemorySize             = 22,
+    ResourceInitialized    = 23,
+
+    InvalidEnum = 24,
+    EnumCount   = 24,
+};
+
+template <>
+TextureImageParameter FromGLenum<TextureImageParameter>(GLenum from);
+GLenum ToGLenum(TextureImageParameter from);
+std::ostream &operator<<(std::ostream &os, TextureImageParameter value);
+
 enum class TextureOp : uint8_t
 {
     OneMinusSrcAlpha = 0,
@@ -671,6 +798,25 @@ template <>
 TilingMode FromGLenum<TilingMode>(GLenum from);
 GLenum ToGLenum(TilingMode from);
 std::ostream &operator<<(std::ostream &os, TilingMode value);
+
+enum class UniformBlockParameter : uint8_t
+{
+    Binding                    = 0,
+    DataSize                   = 1,
+    NameLength                 = 2,
+    ActiveUniforms             = 3,
+    ActiveUniformIndices       = 4,
+    ReferencedByVertexShader   = 5,
+    ReferencedByFragmentShader = 6,
+
+    InvalidEnum = 7,
+    EnumCount   = 7,
+};
+
+template <>
+UniformBlockParameter FromGLenum<UniformBlockParameter>(GLenum from);
+GLenum ToGLenum(UniformBlockParameter from);
+std::ostream &operator<<(std::ostream &os, UniformBlockParameter value);
 
 enum class VertexArrayType : uint8_t
 {

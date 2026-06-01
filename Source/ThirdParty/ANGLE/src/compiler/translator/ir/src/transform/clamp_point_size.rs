@@ -13,13 +13,17 @@ pub fn run(ir: &mut IR, min_point_size: f32, max_point_size: f32) {
         let min_size_constant = ir.meta.get_constant_float_typed(min_point_size);
         let max_size_constant = ir.meta.get_constant_float_typed(max_point_size);
 
+        // Generate:
+        //
+        //     size    = Load point_size
+        //     clamped = Clamp size min max
+        //               Store point_size clamped
         let mut clamp_block = Block::new();
-        let point_size_source =
-            clamp_block.add_typed_instruction(instruction::load(&mut ir.meta, point_size));
+        let size = clamp_block.add_typed_instruction(instruction::load(&mut ir.meta, point_size));
         let clamped = clamp_block.add_typed_instruction(instruction::built_in(
             &mut ir.meta,
             BuiltInOpCode::Clamp,
-            vec![point_size_source, min_size_constant, max_size_constant],
+            vec![size, min_size_constant, max_size_constant],
         ));
         clamp_block.add_void_instruction(OpCode::Store(point_size, clamped));
 

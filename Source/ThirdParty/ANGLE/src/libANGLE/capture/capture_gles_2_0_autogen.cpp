@@ -1513,19 +1513,19 @@ CallCapture CaptureGetShaderSource(const State &glState,
 CallCapture CaptureGetShaderiv(const State &glState,
                                bool isCallValid,
                                ShaderProgramID shaderPacked,
-                               GLenum pname,
+                               ShaderParameter pnamePacked,
                                GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("shaderPacked", ParamType::TShaderProgramID, shaderPacked);
-    paramBuffer.addEnumParam("pname", GLESEnum::ShaderParameterName, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("pnamePacked", ParamType::TShaderParameter, pnamePacked);
 
     ParamCapture paramsParam("params", ParamType::TGLintPointer);
     if (isCallValid)
     {
         InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-        CaptureGetShaderiv_params(glState, shaderPacked, pname, params, &paramsParam);
+        CaptureGetShaderiv_params(glState, shaderPacked, pnamePacked, params, &paramsParam);
     }
     else
     {

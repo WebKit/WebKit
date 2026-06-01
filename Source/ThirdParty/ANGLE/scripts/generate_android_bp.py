@@ -547,6 +547,16 @@ def library_target_to_blueprint(target, build_info) -> list[tuple[str, dict]]:
         bp['sdk_version'] = CURRENT_SDK_VERSION
 
         bp['stl'] = STL
+
+        # Explicitly disable general Control Flow Integrity (CFI)
+        bp['sanitize'] = {
+            'cfi': False,
+        }
+
+        # Explicitly enable LTO and add aggressive LTO optimizations
+        bp['whole_program_vtables'] = True
+        bp['ldflags'] = ['-Wl,-plugin-opt,O2']
+
         if target in ROOT_TARGETS:
             bp['defaults'].append('angle_vendor_cc_defaults')
             bp['defaults'].append('angle_dma_buf_cc_defaults')

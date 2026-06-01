@@ -230,8 +230,8 @@ TEST_F(ShaderVariableTest, InvariantDoubleDeleteBug)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
-    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    ShHandle compiler =
+        sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC, SH_GLSL_150_CORE_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
     const char *program[] = {
@@ -253,8 +253,8 @@ TEST_F(ShaderVariableTest, IllegalInvariantVarying)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
-    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    ShHandle compiler =
+        sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC, SH_GLSL_150_CORE_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
     const char *program1[] = {
@@ -288,8 +288,8 @@ TEST_F(ShaderVariableTest, InvariantLeakAcrossShaders)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
-    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    ShHandle compiler =
+        sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC, SH_GLSL_150_CORE_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
     const char *program1[] = {
@@ -330,8 +330,8 @@ TEST_F(ShaderVariableTest, GlobalInvariantLeakAcrossShaders)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
-    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    ShHandle compiler =
+        sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC, SH_GLSL_150_CORE_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
     const char *program1[] = {
@@ -372,8 +372,8 @@ TEST_F(ShaderVariableTest, BuiltinInvariantVarying)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
-    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    ShHandle compiler =
+        sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES2_SPEC, SH_GLSL_150_CORE_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
     const char *program1[] = {
@@ -466,8 +466,8 @@ TEST_F(ShaderVariableTest, DoubleUnderscoresForIdentifier)
     ShBuiltInResources resources;
     sh::InitBuiltInResources(&resources);
 
-    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES3_SPEC,
-                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    ShHandle compiler =
+        sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES3_SPEC, SH_GLSL_150_CORE_OUTPUT, &resources);
     EXPECT_NE(static_cast<ShHandle>(0), compiler);
 
     const char *front_underscores[] = {

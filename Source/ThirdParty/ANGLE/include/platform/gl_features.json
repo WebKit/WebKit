@@ -451,6 +451,14 @@
             "issue": "https://anglebug.com/42263273"
         },
         {
+            "name": "force_luma_workaround_for_same_texture_CopyTexImage2D",
+            "category": "Workarounds",
+            "description": [
+                "Work around incorrect channel results in same-texture LUMA CopyTexImage2D."
+            ],
+            "issue": "https://anglebug.com/486067696"
+        },
+        {
             "name": "disable_GPU_switching_support",
             "category": "Workarounds",
             "description": [
@@ -868,6 +876,15 @@
                 "Validate GL_MAX_*_UNIFORM_BLOCKS at compile time instead of link time to work around compiler bugs."
             ],
             "issue": "http://crbug.com/475877320"
+        },
+        {
+            "name": "recreate_mipmap_levels_before_generate",
+            "category": "Workarounds",
+            "description": [
+                "Before calling glGenerateMipmap on a mutable texture, recreate levels that the driver is ",
+                "supposed to recreate to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/491732188"
         },
         {
             "name": "limit_max_buffer_size_to_1gb",
