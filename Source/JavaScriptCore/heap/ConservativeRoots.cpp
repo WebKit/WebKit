@@ -33,6 +33,7 @@
 #include "JITStubRoutineSet.h"
 #include "JSCast.h"
 #include "JSCellInlines.h"
+#include "JSString.h"
 #include "MarkedBlockInlines.h"
 #include "WasmCallee.h"
 #include <wtf/OSAllocator.h>
@@ -193,7 +194,15 @@ inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion mark
         // Only return early if we are marking a non-butterfly, since butterflies without indexed properties could point past the end of their allocation.
         // If we do, and there is another live butterfly immediately following the first, we will mark the latter one here but we still need to
         // mark the former.
-        return isLive && !mayHaveIndexingHeader(cellKind);
+        if (isLive && !mayHaveIndexingHeader(cellKind)) {
+            static_assert(!JSString::numberOfLowerTierPreciseCells && !JSRopeString::numberOfLowerTierPreciseCells, "We only check for strings in MarkedBlocks so Strings better not have precise allocations");
+            // Since we're looking for strings we only need to check if we know we're not looking at an allocation with an IndexingHeader.
+            // FIXME: If we wanted to make this more performant we could have a JSString HeapCell::Kind or embed the JSType in the MarkedBlock::Handle.
+            if (auto* string = jsDynamicCast<const JSString*>(std::bit_cast<const JSCell*>(pointer)))
+                m_heap.m_discoveredAccessedStringsFromGCOwnedDataScope.add(string);
+            return true;
+        }
+        return false;
     };
 
     if (isJSCellKind(cellKind)) {

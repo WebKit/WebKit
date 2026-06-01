@@ -26,11 +26,11 @@
 #pragma once
 
 #include <JavaScriptCore/EnsureStillAliveHere.h>
+#include <JavaScriptCore/JSCell.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/text/StringView.h>
 
 namespace JSC {
-
-class JSCell;
 
 // This class is used return data owned by a JSCell. Consider:
 // int foo(JSString* jsString)
@@ -74,9 +74,21 @@ public:
     GCOwnedDataScope(const JSCell* cell, T value)
         : owner(cell)
         , data(value)
-    { }
+    {
+#if ASSERT_ENABLED
+        if (!owner->vm().heap.m_topGCOwnedDataScope)
+            owner->vm().heap.m_topGCOwnedDataScope = this;
+#endif
+    }
 
-    ~GCOwnedDataScope() { ensureStillAliveHere(owner); }
+    ~GCOwnedDataScope()
+    {
+#if ASSERT_ENABLED
+        if (owner && owner->vm().heap.m_topGCOwnedDataScope == this)
+            owner->vm().heap.m_topGCOwnedDataScope = nullptr;
+#endif
+        ensureStillAliveHere(owner);
+    }
 
     operator const T() const LIFETIME_BOUND { return data; }
     operator T() LIFETIME_BOUND { return data; }
