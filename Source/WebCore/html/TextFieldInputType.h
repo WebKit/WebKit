@@ -52,6 +52,9 @@ class TextFieldInputType : public InputType, protected SpinButtonOwner, protecte
     WTF_MAKE_TZONE_ALLOCATED(TextFieldInputType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextFieldInputType);
 public:
+    void ref() const override { InputType::ref(); }
+    void deref() const override { InputType::deref(); }
+
     bool valueMissing(const String&) const final;
 
 protected:
@@ -150,7 +153,7 @@ private:
     RefPtr<HTMLElement> m_placeholder;
     RefPtr<SpinButtonElement> m_innerSpinButton;
     RefPtr<HTMLElement> m_capsLockIndicator;
-    RefPtr<HTMLElement> m_autoFillButton;
+    RefPtr<AutoFillButtonElement> m_autoFillButton;
 };
 
 } // namespace WebCore
