@@ -50,7 +50,7 @@ struct PointerLockState {
     bool isActive { false };
     bool isObservingNotifications { false };
     RetainPtr<GCMouse> currentMouse;
-    GCMouseMoved originalMouseMovedHandler { nil };
+    BlockPtr<void(GCMouseInput *, float, float)> originalMouseMovedHandler;
     std::optional<CGPoint> lockedCursorPosition;
 
     void reset()
@@ -477,6 +477,9 @@ inline static String pointerType(UITouchType type)
         return;
 #endif
 
+    if (_pointerLockState.isActive)
+        return;
+
     _pointerLockState.currentMouse = dynamic_objc_cast<GCMouse>([WebCore::getGCMouseClassSingleton() current]);
     if (!_pointerLockState.currentMouse)
         return;
@@ -497,7 +500,7 @@ inline static String pointerType(UITouchType type)
 
     [self _stopObservingMouseNotifications];
 
-    [[_pointerLockState.currentMouse mouseInput] setMouseMovedHandler:_pointerLockState.originalMouseMovedHandler];
+    [[_pointerLockState.currentMouse mouseInput] setMouseMovedHandler:_pointerLockState.originalMouseMovedHandler.get()];
     _pointerLockState.originalMouseMovedHandler = nil;
     _pointerLockState.currentMouse = nil;
 
@@ -564,7 +567,7 @@ inline static String pointerType(UITouchType type)
 {
     if (!mouse)
         return;
-    _pointerLockState.originalMouseMovedHandler = [[mouse mouseInput] mouseMovedHandler];
+    _pointerLockState.originalMouseMovedHandler = makeBlockPtr([[mouse mouseInput] mouseMovedHandler]);
     [[mouse mouseInput] setMouseMovedHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKMouseInteraction> { self }](GCMouseInput *mouseInput, float deltaX, float deltaY) {
         if (RetainPtr strongSelf = weakSelf.get())
             [strongSelf handleGameControllerMouseMove:deltaX deltaY:deltaY];

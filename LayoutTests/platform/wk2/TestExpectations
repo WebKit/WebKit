@@ -624,6 +624,7 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 [ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
+[ Debug ] ipc/pointer-lock-double-lock-uaf.html [ Skip ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
