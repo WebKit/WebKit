@@ -100,7 +100,7 @@ LayoutUnit RenderTextControlMultiLine::computeControlLogicalHeight(LayoutUnit li
 void RenderTextControlMultiLine::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     RenderTextControl::layoutExcludedChildren(relayoutChildren);
-    HTMLElement* placeholder = textFormControlElement().placeholderElement();
+    RefPtr placeholder = textFormControlElement().placeholderElement();
     RenderElement* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
         return;

@@ -159,7 +159,7 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
 void BuilderState::updateFont()
 {
-    auto& fontSelector = const_cast<Document&>(document()).fontSelector();
+    Ref fontSelector = const_cast<Document&>(document()).fontSelector();
 
     auto needsUpdate = [&] {
         return m_fontDirty || !m_style.fontCascade().fonts();
@@ -176,7 +176,7 @@ void BuilderState::updateFont()
     updateFontForOrientationChange();
     updateFontForSizeChange();
 
-    m_style.fontCascade().update(&fontSelector);
+    m_style.fontCascade().update(fontSelector.ptr());
 
     m_fontDirty = false;
 }

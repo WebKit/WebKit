@@ -196,13 +196,13 @@ void Resolver::initialize()
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
-    auto* view = document().view();
+    CheckedPtr view = document().view();
     if (view)
         m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { view->mediaType() };
     else
         m_mediaQueryEvaluator = MQ::MediaQueryEvaluator { };
 
-    if (auto* documentElement = document().documentElement()) {
+    if (RefPtr documentElement = document().documentElement()) {
         m_rootDefaultStyle = styleForElement(*documentElement, { document().initialContainingBlockStyle() }, RuleMatchingBehavior::MatchOnlyUserAgentRules).style;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         document().fontSelector().incrementIsComputingRootStyleFont();
@@ -239,8 +239,8 @@ void Resolver::addCurrentSVGFontFaceRules()
 {
     if (document().svgExtensionsIfExists()) {
         auto& svgFontFaceElements = document().svgExtensionsIfExists()->svgFontFaceElements();
-        for (auto& svgFontFaceElement : svgFontFaceElements)
-            document().fontSelector().addFontFaceRule(svgFontFaceElement.fontFaceRule(), svgFontFaceElement.isInUserAgentShadowTree());
+        for (Ref svgFontFaceElement : svgFontFaceElements)
+            document().fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
     }
 }
 
@@ -403,10 +403,10 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
         // function between this keyframe and the next.
         if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
             blendingKeyframe.setContainsDirectionAwareProperty(true);
-        if (auto* value = propertyReference.value()) {
+        if (RefPtr value = propertyReference.value()) {
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.writingMode());
             if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
-                if (auto customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
+                if (RefPtr customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
                     blendingKeyframe.addProperty(customValue->name());
                 else
                     blendingKeyframe.addProperty(resolvedProperty);
@@ -495,7 +495,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return timingFunction;
     };
 
-    auto* keyframesRule = it->value.get();
+    RefPtr keyframesRule = it->value.get();
     auto* keyframes = &keyframesRule->keyframes();
 
     using KeyframeUniqueKey = std::tuple<StyleRuleKeyframe::Key, RefPtr<const TimingFunction>, CompositeOperation>;
@@ -614,7 +614,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
 
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 {
-    auto* documentElement = document().documentElement();
+    RefPtr documentElement = document().documentElement();
     if (!documentElement || !documentElement->renderStyle())
         return RenderStyle::createPtr();
 
@@ -701,13 +701,13 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 {
     auto& style = *state.style();
     auto& parentStyle = *state.parentStyle();
-    auto& element = *state.element();
+    Ref element = *state.element();
 
     unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult, parentStyle.inheritedCustomProperties());
 
     auto cacheResult = m_matchedDeclarationsCache.find(cacheHash, matchResult, parentStyle.inheritedCustomProperties(), parentStyle);
 
-    auto hasUsableEntry = cacheResult && MatchedDeclarationsCache::isCacheable(element, style, parentStyle);
+    auto hasUsableEntry = cacheResult && MatchedDeclarationsCache::isCacheable(element.get(), style, parentStyle);
     if (hasUsableEntry) {
         auto& cacheEntry = cacheResult->entry;
         bool inheritedEqual = cacheResult->inheritedEqual;
@@ -852,7 +852,7 @@ void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, const
 
     auto styleRule = StyleRule::create(WTF::move(properties), true, viewTransitionSelector(element, name));
 
-    auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
+    RefPtr viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
     RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
     builder.addStyleRule(styleRule);
 }

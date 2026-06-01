@@ -287,7 +287,7 @@ struct SpaceSeparatedEnumSet {
     static SpaceSeparatedEnumSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
     {
         Container result;
-        for (auto&& value : range)
+        for (auto& value : range)
             result.add(mapper(value));
         return result;
     }

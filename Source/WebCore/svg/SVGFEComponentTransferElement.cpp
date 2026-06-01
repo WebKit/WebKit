@@ -76,8 +76,8 @@ RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const Fil
 {
     ComponentTransferFunctions functions;
 
-    for (auto& child : childrenOfType<SVGComponentTransferFunctionElement>(*this))
-        functions[child.channel()] = child.transferFunction();
+    for (Ref child : childrenOfType<SVGComponentTransferFunctionElement>(*this))
+        functions[child->channel()] = child->transferFunction();
 
     return FEComponentTransfer::create(WTF::move(functions));
 }
@@ -88,7 +88,7 @@ static bool isRelevantTransferFunctionElement(const Element& child)
 
     ASSERT(is<SVGComponentTransferFunctionElement>(child));
 
-    for (auto laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
+    for (CheckedPtr laterSibling = child.nextElementSibling(); laterSibling; laterSibling = laterSibling->nextElementSibling()) {
         if (laterSibling->elementName() == name)
             return false;
     }

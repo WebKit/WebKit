@@ -65,7 +65,7 @@ RefPtr<StyleImage> CSSImageSetValue::createStyleImage(const Style::BuilderState&
     size_t length = this->length();
 
     Vector<ImageWithScale> images(length, [&](size_t i) {
-        auto option = downcast<CSSImageSetOptionValue>(item(i));
+        RefPtr<const CSSImageSetOptionValue> option = downcast<CSSImageSetOptionValue>(item(i));
         return ImageWithScale { state.createStyleImage(option->image()), option->protectedResolution()->resolveAsResolution<float>(state.cssToLengthConversionData()), option->type() };
     });
 

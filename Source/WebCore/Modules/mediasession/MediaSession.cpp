@@ -161,7 +161,7 @@ MediaSession::MediaSession(Navigator& navigator)
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr frame = navigator.frame();
-    auto* page = frame ? frame->page() : nullptr;
+    RefPtr page = frame ? frame->page() : nullptr;
     if (page && page->mediaSessionCoordinator())
         m_coordinator->setMediaSessionCoordinatorPrivate(*page->mediaSessionCoordinator());
     m_coordinator->setMediaSession(this);

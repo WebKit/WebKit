@@ -34,6 +34,7 @@
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
+#include "ElementRareData.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameSelection.h"

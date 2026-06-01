@@ -110,7 +110,7 @@ std::optional<Exception> CSSStyleSheetObservableArray::shouldThrowWhenAddingShee
 {
     if (!sheet.wasConstructedByJS())
         return Exception { ExceptionCode::NotAllowedError, "Sheet needs to be constructed by JavaScript"_s };
-    auto* treeScope = this->treeScope();
+    RefPtr treeScope = this->treeScope();
     if (!treeScope || sheet.constructorDocument() != &treeScope->documentScope())
         return Exception { ExceptionCode::NotAllowedError, "Sheet constructor document doesn't match"_s };
     return std::nullopt;

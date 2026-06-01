@@ -425,7 +425,7 @@ void HTMLModelElement::didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D& ce
 
 RefPtr<GraphicsLayer> HTMLModelElement::graphicsLayer() const
 {
-    auto* page = document().page();
+    RefPtr page = document().page();
     if (!page)
         return nullptr;
 
@@ -460,7 +460,7 @@ void HTMLModelElement::logWarning(ModelPlayer& modelPlayer, const String& warnin
 
 void HTMLModelElement::modelDidChange()
 {
-    auto* page = document().page();
+    RefPtr page = document().page();
     if (!page) {
         if (!m_readyPromise->isFulfilled())
             m_readyPromise->reject(Exception { ExceptionCode::AbortError });

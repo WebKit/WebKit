@@ -450,19 +450,19 @@ static RefPtr<const TransformFunctionBase> createPerspectiveTransformFunction(co
     if (!function)
         return { };
 
-    auto& parameter = function->item(0);
-    if (parameter.isValueID()) {
-        ASSERT(parameter.valueID() == CSSValueNone);
+    Ref parameter = function->item(0);
+    if (parameter->isValueID()) {
+        ASSERT(parameter->valueID() == CSSValueNone);
         return PerspectiveTransformFunction::create(CSS::Keyword::None { });
     }
 
-    if (parameter.isLength())
-        return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, parameter));
+    if (parameter->isLength())
+        return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, parameter.get()));
 
     // FIXME: Support for <number> parameters for `perspective` is a quirk that should go away when 3d transforms are finalized.
     return PerspectiveTransformFunction::create(
         Length<CSS::Nonnegative> {
-            static_cast<float>(toStyleFromCSSValue<Number<CSS::Nonnegative>>(state, parameter).value)
+            static_cast<float>(toStyleFromCSSValue<Number<CSS::Nonnegative>>(state, parameter.get()).value)
         }
     );
 }
@@ -471,7 +471,7 @@ static RefPtr<const TransformFunctionBase> createPerspectiveTransformFunction(co
 
 auto CSSValueConversion<TransformFunction>::operator()(BuilderState& state, const CSSValue& value) -> TransformFunction
 {
-    auto transform = requiredDowncast<CSSFunctionValue>(state, value);
+    RefPtr transform = requiredDowncast<CSSFunctionValue>(state, value);
     if (!transform)
         return TransformFunction { MatrixTransformFunction::createIdentity() };
 
@@ -544,95 +544,96 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const R
         return !length.isKnownZero() || length.isPercent();
     };
 
-    auto& function = value.function();
-    switch (function.type()) {
+    Ref function = value.function();
+    switch (function->type()) {
     case TransformFunctionType::TranslateX:
-        return CSSFunctionValue::create(CSSValueTranslateX, translateLength(uncheckedDowncast<TranslateTransformFunction>(function).x()));
+        return CSSFunctionValue::create(CSSValueTranslateX, translateLength(uncheckedDowncast<TranslateTransformFunction>(function.get()).x()));
     case TransformFunctionType::TranslateY:
-        return CSSFunctionValue::create(CSSValueTranslateY, translateLength(uncheckedDowncast<TranslateTransformFunction>(function).y()));
+        return CSSFunctionValue::create(CSSValueTranslateY, translateLength(uncheckedDowncast<TranslateTransformFunction>(function.get()).y()));
     case TransformFunctionType::TranslateZ:
-        return CSSFunctionValue::create(CSSValueTranslateZ, translateLength(uncheckedDowncast<TranslateTransformFunction>(function).z()));
+        return CSSFunctionValue::create(CSSValueTranslateZ, translateLength(uncheckedDowncast<TranslateTransformFunction>(function.get()).z()));
     case TransformFunctionType::Translate:
     case TransformFunctionType::Translate3D: {
-        auto& translate = uncheckedDowncast<TranslateTransformFunction>(function);
-        if (!translate.is3DOperation()) {
-            if (!includeLength(translate.y()))
-                return CSSFunctionValue::create(CSSValueTranslate, translateLength(translate.x()));
+        Ref translate = uncheckedDowncast<TranslateTransformFunction>(function.get());
+        if (!translate->is3DOperation()) {
+            if (!includeLength(translate->y()))
+                return CSSFunctionValue::create(CSSValueTranslate, translateLength(translate->x()));
             return CSSFunctionValue::create(CSSValueTranslate,
-                translateLength(translate.x()),
-                translateLength(translate.y()));
+                translateLength(translate->x()),
+                translateLength(translate->y()));
         }
         return CSSFunctionValue::create(CSSValueTranslate3d,
-            translateLength(translate.x()),
-            translateLength(translate.y()),
-            translateLength(translate.z()));
+            translateLength(translate->x()),
+            translateLength(translate->y()),
+            translateLength(translate->z()));
     }
     case TransformFunctionType::ScaleX:
         return CSSFunctionValue::create(CSSValueScaleX,
-            createCSSValue(pool, style, uncheckedDowncast<ScaleTransformFunction>(function).x()));
+            createCSSValue(pool, style, uncheckedDowncast<ScaleTransformFunction>(function.get()).x()));
     case TransformFunctionType::ScaleY:
         return CSSFunctionValue::create(CSSValueScaleY,
-            createCSSValue(pool, style, uncheckedDowncast<ScaleTransformFunction>(function).y()));
+            createCSSValue(pool, style, uncheckedDowncast<ScaleTransformFunction>(function.get()).y()));
     case TransformFunctionType::ScaleZ:
         return CSSFunctionValue::create(CSSValueScaleZ,
-            createCSSValue(pool, style, uncheckedDowncast<ScaleTransformFunction>(function).z()));
+            createCSSValue(pool, style, uncheckedDowncast<ScaleTransformFunction>(function.get()).z()));
     case TransformFunctionType::Scale:
     case TransformFunctionType::Scale3D: {
-        auto& scale = uncheckedDowncast<ScaleTransformFunction>(function);
-        if (!scale.is3DOperation()) {
-            if (scale.x() == scale.y())
-                return CSSFunctionValue::create(CSSValueScale, createCSSValue(pool, style, scale.x()));
+        Ref scale = uncheckedDowncast<ScaleTransformFunction>(function.get());
+        if (!scale->is3DOperation()) {
+            if (scale->x() == scale->y())
+                return CSSFunctionValue::create(CSSValueScale, createCSSValue(pool, style, scale->x()));
             return CSSFunctionValue::create(CSSValueScale,
-                createCSSValue(pool, style, scale.x()),
-                createCSSValue(pool, style, scale.y()));
+                createCSSValue(pool, style, scale->x()),
+                createCSSValue(pool, style, scale->y()));
         }
         return CSSFunctionValue::create(CSSValueScale3d,
-            createCSSValue(pool, style, scale.x()),
-            createCSSValue(pool, style, scale.y()),
-            createCSSValue(pool, style, scale.z()));
+            createCSSValue(pool, style, scale->x()),
+            createCSSValue(pool, style, scale->y()),
+            createCSSValue(pool, style, scale->z()));
     }
     case TransformFunctionType::RotateX:
         return CSSFunctionValue::create(CSSValueRotateX,
-            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function).angle()));
+            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle()));
     case TransformFunctionType::RotateY:
         return CSSFunctionValue::create(CSSValueRotateY,
-            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function).angle()));
+            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle()));
     case TransformFunctionType::RotateZ:
         return CSSFunctionValue::create(CSSValueRotateZ,
-            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function).angle()));
+            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle()));
     case TransformFunctionType::Rotate:
         return CSSFunctionValue::create(CSSValueRotate,
-            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function).angle()));
+            createCSSValue(pool, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle()));
     case TransformFunctionType::Rotate3D: {
-        auto& rotate = uncheckedDowncast<RotateTransformFunction>(function);
+        Ref rotate = uncheckedDowncast<RotateTransformFunction>(function.get());
         return CSSFunctionValue::create(CSSValueRotate3d,
-            createCSSValue(pool, style, rotate.x()),
-            createCSSValue(pool, style, rotate.y()),
-            createCSSValue(pool, style, rotate.z()),
-            createCSSValue(pool, style, rotate.angle()));
+            createCSSValue(pool, style, rotate->x()),
+            createCSSValue(pool, style, rotate->y()),
+            createCSSValue(pool, style, rotate->z()),
+            createCSSValue(pool, style, rotate->angle()));
     }
     case TransformFunctionType::SkewX:
         return CSSFunctionValue::create(CSSValueSkewX,
-            createCSSValue(pool, style, uncheckedDowncast<SkewTransformFunction>(function).angleX()));
+            createCSSValue(pool, style, uncheckedDowncast<SkewTransformFunction>(function.get()).angleX()));
     case TransformFunctionType::SkewY:
         return CSSFunctionValue::create(CSSValueSkewY,
-            createCSSValue(pool, style, uncheckedDowncast<SkewTransformFunction>(function).angleY()));
+            createCSSValue(pool, style, uncheckedDowncast<SkewTransformFunction>(function.get()).angleY()));
     case TransformFunctionType::Skew: {
-        auto& skew = uncheckedDowncast<SkewTransformFunction>(function);
-        if (skew.angleY().isZero())
+        Ref skew = uncheckedDowncast<SkewTransformFunction>(function.get());
+        if (skew->angleY().isZero()) {
             return CSSFunctionValue::create(CSSValueSkew,
-                createCSSValue(pool, style, skew.angleX()));
+                createCSSValue(pool, style, skew->angleX()));
+        }
         return CSSFunctionValue::create(CSSValueSkew,
-            createCSSValue(pool, style, skew.angleX()),
-            createCSSValue(pool, style, skew.angleY()));
+            createCSSValue(pool, style, skew->angleX()),
+            createCSSValue(pool, style, skew->angleY()));
     }
     case TransformFunctionType::Perspective:
         return CSSFunctionValue::create(CSSValuePerspective,
-            createCSSValue(pool, style, uncheckedDowncast<PerspectiveTransformFunction>(function).perspective()));
+            createCSSValue(pool, style, uncheckedDowncast<PerspectiveTransformFunction>(function.get()).perspective()));
     case TransformFunctionType::Matrix:
     case TransformFunctionType::Matrix3D: {
         TransformationMatrix transform;
-        function.apply(transform, { });
+        function->apply(transform, { });
         return createCSSValue(pool, style, transform);
     }
     }
@@ -679,157 +680,157 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
         return !length.isKnownZero() || length.isPercent();
     };
 
-    auto& function = value.function();
-    switch (function.type()) {
+    Ref function = value.function();
+    switch (function->type()) {
     case TransformFunctionType::TranslateX:
         builder.append(nameLiteral(CSSValueTranslateX), '(');
-        translateLength(uncheckedDowncast<TranslateTransformFunction>(function).x());
+        translateLength(uncheckedDowncast<TranslateTransformFunction>(function.get()).x());
         builder.append(')');
         return;
     case TransformFunctionType::TranslateY:
         builder.append(nameLiteral(CSSValueTranslateY), '(');
-        translateLength(uncheckedDowncast<TranslateTransformFunction>(function).y());
+        translateLength(uncheckedDowncast<TranslateTransformFunction>(function.get()).y());
         builder.append(')');
         return;
     case TransformFunctionType::TranslateZ:
         builder.append(nameLiteral(CSSValueTranslateZ), '(');
-        translateLength(uncheckedDowncast<TranslateTransformFunction>(function).z());
+        translateLength(uncheckedDowncast<TranslateTransformFunction>(function.get()).z());
         builder.append(')');
         return;
     case TransformFunctionType::Translate:
     case TransformFunctionType::Translate3D: {
-        auto& translate = uncheckedDowncast<TranslateTransformFunction>(function);
-        if (!translate.is3DOperation()) {
-            if (!includeLength(translate.y())) {
+        Ref translate = uncheckedDowncast<TranslateTransformFunction>(function.get());
+        if (!translate->is3DOperation()) {
+            if (!includeLength(translate->y())) {
                 builder.append(nameLiteral(CSSValueTranslate), '(');
-                translateLength(translate.x());
+                translateLength(translate->x());
                 builder.append(')');
                 return;
             }
             builder.append(nameLiteral(CSSValueTranslate), '(');
-            translateLength(translate.x());
+            translateLength(translate->x());
             builder.append(", "_s);
-            translateLength(translate.y());
+            translateLength(translate->y());
             builder.append(')');
             return;
         }
         builder.append(nameLiteral(CSSValueTranslate3d), '(');
-        translateLength(translate.x());
+        translateLength(translate->x());
         builder.append(", "_s);
-        translateLength(translate.y());
+        translateLength(translate->y());
         builder.append(", "_s);
-        translateLength(translate.z());
+        translateLength(translate->z());
         builder.append(')');
         return;
     }
     case TransformFunctionType::ScaleX:
         builder.append(nameLiteral(CSSValueScaleX), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<ScaleTransformFunction>(function).x());
+        serializationForCSS(builder, context, style, uncheckedDowncast<ScaleTransformFunction>(function.get()).x());
         builder.append(')');
         return;
     case TransformFunctionType::ScaleY:
         builder.append(nameLiteral(CSSValueScaleY), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<ScaleTransformFunction>(function).y());
+        serializationForCSS(builder, context, style, uncheckedDowncast<ScaleTransformFunction>(function.get()).y());
         builder.append(')');
         return;
     case TransformFunctionType::ScaleZ:
         builder.append(nameLiteral(CSSValueScaleZ), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<ScaleTransformFunction>(function).z());
+        serializationForCSS(builder, context, style, uncheckedDowncast<ScaleTransformFunction>(function.get()).z());
         builder.append(')');
         return;
     case TransformFunctionType::Scale:
     case TransformFunctionType::Scale3D: {
-        auto& scale = uncheckedDowncast<ScaleTransformFunction>(function);
-        if (!scale.is3DOperation()) {
-            if (scale.x() == scale.y()) {
+        Ref scale = uncheckedDowncast<ScaleTransformFunction>(function.get());
+        if (!scale->is3DOperation()) {
+            if (scale->x() == scale->y()) {
                 builder.append(nameLiteral(CSSValueScale), '(');
-                serializationForCSS(builder, context, style, scale.x());
+                serializationForCSS(builder, context, style, scale->x());
                 builder.append(')');
                 return;
             }
             builder.append(nameLiteral(CSSValueScale), '(');
-            serializationForCSS(builder, context, style, scale.x());
+            serializationForCSS(builder, context, style, scale->x());
             builder.append(", "_s);
-            serializationForCSS(builder, context, style, scale.y());
+            serializationForCSS(builder, context, style, scale->y());
             builder.append(')');
             return;
         }
         builder.append(nameLiteral(CSSValueScale3d), '(');
-        serializationForCSS(builder, context, style, scale.x());
+        serializationForCSS(builder, context, style, scale->x());
         builder.append(", "_s);
-        serializationForCSS(builder, context, style, scale.y());
+        serializationForCSS(builder, context, style, scale->y());
         builder.append(", "_s);
-        serializationForCSS(builder, context, style, scale.z());
+        serializationForCSS(builder, context, style, scale->z());
         builder.append(')');
         return;
     }
     case TransformFunctionType::RotateX:
         builder.append(nameLiteral(CSSValueRotateX), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function).angle());
+        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle());
         builder.append(')');
         return;
     case TransformFunctionType::RotateY:
         builder.append(nameLiteral(CSSValueRotateY), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function).angle());
+        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle());
         builder.append(')');
         return;
     case TransformFunctionType::RotateZ:
         builder.append(nameLiteral(CSSValueRotateZ), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function).angle());
+        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle());
         builder.append(')');
         return;
     case TransformFunctionType::Rotate:
         builder.append(nameLiteral(CSSValueRotate), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function).angle());
+        serializationForCSS(builder, context, style, uncheckedDowncast<RotateTransformFunction>(function.get()).angle());
         builder.append(')');
         return;
     case TransformFunctionType::Rotate3D: {
-        auto& rotate = uncheckedDowncast<RotateTransformFunction>(function);
+        Ref rotate = uncheckedDowncast<RotateTransformFunction>(function.get());
         builder.append(nameLiteral(CSSValueRotate3d), '(');
-        serializationForCSS(builder, context, style, rotate.x());
+        serializationForCSS(builder, context, style, rotate->x());
         builder.append(", "_s);
-        serializationForCSS(builder, context, style, rotate.y());
+        serializationForCSS(builder, context, style, rotate->y());
         builder.append(", "_s);
-        serializationForCSS(builder, context, style, rotate.z());
+        serializationForCSS(builder, context, style, rotate->z());
         builder.append(", "_s);
-        serializationForCSS(builder, context, style, rotate.angle());
+        serializationForCSS(builder, context, style, rotate->angle());
         builder.append(')');
         return;
     }
     case TransformFunctionType::SkewX:
         builder.append(nameLiteral(CSSValueSkewX), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<SkewTransformFunction>(function).angleX());
+        serializationForCSS(builder, context, style, uncheckedDowncast<SkewTransformFunction>(function.get()).angleX());
         builder.append(')');
         return;
     case TransformFunctionType::SkewY:
         builder.append(nameLiteral(CSSValueSkewY), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<SkewTransformFunction>(function).angleY());
+        serializationForCSS(builder, context, style, uncheckedDowncast<SkewTransformFunction>(function.get()).angleY());
         builder.append(')');
         return;
     case TransformFunctionType::Skew: {
-        auto& skew = uncheckedDowncast<SkewTransformFunction>(function);
-        if (skew.angleY().isZero()) {
+        Ref skew = uncheckedDowncast<SkewTransformFunction>(function.get());
+        if (skew->angleY().isZero()) {
             builder.append(nameLiteral(CSSValueSkew), '(');
-            serializationForCSS(builder, context, style, skew.angleX());
+            serializationForCSS(builder, context, style, skew->angleX());
             builder.append(')');
             return;
         }
         builder.append(nameLiteral(CSSValueSkew), '(');
-        serializationForCSS(builder, context, style, skew.angleX());
+        serializationForCSS(builder, context, style, skew->angleX());
         builder.append(", "_s);
-        serializationForCSS(builder, context, style, skew.angleY());
+        serializationForCSS(builder, context, style, skew->angleY());
         builder.append(')');
         return;
     }
     case TransformFunctionType::Perspective:
         builder.append(nameLiteral(CSSValuePerspective), '(');
-        serializationForCSS(builder, context, style, uncheckedDowncast<PerspectiveTransformFunction>(function).perspective());
+        serializationForCSS(builder, context, style, uncheckedDowncast<PerspectiveTransformFunction>(function.get()).perspective());
         builder.append(')');
         return;
     case TransformFunctionType::Matrix:
     case TransformFunctionType::Matrix3D: {
         TransformationMatrix transform;
-        function.apply(transform, { });
+        function->apply(transform, { });
         serializationForCSS(builder, context, style, transform);
         return;
     }

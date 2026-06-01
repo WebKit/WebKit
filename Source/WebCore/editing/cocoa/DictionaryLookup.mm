@@ -292,11 +292,11 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
     if (!canCreateRevealItems())
         return std::nullopt;
     
-    auto* node = hitTestResult.innerNonSharedNode();
+    RefPtr node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
         return std::nullopt;
 
-    auto* frame = node->document().frame();
+    RefPtr frame = node->document().frame();
     if (!frame)
         return std::nullopt;
 
@@ -307,7 +307,7 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
 
     auto position = frame->visiblePositionForPoint(framePoint);
     if (position.isNull())
-        position = firstPositionInOrBeforeNode(node);
+        position = firstPositionInOrBeforeNode(node.get());
 
     RefPtr focusedOrMainFrame = frame->page()->focusController().focusedOrMainFrame();
     if (!focusedOrMainFrame)

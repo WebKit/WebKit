@@ -86,8 +86,8 @@ void Image::invalidateAdapter()
 Image& Image::nullImage()
 {
     ASSERT(isMainThread());
-    static Image& nullImage = BitmapImage::create().leakRef();
-    return nullImage;
+    static NeverDestroyed<Ref<BitmapImage>> nullImage = BitmapImage::create();
+    return nullImage->get();
 }
 
 static bool isPDFResource(const String& mimeType, const URL& url)

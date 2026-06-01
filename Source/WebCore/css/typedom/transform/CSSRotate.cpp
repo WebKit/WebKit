@@ -77,7 +77,7 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<const CSSFunctionValue> cssFun
     auto makeRotate = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSRotate>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
         Vector<RefPtr<CSSNumericValue>> components;
         for (Ref componentCSSValue : cssFunctionValue.get()) {
-            auto valueOrException = CSSStyleValueFactory::reifyValue(document, componentCSSValue, std::nullopt);
+            auto valueOrException = CSSStyleValueFactory::reifyValue(document, componentCSSValue.get(), std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());

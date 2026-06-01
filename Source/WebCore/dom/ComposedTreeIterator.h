@@ -95,7 +95,7 @@ inline ComposedTreeIterator<ContextInlineCapacity>::ComposedTreeIterator()
 template <size_t ContextInlineCapacity>
 inline ComposedTreeIterator<ContextInlineCapacity>& ComposedTreeIterator<ContextInlineCapacity>::traverseNext()
 {
-    if (auto* shadowRoot = context().iterator->shadowRoot()) {
+    if (RefPtr shadowRoot = context().iterator->shadowRoot()) {
         traverseShadowRoot(*shadowRoot);
         return *this;
     }
@@ -215,9 +215,9 @@ WEBCORE_EXPORT String composedTreeAsText(ContainerNode& root, ComposedTreeAsText
 // Helper functions for walking the composed tree.
 // FIXME: Use ComposedTreeIterator instead. These functions are more expensive because they might do O(n) work.
 
-inline HTMLSlotElement* assignedSlotIgnoringUserAgentShadow(Node& node)
+inline RefPtr<HTMLSlotElement> assignedSlotIgnoringUserAgentShadow(Node& node)
 {
-    auto* slot = node.assignedSlot();
+    RefPtr slot = node.assignedSlot();
     if (!slot || slot->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
         return nullptr;
     return slot;
@@ -244,7 +244,7 @@ inline Node* firstChildInComposedTreeIgnoringUserAgentShadow(Node& node)
 
 inline Node* nextSiblingInComposedTreeIgnoringUserAgentShadow(Node& node)
 {
-    if (auto* slot = assignedSlotIgnoringUserAgentShadow(node)) {
+    if (RefPtr slot = assignedSlotIgnoringUserAgentShadow(node)) {
         auto* assignedNodes = slot->assignedNodes();
         ASSERT(assignedNodes);
         auto nodeIndex = assignedNodes->find(&node);
@@ -260,7 +260,7 @@ inline Node* nextSkippingChildrenInComposedTreeIgnoringUserAgentShadow(Node& nod
 {
     if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(node))
         return sibling;
-    for (auto* ancestor = node.parentInComposedTree(); ancestor; ancestor = ancestor->parentInComposedTree()) {
+    for (RefPtr ancestor = node.parentInComposedTree(); ancestor; ancestor = ancestor->parentInComposedTree()) {
         if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(*ancestor))
             return sibling;
     }
@@ -311,7 +311,7 @@ inline ComposedTreeIterator<ContextInlineCapacity>::ComposedTreeIterator(Contain
             return;
         }
     }
-    if (auto* shadowRoot = root.shadowRoot()) {
+    if (RefPtr shadowRoot = root.shadowRoot()) {
         ElementAndTextDescendantIterator firstChild(*shadowRoot, ElementAndTextDescendantIterator::FirstChild);
         initializeContextStack(root, firstChild ? *firstChild : root);
         return;
@@ -339,16 +339,16 @@ inline void ComposedTreeIterator<ContextInlineCapacity>::initializeContextStack(
 {
     // This code sets up the iterator for arbitrary node/root pair. It is not needed in common cases
     // or completes fast because node and root are close (like in composedTreeChildren(*parent).at(node) case).
-    auto* node = &current;
-    auto* contextCurrent = node;
+    RefPtr node = &current;
+    RefPtr contextCurrent = node;
     size_t currentSlotNodeIndex = notFound;
     while (node != &root) {
-        auto* parent = node->parentNode();
+        RefPtr parent = node->parentNode();
         if (!parent) {
             *this = { };
             return;
         }
-        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*parent)) {
+        if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*parent)) {
             m_contextStack.append(Context(*shadowRoot, *contextCurrent));
             m_contextStack.last().slotNodeIndex = currentSlotNodeIndex;
 
@@ -357,13 +357,13 @@ inline void ComposedTreeIterator<ContextInlineCapacity>::initializeContextStack(
             currentSlotNodeIndex = notFound;
             continue;
         }
-        if (auto* shadowRoot = parent->shadowRoot()) {
+        if (RefPtr shadowRoot = parent->shadowRoot()) {
             m_contextStack.append(Context(*parent, *contextCurrent, Context::Slotted));
             m_contextStack.last().slotNodeIndex = currentSlotNodeIndex;
 
-            auto* assignedSlot = shadowRoot->findAssignedSlot(*node);
+            RefPtr assignedSlot = shadowRoot->findAssignedSlot(*node);
             if (assignedSlot) {
-                currentSlotNodeIndex = assignedSlot->assignedNodes()->find(node);
+                currentSlotNodeIndex = assignedSlot->assignedNodes()->find(node.get());
                 ASSERT(currentSlotNodeIndex != notFound);
                 node = assignedSlot;
                 contextCurrent = assignedSlot;
@@ -410,10 +410,10 @@ inline void ComposedTreeIterator<ContextInlineCapacity>::traverseNextInShadowTre
 {
     ASSERT(m_contextStack.size() > 1 || m_rootIsInShadowTree);
 
-    if (auto* slot = dynamicDowncast<HTMLSlotElement>(current())) {
+    if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(current())) {
         if (auto* assignedNodes = slot->assignedNodes()) {
             context().slotNodeIndex = 0;
-            auto* assignedNode = assignedNodes->at(0).get();
+            RefPtr assignedNode = assignedNodes->at(0).get();
             ASSERT(assignedNode);
             ASSERT(dynamicDowncast<Element>(assignedNode->parentNode()));
             m_contextStack.append(Context(*dynamicDowncast<Element>(assignedNode->parentNode()), *assignedNode, Context::Slotted));
@@ -432,7 +432,7 @@ inline void ComposedTreeIterator<ContextInlineCapacity>::traverseNextLeavingCont
 {
     while (context().iterator == context().end && m_contextStack.size() > 1) {
         m_contextStack.removeLast();
-        if (auto* slot = dynamicDowncast<HTMLSlotElement>(current()); slot && advanceInSlot(1, *slot))
+        if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(current()); slot && advanceInSlot(1, *slot))
             return;
         if (context().iterator == context().end)
             return;
@@ -451,7 +451,7 @@ inline bool ComposedTreeIterator<ContextInlineCapacity>::advanceInSlot(int direc
     if (context().slotNodeIndex >= assignedNodes.size())
         return false;
 
-    auto* slotNode = assignedNodes.at(context().slotNodeIndex).get();
+    RefPtr slotNode = assignedNodes.at(context().slotNodeIndex).get();
     ASSERT(slotNode);
     ASSERT(dynamicDowncast<Element>(slotNode->parentNode()));
     m_contextStack.append(Context(*dynamicDowncast<Element>(slotNode->parentNode()), *slotNode, Context::Slotted));

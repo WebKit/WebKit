@@ -375,7 +375,7 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
 
 bool FETurbulenceSoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>>, FilterImage& result) const
 {
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 

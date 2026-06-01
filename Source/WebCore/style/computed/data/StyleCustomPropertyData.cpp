@@ -106,8 +106,8 @@ bool CustomPropertyData::operator==(const CustomPropertyData& other) const
             return false;
 
         for (auto& entry : m_ownValues) {
-            auto* otherValue = other.m_ownValues.get(entry.key);
-            if (!otherValue || *entry.value != *otherValue)
+            auto it = other.m_ownValues.find(entry.key);
+            if (it == other.m_ownValues.end() || *entry.value != *it->value)
                 return false;
         }
         return true;
@@ -132,14 +132,14 @@ void CustomPropertyData::forEachInternal(Callback&& callback) const
     Vector<const CustomPropertyData*, maximumAncestorCount> descendants;
 
     auto isOverridenByDescendants = [&](auto& key) {
-        for (auto* descendant : descendants) {
+        for (RefPtr descendant : descendants) {
             if (descendant->m_ownValues.contains(key))
                 return true;
         }
         return false;
     };
 
-    auto* propertyData = this;
+    RefPtr propertyData = this;
     while (true) {
         for (auto& entry : propertyData->m_ownValues) {
             if (isOverridenByDescendants(entry.key))
@@ -150,8 +150,8 @@ void CustomPropertyData::forEachInternal(Callback&& callback) const
         }
         if (!propertyData->m_parentValues)
             return;
-        descendants.append(propertyData);
-        propertyData = propertyData->m_parentValues.get();
+        descendants.append(propertyData.get());
+        propertyData = propertyData->m_parentValues;
     }
 }
 

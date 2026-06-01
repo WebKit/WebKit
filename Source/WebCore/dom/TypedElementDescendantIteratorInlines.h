@@ -149,12 +149,12 @@ template<typename ElementType, bool filter(const ElementType&)> FilteredElementD
 
 template<typename ElementType, bool filter(const ElementType&)> auto FilteredElementDescendantRange<ElementType, filter>::begin() const -> Iterator
 {
-    return { m_root, first() };
+    return { m_root, first().get() };
 }
 
-template<typename ElementType, bool filter(const ElementType&)> ElementType* FilteredElementDescendantRange<ElementType, filter>::first() const
+template<typename ElementType, bool filter(const ElementType&)> RefPtr<ElementType> FilteredElementDescendantRange<ElementType, filter>::first() const
 {
-    for (auto* element = Traversal<ElementType>::firstWithin(m_root.get()); element; element = Traversal<ElementType>::next(*element, m_root.ptr())) {
+    for (RefPtr element = Traversal<ElementType>::firstWithin(m_root.get()); element; element = Traversal<ElementType>::next(*element, m_root.ptr())) {
         if (filter(*element))
             return element;
     }

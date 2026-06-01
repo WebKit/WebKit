@@ -193,11 +193,11 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         return;
 
     Ref canvas = this->canvas();
-    auto& document = canvas->document();
+    Ref document = canvas->document();
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
     // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseUnresolvedFont() ignores these.
-    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document.get(), strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!unresolvedFont)
         return;
 
@@ -213,7 +213,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), document);
+    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), document.get());
     if (!fontCascade)
         return;
 
@@ -221,7 +221,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
 
-    modifiableState().font.initialize(document.fontSelector(), *fontCascade);
+    modifiableState().font.initialize(document->fontSelector(), *fontCascade);
     ASSERT(state().font.realized());
     ASSERT(state().font.isPopulated());
 

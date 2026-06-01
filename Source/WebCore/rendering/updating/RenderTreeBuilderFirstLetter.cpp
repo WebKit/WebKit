@@ -263,7 +263,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
                 length = scanLength + numCodeUnits;
         }
 
-        auto* textNode = currentTextChild.textNode();
+        RefPtr textNode = currentTextChild.textNode();
         WeakPtr beforeChild = currentTextChild.nextSibling();
         WeakPtr inlineWrapperForDisplayContents = currentTextChild.inlineWrapperForDisplayContents();
         auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();

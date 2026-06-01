@@ -240,7 +240,7 @@ public:
 
     void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
     {
-        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
+        if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
             property->setDirty();
             return;
         }
@@ -273,7 +273,7 @@ public:
     // string through the associated SVGMemberAccessor.
     std::optional<String> synchronize(const QualifiedName& attributeName) const override
     {
-        if (auto* property = fastAnimatedPropertyLookup(m_owner, attributeName))
+        if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName))
             return property->synchronize();
 
         std::optional<String> value;

@@ -130,7 +130,7 @@ RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle
 
 const CustomProperty* ComputedStyleBase::customPropertyValue(const AtomString& name) const
 {
-    for (auto* map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
+    for (RefPtr map : { &nonInheritedCustomProperties(), &inheritedCustomProperties() }) {
         if (auto* value = map->get(name))
             return value;
     }
@@ -141,10 +141,10 @@ void ComputedStyleBase::setCustomPropertyValue(Ref<const CustomProperty>&& value
 {
     auto& name = value->name();
     if (isInherited) {
-        if (auto* existingValue = m_inheritedRareData->customProperties->get(name); !existingValue || *existingValue != value.get())
+        if (RefPtr existingValue = m_inheritedRareData->customProperties->get(name); !existingValue || *existingValue != value.get())
             m_inheritedRareData.access().customProperties.access().set(name, WTF::move(value));
     } else {
-        if (auto* existingValue = m_nonInheritedData->rareData->customProperties->get(name); !existingValue || *existingValue != value.get())
+        if (RefPtr existingValue = m_nonInheritedData->rareData->customProperties->get(name); !existingValue || *existingValue != value.get())
             m_nonInheritedData.access().rareData.access().customProperties.access().set(name, WTF::move(value));
     }
 }
@@ -154,8 +154,8 @@ bool ComputedStyleBase::customPropertyValueEqual(const ComputedStyleBase& other,
     if (&nonInheritedCustomProperties() == &other.nonInheritedCustomProperties() && &inheritedCustomProperties() == &other.inheritedCustomProperties())
         return true;
 
-    auto* value = customPropertyValue(name);
-    auto* otherValue = other.customPropertyValue(name);
+    RefPtr value = customPropertyValue(name);
+    RefPtr otherValue = other.customPropertyValue(name);
     if (value == otherValue)
         return true;
     if (!value || !otherValue)
@@ -187,8 +187,8 @@ void ComputedStyleBase::deduplicateCustomProperties(const ComputedStyleBase& oth
 
 void ComputedStyleBase::addCustomPaintWatchProperty(const AtomString& name)
 {
-    auto& data = m_nonInheritedData.access().rareData.access();
-    data.customPaintWatchedProperties.add(name);
+    Ref data = m_nonInheritedData.access().rareData.access();
+    data->customPaintWatchedProperties.add(name);
 }
 
 // MARK: - FontCascade support.

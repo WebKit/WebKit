@@ -44,9 +44,9 @@ String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode mode)
             stream << "\n";
             continue;
         }
-        auto& element = downcast<Element>(*it);
-        stream << element.localName();
-        if (element.shadowRoot())
+        Ref element = downcast<Element>(*it);
+        stream << element->localName();
+        if (element->shadowRoot())
             stream << " (shadow root)";
         if (mode == ComposedTreeAsTextMode::WithPointers)
             stream << " " << &*it;

@@ -148,8 +148,8 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(Do
         // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
         if (CSSProperty::isListValuedProperty(propertyID)) {
             if (auto* values = dynamicDowncast<CSSValueContainingVector>(*cssValue)) {
-                for (auto& value : *values)
-                    cssValues.append(Ref { const_cast<CSSValue&>(value) });
+                for (Ref value : *values)
+                    cssValues.append(Ref { const_cast<CSSValue&>(value.get()) });
             }
         }
         if (cssValues.isEmpty())

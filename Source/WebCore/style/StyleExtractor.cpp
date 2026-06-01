@@ -162,17 +162,17 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
         return false;
 
     const auto* currentElement = &element;
-    for (auto& ancestor : composedTreeAncestors(element)) {
-        if (ancestor.styleValidity() != Style::Validity::Valid)
+    for (Ref ancestor : composedTreeAncestors(element)) {
+        if (ancestor->styleValidity() != Style::Validity::Valid)
             return false;
 
-        if (isQueryContainer(ancestor))
+        if (isQueryContainer(ancestor.get()))
             return false;
 
-        if (ancestor.directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
+        if (ancestor->directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
             return false;
 
-        currentElement = &ancestor;
+        currentElement = ancestor.ptr();
     }
 
     return true;

@@ -66,7 +66,7 @@ unsigned StyleSheetContents::estimatedSizeInBytes() const
     size += ruleCount() * StyleRule::averageSizeInBytes();
 
     for (unsigned i = 0; i < m_importRules.size(); ++i) {
-        if (StyleSheetContents* sheet = m_importRules[i]->styleSheet())
+        if (RefPtr sheet = m_importRules[i]->styleSheet())
             size += sheet->estimatedSizeInBytes();
     }
     return size;
@@ -414,8 +414,8 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     }
     if (!hasValidMIMEType) {
         ASSERT(sheetText.isNull());
-        if (auto* document = singleOwnerDocument()) {
-            if (auto* frame = document->frame()) {
+        if (RefPtr document = singleOwnerDocument()) {
+            if (RefPtr frame = document->frame()) {
                 if (isStrictParserMode(m_parserContext.mode))
                     frame->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse stylesheet at '"_s, cachedStyleSheet->url().stringCenterEllipsizedToLength(), "' because non CSS MIME types are not allowed in strict mode."_s));
                 else if (!cachedStyleSheet->mimeTypeAllowedByNosniff())
@@ -452,7 +452,7 @@ void StyleSheetContents::checkLoaded()
         return;
 
     Ref<StyleSheetContents> protectedThis(*this);
-    StyleSheetContents* parentSheet = parentStyleSheet();
+    RefPtr parentSheet = parentStyleSheet();
     if (parentSheet) {
         parentSheet->checkLoaded();
         m_loadCompleted = true;
@@ -477,7 +477,7 @@ void StyleSheetContents::notifyLoadedSheet(const CachedCSSStyleSheet* sheet)
 
 void StyleSheetContents::startLoadingDynamicSheet()
 {
-    if (Node* owner = singleOwnerNode())
+    if (RefPtr owner = singleOwnerNode())
         owner->startLoadingDynamicSheet();
 }
 
@@ -491,7 +491,9 @@ StyleSheetContents* StyleSheetContents::rootStyleSheet() const
 
 Node* StyleSheetContents::singleOwnerNode() const
 {
-    StyleSheetContents* root = rootStyleSheet();
+    RefPtr root = rootStyleSheet();
+    if (!root)
+        return nullptr;
     if (root->m_clients.isEmpty())
         return nullptr;
     ASSERT(root->m_clients.size() == 1);
@@ -500,7 +502,7 @@ Node* StyleSheetContents::singleOwnerNode() const
 
 Document* StyleSheetContents::singleOwnerDocument() const
 {
-    Node* ownerNode = singleOwnerNode();
+    RefPtr ownerNode = singleOwnerNode();
     return ownerNode ? &ownerNode->document() : nullptr;
 }
 
@@ -509,11 +511,11 @@ static bool traverseRulesInVector(const Vector<Ref<StyleRuleBase>>& rules, NOESC
     for (auto& rule : rules) {
         if (handler(rule))
             return true;
-        if (auto styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(rule.ptr())) {
+        if (RefPtr styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(rule.ptr())) {
             if (traverseRulesInVector(styleRuleWithNesting->nestedRules(), handler))
                 return true;
         }
-        auto* groupRule = dynamicDowncast<StyleRuleGroup>(rule.get());
+        RefPtr groupRule = dynamicDowncast<StyleRuleGroup>(rule.get());
         if (!groupRule)
             continue;
         if (traverseRulesInVector(groupRule->childRules(), handler))
@@ -610,7 +612,7 @@ bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLo
 
 #if ENABLE(CONTENT_EXTENSIONS)
         // If a cached subresource is blocked or made HTTPS by a content blocker, we cannot reuse the cached stylesheet.
-        auto* page = loader.frame().page();
+        RefPtr page = loader.frame().page();
         auto* documentLoader = loader.documentLoader();
         if (page && documentLoader) {
             const auto& request = resource.resourceRequest();

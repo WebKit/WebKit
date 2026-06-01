@@ -429,7 +429,7 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {
-            auto* faces = fontFace(request, family);
+            RefPtr faces = fontFace(request, family);
             if (!faces)
                 continue;
             for (auto& constituentFace : faces->constituentFaces()) {
@@ -482,8 +482,8 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
 
     Vector<std::reference_wrapper<CSSFontFace>, 32> candidateFontFaces;
     for (int i = familyFontFaces.size() - 1; i >= 0; --i) {
-        CSSFontFace& candidate = familyFontFaces[i];
-        if (candidate.status() == CSSFontFace::Status::Failure)
+        Ref candidate = familyFontFaces[i];
+        if (candidate->status() == CSSFontFace::Status::Failure)
             continue;
         candidateFontFaces.append(candidate);
     }
@@ -538,9 +538,9 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
                 return true;
             return false;
         });
-        CSSFontFace* previousCandidate = nullptr;
+        RefPtr<CSSFontFace> previousCandidate;
         for (auto& candidate : candidateFontFaces) {
-            if (&candidate.get() == previousCandidate)
+            if (&candidate.get() == previousCandidate.get())
                 continue;
             previousCandidate = &candidate.get();
             face->appendFontFace(candidate.get());

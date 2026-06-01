@@ -175,7 +175,7 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTF::move(transform));
     };
     FloatRect maskRepaintRect;
-    for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
         if (!renderer || !childNode->isSVGElement())
             continue;

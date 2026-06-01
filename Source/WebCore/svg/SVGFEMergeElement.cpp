@@ -55,8 +55,8 @@ void SVGFEMergeElement::childrenChanged(const ChildChange& change)
 Vector<AtomString> SVGFEMergeElement::filterEffectInputsNames() const
 {
     Vector<AtomString> inputsNames;
-    for (auto& mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this))
-        inputsNames.append(mergeNode.in1());
+    for (Ref mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this))
+        inputsNames.append(mergeNode->in1());
     return inputsNames;
 }
 

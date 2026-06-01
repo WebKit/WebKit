@@ -46,7 +46,7 @@ inline unsigned CollectionIndexCache<Collection, Iterator>::nodeCount(const Coll
 template <class Collection, class Iterator>
 unsigned CollectionIndexCache<Collection, Iterator>::computeNodeCountUpdatingListCache(const Collection& collection)
 {
-    auto current = collection.collectionBegin();
+    Iterator current = collection.collectionBegin();
     if (!current)
         return 0;
 

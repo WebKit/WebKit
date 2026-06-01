@@ -64,8 +64,8 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& doc
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
 {
-    for (auto& child : childrenOfType<SVGElement>(*svgElement)) {
-        if (auto* element = dynamicDowncast<SVGFELightElement>(child))
+    for (Ref child : childrenOfType<SVGElement>(*svgElement)) {
+        if (auto* element = dynamicDowncast<SVGFELightElement>(child.get()))
             return const_cast<SVGFELightElement*>(element);
     }
     return nullptr;
@@ -126,10 +126,10 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
         if (!renderer || !renderer->isRenderOrLegacyRenderSVGResourceFilterPrimitive())
             return;
 
-        if (auto* lightingElement = dynamicDowncast<SVGFEDiffuseLightingElement>(*parent)) {
+        if (CheckedPtr lightingElement = dynamicDowncast<SVGFEDiffuseLightingElement>(*parent)) {
             InstanceInvalidationGuard guard(*this);
             lightingElement->lightElementAttributeChanged(this, attrName);
-        } else if (auto* lightingElement = dynamicDowncast<SVGFESpecularLightingElement>(*parent)) {
+        } else if (CheckedPtr lightingElement = dynamicDowncast<SVGFESpecularLightingElement>(*parent)) {
             InstanceInvalidationGuard guard(*this);
             lightingElement->lightElementAttributeChanged(this, attrName);
         }

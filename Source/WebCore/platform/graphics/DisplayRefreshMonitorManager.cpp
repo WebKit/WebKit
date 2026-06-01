@@ -42,19 +42,18 @@ DisplayRefreshMonitorManager& DisplayRefreshMonitorManager::sharedManager()
     return manager.get();
 }
 
-DisplayRefreshMonitor* DisplayRefreshMonitorManager::ensureMonitorForDisplayID(PlatformDisplayID displayID, DisplayRefreshMonitorFactory* factory)
+RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitorManager::ensureMonitorForDisplayID(PlatformDisplayID displayID, DisplayRefreshMonitorFactory* factory)
 {
     if (auto* existingMonitor = monitorForDisplayID(displayID))
         return existingMonitor;
 
-    auto monitor = DisplayRefreshMonitor::create(factory, displayID);
+    RefPtr monitor = DisplayRefreshMonitor::create(factory, displayID);
     if (!monitor)
         return nullptr;
 
     LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitorManager::ensureMonitorForDisplayID() - created monitor " << monitor.get() << " for display " << displayID);
-    DisplayRefreshMonitor* result = monitor.get();
-    m_monitors.append(DisplayRefreshMonitorWrapper { WTF::move(monitor) });
-    return result;
+    m_monitors.append(DisplayRefreshMonitorWrapper { monitor });
+    return monitor;
 }
 
 void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient& client)

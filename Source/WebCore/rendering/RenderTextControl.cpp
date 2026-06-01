@@ -224,7 +224,7 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
 {
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 
-    auto* placeholder = textFormControlElement().placeholderElement();
+    RefPtr placeholder = textFormControlElement().placeholderElement();
     if (!placeholder)
         return;
 

@@ -82,8 +82,8 @@ void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters
         return;
     }
     auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey.get());
-    auto& ecPublicKey = downcast<CryptoKeyEC>(*(ecParameters.publicKey.get()));
-    if (ecBaseKey.namedCurve() != ecPublicKey.namedCurve()) {
+    Ref ecPublicKey = downcast<CryptoKeyEC>(*(ecParameters.publicKey.get()));
+    if (ecBaseKey.namedCurve() != ecPublicKey->namedCurve()) {
         exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }

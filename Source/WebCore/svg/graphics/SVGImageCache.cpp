@@ -87,11 +87,12 @@ FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) cons
 // restart on page load, nor will two animations in different pages have different timelines.
 Image* SVGImageCache::imageForRenderer(const RenderObject* renderer) const
 {
-    auto* image = findImageForRenderer(renderer);
-    if (!image)
-        return &Image::nullImage();
-    ASSERT(!image->size().isEmpty());
-    return image;
+    if (Image* image = findImageForRenderer(renderer)) {
+        ASSERT(!image->size().isEmpty());
+        return image;
+    }
+
+    return &Image::nullImage();
 }
 
 } // namespace WebCore

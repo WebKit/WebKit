@@ -55,7 +55,7 @@ public:
 
 private:
     void traverseParentInShadowTree();
-    static Element* traverseParent(Node*);
+    static CheckedPtr<Element> traverseParent(Node*);
 
     CheckedPtr<Element> m_current;
 };
@@ -75,19 +75,19 @@ inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator(Element& curre
 {
 }
 
-inline Element* ComposedTreeAncestorIterator::traverseParent(Node* current)
+inline CheckedPtr<Element> ComposedTreeAncestorIterator::traverseParent(Node* current)
 {
-    auto* parent = current->parentNode();
+    RefPtr parent = current->parentNode();
     if (!parent)
         return nullptr;
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*parent))
         return shadowRoot->host();
-    auto* parentElement = dynamicDowncast<Element>(*parent);
+    RefPtr parentElement = dynamicDowncast<Element>(*parent);
     if (!parentElement)
         return nullptr;
-    if (auto* shadowRoot = parentElement->shadowRoot())
+    if (RefPtr shadowRoot = parentElement->shadowRoot())
         return shadowRoot->findAssignedSlot(*current);
-    return parentElement;
+    return parentElement.get();
 }
 
 class ComposedTreeAncestorAdapter {

@@ -202,7 +202,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         constexpr bool hasArrayBufferType = brigand::any<TypeList, IsIDLArrayBuffer<brigand::_1>>::value;
         if constexpr (hasArrayBufferType || hasObjectType) {
-            auto arrayBuffer = (brigand::any<TypeList, IsIDLArrayBufferAllowShared<brigand::_1>>::value) ? JSC::JSArrayBuffer::toWrappedAllowShared(vm, value) : JSC::JSArrayBuffer::toWrapped(vm, value);
+            RefPtr arrayBuffer = (brigand::any<TypeList, IsIDLArrayBufferAllowShared<brigand::_1>>::value) ? JSC::JSArrayBuffer::toWrappedAllowShared(vm, value) : JSC::JSArrayBuffer::toWrapped(vm, value);
             if (arrayBuffer) {
                 if constexpr (hasArrayBufferType) {
                     return functor(WTF::move(arrayBuffer));

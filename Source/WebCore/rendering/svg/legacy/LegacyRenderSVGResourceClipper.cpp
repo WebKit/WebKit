@@ -114,7 +114,7 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     // visible shape, the additive clipping may not work, caused by the clipRule. EvenOdd
     // as well as NonZero can cause self-clipping of the elements.
     // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
-    for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RefPtr graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
         if (!graphicsElement)
             continue;
@@ -123,7 +123,7 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
             continue;
 
         // For <use> elements, check visibility of the target element and skip if no visible target.
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement.get())) {
+        if (RefPtr useElement = dynamicDowncast<SVGUseElement>(graphicsElement.get())) {
             auto* clipChildRenderer = useElement->rendererClipChild();
             if (!clipChildRenderer)
                 continue;
@@ -259,8 +259,8 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
     view().frameView().setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGClipOrMask);
 
     // Draw all clipPath children into a global mask.
-    for (auto& child : childrenOfType<SVGElement>(protectedClipPathElement())) {
-        auto renderer = child.renderer();
+    for (Ref child : childrenOfType<SVGElement>(protectedClipPathElement())) {
+        auto renderer = child->renderer();
         if (!renderer)
             continue;
         if (renderer->needsLayout()) {
@@ -290,7 +290,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
         // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
         // We have to pass the <use> renderer itself to renderSubtreeToContext() to apply it's x/y/transform/etc. values when rendering.
         // So if useElement is non-null, refetch the childNode->renderer(), as renderer got overridden above.
-        SVGRenderingContext::renderSubtreeToContext(maskContext, useElement ? *child.renderer() : *renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToContext(maskContext, useElement ? *child->renderer() : *renderer, maskContentTransformation);
     }
 
     view().frameView().setPaintBehavior(oldBehavior);
@@ -300,7 +300,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
 void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
-    for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
         if (!renderer || !childNode->isSVGElement())
             continue;
@@ -311,7 +311,7 @@ void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect(RepaintRect
             continue;
 
         // For <use> elements, check if the clipping target is visible.
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(childNode)) {
+        if (RefPtr useElement = dynamicDowncast<SVGUseElement>(childNode)) {
             if (!useElement->visibleTargetGraphicsElement())
                 continue;
         }
@@ -344,7 +344,7 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
         point = valueOrDefault(transform.inverse()).mapPoint(point);
     }
 
-    for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;

@@ -96,8 +96,8 @@ SVGElement::~SVGElement()
 {
     if (m_svgRareData) {
         RELEASE_ASSERT(m_svgRareData->referencingElements().isEmptyIgnoringNullReferences());
-        for (SVGElement& instance : copyToVectorOf<Ref<SVGElement>>(instances()))
-            instance.m_svgRareData->setCorrespondingElement(nullptr);
+        for (Ref instance : copyToVectorOf<Ref<SVGElement>>(instances()))
+            instance->m_svgRareData->setCorrespondingElement(nullptr);
         RELEASE_ASSERT(!m_svgRareData->correspondingElement());
         m_svgRareData = nullptr;
     }
@@ -347,8 +347,8 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 
 bool SVGElement::haveLoadedRequiredResources()
 {
-    for (auto& child : childrenOfType<SVGElement>(*this)) {
-        if (!child.haveLoadedRequiredResources())
+    for (Ref child : childrenOfType<SVGElement>(*this)) {
+        if (!child->haveLoadedRequiredResources())
             return false;
     }
     return true;
@@ -421,8 +421,8 @@ static bool hasLoadListener(Element* element)
     if (element->hasEventListeners(eventNames().loadEvent))
         return true;
 
-    for (element = element->parentOrShadowHostElement(); element; element = element->parentOrShadowHostElement()) {
-        if (element->hasCapturingEventListeners(eventNames().loadEvent))
+    for (CheckedPtr current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
+        if (current->hasCapturingEventListeners(eventNames().loadEvent))
             return true;
     }
 

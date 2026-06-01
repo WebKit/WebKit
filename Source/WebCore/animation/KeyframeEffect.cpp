@@ -46,6 +46,7 @@
 #include "DocumentQuirks.h"
 #include "DocumentView.h"
 #include "Element.h"
+#include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventTargetInlines.h"
 #include "FontCascade.h"

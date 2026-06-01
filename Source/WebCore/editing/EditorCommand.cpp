@@ -357,16 +357,16 @@ static bool executeDeleteToEndOfParagraph(LocalFrame& frame, Event*, EditorComma
 
 static bool executeDeleteToMark(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    auto& editor = frame.editor();
+    Ref editor = frame.editor();
     auto& selection = frame.selection();
-    auto markRange = editor.mark().toNormalizedRange();
+    auto markRange = editor->mark().toNormalizedRange();
     auto selectionRange = selection.selection().toNormalizedRange();
     if (markRange && selectionRange) {
         if (!selection.setSelectedRange(unionRange(*markRange, *selectionRange), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             return false;
     }
-    editor.performDelete();
-    editor.setMark(selection.selection());
+    editor->performDelete();
+    editor->setMark(selection.selection());
     return true;
 }
 
@@ -997,7 +997,7 @@ static bool executePasteAsQuotation(LocalFrame& frame, Event*, EditorCommandSour
 
 static bool executePrint(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    Page* page = frame.page();
+    RefPtr page = frame.page();
     if (!page)
         return false;
     return page->chrome().print(frame);
@@ -1080,9 +1080,9 @@ static bool executeSelectSentence(LocalFrame& frame, Event*, EditorCommandSource
 
 static bool executeSelectToMark(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    auto& editor = frame.editor();
+    Ref editor = frame.editor();
     auto& selection = frame.selection();
-    auto markRange = editor.mark().toNormalizedRange();
+    auto markRange = editor->mark().toNormalizedRange();
     auto selectionRange = selection.selection().toNormalizedRange();
     if (!markRange || !selectionRange) {
         SystemSoundManager::singleton().systemBeep();

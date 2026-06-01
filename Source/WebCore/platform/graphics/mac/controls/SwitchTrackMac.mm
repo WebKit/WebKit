@@ -75,19 +75,19 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
     if (!trackImage)
         return nullptr;
 
-    auto cgContext = trackImage->context().platformContext();
+    RetainPtr cgContext = trackImage->context().platformContext();
 
     auto coreUIValue = @(isOn ? 1 : 0);
     auto coreUIState = (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive);
     auto coreUIPresentation = (__bridge NSString *)(isInActiveWindow ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive);
     auto coreUIDirection = (__bridge NSString *)(isInlineFlipped ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
 
-    CGContextStateSaver stateSaver(cgContext);
+    CGContextStateSaver stateSaver(cgContext.get());
 
     // FIXME: clipping in context() might not always be accurate for context().platformContext().
     trackImage->context().clipToImageBuffer(*trackMaskImage, drawingTrackRect);
 
-    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
+    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext.get() options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchFill,
         (__bridge NSString *)kCUIStateKey: coreUIState,
         (__bridge NSString *)kCUIValueKey: coreUIValue,
@@ -97,7 +97,7 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
         (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
     }];
 
-    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
+    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext.get() options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchBorder,
         (__bridge NSString *)kCUISizeKey: coreUISize,
         (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: coreUIDirection,
@@ -118,7 +118,7 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
             SwitchMacUtilities::rotateContextForVerticalWritingMode(trackImage->context(), drawingTrackRect);
         }
 
-        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
+        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext.get() options:@{
             (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchOnOffLabel,
             // FIXME: Below does not pass kCUIStatePressed like NSCoreUIStateForSwitchState does,
             // as passing that does not appear to work correctly. Might be related to

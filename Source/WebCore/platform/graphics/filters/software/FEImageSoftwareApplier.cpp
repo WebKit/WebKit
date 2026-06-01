@@ -56,7 +56,7 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Fil
         return true;
     }
 
-    if (auto imageBuffer = sourceImage.imageBufferIfExists()) {
+    if (RefPtr imageBuffer = sourceImage.imageBufferIfExists()) {
         auto destRect = m_effect->sourceImageRect();
         destRect.moveBy(primitiveSubregion.location());
         destRect.scale(filter.filterScale());

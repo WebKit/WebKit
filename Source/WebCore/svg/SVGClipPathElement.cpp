@@ -139,7 +139,7 @@ RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
     // visible shape, the additive clipping may not work, caused by the clipRule. EvenOdd
     // as well as NonZero can cause self-clipping of the elements.
     // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
-    for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
         RefPtr graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
         if (!graphicsElement)
             continue;
@@ -189,7 +189,7 @@ FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalcula
 
     FloatRect clipContentRepaintRect;
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
-    for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (RefPtr childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
         if (!renderer || !childNode->isSVGElement())
             continue;
@@ -201,7 +201,7 @@ FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalcula
             continue;
 
         // For <use> elements, verify the target is visible and valid
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(childNode)) {
+        if (RefPtr useElement = dynamicDowncast<SVGUseElement>(childNode)) {
             if (!useElement->rendererClipChild())
                 continue;
         }

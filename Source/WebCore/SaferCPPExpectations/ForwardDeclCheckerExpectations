@@ -41,7 +41,6 @@ editing/TextIterator.cpp
 html/HTMLMediaElement.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 html/shadow/DateTimeEditElement.h
-inspector/InspectorInstrumentation.h
 inspector/InspectorStyleSheet.h
 inspector/InstrumentingAgents.h
 inspector/PageInspectorController.h

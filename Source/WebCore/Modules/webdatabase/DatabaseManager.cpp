@@ -235,7 +235,7 @@ bool DatabaseManager::hasOpenDatabases(Document& document)
 
 void DatabaseManager::stopDatabases(Document& document, DatabaseTaskSynchronizer* synchronizer)
 {
-    auto databaseContext = document.databaseContext();
+    RefPtr databaseContext = document.databaseContext();
     if (!databaseContext || !databaseContext->stopDatabases(synchronizer)) {
         if (synchronizer)
             synchronizer->taskCompleted();

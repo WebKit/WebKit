@@ -191,9 +191,9 @@ static void prepareContextForQRCode(ContextMenuContext& context)
         return;
 
     RefPtr<Element> element;
-    for (auto& lineage : lineageOfType<Element>(*nodeElement)) {
+    for (Ref lineage : lineageOfType<Element>(*nodeElement)) {
         if (is<HTMLTableElement>(lineage) || is<HTMLCanvasElement>(lineage) || is<HTMLImageElement>(lineage) || is<SVGSVGElement>(lineage)) {
-            element = lineage;
+            element = lineage.ptr();
             break;
         }
     }

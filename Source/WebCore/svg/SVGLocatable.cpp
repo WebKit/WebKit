@@ -108,7 +108,7 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
 
     AffineTransform ctm;
 
-    for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
+    for (RefPtr<Element> currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
         RefPtr svgElement = dynamicDowncast<SVGElement>(*currentElement);
         if (!svgElement)
             break;

@@ -73,7 +73,7 @@ void AcceleratedEffectStackUpdater::update()
         if (!renderer || !renderer->isComposited())
             continue;
 
-        auto* renderLayer = renderer->layer();
+        CheckedPtr renderLayer = renderer->layer();
         ASSERT(renderLayer && renderLayer->backing());
         auto* backing = renderLayer->backing();
         previousEffectStacks.append(protect(backing->acceleratedEffectStack()));

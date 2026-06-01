@@ -49,8 +49,8 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
         // 2. Let promise be the result of calling resolve with %Promise% as the this value and V as the single argument value.
         auto* promise = JSC::JSPromise::resolvedPromise(globalObject, value);
         if (scope.exception()) {
-            auto* scriptExecutionContext = globalObject->scriptExecutionContext();
-            if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
+            CheckedPtr scriptExecutionContext = globalObject->scriptExecutionContext();
+            if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext.get())) {
                 auto* scriptController = globalScope->script();
                 bool terminatorCausedException = vm.isTerminationException(scope.exception());
                 if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {

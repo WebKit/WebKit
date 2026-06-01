@@ -54,14 +54,14 @@ template<typename T> bool CSSMathValue::equalsImpl(const CSSNumericValue& other)
         return false;
 
     ASSERT(styleValueType() == other.styleValueType());
-    auto& thisValues = static_cast<const T*>(this)->values();
-    auto& otherValues = otherT->values();
-    auto length = thisValues.length();
-    if (length != otherValues.length())
+    Ref thisValues = static_cast<const T*>(this)->values();
+    Ref otherValues = otherT->values();
+    auto length = thisValues->length();
+    if (length != otherValues->length())
         return false;
 
     for (size_t i = 0 ; i < length; ++i) {
-        if (!thisValues.array()[i]->equals(otherValues.array()[i].get()))
+        if (!thisValues->array()[i]->equals(otherValues->array()[i].get()))
             return false;
     }
 

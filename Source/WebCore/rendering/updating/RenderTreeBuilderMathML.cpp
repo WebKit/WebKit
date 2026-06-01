@@ -73,7 +73,7 @@ void RenderTreeBuilder::MathML::attach(RenderMathMLFenced& parent, RenderPtr<Ren
     // if they're different, as later child positions change by +1 or -1.
     // This should also handle surrogate pairs. See https://bugs.webkit.org/show_bug.cgi?id=125938.
     RenderPtr<RenderMathMLFencedOperator> separatorRenderer;
-    auto* separators = parent.separators();
+    RefPtr separators = parent.separators();
     if (separators) {
         unsigned count = 0;
         for (Node* position = child->node(); position; position = position->previousSibling()) {

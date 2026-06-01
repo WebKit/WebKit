@@ -610,7 +610,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     LayoutSize positioningAreaSize;
     // Determine the background positioning area and set destination rect to the background painting area.
     // Destination rect will be adjusted later if the background is non-repeating.
-    auto enclosingLayer = renderer.enclosingLayer();
+    CheckedPtr enclosingLayer = renderer.enclosingLayer();
     bool isTransformed = renderer.isTransformed() || (enclosingLayer && enclosingLayer->hasTransformedAncestor());
     bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground && !isTransformed;
 

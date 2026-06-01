@@ -72,8 +72,8 @@ StyleCursorImage::StyleCursorImage(Ref<StyleImage>&& image, std::optional<IntPoi
 
 StyleCursorImage::~StyleCursorImage()
 {
-    for (auto& element : m_cursorElements)
-        element.removeClient(*this);
+    for (Ref element : m_cursorElements)
+        element->removeClient(*this);
 }
 
 bool StyleCursorImage::operator==(const StyleImage& other) const

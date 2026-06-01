@@ -102,8 +102,8 @@ TreeResolver::Scope::Scope(Document& document, Update& update)
     document.setIsResolvingTreeStyle(true);
 
     // Ensure all shadow tree resolvers exist so their construction doesn't depend on traversal.
-    for (auto& shadowRoot : document.inDocumentShadowRoots())
-        const_cast<ShadowRoot&>(shadowRoot).styleScope().resolver();
+    for (Ref shadowRoot : document.inDocumentShadowRoots())
+        const_cast<ShadowRoot&>(shadowRoot.get()).styleScope().resolver();
 
     selectorMatchingState.containerQueryEvaluationState.styleUpdate = &update;
 }
@@ -177,7 +177,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     if (resolutionType == ResolutionType::AnimationOnly && styleable.lastStyleChangeEventStyle() && !styleable.hasPropertiesOverridenAfterAnimation())
         return { RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) };
 
-    auto& element = styleable.element;
+    Ref element = styleable.element;
 
     if (auto optionStyle = tryChoosePositionOption(styleable, resolutionContext))
         return WTF::move(*optionStyle);
@@ -191,21 +191,21 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     }
 
     auto unadjustedStyle = [&] {
-        if (element.hasCustomStyleResolveCallbacks()) {
+        if (element->hasCustomStyleResolveCallbacks()) {
             RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
-            if (auto customStyle = element.resolveCustomStyle(resolutionContext, shadowHostStyle))
+            if (auto customStyle = element->resolveCustomStyle(resolutionContext, shadowHostStyle))
                 return WTF::move(*customStyle);
         }
 
         if (resolutionType == ResolutionType::FullWithMatchResultCache) {
-            if (auto cachedResult = m_document->styleScope().matchResultCache().resultWithCurrentInlineStyle(element)) {
-                auto result = scope().resolver->unadjustedStyleForCachedMatchResult(element, resolutionContext, WTF::move(*cachedResult));
+            if (auto cachedResult = m_document->styleScope().matchResultCache().resultWithCurrentInlineStyle(element.get())) {
+                auto result = scope().resolver->unadjustedStyleForCachedMatchResult(element.get(), resolutionContext, WTF::move(*cachedResult));
                 MatchResultCache::update(*cachedResult, *result.style);
                 return result;
             }
         }
-        auto result = scope().resolver->unadjustedStyleForElement(element, resolutionContext);
-        m_document->styleScope().matchResultCache().set(element, result);
+        auto result = scope().resolver->unadjustedStyleForElement(element.get(), resolutionContext);
+        m_document->styleScope().matchResultCache().set(element.get(), result);
         return result;
     }();
 
@@ -216,7 +216,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
 
     // Fully custom styles in UA shadow trees that don't originate from selector matching don't need adjusting.
     if (unadjustedStyle.matchResult) {
-        Adjuster adjuster(m_document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, &element);
+        Adjuster adjuster(m_document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, element.ptr());
         adjuster.adjust(*style);
     }
 
@@ -241,7 +241,7 @@ void TreeResolver::resetStyleForNonRenderedDescendants(Element& subtreeRoot)
 {
     auto descendants = composedTreeDescendants(subtreeRoot);
     for (auto it = descendants.begin(); it != descendants.end();) {
-        if (auto* element = dynamicDowncast<Element>(*it)) {
+        if (RefPtr element = dynamicDowncast<Element>(*it)) {
             if (element->needsStyleRecalc()) {
                 element->resetComputedStyle();
                 element->resetStyleRelations();
@@ -621,7 +621,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
         return nullptr;
     };
 
-    auto firstLineElement = findFirstLineElementForBlock();
+    RefPtr firstLineElement = findFirstLineElementForBlock();
     if (!firstLineElement)
         return { };
 
@@ -663,7 +663,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLetterPseudoEleme
         return nullptr;
     };
 
-    auto firstLetterElement = findFirstLetterElement();
+    RefPtr firstLetterElement = findFirstLetterElement();
     if (!firstLetterElement)
         return { };
 
@@ -760,9 +760,9 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudoElement(const ElementUpd
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolvedStyle, const Styleable& styleable, OptionSet<Change> parentChanges, const ResolutionContext& resolutionContext, IsInDisplayNoneTree isInDisplayNoneTree)
 {
-    auto& element = styleable.element;
-    auto& document = element.document();
-    auto* currentStyle = element.renderOrDisplayContentsStyle(styleable.pseudoElementIdentifier);
+    Ref element = styleable.element;
+    Ref document = element->document();
+    auto* currentStyle = element->renderOrDisplayContentsStyle(styleable.pseudoElementIdentifier);
 
     std::unique_ptr<RenderStyle> startingStyle;
 
@@ -772,7 +772,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     auto skipAnimationForAnchorPosition = hasUnresolvedAnchorPosition(styleable) || isTryingPositionOption(styleable);
 
     auto* oldStyle = [&]() -> const RenderStyle* {
-        if (auto* styleBefore = beforeResolutionStyle(element, styleable.pseudoElementIdentifier))
+        if (auto* styleBefore = beforeResolutionStyle(element.get(), styleable.pseudoElementIdentifier))
             return styleBefore;
 
         if (resolvedStyle.style->hasTransitions()) {
@@ -796,7 +796,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     WeakStyleOriginatedAnimations newStyleOriginatedAnimations;
 
     auto updateAnimations = [&] {
-        if (document.backForwardCacheState() != Document::NotInBackForwardCache || document.printing())
+        if (document->backForwardCacheState() != Document::NotInBackForwardCache || document->printing())
             return;
 
         if (skipAnimationForAnchorPosition)
@@ -812,7 +812,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             styleable.updateCSSViewTimelines(oldStyle, *resolvedStyle.style);
 
         if ((oldStyle && oldStyle->timelineScope().type != NameScope::Type::None) || resolvedStyle.style->timelineScope().type != NameScope::Type::None) {
-            CheckedRef styleOriginatedTimelinesController = element.protectedDocument()->ensureStyleOriginatedTimelinesController();
+            CheckedRef styleOriginatedTimelinesController = element->protectedDocument()->ensureStyleOriginatedTimelinesController();
             styleOriginatedTimelinesController->updateNamedTimelineMapForTimelineScope(resolvedStyle.style->timelineScope(), styleable);
         }
 
@@ -895,7 +895,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     auto changes = currentStyle ? determineChanges(*currentStyle, *newStyle) : Change::Renderer;
 
-    if (element.hasInvalidRenderer() || parentChanges.contains(Change::Renderer))
+    if (element->hasInvalidRenderer() || parentChanges.contains(Change::Renderer))
         changes.add(Change::Renderer);
 
     collectChangedAnchorNames(*newStyle, currentStyle);
@@ -920,14 +920,14 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         // the creation of new style-originated animations during this update is known to the
         // document's timeline as animation scheduling was paused for any animation created
         // during this update.
-        if (auto* timeline = m_document->existingTimeline())
+        if (RefPtr timeline = m_document->existingTimeline())
             timeline->styleOriginatedAnimationsWereCreated();
     }
 
     if (animationsAffectedDisplay)
         newStyle->setHasDisplayAffectedByAnimations();
 
-    bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
+    bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element->styleResolutionShouldRecompositeLayer();
 
     auto mayNeedRebuildRoot = [&, newStyle = newStyle.get()] {
         if (changes.contains(Change::Renderer))
@@ -1015,7 +1015,7 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
 
 const RenderStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleable, const ResolutionContext& resolutionContext) const
 {
-    if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
+    if (RefPtr parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
         if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle({ }))
             return *afterChangeStyle;
     }
@@ -1061,7 +1061,7 @@ void TreeResolver::pushParent(Element& element, const RenderStyle& style, Option
     parent.didAXUpdateTextColorSubtree = didAXUpdateTextColorSubtree;
 #endif
 
-    if (auto* shadowRoot = element.shadowRoot()) {
+    if (RefPtr shadowRoot = element.shadowRoot()) {
         pushScope(*shadowRoot);
         parent.didPushScope = true;
     } else if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(element); slot && slot->assignedNodes()) {
@@ -1077,14 +1077,14 @@ void TreeResolver::pushParent(Element& element, const RenderStyle& style, Option
 
 void TreeResolver::popParent()
 {
-    auto& parentElement = *parent().element;
+    Ref parentElement = *parent().element;
 
-    parentElement.setHasValidStyle();
-    parentElement.clearChildNeedsStyleRecalc();
+    parentElement->setHasValidStyle();
+    parentElement->clearChildNeedsStyleRecalc();
 
     // FIXME: Push after-change style into parent stack instead.
-    if (!parentElement.hasKeyframeEffects({ }))
-        parentElement.setLastStyleChangeEventStyle({ }, nullptr);
+    if (!parentElement->hasKeyframeEffects({ }))
+        parentElement->setLastStyleChangeEventStyle({ }, nullptr);
 
     if (parent().didPushScope)
         popScope();
@@ -1092,7 +1092,7 @@ void TreeResolver::popParent()
     scope().selectorMatchingState.selectorFilter.popParent();
 
     auto& queryContainers = scope().selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers;
-    if (!queryContainers.isEmpty() && queryContainers.last().ptr() == &parentElement)
+    if (!queryContainers.isEmpty() && queryContainers.last().ptr() == parentElement.ptr())
         queryContainers.removeLast();
 
     m_parentStack.removeLast();
@@ -1112,9 +1112,9 @@ auto TreeResolver::determineResolutionType(const Element& element, const RenderS
 {
     auto combinedValidity = [&] {
         auto validity = element.styleValidity();
-        if (auto* pseudoElement = element.beforePseudoElement())
+        if (RefPtr pseudoElement = element.beforePseudoElement())
             validity = std::max(validity, pseudoElement->styleValidity());
-        if (auto* pseudoElement = element.afterPseudoElement())
+        if (RefPtr pseudoElement = element.afterPseudoElement())
             validity = std::max(validity, pseudoElement->styleValidity());
         return validity;
     }();
@@ -1179,8 +1179,8 @@ static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& 
         return true;
     if (!checkDescendants)
         return false;
-    for (auto& descendant : descendantsOfType<Element>(element)) {
-        if (styleScope.hasPendingSheetInBody(descendant))
+    for (Ref descendant : descendantsOfType<Element>(element)) {
+        if (styleScope.hasPendingSheetInBody(descendant.get()))
             return true;
     };
     return false;
@@ -1226,12 +1226,12 @@ void TreeResolver::resolveComposedTree()
     while (it != end) {
         popParentsToDepth(it.depth());
 
-        auto& node = *it;
+        Ref node = *it;
         auto& parent = this->parent();
 
-        ASSERT(node.isConnected());
-        ASSERT(node.containingShadowRoot() == scope().shadowRoot);
-        ASSERT(node.parentElement() == parent.element || is<ShadowRoot>(node.parentNode()) || node.parentElement()->shadowRoot());
+        ASSERT(node->isConnected());
+        ASSERT(node->containingShadowRoot() == scope().shadowRoot);
+        ASSERT(node->parentElement() == parent.element || is<ShadowRoot>(node->parentNode()) || node->parentElement()->shadowRoot());
 
         if (RefPtr text = dynamicDowncast<Text>(node)) {
             auto containsOnlyASCIIWhitespace = text->containsOnlyASCIIWhitespace();
@@ -1259,7 +1259,7 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        auto& element = downcast<Element>(node);
+        Ref element = Ref { downcast<Element>(node.get()) };
 
         if (it.depth() > maximumRenderTreeDepth()) {
             resetStyleForNonRenderedDescendants(element);
@@ -1267,7 +1267,7 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        auto* style = existingStyle(element);
+        auto* style = existingStyle(element.get());
 
         auto changes = OptionSet<Change> { };
         auto descendantsToResolve = DescendantsToResolve::None;
@@ -1276,27 +1276,27 @@ void TreeResolver::resolveComposedTree()
         bool didAXUpdateFontSubtree = parent.didAXUpdateFontSubtree;
         bool didAXUpdateTextColorSubtree = parent.didAXUpdateTextColorSubtree;
 #endif
-        auto resolutionType = determineResolutionType(element, style, parent.descendantsToResolve, parent.changes);
+        auto resolutionType = determineResolutionType(element.get(), style, parent.descendantsToResolve, parent.changes);
         if (resolutionType) {
-            element.resetComputedStyle();
+            element->resetComputedStyle();
 
             if (*resolutionType == ResolutionType::Full)
-                element.resetStyleRelations();
+                element->resetStyleRelations();
 
-            if (element.hasCustomStyleResolveCallbacks())
-                element.willRecalcStyle(parent.changes);
+            if (element->hasCustomStyleResolveCallbacks())
+                element->willRecalcStyle(parent.changes);
 
-            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element, style, *resolutionType);
+            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element.get(), style, *resolutionType);
 
-            if (element.hasCustomStyleResolveCallbacks())
-                element.didRecalcStyle(elementUpdate.changes);
+            if (element->hasCustomStyleResolveCallbacks())
+                element->didRecalcStyle(elementUpdate.changes);
             if (CheckedPtr cache = m_document->existingAXObjectCache()) {
-                cache->onStyleChange(element, elementUpdate.changes, style, elementUpdate.style.get());
+                cache->onStyleChange(element.get(), elementUpdate.changes, style, elementUpdate.style.get());
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
                 if (!didAXUpdateFontSubtree)
-                    didAXUpdateFontSubtree = cache->onFontChange(element, style, elementUpdate.style.get());
+                    didAXUpdateFontSubtree = cache->onFontChange(element.get(), style, elementUpdate.style.get());
                 if (!didAXUpdateTextColorSubtree)
-                    didAXUpdateTextColorSubtree = cache->onTextColorChange(element, style, elementUpdate.style.get());
+                    didAXUpdateTextColorSubtree = cache->onTextColorChange(element.get(), style, elementUpdate.style.get());
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             }
 
@@ -1304,20 +1304,20 @@ void TreeResolver::resolveComposedTree()
             changes = elementUpdate.changes;
             descendantsToResolve = elementDescendantsToResolve;
 
-            if (style || element.hasDisplayNone())
-                m_update->addElement(element, parent.element, WTF::move(elementUpdate));
-            if (style && &element == m_document->documentElement())
+            if (style || element->hasDisplayNone())
+                m_update->addElement(element.get(), parent.element, WTF::move(elementUpdate));
+            if (style && element.ptr() == m_document->documentElement())
                 m_computedDocumentElementStyle = RenderStyle::clonePtr(*style);
-            clearNeedsStyleResolution(element);
+            clearNeedsStyleResolution(element.get());
         }
 
         if (!style)
-            resetStyleForNonRenderedDescendants(element);
+            resetStyleForNonRenderedDescendants(element.get());
 
-        auto queryContainerAction = updateStateForQueryContainer(element, style, descendantsToResolve);
-        auto anchorPositionedElementAction = updateAnchorPositioningState(element, style);
+        auto queryContainerAction = updateStateForQueryContainer(element.get(), style, descendantsToResolve);
+        auto anchorPositionedElementAction = updateAnchorPositioningState(element.get(), style);
 
-        resumeDescendantResolutionIfNeeded(element, changes, descendantsToResolve);
+        resumeDescendantResolutionIfNeeded(element.get(), changes, descendantsToResolve);
 
         bool shouldIterateChildren = [&] {
             // display::none, no need to resolve descendants.
@@ -1326,15 +1326,15 @@ void TreeResolver::resolveComposedTree()
 
             // Style resolution will be resumed after the container or anchor-positioned element has been resolved.
             if (queryContainerAction == LayoutInterleavingAction::SkipDescendants || anchorPositionedElementAction == LayoutInterleavingAction::SkipDescendants) {
-                deferDescendantResolution(element, changes, descendantsToResolve);
+                deferDescendantResolution(element.get(), changes, descendantsToResolve);
                 return false;
             }
 
-            return element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None;
+            return element->childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None;
         }();
 
         if (!m_didSeePendingStylesheet)
-            m_didSeePendingStylesheet = hasLoadingStylesheet(m_document->styleScope(), element, !shouldIterateChildren);
+            m_didSeePendingStylesheet = hasLoadingStylesheet(m_document->styleScope(), element.get(), !shouldIterateChildren);
 
         if (!parent.resolvedFirstLineAndLetterChild && style && generatesBox(*style) && supportsFirstLineAndLetterPseudoElement(*style))
             parent.resolvedFirstLineAndLetterChild = true;
@@ -1344,13 +1344,13 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        resetDescendantStyleRelations(element, descendantsToResolve);
+        resetDescendantStyleRelations(element.get(), descendantsToResolve);
 
         auto isInDisplayNoneTree = parent.isInDisplayNoneTree == IsInDisplayNoneTree::Yes || !style || style->display() == DisplayType::None;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        pushParent(element, *style, changes, descendantsToResolve, isInDisplayNoneTree ? IsInDisplayNoneTree::Yes : IsInDisplayNoneTree::No, didAXUpdateFontSubtree, didAXUpdateTextColorSubtree);
+        pushParent(element.get(), *style, changes, descendantsToResolve, isInDisplayNoneTree ? IsInDisplayNoneTree::Yes : IsInDisplayNoneTree::No, didAXUpdateFontSubtree, didAXUpdateTextColorSubtree);
 #else
-        pushParent(element, *style, changes, descendantsToResolve, isInDisplayNoneTree ? IsInDisplayNoneTree::Yes : IsInDisplayNoneTree::No);
+        pushParent(element.get(), *style, changes, descendantsToResolve, isInDisplayNoneTree ? IsInDisplayNoneTree::Yes : IsInDisplayNoneTree::No);
 #endif
         it.traverseNext();
     }
@@ -1423,7 +1423,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
     if (didInterleavedLayout)
         m_didFirstInterleavedLayout = true;
 
-    Element* documentElement = m_document->documentElement();
+    RefPtr documentElement = m_document->documentElement();
     if (!documentElement) {
         m_document->styleScope().resolver();
         return nullptr;
@@ -1631,8 +1631,8 @@ std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const Position
         // "If an at-rule or property defines a name that other CSS constructs can refer to it by, ... it must be defined as a tree-scoped name."
         // https://drafts.csswg.org/css-scoping-1/#shadow-names
         return Style::Scope::resolveTreeScopedReference(styleable.element, *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const AtomString& name) -> RefPtr<const StyleProperties> {
-            auto& ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
-            auto rule = ruleSet.positionTryRuleForName(name);
+            Ref ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
+            auto rule = ruleSet->positionTryRuleForName(name);
             if (!rule)
                 return nullptr;
             return rule->properties();
@@ -1963,7 +1963,7 @@ void deprecatedQueuePostResolutionCallback(Function<void()>&& callback)
 
 static void suspendMemoryCacheClientCalls(Document& document)
 {
-    Page* page = document.page();
+    RefPtr page = document.page();
     if (!page || !page->areMemoryCacheClientCallsEnabled())
         return;
 

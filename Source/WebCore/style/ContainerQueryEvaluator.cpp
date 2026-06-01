@@ -159,7 +159,7 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axi
         });
     };
 
-    auto findOriginatingElement = [&]() -> const Element* {
+    auto findOriginatingElement = [&]() -> RefPtr<const Element> {
         if (selectionMode == SelectionMode::PseudoElement)
             return &element;
 

@@ -113,14 +113,15 @@ static const MQ::MediaQueryEvaluator& printEval()
 
 static StyleSheetContents* parseUASheet(const String& str)
 {
-    StyleSheetContents& sheet = StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef(); // leak the sheet on purpose
-    sheet.parseString(str);
-    return &sheet;
+    Ref sheet = StyleSheetContents::create(CSSParserContext(UASheetMode));
+    sheet->parseString(str);
+    return &sheet.leakRef();
 }
+
 void static addToCounterStyleRegistry(StyleSheetContents& sheet)
 {
     for (auto& rule : sheet.childRules()) {
-        if (auto* counterStyleRule = dynamicDowncast<StyleRuleCounterStyle>(rule.get()))
+        if (RefPtr counterStyleRule = dynamicDowncast<StyleRuleCounterStyle>(rule.get()))
             CSSCounterStyleRegistry::addUserAgentCounterStyle(counterStyleRule->descriptors());
     }
     CSSCounterStyleRegistry::resolveUserAgentReferences();
@@ -130,7 +131,7 @@ void static addUserAgentKeyframes(StyleSheetContents& sheet)
 {
     // This does not handle nested rules.
     for (auto& rule : sheet.childRules()) {
-        if (auto* styleRuleKeyframes = dynamicDowncast<StyleRuleKeyframes>(rule.get()))
+        if (RefPtr styleRuleKeyframes = dynamicDowncast<StyleRuleKeyframes>(rule.get()))
             Style::Resolver::addUserAgentKeyframeStyle(*styleRuleKeyframes);
     }
 }

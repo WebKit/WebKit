@@ -259,7 +259,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
     }
 
     auto writeMarker = [&](ASCIILiteral name, const Style::SVGMarkerResource& value) {
-        auto* element = renderer.element();
+        RefPtr element = renderer.element();
         if (!element)
             return;
 

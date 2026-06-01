@@ -1066,7 +1066,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle& style, Node*
         }
 
         auto styleToPushDown = EditingStyle::create();
-        if (auto* htmlElement = dynamicDowncast<HTMLElement>(*current))
+        if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(*current))
             removeInlineStyleFromElement(style, *htmlElement, InlineStyleRemovalMode::IfNeeded, styleToPushDown.ptr());
 
         // The inner loop will go through children on each level
@@ -1439,11 +1439,11 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
     RefPtr<HTMLFontElement> fontContainer;
     RefPtr<HTMLElement> styleContainer;
     while (startNode == endNode) {
-        if (auto* container = dynamicDowncast<HTMLElement>(*startNode)) {
-            if (auto* fontElement = dynamicDowncast<HTMLFontElement>(*container))
+        if (RefPtr container = dynamicDowncast<HTMLElement>(*startNode)) {
+            if (auto* fontElement = dynamicDowncast<HTMLFontElement>(*container.get()))
                 fontContainer = fontElement;
-            if (is<HTMLSpanElement>(*container) || (!is<HTMLSpanElement>(styleContainer) && container->hasChildNodes()))
-                styleContainer = container;
+            if (is<HTMLSpanElement>(*container.get()) || (!is<HTMLSpanElement>(styleContainer) && container->hasChildNodes()))
+                styleContainer = container.get();
             if (!canHaveChildrenForEditing(*startNode))
                 break;
         }

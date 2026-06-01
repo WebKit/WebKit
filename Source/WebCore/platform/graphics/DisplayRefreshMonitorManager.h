@@ -63,7 +63,7 @@ private:
     DisplayRefreshMonitor* monitorForDisplayID(PlatformDisplayID) const;
     RefPtr<DisplayRefreshMonitor> monitorForClient(DisplayRefreshMonitorClient&);
 
-    DisplayRefreshMonitor* ensureMonitorForDisplayID(PlatformDisplayID, DisplayRefreshMonitorFactory*);
+    RefPtr<DisplayRefreshMonitor> ensureMonitorForDisplayID(PlatformDisplayID, DisplayRefreshMonitorFactory*);
 
     struct DisplayRefreshMonitorWrapper {
         ~DisplayRefreshMonitorWrapper()

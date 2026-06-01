@@ -1061,8 +1061,8 @@ void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerning
 template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage)
 {
     Vector<KerningData> kerningData;
-    for (auto& element : childrenOfType<T>(protectedFontElement())) {
-        if (auto kerningPair = (element.*buildKerningPair)())
+    for (Ref element : childrenOfType<T>(protectedFontElement())) {
+        if (auto kerningPair = (element.get().*buildKerningPair)())
             addKerningPair(kerningData, WTF::move(*kerningPair));
     }
     return finishAppendingKERNSubtable(WTF::move(kerningData), coverage);
@@ -1414,10 +1414,10 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         boundingBox = FloatRect(0, 0, s_outputUnitsPerEm, s_outputUnitsPerEm);
     }
 
-    for (auto& glyphElement : childrenOfType<SVGGlyphElement>(protectedFontElement())) {
-        auto& unicodeAttribute = glyphElement.attributeWithoutSynchronization(SVGNames::unicodeAttr);
+    for (Ref glyphElement : childrenOfType<SVGGlyphElement>(protectedFontElement())) {
+        auto& unicodeAttribute = glyphElement->attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
-            processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
+            processGlyphElement(glyphElement.get(), glyphElement.ptr(), defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
     }
 
     m_boundingBox = valueOrDefault(boundingBox);

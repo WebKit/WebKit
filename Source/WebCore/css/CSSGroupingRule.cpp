@@ -178,7 +178,7 @@ void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, c
 {
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); index++) {
-        auto wrappedRule = item(index);
+        RefPtr wrappedRule = item(index);
         rules.append("\n  "_s, wrappedRule->cssText(context));
     }
 }

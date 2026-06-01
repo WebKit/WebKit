@@ -275,14 +275,14 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
     if (order.isEmpty())
         return nullptr;
 
-    auto& kernelMatrix = this->kernelMatrix();
+    Ref kernelMatrix = this->kernelMatrix();
 
     // The spec says this is a requirement, and should bail out if fails
-    if (order.unclampedArea() != kernelMatrix.length())
+    if (order.unclampedArea() != kernelMatrix->length())
         return nullptr;
 
     // Spec says the specified divisor cannot be 0.
-    auto divisor = filterDivisor(kernelMatrix);
+    auto divisor = filterDivisor(kernelMatrix.get());
     if (!divisor)
         return nullptr;
 
@@ -295,7 +295,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
     if (kernelUnitLength.isEmpty())
         return nullptr;
 
-    return FEConvolveMatrix::create(order, divisor, bias(), target, edgeMode(), FloatPoint(kernelUnitLength), preserveAlpha(), kernelMatrix);
+    return FEConvolveMatrix::create(order, divisor, bias(), target, edgeMode(), FloatPoint(kernelUnitLength), preserveAlpha(), kernelMatrix.get());
 }
 
 } // namespace WebCore

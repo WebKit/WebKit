@@ -61,12 +61,12 @@ String CSSLayerBlockRule::cssText() const
 
 String CSSLayerBlockRule::name() const
 {
-    auto& layer = downcast<StyleRuleLayer>(groupRule());
+    Ref layer = downcast<StyleRuleLayer>(groupRule());
 
-    if (layer.name().isEmpty())
+    if (layer->name().isEmpty())
         return emptyString();
 
-    return stringFromCascadeLayerName(layer.name());
+    return stringFromCascadeLayerName(layer->name());
 }
 
 String stringFromCascadeLayerName(const CascadeLayerName& name)

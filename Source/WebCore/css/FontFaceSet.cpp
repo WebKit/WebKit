@@ -167,28 +167,29 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
     for (Ref face : matchingFaces)
         face->load();
 
-    auto* document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (document && document->quirks().shouldEnableFontLoadingAPIQuirk()) {
-        // HBOMax.com expects that loading fonts will succeed, and will totally break when it doesn't. But when lockdown mode is enabled, fonts
-        // fail to load, because that's the whole point of lockdown mode.
-        //
-        // This is a bit of a hack to say "When lockdown mode is enabled, and lockdown mode has removed all the remote fonts, then just pretend
-        // that the fonts loaded successfully." If there are any non-remote fonts still present, don't make any behavior change.
-        //
-        // See also: https://github.com/w3c/csswg-drafts/issues/7680
+    if (auto document = dynamicDowncast<Document>(scriptExecutionContext())) {
+        if (document->quirks().shouldEnableFontLoadingAPIQuirk()) {
+            // HBOMax.com expects that loading fonts will succeed, and will totally break when it doesn't. But when lockdown mode is enabled, fonts
+            // fail to load, because that's the whole point of lockdown mode.
+            //
+            // This is a bit of a hack to say "When lockdown mode is enabled, and lockdown mode has removed all the remote fonts, then just pretend
+            // that the fonts loaded successfully." If there are any non-remote fonts still present, don't make any behavior change.
+            //
+            // See also: https://github.com/w3c/csswg-drafts/issues/7680
 
-        bool hasSource = false;
-        for (Ref face : matchingFaces) {
-            if (face->sourceCount()) {
-                hasSource = true;
-                break;
+            bool hasSource = false;
+            for (Ref face : matchingFaces) {
+                if (face->sourceCount()) {
+                    hasSource = true;
+                    break;
+                }
             }
-        }
-        if (!hasSource) {
-            promise.resolve(matchingFaces.map([scriptExecutionContext = scriptExecutionContext()] (const auto& matchingFace) {
-                return matchingFace->wrapper(scriptExecutionContext);
-            }));
-            return;
+            if (!hasSource) {
+                promise.resolve(matchingFaces.map([scriptExecutionContext = scriptExecutionContext()] (const auto& matchingFace) {
+                    return matchingFace->wrapper(scriptExecutionContext);
+                }));
+                return;
+            }
         }
     }
 

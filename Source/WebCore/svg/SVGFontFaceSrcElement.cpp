@@ -51,11 +51,11 @@ Ref<SVGFontFaceSrcElement> SVGFontFaceSrcElement::create(const QualifiedName& ta
 Ref<CSSValueList> SVGFontFaceSrcElement::createSrcValue() const
 {
     CSSValueListBuilder list;
-    for (auto& child : childrenOfType<SVGElement>(*this)) {
-        if (RefPtr element = dynamicDowncast<SVGFontFaceUriElement>(child)) {
+    for (Ref child : childrenOfType<SVGElement>(*this)) {
+        if (RefPtr element = dynamicDowncast<SVGFontFaceUriElement>(child.get())) {
             if (auto srcValue = element->createSrcValue(); !srcValue->isEmpty())
                 list.append(WTF::move(srcValue));
-        } else if (RefPtr element = dynamicDowncast<SVGFontFaceNameElement>(child)) {
+        } else if (RefPtr element = dynamicDowncast<SVGFontFaceNameElement>(child.get())) {
             if (auto srcValue = element->createSrcValue(); !srcValue->isEmpty())
                 list.append(WTF::move(srcValue));
         }

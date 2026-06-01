@@ -63,7 +63,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<const CSSFunctionValue> 
     auto makeTranslate = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSTranslate>>(Vector<Ref<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSTranslate>> {
         Vector<Ref<CSSNumericValue>> components;
         for (Ref componentCSSValue : cssFunctionValue.get()) {
-            auto valueOrException = CSSStyleValueFactory::reifyValue(document, componentCSSValue, std::nullopt);
+            auto valueOrException = CSSStyleValueFactory::reifyValue(document, componentCSSValue.get(), std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
             RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());

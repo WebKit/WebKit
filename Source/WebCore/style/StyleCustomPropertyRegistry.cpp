@@ -182,7 +182,7 @@ void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const 
     auto& document = m_scope.document();
     for (auto& animation : WebAnimation::instances()) {
         if (RefPtr keyframeEffect = animation->keyframeEffect()) {
-            if (auto* target = keyframeEffect->target()) {
+            if (RefPtr target = keyframeEffect->target()) {
                 if (&target->document() == &document)
                     keyframeEffect->customPropertyRegistrationDidChange(customProperty);
             }

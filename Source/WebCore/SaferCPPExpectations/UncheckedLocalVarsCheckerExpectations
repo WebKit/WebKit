@@ -23,7 +23,6 @@ bindings/js/JSAttrCustom.cpp
 bindings/js/JSCSSStyleDeclarationCustom.cpp
 bindings/js/JSCustomElementInterface.cpp
 bindings/js/JSDOMAbstractOperations.h
-bindings/js/JSDOMConvertInterface.h
 bindings/js/JSDOMConvertPromise.h
 bindings/js/JSDOMGlobalObject.cpp
 bindings/js/JSDOMPromiseDeferred.cpp
@@ -36,7 +35,6 @@ bindings/js/JSHTMLTemplateElementCustom.cpp
 bindings/js/JSLazyEventListener.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSPluginElementFunctions.cpp
-bindings/js/JSStyleSheetCustom.h
 bindings/js/JSUndoItemCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
@@ -51,20 +49,13 @@ css/SelectorChecker.cpp
 css/SelectorFilter.cpp
 css/StyleAttributeMutationScope.h
 css/StyleRuleImport.cpp
-css/StyleSheetContents.cpp
 css/query/ContainerQueryFeatures.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
 dom/CollectionIndexCacheInlines.h
-dom/ComposedTreeAncestorIterator.h
-dom/ComposedTreeIterator.cpp
-dom/ComposedTreeIterator.h
-dom/ContainerNodeAlgorithms.cpp
 dom/CustomElementReactionQueue.cpp
 dom/Document.cpp
 dom/Element.cpp
-dom/ElementAndTextDescendantIterator.h
 dom/ElementInlines.h
-dom/ElementIteratorInlines.h
 dom/ElementTextDirection.cpp
 dom/ElementTraversal.h
 dom/EventLoop.cpp
@@ -73,7 +64,6 @@ dom/InlineStyleSheetOwner.cpp
 dom/MouseRelatedEvent.cpp
 dom/Node.cpp
 dom/NodeTraversal.cpp
-dom/NodeTraversal.h
 dom/Position.cpp
 dom/PositionIterator.cpp
 dom/RadioButtonGroups.cpp
@@ -87,7 +77,6 @@ dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
 [ Mac ] editing/AlternativeTextController.cpp
 editing/ApplyBlockElementCommand.cpp
-editing/ApplyStyleCommand.cpp
 editing/BreakBlockquoteCommand.cpp
 editing/ChangeListTypeCommand.cpp
 editing/DictationCommand.cpp
@@ -101,7 +90,6 @@ editing/TextIterator.cpp
 editing/TextManipulationController.cpp
 editing/VisibleUnits.cpp
 editing/cocoa/DataDetection.mm
-editing/cocoa/DictionaryLookup.mm
 editing/cocoa/EditingHTMLConverter.mm
 [ iOS ] editing/cocoa/EditorCocoa.mm
 editing/cocoa/NodeHTMLConverter.mm
@@ -130,7 +118,6 @@ inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorCanvas.cpp
 inspector/InspectorCanvasCallTracer.cpp
 inspector/InspectorInstrumentation.cpp
-inspector/InspectorInstrumentation.h
 inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorStyleSheet.cpp
@@ -204,14 +191,12 @@ layout/integration/inline/LineSelection.h
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutElementBox.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
-loader/EmptyClients.cpp
 loader/FrameLoader.cpp
 loader/archive/cf/LegacyWebArchive.cpp
 loader/cache/MemoryCache.cpp
 mathml/MathMLSelectElement.cpp
 page/AutoscrollController.cpp
 [ iOS ] page/Chrome.cpp
-[ Mac ] page/ContextMenuController.cpp
 [ iOS ] page/DOMTimer.cpp
 page/DragController.cpp
 page/ElementTargetingController.cpp
@@ -329,8 +314,6 @@ rendering/RenderObject.h
 rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
-rendering/RenderReplica.cpp
-rendering/RenderSearchField.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTableCellInlines.h
@@ -372,7 +355,6 @@ rendering/shapes/ShapeOutsideInfo.cpp
 rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleCrossfadeImage.cpp
-rendering/style/StyleCursorImage.cpp
 rendering/style/StyleFilterImage.cpp
 rendering/style/StyleGradientImage.cpp
 rendering/svg/RenderSVGContainer.cpp
@@ -403,7 +385,6 @@ rendering/svg/SVGTextLayoutEngineBaseline.cpp
 rendering/svg/SVGTextMetrics.cpp
 rendering/svg/SVGTextMetricsBuilder.cpp
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp
-rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResource.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
@@ -431,60 +412,39 @@ rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 rendering/updating/RenderTreeUpdaterViewTransition.cpp
 style/AnchorPositionEvaluator.cpp
-style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
-style/ClassChangeInvalidation.cpp
 style/ContainerQueryEvaluator.cpp
 style/ElementRuleCollector.cpp
-style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
 style/MatchResultCache.cpp
-style/PseudoClassChangeInvalidation.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
 style/StyleBuilderStateInlines.h
-style/StyleCustomPropertyRegistry.cpp
 style/StyleDifference.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
-style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
 style/StyleRelations.cpp
 style/StyleResolveForDocument.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleTreeResolver.cpp
-style/StyleUpdate.cpp
 style/Styleable.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/primitives/StyleLengthResolution.cpp
 style/values/text/StyleTextAlign.cpp
 style/values/transforms/StyleTransformList.cpp
-svg/SVGAnimateMotionElement.cpp
 svg/SVGClipPathElement.cpp
-svg/SVGElement.cpp
-svg/SVGFEComponentTransferElement.cpp
 svg/SVGFEFloodElement.cpp
-svg/SVGFELightElement.cpp
-svg/SVGFEMergeElement.cpp
 svg/SVGFilterPrimitiveStandardAttributes.cpp
-svg/SVGFontFaceSrcElement.cpp
 svg/SVGGeometryElement.cpp
-svg/SVGGradientElement.cpp
 svg/SVGLengthContext.cpp
-svg/SVGLinearGradientElement.cpp
-svg/SVGLocatable.cpp
 svg/SVGMaskElement.cpp
-svg/SVGSVGElement.cpp
 svg/SVGStopElement.cpp
-svg/SVGSwitchElement.cpp
-svg/SVGToOTFFontConversion.cpp
 svg/SVGUseElement.cpp
-svg/graphics/SVGImage.cpp
-svg/properties/SVGAnimatedString.cpp
 testing/Internals.cpp
 testing/js/WebCoreTestSupport.cpp
 workers/WorkerGlobalScope.cpp

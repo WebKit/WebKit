@@ -509,8 +509,8 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
         return nullptr;
 
     if (correspondingElement) {
-        for (auto& ancestor : lineageOfType<SVGElement>(*this)) {
-            if (ancestor.correspondingElement() == target)
+        for (Ref ancestor : lineageOfType<SVGElement>(*this)) {
+            if (ancestor->correspondingElement() == target)
                 return nullptr;
         }
     } else {

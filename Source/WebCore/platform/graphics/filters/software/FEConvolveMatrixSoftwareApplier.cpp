@@ -304,15 +304,15 @@ void FEConvolveMatrixSoftwareApplier::applyPlatform(PaintingData& paintingData) 
 
 bool FEConvolveMatrixSoftwareApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
     auto alphaFormat = m_effect->preserveAlpha() ? AlphaPremultiplication::Unpremultiplied : AlphaPremultiplication::Premultiplied;
-    auto destinationPixelBuffer = result.pixelBuffer(alphaFormat);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(alphaFormat);
     if (!destinationPixelBuffer)
         return false;
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto sourcePixelBuffer = input.getPixelBuffer(alphaFormat, effectDrawingRect, m_effect->operatingColorSpace());
+    auto sourcePixelBuffer = input->getPixelBuffer(alphaFormat, effectDrawingRect, m_effect->operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 

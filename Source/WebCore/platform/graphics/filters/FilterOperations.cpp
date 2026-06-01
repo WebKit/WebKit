@@ -69,8 +69,8 @@ IntOutsets FilterOperations::outsets() const
     for (auto& operation : m_operations) {
         switch (operation->type()) {
         case FilterOperation::Type::Blur: {
-            auto& blurOperation = downcast<BlurFilterOperation>(operation.get());
-            float stdDeviation = blurOperation.stdDeviation();
+            Ref blurOperation = downcast<BlurFilterOperation>(operation.get());
+            float stdDeviation = blurOperation->stdDeviation();
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
             IntOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
             totalOutsets += outsets;
@@ -78,14 +78,14 @@ IntOutsets FilterOperations::outsets() const
         }
         case FilterOperation::Type::DropShadow:
         case FilterOperation::Type::DropShadowWithStyleColor: {
-            auto& dropShadowOperation = downcast<DropShadowFilterOperationBase>(operation.get());
-            float stdDeviation = dropShadowOperation.stdDeviation();
+            Ref dropShadowOperation = downcast<DropShadowFilterOperationBase>(operation.get());
+            float stdDeviation = dropShadowOperation->stdDeviation();
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
-            
-            int top = std::max(0, outsetSize.height() - dropShadowOperation.y());
-            int right = std::max(0, outsetSize.width() + dropShadowOperation.x());
-            int bottom = std::max(0, outsetSize.height() + dropShadowOperation.y());
-            int left = std::max(0, outsetSize.width() - dropShadowOperation.x());
+
+            int top = std::max(0, outsetSize.height() - dropShadowOperation->y());
+            int right = std::max(0, outsetSize.width() + dropShadowOperation->x());
+            int bottom = std::max(0, outsetSize.height() + dropShadowOperation->y());
+            int left = std::max(0, outsetSize.width() - dropShadowOperation->x());
             
             auto outsets = IntOutsets { top, right, bottom, left };
             totalOutsets += outsets;

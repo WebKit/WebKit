@@ -68,7 +68,7 @@ namespace WebCore {
 const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement& renderer)
 {
     if (!renderer.style().pseudoElementType()) {
-        if (auto* element = renderer.element())
+        if (RefPtr element = renderer.element())
             return fromElement(*element);
         return { };
     }
@@ -94,16 +94,16 @@ const std::optional<const Styleable> Styleable::fromRenderer(const RenderElement
     case PseudoElementType::ViewTransitionImagePair:
     case PseudoElementType::ViewTransitionNew:
     case PseudoElementType::ViewTransitionOld:
-        if (auto* documentElement = renderer.document().documentElement())
+        if (RefPtr documentElement = renderer.document().documentElement())
             return Styleable(*documentElement, renderer.style().pseudoElementIdentifier());
         break;
     case PseudoElementType::ViewTransition:
-        if (auto* documentElement = renderer.document().documentElement())
+        if (RefPtr documentElement = renderer.document().documentElement())
             return Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoElementType::ViewTransition });
         break;
     case PseudoElementType::After:
     case PseudoElementType::Before:
-        if (auto* element = renderer.element())
+        if (RefPtr element = renderer.element())
             return fromElement(*element);
         break;
     default:
@@ -333,8 +333,8 @@ void Styleable::cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimati
 {
     if (auto* animations = this->animations()) {
         for (auto& animation : *animations) {
-            if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get())) {
-                styleOriginatedAnimation->cancelFromStyle(animationsToCancelSilently.contains(styleOriginatedAnimation) ? WebAnimation::Silently::Yes : WebAnimation::Silently::No);
+            if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get())) {
+                styleOriginatedAnimation->cancelFromStyle(animationsToCancelSilently.contains(styleOriginatedAnimation.get()) ? WebAnimation::Silently::Yes : WebAnimation::Silently::No);
                 setLastStyleChangeEventStyle(nullptr);
             }
         }
@@ -349,7 +349,7 @@ void Styleable::cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimati
 static bool keyframesRuleExistsForAnimation(Element& element, const Style::ScopedName& animationName)
 {
     return Style::Scope::resolveTreeScopedReference(element, animationName, [](const Style::Scope& scope, const AtomString& name) -> bool {
-        if (auto* resolver = scope.resolverIfExists())
+        if (RefPtr resolver = scope.resolverIfExists())
             return resolver->isAnimationNameValid(name);
         return false;
     });
@@ -470,7 +470,7 @@ static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styl
 
 static bool propertyInStyleMatchesValueForTransitionInMap(const AnimatableCSSProperty& property, const RenderStyle& style, AnimatableCSSPropertyToTransitionMap& transitions, const Document& document)
 {
-    if (auto* transition = transitions.get(property)) {
+    if (RefPtr transition = transitions.get(property)) {
         if (Style::Interpolation::equals(property, style, transition->targetStyle(), document))
             return true;
     }
@@ -559,11 +559,11 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, CSSProp
 
 static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleable, const AnimatableCSSProperty& property, const RenderStyle& currentStyle, const RenderStyle& newStyle, const MonotonicTime generationTime, WeakStyleOriginatedAnimations& newStyleOriginatedAnimations)
 {
-    auto* keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
-    auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
+    RefPtr keyframeEffect = keyframeEffectForElementAndProperty(styleable, property);
+    RefPtr animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
 
     bool isDeclarative = false;
-    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation)) {
+    if (RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get())) {
         if (auto owningElement = styleOriginatedAnimation->owningElement())
             isDeclarative = *owningElement == styleable;
     }
@@ -571,7 +571,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     if (animation && !isDeclarative)
         return;
 
-    auto& document = styleable.element.document();
+    Ref document = styleable.element.document();
 
     auto hasMatchingTransitionProperty = false;
     auto matchingTransitionDuration = 0.0;
@@ -584,7 +584,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
                 matchingTransitionDuration = std::max(0.0, matchingTransition->duration().value) + matchingTransition->delay().value;
             }
         }
-    } else if (!document.quirks().needsResettingTransitionCancelsRunningTransitionQuirk()) {
+    } else if (!document->quirks().needsResettingTransitionCancelsRunningTransitionQuirk()) {
         // If we don't have any transitions in the map, this means that the initial value "all 0s" was set
         // and thus all properties match.
         hasMatchingTransitionProperty = true;
@@ -624,7 +624,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
 
     auto allowsDiscreteTransitions = matchingTransition && matchingTransition->behavior() == TransitionBehavior::AllowDiscrete;
     auto propertyCanBeInterpolated = [&](const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b) {
-        return allowsDiscreteTransitions || Style::Interpolation::canInterpolate(property, a, b, document);
+        return allowsDiscreteTransitions || Style::Interpolation::canInterpolate(property, a, b, document.get());
     };
 
     auto createCSSTransition = [&](const RenderStyle& oldStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor) {
@@ -636,9 +636,9 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     bool hasRunningTransition = styleable.hasRunningTransitionForProperty(property);
     if (!hasRunningTransition
         && hasMatchingTransitionProperty && matchingTransitionDuration > 0
-        && !Style::Interpolation::equals(property, beforeChangeStyle, afterChangeStyle, document)
+        && !Style::Interpolation::equals(property, beforeChangeStyle, afterChangeStyle, document.get())
         && propertyCanBeInterpolated(property, beforeChangeStyle, afterChangeStyle)
-        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document)) {
+        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty(), document.get())) {
         // 1. If all of the following are true:
         //   - the element does not have a running transition for the property,
         //   - the before-change style is different from and can be interpolated with the after-change style for that property,
@@ -719,7 +719,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             ASSERT(matchingTransition);
             auto& reversingAdjustedStartStyle = previouslyRunningTransition->targetStyle();
             double transformedProgress = 1;
-            if (auto* effect = previouslyRunningTransition->effect()) {
+            if (RefPtr effect = previouslyRunningTransition->effect()) {
                 if (auto computedTimingProgress = effect->getComputedTiming().progress)
                     transformedProgress = *computedTimingProgress;
             }
@@ -809,7 +809,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
             for (const auto& effect : keyframeEffectStack()->sortedEffects()) {
                 for (const auto& property : effect->animatedProperties())
                     addProperty(property);
-                if (auto* transition = dynamicDowncast<CSSTransition>(effect->animation()))
+                if (RefPtr transition = dynamicDowncast<CSSTransition>(effect->animation()))
                     addProperty(transition->property());
             }
         }
