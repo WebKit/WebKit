@@ -24,7 +24,7 @@
 PRODUCT_NAME = yasm;
 
 // Needs to be ad-hoc signed by the linker due to rdar://107696259.
-CODE_SIGN_IDENTITY = ;
+CODE_SIGNING_ALLOWED = NO;
 
 // Support building WebKit for an OS that is newer than the machine doing the
 // building. This is the oldest version of macOS the project should be buildable on.
