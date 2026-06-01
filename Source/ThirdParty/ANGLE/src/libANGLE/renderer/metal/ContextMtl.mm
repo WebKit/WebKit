@@ -776,59 +776,31 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     }
 
     mtl::BufferRef idxBuffer;
-    mtl::BufferRef drawIdxBuffer;
-    size_t convertedOffset             = 0;
-    gl::DrawElementsType convertedType = type;
+    size_t idxBufferOffset;
+    gl::PrimitiveMode newMode          = mode;
+    gl::DrawElementsType idxBufferType = type;
+    std::vector<DrawCommandRange> drawCommands;
 
-    ANGLE_TRY(mVertexArray->getIndexBuffer(context, type, count, indices, &idxBuffer,
-                                           &convertedOffset, &convertedType));
+    ANGLE_TRY(mVertexArray->resolveDrawElementsDraw(
+        context, mode, type, count, indices, requiresIndexRewrite(context->getState(), mode),
+        mState.isPrimitiveRestartEnabled(), &newMode, &drawCommands, &idxBuffer, &idxBufferOffset,
+        &idxBufferType));
 
-    ASSERT(idxBuffer);
-    ASSERT((convertedType == gl::DrawElementsType::UnsignedShort && (convertedOffset % 2) == 0) ||
-           (convertedType == gl::DrawElementsType::UnsignedInt && (convertedOffset % 4) == 0));
-
-    uint32_t convertedCounti32 = (uint32_t)count;
-
-    size_t provokingVertexAdditionalOffset = 0;
-
-    if (requiresIndexRewrite(context->getState(), mode))
-    {
-        uint32_t outIndexCount    = 0;
-        gl::PrimitiveMode newMode = gl::PrimitiveMode::InvalidEnum;
-        ANGLE_TRY(mProvokingVertexHelper.preconditionIndexBuffer(
-            mtl::GetImpl(context), idxBuffer, count, convertedOffset,
-            mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
-            provokingVertexAdditionalOffset, newMode, drawIdxBuffer));
-        // Line strips and triangle strips are rewritten to flat line arrays and tri arrays.
-        convertedCounti32 = outIndexCount;
-        mode              = newMode;
-    }
-    else
-    {
-        drawIdxBuffer = idxBuffer;
-    }
-    // Draw commands will only be broken up if transform feedback is enabled,
-    // if the mode is a simple type, and if the buffer contained any restart
-    // indices.
-    // It's safe to use idxBuffer in this case, as it will contain the same count and restart ranges
-    // as drawIdxBuffer.
-    const std::vector<DrawCommandRange> drawCommands = mVertexArray->getDrawIndices(
-        context, type, convertedType, mode, idxBuffer, convertedCounti32, convertedOffset);
     bool isNoOp = false;
     ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
     if (!isNoOp)
     {
-        MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);
+        MTLPrimitiveType mtlType = mtl::GetPrimitiveType(newMode);
 
-        MTLIndexType mtlIdxType = mtl::GetIndexType(convertedType);
+        MTLIndexType mtlIdxType = mtl::GetIndexType(idxBufferType);
 
         if (instances == 0 && baseVertex == 0 && baseInstance == 0)
         {
             // Normal draw
             for (auto &command : drawCommands)
             {
-                mRenderEncoder.drawIndexed(mtlType, command.count, mtlIdxType, drawIdxBuffer,
-                                           command.offset + provokingVertexAdditionalOffset);
+                mRenderEncoder.drawIndexed(mtlType, command.count, mtlIdxType, idxBuffer,
+                                           command.offset + idxBufferOffset);
             }
         }
         else
@@ -838,9 +810,9 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
             {
                 for (auto &command : drawCommands)
                 {
-                    mRenderEncoder.drawIndexedInstanced(
-                        mtlType, command.count, mtlIdxType, drawIdxBuffer,
-                        command.offset + provokingVertexAdditionalOffset, instanceCount);
+                    mRenderEncoder.drawIndexedInstanced(mtlType, command.count, mtlIdxType,
+                                                        idxBuffer, command.offset + idxBufferOffset,
+                                                        instanceCount);
                 }
             }
             else
@@ -848,9 +820,8 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
                 for (auto &command : drawCommands)
                 {
                     mRenderEncoder.drawIndexedInstancedBaseVertexBaseInstance(
-                        mtlType, command.count, mtlIdxType, drawIdxBuffer,
-                        command.offset + provokingVertexAdditionalOffset, instanceCount, baseVertex,
-                        baseInstance);
+                        mtlType, command.count, mtlIdxType, idxBuffer,
+                        command.offset + idxBufferOffset, instanceCount, baseVertex, baseInstance);
                 }
             }
         }

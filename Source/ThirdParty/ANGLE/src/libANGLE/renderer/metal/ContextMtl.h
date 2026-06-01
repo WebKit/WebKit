@@ -405,6 +405,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
+    ProvokingVertexHelper &getProvokingVertexHelper() { return mProvokingVertexHelper; }
+
     mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }

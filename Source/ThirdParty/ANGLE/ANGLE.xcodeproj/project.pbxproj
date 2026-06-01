@@ -484,6 +484,7 @@
 		7B8EC8472DF2E5FC00105EB6 /* EnsureLoopForwardProgress.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8EC8442DF2E5FC00105EB6 /* EnsureLoopForwardProgress.h */; };
 		7B8EC8482DF2E5FC00105EB6 /* EnsureLoopForwardProgress.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8EC8442DF2E5FC00105EB6 /* EnsureLoopForwardProgress.h */; };
 		7B8EC8492DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC8452DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp */; };
+		7B91C9A82F8CE63A00420427 /* VertexArrayMtl_unittest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B91C9A62F8CDB5400420427 /* VertexArrayMtl_unittest.mm */; };
 		7B9A99BA2DDC685100160B6E /* ReduceInterfaceBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9A99B92DDC685100160B6E /* ReduceInterfaceBlocks.cpp */; };
 		7B9A99BB2DDC685100160B6E /* ReduceInterfaceBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9A99B82DDC685100160B6E /* ReduceInterfaceBlocks.h */; };
 		7B9A99BC2DDC685100160B6E /* ReduceInterfaceBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9A99B92DDC685100160B6E /* ReduceInterfaceBlocks.cpp */; };
@@ -2167,6 +2168,7 @@
 		7B8EC83F2DF1BC9100105EB6 /* ImageTestMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageTestMetal.mm; sourceTree = "<group>"; };
 		7B8EC8442DF2E5FC00105EB6 /* EnsureLoopForwardProgress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnsureLoopForwardProgress.h; sourceTree = "<group>"; };
 		7B8EC8452DF2E5FC00105EB6 /* EnsureLoopForwardProgress.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnsureLoopForwardProgress.cpp; sourceTree = "<group>"; };
+		7B91C9A62F8CDB5400420427 /* VertexArrayMtl_unittest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VertexArrayMtl_unittest.mm; sourceTree = "<group>"; };
 		7B9829372E0EB05200F1E9FB /* ANGLETranslator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ANGLETranslator.xcconfig; sourceTree = "<group>"; };
 		7B9A99B82DDC685100160B6E /* ReduceInterfaceBlocks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReduceInterfaceBlocks.h; sourceTree = "<group>"; };
 		7B9A99B92DDC685100160B6E /* ReduceInterfaceBlocks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ReduceInterfaceBlocks.cpp; sourceTree = "<group>"; };
@@ -4448,6 +4450,7 @@
 				FF81FEA425818D6800894E24 /* TransformFeedbackMtl.mm */,
 				FF81FE9725818D6800894E24 /* VertexArrayMtl.h */,
 				FF81FE9A25818D6800894E24 /* VertexArrayMtl.mm */,
+				7B91C9A62F8CDB5400420427 /* VertexArrayMtl_unittest.mm */,
 			);
 			path = metal;
 			sourceTree = "<group>";
@@ -6045,6 +6048,7 @@
 				7BFAF5C12DE59E0900327F7F /* UniformTest.cpp in Sources */,
 				7BFAF6062DE59E0900327F7F /* UnpackAlignmentTest.cpp in Sources */,
 				7BFAF5F22DE59E0900327F7F /* UnpackRowLength.cpp in Sources */,
+				7B91C9A82F8CE63A00420427 /* VertexArrayMtl_unittest.mm in Sources */,
 				7BFAF5FE2DE59E0900327F7F /* VertexAttributeTest.cpp in Sources */,
 				7BFAF5FC2DE59E0900327F7F /* ViewportTest.cpp in Sources */,
 				7BFAF6152DE59E2300327F7F /* WebGLCompatibilityTest.cpp in Sources */,

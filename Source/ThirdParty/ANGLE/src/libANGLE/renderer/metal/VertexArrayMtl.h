@@ -54,21 +54,18 @@ class VertexArrayMtl : public VertexArrayImpl
                             bool *vertexDescChanged,
                             mtl::VertexDesc *vertexDescOut);
 
-    angle::Result getIndexBuffer(const gl::Context *glContext,
-                                 gl::DrawElementsType indexType,
-                                 size_t indexCount,
-                                 const void *sourcePointer,
-                                 mtl::BufferRef *idxBufferOut,
-                                 size_t *idxBufferOffsetOut,
-                                 gl::DrawElementsType *indexTypeOut);
-
-    std::vector<DrawCommandRange> getDrawIndices(const gl::Context *glContext,
-                                                 gl::DrawElementsType originalIndexType,
-                                                 gl::DrawElementsType indexType,
-                                                 gl::PrimitiveMode primitiveMode,
-                                                 mtl::BufferRef idxBuffer,
-                                                 uint32_t indexCount,
-                                                 size_t offset);
+    angle::Result resolveDrawElementsDraw(const gl::Context *glContext,
+                                          gl::PrimitiveMode mode,
+                                          gl::DrawElementsType type,
+                                          GLsizei count,
+                                          const void *indices,
+                                          bool rewriteProvokingVertex,
+                                          bool isPrimitiveRestartEnabled,
+                                          gl::PrimitiveMode *outNewMode,
+                                          std::vector<DrawCommandRange> *outDrawCommands,
+                                          mtl::BufferRef *outIndexBuffer,
+                                          size_t *outIndexBufferOffset,
+                                          gl::DrawElementsType *outIndexBufferType);
 
   private:
     void reset(ContextMtl *context);
@@ -151,6 +148,16 @@ class VertexArrayMtl : public VertexArrayImpl
     bool mVertexArrayDirty = true;
     bool mVertexDataDirty  = true;
 };
+// Free function for computing draw command ranges from draw index ranges.
+// Exposed for unit testing.
+void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+                                   gl::PrimitiveMode mode,
+                                   uint32_t count,
+                                   size_t firstIndex,
+                                   const std::vector<DrawIndexRange> &drawIndexRanges,
+                                   gl::PrimitiveMode drawMode,
+                                   gl::DrawElementsType indexBufferType);
+
 }  // namespace rx
 
 #endif /* LIBANGLE_RENDERER_METAL_VERTEXARRAYMTL_H_ */
