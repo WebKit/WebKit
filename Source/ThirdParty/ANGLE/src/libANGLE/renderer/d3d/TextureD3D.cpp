@@ -303,6 +303,13 @@ bool TextureD3D::shouldUseSetData(const ImageD3D *image) const
         return false;
     }
 
+    // Emulated RGBX/BGRX formats must always use the slow path to ensure the alpha channel is set
+    // to 1.0.
+    if (gl::IsRGBXOrBGRXFormat(internalFormat.sizedInternalFormat))
+    {
+        return false;
+    }
+
     // TODO(jmadill): Handle compressed internal formats
     return (mTexStorage && !internalFormat.compressed);
 }
@@ -947,9 +954,23 @@ angle::Result TextureD3D::initializeContents(const gl::Context *context,
     const auto &formatInfo = gl::GetSizedInternalFormatInfo(image->getInternalFormat());
 
     GLuint imageBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextD3D, formatInfo.computeRowPitch(formatInfo.type, image->getWidth(),
-                                                               1, 0, &imageBytes));
-    imageBytes *= image->getHeight() * image->getDepth();
+    if (formatInfo.compressed)
+    {
+        ANGLE_CHECK_GL_MATH(
+            contextD3D, formatInfo.computeCompressedImageSize(
+                            gl::Extents(image->getWidth(), image->getHeight(), image->getDepth()),
+                            &imageBytes));
+    }
+    else
+    {
+        ANGLE_CHECK_GL_MATH(contextD3D, formatInfo.computeRowPitch(
+                                            formatInfo.type, image->getWidth(), 1, 0, &imageBytes));
+
+        angle::CheckedNumeric<GLuint> checkedImageBytes(imageBytes);
+        checkedImageBytes *= image->getHeight();
+        checkedImageBytes *= image->getDepth();
+        ANGLE_CHECK_GL_MATH(contextD3D, checkedImageBytes.AssignIfValid(&imageBytes));
+    }
 
     gl::PixelUnpackState zeroDataUnpackState;
     zeroDataUnpackState.alignment = 1;

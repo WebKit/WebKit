@@ -155,7 +155,14 @@ void WriteCppReplayForCallCL(const CallCapture &call,
 
         if (param.arrayClientPointerIndex != -1 && param.value.voidConstPointerVal != nullptr)
         {
-            callOut << "gClientArrays[" << param.arrayClientPointerIndex << "]";
+            int clientIndex = (param.arrayClientPointerMergedIndex != -1)
+                                  ? param.arrayClientPointerMergedIndex
+                                  : param.arrayClientPointerIndex;
+            callOut << "gClientArrays[" << clientIndex << "]";
+            if (param.arrayClientPointerOffset != 0)
+            {
+                callOut << " + " << param.arrayClientPointerOffset;
+            }
         }
         else if (param.readBufferSizeBytes > 0)
         {

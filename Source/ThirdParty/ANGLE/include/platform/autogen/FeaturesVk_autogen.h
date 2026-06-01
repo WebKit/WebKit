@@ -1034,6 +1034,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo swapchainDeferredMemoryAllocation = {
+        "swapchainDeferredMemoryAllocation",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo supportsGetMemoryRequirements2 = {
         "supportsGetMemoryRequirements2",
         FeatureCategory::VulkanFeatures,

@@ -1354,6 +1354,14 @@
             "issue": "https://anglebug.com/42266319"
         },
         {
+            "name": "swapchain_deferred_memory_allocation",
+            "category": "Workarounds",
+            "description": [
+                "Enable the usage of the deferred memory allocation flag for swapchain creation"
+            ],
+            "issue": "https://anglebug.com/499347835"
+        },
+        {
             "name": "supports_get_memory_requirements2",
             "category": "Features",
             "description": [

@@ -463,6 +463,8 @@ const char *TType::buildMangledName() const
     }
     else
     {
+        constexpr char kStructMangledNameSeparator = ':';
+
         ASSERT(type == EbtStruct || type == EbtInterfaceBlock);
         switch (type)
         {
@@ -472,12 +474,14 @@ const char *TType::buildMangledName() const
                 {
                     mangledName += mStructure->name().data();
                 }
+                mangledName += kStructMangledNameSeparator;
                 mangledName += mStructure->mangledFieldList();
                 mangledName += '}';
                 break;
             case EbtInterfaceBlock:
                 mangledName += "{i";
                 mangledName += mInterfaceBlock->name().data();
+                mangledName += kStructMangledNameSeparator;
                 mangledName += mInterfaceBlock->mangledFieldList();
                 mangledName += '}';
                 break;

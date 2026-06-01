@@ -1054,6 +1054,19 @@ GLfloat Texture::getMaxLod() const
     return mState.mSamplerState.getMaxLod();
 }
 
+void Texture::setLodBias(const Context *context, GLfloat lodBias)
+{
+    if (mState.mSamplerState.setLodBias(lodBias))
+    {
+        signalDirtyState(DIRTY_BIT_LOD_BIAS_QCOM);
+    }
+}
+
+GLfloat Texture::getLodBias() const
+{
+    return mState.mSamplerState.getLodBias();
+}
+
 void Texture::setCompareMode(const Context *context, GLenum compareMode)
 {
     if (mState.mSamplerState.setCompareMode(compareMode))

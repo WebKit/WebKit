@@ -59,6 +59,9 @@ class Sampler final : public RefCountObject<SamplerID>, public LabeledObject, pu
     void setMaxLod(const Context *context, GLfloat maxLod);
     GLfloat getMaxLod() const;
 
+    void setLodBias(const Context *context, GLfloat lodBias);
+    GLfloat getLodBias() const;
+
     void setCompareMode(const Context *context, GLenum compareMode);
     GLenum getCompareMode() const;
 

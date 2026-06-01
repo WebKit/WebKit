@@ -55,6 +55,9 @@ fn broadcast(
 
         let type_id = replacement.type_id;
         let precision = replacement.precision;
+        // replacement.type_id is a pointer (because it is a Variable), we need to get the pointee
+        // type
+        let type_id = ir.meta.get_pointee_type(type_id);
 
         // Declare a new variable with the new BuiltIn.  gl_FragColor is a `mediump vec4` and
         // gl_FragData is an array of that.  gl_SecondaryFragColorEXT and gl_SecondaryFragDataEXT

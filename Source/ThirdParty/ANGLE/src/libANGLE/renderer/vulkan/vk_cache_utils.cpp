@@ -5685,6 +5685,15 @@ void SamplerDesc::update(Renderer *renderer,
     {
         mMipLodBias = 4.0f;
     }
+    else
+    {
+        mMipLodBias = samplerState.getLodBias();
+        // According to GL_QCOM_texture_lod_bias spec, the lodBias parameter is clamped between the
+        // positive and negative values of the implementation defined constant
+        // MAX_TEXTURE_LOD_BIAS_EXT (mapped to Vulkan's maxSamplerLodBias).
+        float maxSamplerLodBias = renderer->getNativeCaps().maxLODBias;
+        mMipLodBias             = gl::clamp(mMipLodBias, -maxSamplerLodBias, maxSamplerLodBias);
+    }
 
     mMaxAnisotropy = samplerState.getMaxAnisotropy();
     mMinLod        = samplerState.getMinLod();

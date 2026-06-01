@@ -77,8 +77,10 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
     bool isPaused() const;
     PrimitiveMode getPrimitiveMode() const;
     // Validates that the vertices produced by a draw call will fit in the bound transform feedback
-    // buffers.
-    bool checkBufferSpaceForDraw(GLsizei count, GLsizei primcount) const;
+    // buffers. primcounts may be nullptr for non-instanced draw calls.
+    bool checkBufferSpaceForDraw(const GLsizei *counts,
+                                 const GLsizei *primcounts,
+                                 GLsizei drawcount) const;
     // This must be called after each draw call when transform feedback is enabled to keep track of
     // how many vertices have been written to the buffers. This information is needed by
     // checkBufferSpaceForDraw because each draw call appends vertices to the buffers starting just

@@ -164,7 +164,8 @@
         "CompareFunc": "GL_TEXTURE_COMPARE_FUNC",
         "BorderColor": "GL_TEXTURE_BORDER_COLOR",
         "MaxAnisotropy": "GL_TEXTURE_MAX_ANISOTROPY_EXT",
-        "SrgbDecode": "GL_TEXTURE_SRGB_DECODE_EXT"
+        "SrgbDecode": "GL_TEXTURE_SRGB_DECODE_EXT",
+        "LodBiasQCOM": "GL_TEXTURE_LOD_BIAS_QCOM"
     },
     "ShaderParameter":
     {
@@ -213,7 +214,8 @@
     "TextureEnvTarget":
     {
         "Env": "GL_TEXTURE_ENV",
-        "PointSprite": "GL_POINT_SPRITE_OES"
+        "PointSprite": "GL_POINT_SPRITE_OES",
+        "TextureFilterControl": "GL_TEXTURE_FILTER_CONTROL_EXT"
     },
     "TextureEnvParameter":
     {
@@ -235,7 +237,8 @@
         "Op0Alpha": "GL_OPERAND0_ALPHA",
         "Op1Alpha": "GL_OPERAND1_ALPHA",
         "Op2Alpha": "GL_OPERAND2_ALPHA",
-        "PointCoordReplace": "GL_COORD_REPLACE_OES"
+        "PointCoordReplace": "GL_COORD_REPLACE_OES",
+        "LodBias": "GL_TEXTURE_LOD_BIAS_EXT"
     },
     "TextureImageParameter":
     {

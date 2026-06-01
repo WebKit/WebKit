@@ -56,6 +56,39 @@ def angle_win_parent_builder(**kwargs):
     ci.builder(**kwargs)
 
 angle_linux_parent_builder(
+    name = "angle-android-arm64-builder-rel",
+    description_html = "Compiles release ANGLE test binaries for Android/arm64",
+    schedule = "triggered",
+    builder_spec = builder_config.builder_spec(
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_android",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.ARM,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.ANDROID,
+        ),
+    ),
+    gn_args = gn_args.config(
+        configs = [
+            "android_clang",
+            "android_static_analysis",
+            "arm64",
+            "capture",
+            "component",
+            "opencl",
+            "release_with_dchecks",
+        ],
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "compile|android|arm64",
+        short_name = "rel",
+    ),
+)
+
+angle_linux_parent_builder(
     name = "angle-linux-x64-builder-rel",
     description_html = "Compiles release ANGLE test binaries for Linux/x64",
     schedule = "triggered",
@@ -215,6 +248,128 @@ angle_win_parent_builder(
 ################################################################################
 # Child Testers                                                                #
 ################################################################################
+
+ci.thin_tester(
+    name = "angle-android-arm64-google-pixel4-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Pixel 4 devices",
+    parent = "angle-android-arm64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_android",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.ARM,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.ANDROID,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|android|arm64|rel",
+        short_name = "p4",
+    ),
+)
+
+ci.thin_tester(
+    name = "angle-android-arm64-google-pixel6-exp-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on experimental Pixel 6 devices",
+    parent = "angle-android-arm64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_android",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.ARM,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.ANDROID,
+        ),
+        run_tests_serially = True,
+    ),
+    # Uncomment this entry when this experimental tester is actually in use.
+    console_view_entry = consoles.console_view_entry(
+        category = "test|android|arm64|rel|exp",
+        short_name = "p6",
+    ),
+    list_view = "exp",
+)
+
+ci.thin_tester(
+    name = "angle-android-arm64-google-pixel6-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Pixel 6 devices",
+    parent = "angle-android-arm64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_android",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.ARM,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.ANDROID,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|android|arm64|rel",
+        short_name = "p6",
+    ),
+)
+
+ci.thin_tester(
+    name = "angle-android-arm64-google-pixel10-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Pixel 10 devices",
+    parent = "angle-android-arm64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_android",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.ARM,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.ANDROID,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|android|arm64|rel",
+        short_name = "p10",
+    ),
+)
+
+ci.thin_tester(
+    name = "angle-android-arm64-samsung-s24-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Samsung S24 devices",
+    parent = "angle-android-arm64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_android",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.ARM,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.ANDROID,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|android|arm64|rel",
+        short_name = "s24",
+    ),
+)
 
 ci.thin_tester(
     name = "angle-linux-x64-amd-rx5500xt-rel",

@@ -6028,6 +6028,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
                             mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE &&
                                 useVulkanSwapchain == UseVulkanSwapchain::Yes);
 
+    // ANI crashes on NVIDIA/Wayland on a swapchain with deferred memory allocation.
+    // http://anglebug.com/499347835
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, swapchainDeferredMemoryAllocation,
+        mFeatures.supportsSwapchainMaintenance1.enabled && !(IsWayland() && isNvidia));
+
     // The VK_EXT_legacy_dithering extension enables dithering support without emulation
     // Disable the usage of VK_EXT_legacy_dithering on ARM until the driver bug
     // http://issuetracker.google.com/293136916, http://issuetracker.google.com/292282210 are fixed.

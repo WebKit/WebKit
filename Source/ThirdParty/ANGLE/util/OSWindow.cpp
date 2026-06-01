@@ -470,10 +470,13 @@ bool FindTestDataPath(const char *searchPath, char *dataPathOut, size_t maxDataP
     const std::string searchPaths[] = {GetExecutableDirectory(),
                                        GetExecutableDirectory() + "/third_party/angle"};
 #else
-    const std::string searchPaths[] = {
-        GetExecutableDirectory(), GetExecutableDirectory() + "/../..", ".",
-        GetExecutableDirectory() + "/../../third_party/angle", "third_party/angle",
-        GetExecutableDirectory() + "/../../Source/ThirdParty/ANGLE", "Source/ThirdParty/ANGLE"};
+    const std::string searchPaths[] = {GetExecutableDirectory(),
+                                       GetExecutableDirectory() + "/../..",
+                                       ".",
+                                       GetExecutableDirectory() + "/../../third_party/angle",
+                                       "third_party/angle",
+                                       GetExecutableDirectory() + "/../../Source/ThirdParty/ANGLE",
+                                       "Source/ThirdParty/ANGLE"};
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
 
     for (const std::string &path : searchPaths)

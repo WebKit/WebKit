@@ -398,11 +398,13 @@ angle::base::CheckedNumeric<size_t> CalculateVariableSize(const TType *type, boo
         return elementSize * type->getArraySizeProduct();
     }
 
-    if (type->getBasicType() == EbtStruct)
+    if (type->getBasicType() == EbtStruct || type->getBasicType() == EbtInterfaceBlock)
     {
-        const TStructure *structure                   = type->getStruct();
+        const TFieldList &fields                      = type->getBasicType() == EbtStruct
+                                                            ? type->getStruct()->fields()
+                                                            : type->getInterfaceBlock()->fields();
         angle::base::CheckedNumeric<size_t> totalSize = 0;
-        for (const TField *field : structure->fields())
+        for (const TField *field : fields)
         {
             const TType *fieldType = field->type();
             totalSize += CalculateVariableSize(fieldType, isStd140);
@@ -1184,19 +1186,14 @@ bool TParseContext::checkIsNotReserved(const TSourceLoc &line, const ImmutableSt
     static const char *reservedErrMsg = "reserved built-in name";
     if (gl::IsBuiltInName(identifier.data()))
     {
-        error(line, reservedErrMsg, "gl_");
+        error(line, reservedErrMsg, identifier);
         return false;
     }
     if (sh::IsWebGLBasedSpec(mShaderSpec))
     {
-        if (identifier.beginsWith("webgl_"))
+        if (identifier.beginsWith("webgl_") || identifier.beginsWith("_webgl_"))
         {
-            error(line, reservedErrMsg, "webgl_");
-            return false;
-        }
-        if (identifier.beginsWith("_webgl_"))
-        {
-            error(line, reservedErrMsg, "_webgl_");
+            error(line, reservedErrMsg, identifier);
             return false;
         }
     }
@@ -1978,150 +1975,159 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
     checkBindingIsValid(line, *type);
 
     bool needsReservedCheck = true;
+    const TVariable *builtInSymbol =
+        static_cast<const TVariable *>(symbolTable.findBuiltIn(identifier, mShaderVersion));
 
-    // gl_LastFragData may be redeclared with a new precision qualifier
-    if (type->isArray() && identifier.beginsWith("gl_LastFragData"))
+    // Some built-ins may be redeclared with a new precision qualifier, but must otherwise match the
+    // built-in in type, array dimensions etc: gl_LastFragData, gl_LastFragColorARM,
+    // gl_LastFragDepthARM, gl_LastFragStencilARM, gl_ClipDistance, gl_CullDistance, gl_FragDepth,
+    // gl_Position, gl_PointSize.
+    //
+    // For gl_ClipDistance and gl_CullDistance, the array size can be less than the built-in's.
+    if (builtInSymbol != nullptr)
     {
-        const TVariable *maxDrawBuffers = static_cast<const TVariable *>(
-            symbolTable.findBuiltIn(ImmutableString("gl_MaxDrawBuffers"), mShaderVersion));
+        const TType &expectedType = builtInSymbol->getType();
+
+        uint32_t expectedArraySize         = 0;
+        bool canArraySizeBeLessThanBuiltIn = false;
+        const char *arraySizeCheckError    = nullptr;
+
+        switch (expectedType.getQualifier())
+        {
+            case EvqLastFragData:
+                expectedArraySize = static_cast<const TVariable *>(
+                                        symbolTable.findBuiltIn(
+                                            ImmutableString("gl_MaxDrawBuffers"), mShaderVersion))
+                                        ->getConstPointer()
+                                        ->getIConst();
+                arraySizeCheckError =
+                    "redeclaration of gl_LastFragData with size != gl_MaxDrawBuffers";
+                needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
+                break;
+            case EvqLastFragColor:
+            case EvqLastFragDepth:
+            case EvqLastFragStencil:
+                needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
+                break;
+            case EvqClipDistance:
+            {
+                const TVariable *maxClipDistances =
+                    static_cast<const TVariable *>(symbolTable.findBuiltIn(
+                        ImmutableString("gl_MaxClipDistances"), mShaderVersion));
+                if (maxClipDistances != nullptr)
+                {
+                    expectedArraySize = maxClipDistances->getConstPointer()->getIConst();
+                    canArraySizeBeLessThanBuiltIn = true;
+                    arraySizeCheckError =
+                        "redeclaration of gl_ClipDistance with size > gl_MaxClipDistances";
+                    needsReservedCheck =
+                        !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
+                }
+                else
+                {
+                    // Unsupported extension
+                    error(line, "redeclaration of built-in is not allowed", identifier);
+                    return false;
+                }
+                break;
+            }
+            case EvqCullDistance:
+            {
+                const TVariable *maxCullDistances =
+                    static_cast<const TVariable *>(symbolTable.findBuiltIn(
+                        ImmutableString("gl_MaxCullDistances"), mShaderVersion));
+                if (maxCullDistances != nullptr)
+                {
+                    expectedArraySize = maxCullDistances->getConstPointer()->getIConst();
+                    canArraySizeBeLessThanBuiltIn = true;
+                    arraySizeCheckError =
+                        "redeclaration of gl_CullDistance with size > gl_MaxCullDistances";
+                    needsReservedCheck =
+                        !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
+                }
+                else
+                {
+                    // Unsupported extension
+                    error(line, "redeclaration of built-in is not allowed", identifier);
+                    return false;
+                }
+                break;
+            }
+            case EvqFragDepth:
+                needsReservedCheck = !isExtensionEnabled(TExtension::EXT_conservative_depth) ||
+                                     mShaderType != GL_FRAGMENT_SHADER ||
+                                     symbolType == SymbolType::UserDefined;
+                break;
+            case EvqPosition:
+            case EvqPointSize:
+                if (isExtensionEnabled(TExtension::EXT_separate_shader_objects) &&
+                    mShaderType == GL_VERTEX_SHADER)
+                {
+                    needsReservedCheck = false;
+                    if (expectedType.getQualifier() == EvqPosition)
+                    {
+                        mPositionRedeclaredForSeparateShaderObject = true;
+                    }
+                    else
+                    {
+                        mPointSizeRedeclaredForSeparateShaderObject = true;
+                    }
+                    if (mPositionOrPointSizeUsedForSeparateShaderObject)
+                    {
+                        error(line,
+                              "When EXT_separate_shader_objects is enabled, both gl_Position and "
+                              "gl_PointSize must be redeclared before either is used",
+                              identifier);
+                    }
+                }
+                else
+                {
+                    error(line, "redeclaration of built-in is not allowed", identifier);
+                    return false;
+                }
+                break;
+            default:
+                error(line, "reserved built-in name", identifier);
+                return false;
+        }
+
+        // No built-in is an array of arrays.
         if (type->isArrayOfArrays())
         {
-            error(line, "redeclaration of gl_LastFragData as an array of arrays", identifier);
+            error(line, "redeclaration of built-in as an array of arrays", identifier);
             return false;
         }
-        else if (static_cast<int>(type->getOutermostArraySize()) ==
-                 maxDrawBuffers->getConstPointer()->getIConst())
+
+        if (type->getBasicType() != expectedType.getBasicType() ||
+            type->getNominalSize() != expectedType.getNominalSize() ||
+            type->getSecondarySize() != expectedType.getSecondarySize() ||
+            type->isArray() != expectedType.isArray())
         {
-            if (const TSymbol *builtInSymbol = symbolTable.findBuiltIn(identifier, mShaderVersion))
+            error(line, "redeclaration of built-in with a different type", identifier);
+            return false;
+        }
+
+        if (type->isArray())
+        {
+            unsigned int arraySize = type->getOutermostArraySize();
+            if (arraySize > expectedArraySize ||
+                (!canArraySizeBeLessThanBuiltIn && arraySize != expectedArraySize))
             {
-                needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
-            }
-        }
-        else
-        {
-            error(line, "redeclaration of gl_LastFragData with size != gl_MaxDrawBuffers",
-                  identifier);
-            return false;
-        }
-    }
-    else if (identifier.beginsWith("gl_LastFragColorARM") ||
-             identifier.beginsWith("gl_LastFragDepthARM") ||
-             identifier.beginsWith("gl_LastFragStencilARM"))
-    {
-        // gl_LastFrag{Color,Depth,Stencil}ARM may be redeclared with a new precision qualifier
-        if (const TSymbol *builtInSymbol = symbolTable.findBuiltIn(identifier, mShaderVersion))
-        {
-            needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
-        }
-    }
-    else if (type->isArray() && identifier == "gl_ClipDistance")
-    {
-        // gl_ClipDistance can be redeclared with smaller size than gl_MaxClipDistances
-        const TVariable *maxClipDistances = static_cast<const TVariable *>(
-            symbolTable.findBuiltIn(ImmutableString("gl_MaxClipDistances"), mShaderVersion));
-        if (!maxClipDistances)
-        {
-            // Unsupported extension
-            needsReservedCheck = true;
-        }
-        else if (type->isArrayOfArrays())
-        {
-            error(line, "redeclaration of gl_ClipDistance as an array of arrays", identifier);
-            return false;
-        }
-        else if (static_cast<int>(type->getOutermostArraySize()) <=
-                 maxClipDistances->getConstPointer()->getIConst())
-        {
-            const TSymbol *builtInSymbol = symbolTable.findBuiltIn(identifier, mShaderVersion);
-            if (builtInSymbol)
-            {
-                needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
-            }
-            MarkClipCullRedeclaredSize(line, type->getOutermostArraySize(), &mClipDistanceInfo);
-        }
-        else
-        {
-            error(line, "redeclaration of gl_ClipDistance with size > gl_MaxClipDistances",
-                  identifier);
-            return false;
-        }
-    }
-    else if (type->isArray() && identifier == "gl_CullDistance")
-    {
-        // gl_CullDistance can be redeclared with smaller size than gl_MaxCullDistances
-        const TVariable *maxCullDistances = static_cast<const TVariable *>(
-            symbolTable.findBuiltIn(ImmutableString("gl_MaxCullDistances"), mShaderVersion));
-        if (!maxCullDistances)
-        {
-            // Unsupported extension
-            needsReservedCheck = true;
-        }
-        else if (type->isArrayOfArrays())
-        {
-            error(line, "redeclaration of gl_CullDistance as an array of arrays", identifier);
-            return false;
-        }
-        else if (static_cast<int>(type->getOutermostArraySize()) <=
-                 maxCullDistances->getConstPointer()->getIConst())
-        {
-            if (const TSymbol *builtInSymbol = symbolTable.findBuiltIn(identifier, mShaderVersion))
-            {
-                needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
-            }
-            MarkClipCullRedeclaredSize(line, type->getOutermostArraySize(), &mCullDistanceInfo);
-        }
-        else
-        {
-            error(line, "redeclaration of gl_CullDistance with size > gl_MaxCullDistances",
-                  identifier);
-            return false;
-        }
-    }
-    else if (isExtensionEnabled(TExtension::EXT_conservative_depth) &&
-             mShaderType == GL_FRAGMENT_SHADER && identifier == "gl_FragDepth")
-    {
-        if (type->getBasicType() != EbtFloat || type->getNominalSize() != 1 ||
-            type->getSecondarySize() != 1 || type->isArray())
-        {
-            error(line, "gl_FragDepth can only be redeclared as float", identifier);
-            return false;
-        }
-        needsReservedCheck = (symbolType == SymbolType::UserDefined);
-    }
-    else if (isExtensionEnabled(TExtension::EXT_separate_shader_objects) &&
-             mShaderType == GL_VERTEX_SHADER)
-    {
-        bool isRedefiningPositionOrPointSize = false;
-        if (identifier == "gl_Position")
-        {
-            if (type->getBasicType() != EbtFloat || type->getNominalSize() != 4 ||
-                type->getSecondarySize() != 1 || type->isArray())
-            {
-                error(line, "gl_Position can only be redeclared as vec4", identifier);
+                error(line, arraySizeCheckError, identifier);
                 return false;
             }
-            needsReservedCheck                         = false;
-            mPositionRedeclaredForSeparateShaderObject = true;
-            isRedefiningPositionOrPointSize            = true;
         }
-        else if (identifier == "gl_PointSize")
+
+        switch (expectedType.getQualifier())
         {
-            if (type->getBasicType() != EbtFloat || type->getNominalSize() != 1 ||
-                type->getSecondarySize() != 1 || type->isArray())
-            {
-                error(line, "gl_PointSize can only be redeclared as float", identifier);
-                return false;
-            }
-            needsReservedCheck                          = false;
-            mPointSizeRedeclaredForSeparateShaderObject = true;
-            isRedefiningPositionOrPointSize             = true;
-        }
-        if (isRedefiningPositionOrPointSize && mPositionOrPointSizeUsedForSeparateShaderObject)
-        {
-            error(line,
-                  "When EXT_separate_shader_objects is enabled, both gl_Position and "
-                  "gl_PointSize must be redeclared before either is used",
-                  identifier);
+            case EvqClipDistance:
+                MarkClipCullRedeclaredSize(line, type->getOutermostArraySize(), &mClipDistanceInfo);
+                break;
+            case EvqCullDistance:
+                MarkClipCullRedeclaredSize(line, type->getOutermostArraySize(), &mCullDistanceInfo);
+                break;
+            default:
+                break;
         }
     }
 
@@ -6761,6 +6767,7 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
         new TVariable(&symbolTable, instanceName, interfaceBlockType,
                       instanceName.empty() ? SymbolType::Empty : instanceSymbolType);
 
+    checkVariableSize(nameLine, blockName, interfaceBlockType);
     checkVariableLocations(nameLine, instanceVariable);
     declareIRVariable(instanceVariable, sized);
 

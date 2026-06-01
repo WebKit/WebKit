@@ -1377,6 +1377,8 @@ void Renderer::ensureCapsInitialized() const
     mNativeExtensions.framebufferFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
     // GL_QCOM_texture_foveated
     mNativeExtensions.textureFoveatedQCOM = mFeatures.supportsFoveatedRendering.enabled;
+    // GL_QCOM_texture_lod_bias
+    mNativeExtensions.textureLodBiasQCOM = true;
 
     // GL_ANGLE_shader_pixel_local_storage
     //

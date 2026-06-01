@@ -7,7 +7,7 @@
 void InitReplay(void)
 {
     // binaryDataFileName = CapturedTest_MultiFrame_ES3_Vulkan.angledata
-    // maxClientArraySize = 72
+    // maxClientArraySize = 156
     // readBufferSize = 32
     // resourceIDBufferSize = 1
     // contextID = 1
@@ -29,7 +29,7 @@ void InitReplay(void)
     // maxTransformFeedback = 0
     // maxVertexArray = 1
     // maxegl_Sync = 0
-    InitializeReplay5("CapturedTest_MultiFrame_ES3_Vulkan.angledata", 72, 32, 1, 1, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 16, 1, 0, 3, 0, 1, 0);
+    InitializeReplay5("CapturedTest_MultiFrame_ES3_Vulkan.angledata", 156, 32, 1, 1, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 16, 1, 0, 3, 0, 1, 0);
     InitializeBinaryDataLoader();
 }
 

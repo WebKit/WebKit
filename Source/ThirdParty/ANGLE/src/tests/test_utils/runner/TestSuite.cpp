@@ -29,10 +29,10 @@
 
 #include <gtest/gtest.h>
 #if defined(ANGLE_HAS_RAPIDJSON)
-#include <rapidjson/document.h>
-#include <rapidjson/filewritestream.h>
-#include <rapidjson/istreamwrapper.h>
-#include <rapidjson/prettywriter.h>
+#    include <rapidjson/document.h>
+#    include <rapidjson/filewritestream.h>
+#    include <rapidjson/istreamwrapper.h>
+#    include <rapidjson/prettywriter.h>
 #endif
 
 // We directly call into a function to register the parameterized tests. This saves spinning up

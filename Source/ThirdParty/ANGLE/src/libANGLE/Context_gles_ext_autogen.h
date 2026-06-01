@@ -14,6 +14,7 @@
                                                                                                    \
     /* GLES1 Extensions */                                                                         \
                                                                                                    \
+    /* GL_EXT_texture_lod_bias */                                                                  \
     /* GL_OES_blend_subtract */                                                                    \
     /* GL_OES_draw_texture */                                                                      \
     void drawTexf(GLfloat x, GLfloat y, GLfloat z, GLfloat width, GLfloat height);                 \
@@ -386,6 +387,7 @@
     void textureFoveationParameters(TextureID texturePacked, GLuint layer, GLuint focalPoint,      \
                                     GLfloat focalX, GLfloat focalY, GLfloat gainX, GLfloat gainY,  \
                                     GLfloat foveaArea);                                            \
+    /* GL_QCOM_texture_lod_bias */                                                                 \
     /* GL_QCOM_tiled_rendering */                                                                  \
     void endTiling(GLbitfield preserveMask);                                                       \
     void startTiling(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield preserveMask);    \

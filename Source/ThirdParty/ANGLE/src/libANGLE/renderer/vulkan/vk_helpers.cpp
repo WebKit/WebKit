@@ -1634,8 +1634,7 @@ void RenderPassCommandBufferHelper::fragmentShadingRateImageRead(ImageHelper *im
 
     // Initialize RenderPassAttachment for fragment shading rate attachment.
     mFragmentShadingRateAtachment.init(image, gl::LevelIndex(0), 0, 1, VK_IMAGE_ASPECT_COLOR_BIT);
-    image->getRenderPassUsage().flags(this).set(
-        RenderPassUsage::FragmentShadingRateReadOnlyAttachment);
+    image->getRenderPassUsage().flags(this).set(RenderPassUsage::RenderTargetAttachment);
 }
 
 void RenderPassCommandBufferHelper::onColorAccess(PackedAttachmentIndex packedAttachmentIndex,
@@ -1983,7 +1982,8 @@ void RenderPassCommandBufferHelper::finalizeFragmentShadingRateImageLayout(Conte
 {
     ImageHelper *image      = mFragmentShadingRateAtachment.getImage();
     ImageAccess imageAccess = ImageAccess::FragmentShadingRateAttachmentReadOnly;
-    ASSERT(image && image->valid());
+    ASSERT(image != nullptr);
+    ASSERT(image->valid());
     if (image->isReadBarrierNecessary(context->getRenderer(), imageAccess))
     {
         updateImageLayoutAndBarrier(context, image, VK_IMAGE_ASPECT_COLOR_BIT, imageAccess,
@@ -5186,6 +5186,7 @@ void BufferHelper::recordReadBarrier(Context *context,
         eventBarriers->addEventMemoryBarrier(context->getRenderer(), mCurrentWriteEvent.getEvent(),
                                              mCurrentWriteEvent.getAccessFlags(),
                                              readPipelineStageFlags, readAccessType);
+        eventCollector->emplace_back(mCurrentWriteEvent.getEvent());
     }
 
     // Barrier against prior access that not tracked by VkEvent using pipelineBarrier.
@@ -8413,7 +8414,7 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
         }
         else if (!stencilOnly)
         {
-            outputRowPitch = storageFormat.pixelBytes * glExtents.width;
+            outputRowPitch = static_cast<size_t>(glExtents.width) * storageFormat.pixelBytes;
         }
         else
         {
@@ -8438,7 +8439,9 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
             formatInfo.stencilBits > 0)
         {
             // Note: Stencil is always one byte
-            stencilAllocationSize = glExtents.width * glExtents.height * glExtents.depth;
+            stencilAllocationSize = static_cast<size_t>(glExtents.width) *
+                                    static_cast<size_t>(glExtents.height) *
+                                    static_cast<size_t>(glExtents.depth);
             allocationSize += stencilAllocationSize;
         }
     }
@@ -11458,7 +11461,8 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
 
     uint8_t *readPixelBuffer   = nullptr;
     VkDeviceSize stagingOffset = 0;
-    size_t allocationSize      = readFormat->pixelBytes * area.width * area.height;
+    size_t allocationSize =
+        static_cast<size_t>(area.width) * static_cast<size_t>(area.height) * readFormat->pixelBytes;
 
     ANGLE_TRY(contextVk->initBufferForImageCopy(stagingBuffer, allocationSize,
                                                 MemoryCoherency::CachedPreferCoherent,

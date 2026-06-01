@@ -140,6 +140,17 @@ GLfloat Sampler::getMaxLod() const
     return mState.getMaxLod();
 }
 
+void Sampler::setLodBias(const Context *context, GLfloat lodBias)
+{
+    mState.setLodBias(lodBias);
+    signalDirtyState();
+}
+
+GLfloat Sampler::getLodBias() const
+{
+    return mState.getLodBias();
+}
+
 void Sampler::setCompareMode(const Context *context, GLenum compareMode)
 {
     mState.setCompareMode(compareMode);

@@ -435,6 +435,10 @@ class SamplerState final
 
     bool setMaxLod(GLfloat maxLod);
 
+    GLfloat getLodBias() const { return mSampleLodBias; }
+
+    bool setLodBias(GLfloat lodBias);
+
     GLenum getCompareMode() const { return mCompareMode; }
 
     bool setCompareMode(GLenum compareMode);
@@ -471,6 +475,7 @@ class SamplerState final
 
     GLfloat mMinLod;
     GLfloat mMaxLod;
+    GLfloat mSampleLodBias;
 
     GLenum mCompareMode;
     GLenum mCompareFunc;

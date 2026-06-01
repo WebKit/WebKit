@@ -145,6 +145,10 @@ Additions to the OpenGL ES 2.0 Specification
     INVALID_VALUE is generated if <sourceLevel> of the source texture is not
     defined.
 
+    INVALID_VALUE is generated if <sourceLevel> of the source texture is less
+    than the source texture's value for TEXTURE_BASE_LEVEL or more than the
+    source texture's value for TEXTURE_MAX_LEVEL.
+
     The command
 
         CopySubTextureCHROMIUM
@@ -183,6 +187,16 @@ Additions to the OpenGL ES 2.0 Specification
 
     INVALID_VALUE is generated if (<xoffset> + <width>) > destWidth,
     or (<yoffset> + <height>) > destHeight.
+
+    INVALID_VALUE is generated if <sourceLevel> is not 0 for ES 2.0, or if
+    <sourceLevel> or <destLevel> is less than 0 for ES 3.0.
+
+    INVALID_VALUE is generated if <sourceLevel> of the source texture is not
+    defined.
+
+    INVALID_VALUE is generated if <sourceLevel> of the source texture is less
+    than the source texture's value for TEXTURE_BASE_LEVEL or more than the
+    source texture's value for TEXTURE_MAX_LEVEL.
 
     Table 1.0 Valid internal formats for CopyTextureCHROMIUM:
 
@@ -298,3 +312,4 @@ Revision History
     19/1/2017   Added TEXTURE_CUBE_MAP as valid dest_id target.
     24/3/2017   Clean up naming and move formats into tables.
     3/9/2025    Add source copy formats from ANGLE_yuv_internal_format
+    9/4/2026    Add restriction that sourceLevel is in [BASE, MAX] range

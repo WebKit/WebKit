@@ -508,7 +508,7 @@ void CaptureMultiDrawArraysANGLE_firsts(const State &glState,
                                         GLsizei drawcount,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(firsts, drawcount, paramCapture);
 }
 
 void CaptureMultiDrawArraysANGLE_counts(const State &glState,
@@ -518,7 +518,7 @@ void CaptureMultiDrawArraysANGLE_counts(const State &glState,
                                         GLsizei drawcount,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(counts, drawcount, paramCapture);
 }
 
 void CaptureMultiDrawArraysInstancedANGLE_firsts(const State &glState,
@@ -529,7 +529,7 @@ void CaptureMultiDrawArraysInstancedANGLE_firsts(const State &glState,
                                                  GLsizei drawcount,
                                                  ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(firsts, drawcount, paramCapture);
 }
 
 void CaptureMultiDrawArraysInstancedANGLE_counts(const State &glState,
@@ -540,7 +540,7 @@ void CaptureMultiDrawArraysInstancedANGLE_counts(const State &glState,
                                                  GLsizei drawcount,
                                                  ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(counts, drawcount, paramCapture);
 }
 
 void CaptureMultiDrawArraysInstancedANGLE_instanceCounts(const State &glState,
@@ -551,7 +551,7 @@ void CaptureMultiDrawArraysInstancedANGLE_instanceCounts(const State &glState,
                                                          GLsizei drawcount,
                                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureArray(instanceCounts, drawcount, paramCapture);
 }
 
 void CaptureMultiDrawElementsANGLE_counts(const State &glState,

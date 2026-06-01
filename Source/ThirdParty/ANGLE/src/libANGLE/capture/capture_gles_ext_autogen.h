@@ -1933,6 +1933,8 @@ angle::CallCapture CaptureTexBufferRangeEXT(const State &glState,
 
 // GL_EXT_texture_format_sRGB_override
 
+// GL_EXT_texture_lod_bias
+
 // GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
@@ -2819,6 +2821,8 @@ angle::CallCapture CaptureTextureFoveationParametersQCOM(const State &glState,
                                                          GLfloat gainX,
                                                          GLfloat gainY,
                                                          GLfloat foveaArea);
+
+// GL_QCOM_texture_lod_bias
 
 // GL_QCOM_tiled_rendering
 angle::CallCapture CaptureEndTilingQCOM(const State &glState,

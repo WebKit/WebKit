@@ -1066,6 +1066,12 @@ TEST_P(TextureMultisampleArrayTest, InvalidTexParameteri)
                         GL_DECODE_EXT);
         EXPECT_GL_ERROR(GL_INVALID_ENUM);
     }
+
+    if (EnsureGLExtensionEnabled("GL_QCOM_texture_lod_bias"))
+    {
+        glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES, GL_TEXTURE_LOD_BIAS_QCOM, 0);
+        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    }
 }
 
 // Test a valid TexStorage3DMultisample call and check that the queried texture level parameters

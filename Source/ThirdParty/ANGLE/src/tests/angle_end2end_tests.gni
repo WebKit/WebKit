@@ -139,6 +139,7 @@ angle_end2end_tests_sources = [
   "gl_tests/ProgramParameterTest.cpp",
   "gl_tests/ProgramPipelineTest.cpp",
   "gl_tests/ProvokingVertexTest.cpp",
+  "gl_tests/QCOMTextureLodBiasTest.cpp",
   "gl_tests/QueryObjectValidation.cpp",
   "gl_tests/ReadOnlyFeedbackLoopTest.cpp",
   "gl_tests/ReadPixelsTest.cpp",

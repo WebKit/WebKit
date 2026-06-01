@@ -443,6 +443,57 @@ void MultiFrame::frame5()
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
     EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
 
+    // The pointer assignments for the position and texture attributes are swapped.
+    glClear(GL_COLOR_BUFFER_BIT);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // Redundant pointer assignments are added for the vertex attributes, which will be overridden
+    // with their final values before the next draw.
+    GLfloat unusedData[] = {
+        10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+    };
+    glDisableVertexAttribArray(positionLoc);
+    glDisableVertexAttribArray(texCoordLoc);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), unusedData + 6);
+    glEnableVertexAttribArray(positionLoc);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 2);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices);
+
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 5);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), unusedData + 7);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vertices + 3);
+    glEnableVertexAttribArray(texCoordLoc);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
+    // The stride for the position attribute is increased so that the data for the texture attribute
+    // falls entirely within its range.
+    GLfloat reorderedData[] = {
+        -0.25f, 0.75f,  0.0f,                                      // Position 0
+        0.0f,   0.0f,                                              // TexCoord 0
+        0.0f,   1.0f,                                              // TexCoord 1
+        1.0f,   1.0f,                                              // TexCoord 2
+        1.0f,   0.0f,                                              // TexCoord 3
+        0.0f,                                                      // Padding
+        -0.25f, -0.25f, 0.0f,                                      // Position 1
+        0.0f,   0.0f,   0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // Padding
+        0.75f,  -0.25f, 0.0f,                                      // Position 2
+        0.0f,   0.0f,   0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // Padding
+        0.75f,  0.75f,  0.0f,                                      // Position 3
+    };
+    glClear(GL_COLOR_BUFFER_BIT);
+    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), reorderedData);
+    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
+                          reorderedData + 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+    EXPECT_PIXEL_EQ(108, 108, 0, 0, 255, 255);
+
     // Add an invalid call so it shows up in capture as a comment.
     // This is unrelated to the rest of the frame, but needs a home.
     GLuint nonExistentBinding = 666;

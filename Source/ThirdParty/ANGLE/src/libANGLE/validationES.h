@@ -98,6 +98,15 @@ bool ValidateWebGLVertexAttribPointer(const Context *context,
                                       const void *ptr,
                                       bool pureInteger);
 
+// Validation of transform feedback buffer output size for various DrawArrays calls.
+// `primcounts` can be null for non-instanced calls.
+// If this function returns false, an error has been generated.
+bool ValidateDrawArraysTransformFeedbackBufferSize(const Context *context,
+                                                   angle::EntryPoint entryPoint,
+                                                   const GLsizei *counts,
+                                                   const GLsizei *primcounts,
+                                                   GLsizei drawcount);
+
 // Returns valid program if id is a valid program name
 // Errors INVALID_OPERATION if valid shader is given and returns NULL
 // Errors INVALID_VALUE otherwise and returns NULL
@@ -939,18 +948,6 @@ ANGLE_INLINE bool ValidateDrawArraysCommon(const Context *context,
     if (ANGLE_UNLIKELY(!ValidateDrawBase(context, entryPoint, mode)))
     {
         return false;
-    }
-
-    if (ANGLE_UNLIKELY(context->getStateCache().isTransformFeedbackActiveUnpaused()) &&
-        ANGLE_UNLIKELY(!context->supportsGeometryOrTesselation()))
-    {
-        const State &state                      = context->getState();
-        TransformFeedback *curTransformFeedback = state.getCurrentTransformFeedback();
-        if (!curTransformFeedback->checkBufferSpaceForDraw(count, primcount))
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, err::kTransformFeedbackBufferTooSmall);
-            return false;
-        }
     }
 
     return ValidateDrawArraysAttribs(context, entryPoint, first, count);

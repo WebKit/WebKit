@@ -72,10 +72,10 @@ static const struct
     ShShaderOutput output;
     const char *flag;
 } allOutputs[] = {
-    {SH_MSL_METAL_OUTPUT, "m"},          {SH_ESSL_OUTPUT, "e"},
-    {SH_GLSL_330_CORE_OUTPUT, "g330"},   {SH_GLSL_400_CORE_OUTPUT, "g400"},
-    {SH_GLSL_410_CORE_OUTPUT, "g410"},   {SH_GLSL_420_CORE_OUTPUT, "g420"},
-    {SH_GLSL_430_CORE_OUTPUT, "g430"},   {SH_GLSL_440_CORE_OUTPUT, "g440"},
+    {SH_MSL_METAL_OUTPUT, "m"},        {SH_ESSL_OUTPUT, "e"},
+    {SH_GLSL_330_CORE_OUTPUT, "g330"}, {SH_GLSL_400_CORE_OUTPUT, "g400"},
+    {SH_GLSL_410_CORE_OUTPUT, "g410"}, {SH_GLSL_420_CORE_OUTPUT, "g420"},
+    {SH_GLSL_430_CORE_OUTPUT, "g430"}, {SH_GLSL_440_CORE_OUTPUT, "g440"},
     {SH_GLSL_450_CORE_OUTPUT, "g450"},
 };
 static constexpr int allOutputsCount                = ARRAY_COUNT(allOutputs);

@@ -240,7 +240,6 @@ ANGLE_INSTANTIATE_TEST(ContextLostSkipValidationTest,
                        WithRobustness(ES2_METAL()),
                        WithRobustness(ES3_METAL()));
 
-
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ContextLostTestES32);
 ANGLE_INSTANTIATE_TEST(ContextLostTestES32, WithRobustness(ES32_VULKAN()));
 

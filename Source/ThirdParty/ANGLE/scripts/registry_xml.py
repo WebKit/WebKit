@@ -252,6 +252,7 @@ gles_requestable_extensions = [
     "GL_QCOM_render_shared_exponent",
     "GL_QCOM_shading_rate",
     "GL_QCOM_texture_foveated",
+    "GL_QCOM_texture_lod_bias",
     "GL_QCOM_tiled_rendering",
     "GL_WEBGL_video_texture",
 ]
@@ -302,6 +303,7 @@ gles_es_only_extensions = [
 
 # ES1 (Possibly the min set of extensions needed by Android)
 gles1_extensions = [
+    "GL_EXT_texture_lod_bias",
     "GL_OES_blend_subtract",
     "GL_OES_draw_texture",
     "GL_OES_framebuffer_object",

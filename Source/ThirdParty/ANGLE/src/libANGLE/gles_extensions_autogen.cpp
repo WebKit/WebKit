@@ -203,6 +203,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_QCOM_texture_foveated"] = enableableExtension(&Extensions::textureFoveatedQCOM);
         map["GL_OES_texture_half_float"] = enableableExtension(&Extensions::textureHalfFloatOES);
         map["GL_OES_texture_half_float_linear"] = enableableExtension(&Extensions::textureHalfFloatLinearOES);
+        map["GL_QCOM_texture_lod_bias"] = enableableExtension(&Extensions::textureLodBiasQCOM);
         map["GL_EXT_texture_mirror_clamp_to_edge"] = enableableExtension(&Extensions::textureMirrorClampToEdgeEXT);
         map["GL_EXT_texture_norm16"] = enableableExtension(&Extensions::textureNorm16EXT);
         map["GL_OES_texture_npot"] = enableableExtension(&Extensions::textureNpotOES);
@@ -295,6 +296,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_OES_point_sprite"] = enableableExtension(&Extensions::pointSpriteOES);
         map["GL_OES_query_matrix"] = enableableExtension(&Extensions::queryMatrixOES);
         map["GL_OES_texture_cube_map"] = enableableExtension(&Extensions::textureCubeMapOES);
+        map["GL_EXT_texture_lod_bias"] = enableableExtension(&Extensions::textureLodBiasEXT);
         map["GL_OES_texture_mirrored_repeat"] = enableableExtension(&Extensions::textureMirroredRepeatOES);
         // clang-format on
 

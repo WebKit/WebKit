@@ -216,6 +216,7 @@ SamplerState::SamplerState()
     setMaxAnisotropy(1.0f);
     setMinLod(-1000.0f);
     setMaxLod(1000.0f);
+    setLodBias(0.0f);
     setCompareMode(GL_NONE);
     setCompareFunc(GL_LEQUAL);
     setSRGBDecode(GL_DECODE_EXT);
@@ -321,6 +322,16 @@ bool SamplerState::setMaxLod(GLfloat maxLod)
     if (mMaxLod != maxLod)
     {
         mMaxLod = maxLod;
+        return true;
+    }
+    return false;
+}
+
+bool SamplerState::setLodBias(GLfloat lodBias)
+{
+    if (mSampleLodBias != lodBias)
+    {
+        mSampleLodBias = lodBias;
         return true;
     }
     return false;

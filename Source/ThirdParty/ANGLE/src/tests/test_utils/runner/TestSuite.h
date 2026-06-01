@@ -20,7 +20,7 @@
 #include "util/test_utils.h"
 
 #if defined(ANGLE_HAS_RAPIDJSON)
-#include "HistogramWriter.h"
+#    include "HistogramWriter.h"
 #endif
 
 namespace angle

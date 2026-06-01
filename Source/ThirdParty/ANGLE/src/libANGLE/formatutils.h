@@ -571,6 +571,21 @@ ANGLE_INLINE bool IsBGRAFormat(const GLenum internalFormat)
     }
 }
 
+ANGLE_INLINE bool IsRGBXOrBGRXFormat(const GLenum internalFormat)
+{
+    switch (internalFormat)
+    {
+        case GL_RGBX8_ANGLE:
+        case GL_RGBX8_SRGB_ANGLEX:
+        case GL_BGRX8_ANGLEX:
+        case GL_BGRX8_SRGB_ANGLEX:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 // Check if an internal format is ever valid in ES3.  Makes no checks about support for a specific
 // context.
 bool ValidES3InternalFormat(GLenum internalFormat);

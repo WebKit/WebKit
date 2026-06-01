@@ -500,9 +500,10 @@ enum class SamplerParameter : uint8_t
     BorderColor   = 9,
     MaxAnisotropy = 10,
     SrgbDecode    = 11,
+    LodBiasQCOM   = 12,
 
-    InvalidEnum = 12,
-    EnumCount   = 12,
+    InvalidEnum = 13,
+    EnumCount   = 13,
 };
 
 template <>
@@ -642,9 +643,10 @@ enum class TextureEnvParameter : uint8_t
     Op1Alpha          = 16,
     Op2Alpha          = 17,
     PointCoordReplace = 18,
+    LodBias           = 19,
 
-    InvalidEnum = 19,
-    EnumCount   = 19,
+    InvalidEnum = 20,
+    EnumCount   = 20,
 };
 
 template <>
@@ -654,11 +656,12 @@ std::ostream &operator<<(std::ostream &os, TextureEnvParameter value);
 
 enum class TextureEnvTarget : uint8_t
 {
-    Env         = 0,
-    PointSprite = 1,
+    Env                  = 0,
+    PointSprite          = 1,
+    TextureFilterControl = 2,
 
-    InvalidEnum = 2,
-    EnumCount   = 2,
+    InvalidEnum = 3,
+    EnumCount   = 3,
 };
 
 template <>

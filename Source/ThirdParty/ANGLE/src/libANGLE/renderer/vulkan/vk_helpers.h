@@ -1300,8 +1300,6 @@ enum class RenderPassUsage
     ColorTextureSampler,
     DepthTextureSampler,
     StencilTextureSampler,
-    // Fragment shading rate attachment
-    FragmentShadingRateReadOnlyAttachment,
 
     InvalidEnum,
     EnumCount = InvalidEnum,

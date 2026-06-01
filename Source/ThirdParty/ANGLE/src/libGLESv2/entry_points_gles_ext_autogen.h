@@ -1315,6 +1315,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_TexBufferRangeEXT(GLenum target,
 
 // GL_EXT_texture_format_sRGB_override
 
+// GL_EXT_texture_lod_bias
+
 // GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
@@ -1891,6 +1893,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_TextureFoveationParametersQCOM(GLuint texture,
                                                                 GLfloat gainX,
                                                                 GLfloat gainY,
                                                                 GLfloat foveaArea);
+
+// GL_QCOM_texture_lod_bias
 
 // GL_QCOM_tiled_rendering
 ANGLE_EXPORT void GL_APIENTRY GL_EndTilingQCOM(GLbitfield preserveMask);

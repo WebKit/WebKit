@@ -460,6 +460,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::SupportsYUVSamplerConversion, "supportsYUVSamplerConversion"},
     {Feature::SupportsYuvTarget, "supportsYuvTarget"},
     {Feature::SwapbuffersOnFlushOrFinishWithSingleBuffer, "swapbuffersOnFlushOrFinishWithSingleBuffer"},
+    {Feature::SwapchainDeferredMemoryAllocation, "swapchainDeferredMemoryAllocation"},
     {Feature::SyncAllVertexArraysToDefault, "syncAllVertexArraysToDefault"},
     {Feature::SyncDefaultVertexArraysToDefault, "syncDefaultVertexArraysToDefault"},
     {Feature::SyncMonolithicPipelinesToBlobCache, "syncMonolithicPipelinesToBlobCache"},

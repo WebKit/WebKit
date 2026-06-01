@@ -398,7 +398,6 @@ angle::Result GetPresentModes(DisplayVk *displayVk,
                               VkSurfaceKHR surface,
                               std::vector<vk::PresentMode> *outPresentModes)
 {
-
     uint32_t presentModeCount = 0;
     ANGLE_VK_TRY(displayVk, vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface,
                                                                       &presentModeCount, nullptr));
@@ -1758,7 +1757,7 @@ angle::Result WindowSurfaceVk::createSwapchain(vk::ErrorContext *context)
     }
 #endif
 
-    if (renderer->getFeatures().supportsSwapchainMaintenance1.enabled)
+    if (renderer->getFeatures().swapchainDeferredMemoryAllocation.enabled)
     {
         swapchainInfo.flags |= VK_SWAPCHAIN_CREATE_DEFERRED_MEMORY_ALLOCATION_BIT_EXT;
     }
@@ -2044,6 +2043,17 @@ angle::Result WindowSurfaceVk::queryAndAdjustSurfaceCaps(
                 // Drop anything ANGLE can't handle.
                 std::erase_if(*compatiblePresentModesOut,
                               [](VkPresentModeKHR mode) { return !IsKnownAnglePresentMode(mode); });
+
+                // The output compatible present modes must be a subset of the supported present
+                // modes for the physical device.
+                size_t unsupportedPresentModesRemoved =
+                    std::erase_if(*compatiblePresentModesOut, [this](VkPresentModeKHR mode) {
+                        return !supportsPresentMode(vk::ConvertVkPresentModeToPresentMode(mode));
+                    });
+                if (ANGLE_UNLIKELY(unsupportedPresentModesRemoved > 0))
+                {
+                    WARN() << "Unsupported present modes detected and removed.";
+                }
 
                 // Ensure at least one mode remains.
                 ASSERT(!compatiblePresentModesOut->empty());

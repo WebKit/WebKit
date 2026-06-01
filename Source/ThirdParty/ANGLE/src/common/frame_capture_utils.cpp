@@ -50,6 +50,8 @@ ParamCapture &ParamCapture::operator=(ParamCapture &&other)
     std::swap(enumGroup, other.enumGroup);
     std::swap(data, other.data);
     std::swap(arrayClientPointerIndex, other.arrayClientPointerIndex);
+    std::swap(arrayClientPointerMergedIndex, other.arrayClientPointerMergedIndex);
+    std::swap(arrayClientPointerOffset, other.arrayClientPointerOffset);
     std::swap(readBufferSizeBytes, other.readBufferSizeBytes);
     std::swap(dataNElements, other.dataNElements);
     std::swap(uniqueID, other.uniqueID);

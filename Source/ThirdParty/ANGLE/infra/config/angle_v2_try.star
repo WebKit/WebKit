@@ -40,7 +40,7 @@ try_.defaults.set(
 
 def apply_cq_builder_defaults(kwargs):
     kwargs.setdefault("max_concurrent_builds", 4)
-    kwargs.setdefault("tryjob", try_.job())
+    kwargs.setdefault("cq_settings", try_.cq_settings())
     return kwargs
 
 def apply_linux_cq_builder_defaults(kwargs):
@@ -101,6 +101,17 @@ def angle_win_functional_cq_tester(**kwargs):
 ## Functional testers
 
 angle_linux_functional_cq_tester(
+    name = "angle-cq-android-arm64-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on multiple hardware configs. Blocks CL submission.",
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-google-pixel4-rel",
+        "ci/angle-android-arm64-google-pixel6-rel",
+    ],
+    gn_args = "ci/angle-android-arm64-builder-rel",
+)
+
+angle_linux_functional_cq_tester(
     name = "angle-cq-linux-x64-rel",
     description_html = "Tests release ANGLE on Linux/x64 on multiple hardware configs. Blocks CL submission.",
     mirrors = [
@@ -153,9 +164,6 @@ angle_win_functional_cq_tester(
         "ci/angle-win-x86-sws-rel",
     ],
     gn_args = "ci/angle-win-x86-builder-rel",
-    # TODO(anglebug.com/475260235): Actually add this to the CQ after the CI
-    # builders are confirmed to work properly.
-    tryjob = try_.job(includable_only = True),
 )
 
 ################################################################################
@@ -166,8 +174,8 @@ angle_win_functional_cq_tester(
 
 def apply_trace_tester_defaults(kwargs):
     kwargs.setdefault(
-        "tryjob",
-        try_.job(
+        "cq_settings",
+        try_.cq_settings(
             # Trace tests are only run on CQ if files in the capture folders change.
             location_filters = [
                 cq.location_filter(path_regexp = "DEPS"),
@@ -234,6 +242,56 @@ def angle_win_manual_builder(*, name, **kwargs):
     )
 
 ## Functional testers
+
+angle_linux_manual_builder(
+    name = "angle-try-android-arm64-google-pixel4-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Pixel 4 devices. Manual only.",
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-google-pixel4-rel",
+    ],
+    gn_args = "ci/angle-android-arm64-builder-rel",
+)
+
+angle_linux_manual_builder(
+    name = "angle-try-android-arm64-google-pixel6-exp-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on experimental Pixel 6 devices. Manual only.",
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-google-pixel6-exp-rel",
+    ],
+    gn_args = "ci/angle-android-arm64-builder-rel",
+)
+
+angle_linux_manual_builder(
+    name = "angle-try-android-arm64-google-pixel6-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Pixel 6 devices. Manual only.",
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-google-pixel6-rel",
+    ],
+    gn_args = "ci/angle-android-arm64-builder-rel",
+)
+
+angle_linux_manual_builder(
+    name = "angle-try-android-arm64-google-pixel10-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Pixel 10 devices. Manual only.",
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-google-pixel10-rel",
+    ],
+    gn_args = "ci/angle-android-arm64-builder-rel",
+)
+
+angle_linux_manual_builder(
+    name = "angle-try-android-arm64-samsung-s24-rel",
+    description_html = "Tests release ANGLE on Android/arm64 on Samsung S24 devices. Manual only.",
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-samsung-s24-rel",
+    ],
+    gn_args = "ci/angle-android-arm64-builder-rel",
+)
 
 angle_linux_manual_builder(
     name = "angle-try-linux-x64-amd-rx5500xt-rel",

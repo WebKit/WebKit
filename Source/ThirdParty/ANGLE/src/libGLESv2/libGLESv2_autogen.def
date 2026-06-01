@@ -977,6 +977,8 @@ EXPORTS
 
     ; GL_EXT_texture_format_sRGB_override
 
+    ; GL_EXT_texture_lod_bias
+
     ; GL_EXT_texture_mirror_clamp_to_edge
 
     ; GL_EXT_texture_norm16
@@ -1288,6 +1290,8 @@ EXPORTS
 
     ; GL_QCOM_texture_foveated
     glTextureFoveationParametersQCOM
+
+    ; GL_QCOM_texture_lod_bias
 
     ; GL_QCOM_tiled_rendering
     glEndTilingQCOM

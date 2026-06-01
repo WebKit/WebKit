@@ -172,6 +172,8 @@
 42266866 WIN INTEL OPENGL : GLSLTest_ES3.LargeInterfaceBlockNestedArray/* = SKIP
 463961767 WIN INTEL OPENGL : EGLSurfacelessContextTest.Switcheroo/* = SKIP
 494350632 WIN INTEL OPENGL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
+// Some Intel Vulkan drivers report incorrect VkPhysicalDeviceLimits::maxSamplerLodBias on Windows.
+498165510 WIN INTEL VULKAN : QCOMTextureLodBiasTest.BiasClamping/* = SKIP
 
 // Failures on Intel Alder Lake S UHD Graphics 770 (8086:4680-31.0.101.5333)
 352085732 WIN INTEL OPENGL : GeometryShaderTest.LayeredFramebufferClear2DArrayColor/* = SKIP
@@ -1250,6 +1252,7 @@
 480069042 PIXEL10 VULKAN : VulkanPerformanceCounterTest_DepthStencilLoadStoreOps.RenderToTextureUninitializedAndUnusedDepthStencil/* = SKIP
 491488985 PIXEL10 VULKAN : GLSLTest_ES31.HelperInvocationsAfterDiscard/* = SKIP
 497884154 PIXEL10 VULKAN : ClearTextureEXTTest.DrawThenClearPartiallyThenDraw/* = SKIP
+500930576 PIXEL10 VULKAN : ReadPixelsTest.LargeTexture/* = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
 40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
@@ -2665,6 +2668,11 @@
 349994211 IR PIXEL4ORXL GLES : SampleVariablesTest.SamplePosition/* = SKIP
 // Untriaged failures on Pixel 4 / GLES
 349994211 IR PIXEL4ORXL GLES : GLSLTestLoops.ForContinueInSwitchComplex/* = SKIP
+
+// Crashes on OpenGL
+500930576 OPENGL : ReadPixelsTest.LargeTexture/* = SKIP
+// Crashes inside AMD Metal driver when copying the texture -> buffer
+500930576 METAL AMD : ReadPixelsTest.LargeTexture/* = SKIP
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file

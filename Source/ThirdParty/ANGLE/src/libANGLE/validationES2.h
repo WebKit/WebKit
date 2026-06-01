@@ -24,7 +24,17 @@ ANGLE_INLINE bool ValidateDrawArrays(const Context *context,
                                      GLint first,
                                      GLsizei count)
 {
-    return ValidateDrawArraysCommon(context, entryPoint, mode, first, count, 1);
+    if (!ValidateDrawArraysCommon(context, entryPoint, mode, first, count, 1))
+    {
+        return false;
+    }
+
+    if (!ValidateDrawArraysTransformFeedbackBufferSize(context, entryPoint, &count, nullptr, 1))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 ANGLE_INLINE bool ValidateUniform1f(const Context *context,

@@ -1664,14 +1664,18 @@ void TracePerfTest::drawBenchmark()
     snprintf(frameName, sizeof(frameName), "Frame %u", mCurrentFrame);
     beginInternalTraceEvent(frameName);
 
-    startGpuTimer();
+    // Only insert gpu-timer calls for when requested
+    if (mParams->trackGpuTime)
+    {
+        startGpuTimer();
+    }
     atraceCounter("TraceFrameIndex", mCurrentFrame);
 
     const double beginReplayFrameTimeSec = mTrialTimer.getElapsedWallClockTime();
     mTraceReplay->replayFrame(mCurrentFrame);
     mFrameWallTimeSec += mTrialTimer.getElapsedWallClockTime() - beginReplayFrameTimeSec;
 
-    if (!gAddSwapIntoGPUTime)
+    if (!gAddSwapIntoGPUTime && mParams->trackGpuTime)
     {
         stopGpuTimer();
     }
@@ -1801,7 +1805,7 @@ void TracePerfTest::drawBenchmark()
         mFrameWallTimeSec += endSwapTimeSec - beginSwapTimeSec;
     }
 
-    if (gAddSwapIntoGPUTime)
+    if (gAddSwapIntoGPUTime && mParams->trackGpuTime)
     {
         // No need flush here since swap already performs it implicitly and we already call flush
         // in case of the offscreen test.

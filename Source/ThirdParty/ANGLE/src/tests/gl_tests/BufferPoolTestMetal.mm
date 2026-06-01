@@ -8,6 +8,10 @@
 //   size_t overflow scenario.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -121,8 +125,8 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
     // With the uint32_t bug, ptr2 would have overwritten ptr1's data at offset 0
     // because the offset wrapped around to 0 or a small value.
     // Map the first buffer again to verify its contents
-    uint8_t *verifyPtr1 = buf1->mapWithOpt(contextMtl, true, false);
-    ASSERT_NE(verifyPtr1, nullptr);
+    angle::Span<const uint8_t> verifyPtr1 = buf1->mapReadOnly(contextMtl);
+    ASSERT_FALSE(verifyPtr1.empty());
 
     // Check that the first pattern (0xAA) is still intact
     // If the bug exists, this would have been overwritten with 0xBB

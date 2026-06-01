@@ -1907,6 +1907,8 @@ SamplerParameter FromGLenum<SamplerParameter>(GLenum from)
             return SamplerParameter::MaxAnisotropy;
         case GL_TEXTURE_SRGB_DECODE_EXT:
             return SamplerParameter::SrgbDecode;
+        case GL_TEXTURE_LOD_BIAS_QCOM:
+            return SamplerParameter::LodBiasQCOM;
         default:
             return SamplerParameter::InvalidEnum;
     }
@@ -1940,6 +1942,8 @@ GLenum ToGLenum(SamplerParameter from)
             return GL_TEXTURE_MAX_ANISOTROPY_EXT;
         case SamplerParameter::SrgbDecode:
             return GL_TEXTURE_SRGB_DECODE_EXT;
+        case SamplerParameter::LodBiasQCOM:
+            return GL_TEXTURE_LOD_BIAS_QCOM;
         default:
             UNREACHABLE();
             return 0;
@@ -1985,6 +1989,9 @@ std::ostream &operator<<(std::ostream &os, SamplerParameter value)
             break;
         case SamplerParameter::SrgbDecode:
             os << "GL_TEXTURE_SRGB_DECODE_EXT";
+            break;
+        case SamplerParameter::LodBiasQCOM:
+            os << "GL_TEXTURE_LOD_BIAS_QCOM";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -2495,6 +2502,8 @@ TextureEnvParameter FromGLenum<TextureEnvParameter>(GLenum from)
             return TextureEnvParameter::Op2Alpha;
         case GL_COORD_REPLACE_OES:
             return TextureEnvParameter::PointCoordReplace;
+        case GL_TEXTURE_LOD_BIAS_EXT:
+            return TextureEnvParameter::LodBias;
         default:
             return TextureEnvParameter::InvalidEnum;
     }
@@ -2542,6 +2551,8 @@ GLenum ToGLenum(TextureEnvParameter from)
             return GL_OPERAND2_ALPHA;
         case TextureEnvParameter::PointCoordReplace:
             return GL_COORD_REPLACE_OES;
+        case TextureEnvParameter::LodBias:
+            return GL_TEXTURE_LOD_BIAS_EXT;
         default:
             UNREACHABLE();
             return 0;
@@ -2609,6 +2620,9 @@ std::ostream &operator<<(std::ostream &os, TextureEnvParameter value)
         case TextureEnvParameter::PointCoordReplace:
             os << "GL_COORD_REPLACE_OES";
             break;
+        case TextureEnvParameter::LodBias:
+            os << "GL_TEXTURE_LOD_BIAS_EXT";
+            break;
         default:
             os << "GL_INVALID_ENUM";
             break;
@@ -2625,6 +2639,8 @@ TextureEnvTarget FromGLenum<TextureEnvTarget>(GLenum from)
             return TextureEnvTarget::Env;
         case GL_POINT_SPRITE_OES:
             return TextureEnvTarget::PointSprite;
+        case GL_TEXTURE_FILTER_CONTROL_EXT:
+            return TextureEnvTarget::TextureFilterControl;
         default:
             return TextureEnvTarget::InvalidEnum;
     }
@@ -2638,6 +2654,8 @@ GLenum ToGLenum(TextureEnvTarget from)
             return GL_TEXTURE_ENV;
         case TextureEnvTarget::PointSprite:
             return GL_POINT_SPRITE_OES;
+        case TextureEnvTarget::TextureFilterControl:
+            return GL_TEXTURE_FILTER_CONTROL_EXT;
         default:
             UNREACHABLE();
             return 0;
@@ -2653,6 +2671,9 @@ std::ostream &operator<<(std::ostream &os, TextureEnvTarget value)
             break;
         case TextureEnvTarget::PointSprite:
             os << "GL_POINT_SPRITE_OES";
+            break;
+        case TextureEnvTarget::TextureFilterControl:
+            os << "GL_TEXTURE_FILTER_CONTROL_EXT";
             break;
         default:
             os << "GL_INVALID_ENUM";

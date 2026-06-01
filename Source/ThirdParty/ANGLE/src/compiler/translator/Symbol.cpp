@@ -32,8 +32,6 @@ constexpr const ImmutableString kImageSizeName("imageSize");
 constexpr const ImmutableString kImageAtomicExchangeName("imageAtomicExchange");
 constexpr const ImmutableString kAtomicCounterName("atomicCounter");
 
-static const char kFunctionMangledNameSeparator = '(';
-
 }  // anonymous namespace
 
 TSymbol::TSymbol(TSymbolTable *symbolTable,
@@ -230,6 +228,8 @@ void TFunction::shareParameters(const TFunction &parametersSource)
 
 ImmutableString TFunction::buildMangledName() const
 {
+    constexpr char kFunctionMangledNameSeparator = '(';
+
     ImmutableString name = this->name();
     std::string newName(name.data(), name.length());
     newName += kFunctionMangledNameSeparator;

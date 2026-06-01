@@ -683,6 +683,32 @@ TEST_P(TextureUploadFormatTest_ES3, AllWithPBO)
     TestAll(UploadSource::PBO);
 }
 
+// Test invalid upload format combinations in ES2
+TEST_P(TextureUploadFormatTest, InvalidTypeAndFormat)
+{
+    constexpr std::array<uint32_t, 16> kData{};
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    if (IsGLExtensionEnabled("GL_OES_rgb8_rgba8") && IsGLExtensionEnabled("GL_OES_texture_float"))
+    {
+        // Regression test for when the format check for GL_UNSIGNED_INT_2_10_10_10_REV_EXT
+        // accidentally allowed all formats.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 0, GL_RGB, GL_FLOAT, kData.data());
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    if (IsGLExtensionEnabled("GL_OES_required_internalformat") &&
+        IsGLExtensionEnabled("GL_OES_texture_float"))
+    {
+        // Regression test for when the format check for GL_UNSIGNED_INT_2_10_10_10_REV_EXT
+        // accidentally allowed all formats.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB565_OES, 1, 1, 0, GL_RGB, GL_FLOAT, kData.data());
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(TextureUploadFormatTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureUploadFormatTest_ES3);

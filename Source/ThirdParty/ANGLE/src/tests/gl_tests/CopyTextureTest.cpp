@@ -2092,11 +2092,7 @@ TEST_P(CopyTextureTestES3, LuminanceWorkaroundTextureSwizzleBug)
 // Test to ensure that CopyTexture will fail with a non-zero level and NPOT texture in WebGL
 TEST_P(CopyTextureTestWebGL, NPOT)
 {
-    if (IsGLExtensionRequestable("GL_CHROMIUM_copy_texture"))
-    {
-        glRequestExtensionANGLE("GL_CHROMIUM_copy_texture");
-    }
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
 
     std::vector<GLColor> pixelData(10 * 10, GLColor::red);
 
@@ -3284,6 +3280,70 @@ TEST_P(CopyTextureTestES3, TextureCopyMultipleSlicesBetween2DArrayAnd3D)
                                        kIntEquivalentOfFloatOne));
     // part of tex3D slice 1 should remain unchanged
     EXPECT_PIXEL_RECT32I_EQ(0, kTexHeight / 2, kTexWidth, kTexHeight / 2, kIntGreen);
+}
+
+// Test that glCopyTextureCHROMIUM and glCopySubTextureCHROMIUM fail validation if the source level
+// is outside the [BASE, MAX] range.
+TEST_P(CopyTextureTestES3, VerifySourceLevelInBaseMaxRange)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    // Define level 0 for src texture, but base it at level 2.
+    GLTexture src;
+    glBindTexture(GL_TEXTURE_2D, src);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA8, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 3, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLTexture dst;
+    glBindTexture(GL_TEXTURE_2D, dst);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    for (int32_t srcLevel = -1; srcLevel < 5; ++srcLevel)
+    {
+        // Copy from src at level -1 is invalid, it's negative
+        // Copy from src at level 0 is invalid, it's under the BASE level
+        // Copy from src at level 1 is invalid, it's never defined
+        // Copy from src at level 2 and 3 are valid, with or without mipmapping
+        // Copy from src at level 4+ are invalid, it's over the MAX level
+        bool valid = srcLevel >= 2 && srcLevel <= 3;
+
+        uint32_t size = srcLevel > 0 ? 64 >> srcLevel : 64;
+        glCopySubTextureCHROMIUM(src, srcLevel, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, size, size,
+                                 GL_FALSE, GL_FALSE, GL_FALSE);
+        if (valid)
+        {
+            EXPECT_GL_NO_ERROR() << srcLevel;
+        }
+        else
+        {
+            EXPECT_GL_ERROR(GL_INVALID_VALUE) << srcLevel;
+        }
+        glCopyTextureCHROMIUM(src, srcLevel, GL_TEXTURE_2D, dst, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                              GL_FALSE, GL_FALSE, GL_FALSE);
+        if (valid)
+        {
+            EXPECT_GL_NO_ERROR() << srcLevel;
+        }
+        else
+        {
+            EXPECT_GL_ERROR(GL_INVALID_VALUE) << srcLevel;
+        }
+    }
+
+    // Enable mipmapping and copy from level 3.  Still valid.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glCopySubTextureCHROMIUM(src, 3, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 8, 8, GL_FALSE, GL_FALSE,
+                             GL_FALSE);
+    EXPECT_GL_NO_ERROR();
+    glCopyTextureCHROMIUM(src, 3, GL_TEXTURE_2D, dst, 0, GL_RGBA, GL_UNSIGNED_BYTE, GL_FALSE,
+                          GL_FALSE, GL_FALSE);
+    EXPECT_GL_NO_ERROR();
 }
 
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);

@@ -1,5 +1,6 @@
 {
   "ci": {
+    "angle-android-arm64-builder-rel": "ci/angle-android-arm64-builder-rel/gn-args.json",
     "angle-linux-x64-builder-rel": "ci/angle-linux-x64-builder-rel/gn-args.json",
     "angle-linux-x64-trace": "ci/angle-linux-x64-trace/gn-args.json",
     "angle-mac-arm64-builder-rel": "ci/angle-mac-arm64-builder-rel/gn-args.json",
@@ -8,12 +9,18 @@
     "angle-win-x86-builder-rel": "ci/angle-win-x86-builder-rel/gn-args.json"
   },
   "try": {
+    "angle-cq-android-arm64-rel": "try/angle-cq-android-arm64-rel/gn-args.json",
     "angle-cq-linux-x64-rel": "try/angle-cq-linux-x64-rel/gn-args.json",
     "angle-cq-linux-x64-trace": "try/angle-cq-linux-x64-trace/gn-args.json",
     "angle-cq-mac-arm64-rel": "try/angle-cq-mac-arm64-rel/gn-args.json",
     "angle-cq-mac-x64-rel": "try/angle-cq-mac-x64-rel/gn-args.json",
     "angle-cq-win-x64-rel": "try/angle-cq-win-x64-rel/gn-args.json",
     "angle-cq-win-x86-rel": "try/angle-cq-win-x86-rel/gn-args.json",
+    "angle-try-android-arm64-google-pixel10-rel": "try/angle-try-android-arm64-google-pixel10-rel/gn-args.json",
+    "angle-try-android-arm64-google-pixel4-rel": "try/angle-try-android-arm64-google-pixel4-rel/gn-args.json",
+    "angle-try-android-arm64-google-pixel6-exp-rel": "try/angle-try-android-arm64-google-pixel6-exp-rel/gn-args.json",
+    "angle-try-android-arm64-google-pixel6-rel": "try/angle-try-android-arm64-google-pixel6-rel/gn-args.json",
+    "angle-try-android-arm64-samsung-s24-rel": "try/angle-try-android-arm64-samsung-s24-rel/gn-args.json",
     "angle-try-linux-x64-amd-rx5500xt-rel": "try/angle-try-linux-x64-amd-rx5500xt-rel/gn-args.json",
     "angle-try-linux-x64-intel-uhd630-exp-rel": "try/angle-try-linux-x64-intel-uhd630-exp-rel/gn-args.json",
     "angle-try-linux-x64-intel-uhd630-rel": "try/angle-try-linux-x64-intel-uhd630-rel/gn-args.json",

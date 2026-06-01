@@ -19,40 +19,6 @@
       'swarming_containment_auto',
     ],
     'machines': {
-      'android-arm64-exp-pixel10': {
-        'os_type': 'android',
-        'mixins': [
-          'gpu_pixel_10_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
-        },
-      },
-      'android-arm64-exp-pixel6': {  # android-arm64-pixel6 below for android-arm64-test
-        'os_type': 'android',
-        'mixins': [
-          'gpu_pixel_6_experimental',
-          'limited_capacity_bot',
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_vulkan_gtests',
-          'isolated_scripts': 'isolated_scripts_group_pixel6',
-        },
-      },
-      'android-arm64-exp-s24': {
-        'os_type': 'android',
-        'mixins': [
-          'gpu-swarming-pool',
-          'samsung_s24',
-          # crbug.com/419062315
-          'no_tombstones',
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_vulkan_gtests',
-          'isolated_scripts': 'isolated_scripts_group_s24',
-        },
-      },
       'android-arm64-ir-pixel4': {
         'os_type': 'android',
         'mixins': [
@@ -73,16 +39,6 @@
           'isolated_scripts': 'isolated_scripts_group_pixel6',
         },
       },
-      'android-arm64-pixel4': {
-        'os_type': 'android',
-        'mixins': [
-          'gpu_pixel_4_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_novulkan_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common_notrace',
-        },
-      },
       'android-arm64-pixel4-perf': {
         'os_type': 'android',
         'mixins': [
@@ -92,16 +48,6 @@
         ],
         'test_suites': {
           'isolated_scripts': 'isolated_scripts_group_perf_notrace',
-        },
-      },
-      'android-arm64-pixel6': {
-        'os_type': 'android',
-        'mixins': [
-          'gpu_pixel_6_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'android_vulkan_gtests',
-          'isolated_scripts': 'isolated_scripts_group_pixel6',
         },
       },
       'android-arm64-pixel6-perf': {
@@ -317,6 +263,60 @@
       'swarming_containment_auto',
     ],
     'machines': {
+      'angle-android-arm64-google-pixel10-rel': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu_pixel_10_stable',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_gtests',
+          'isolated_scripts': 'isolated_scripts_group_common',
+        },
+      },
+      'angle-android-arm64-google-pixel4-rel': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu_pixel_4_stable',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_novulkan_gtests',
+          'isolated_scripts': 'isolated_scripts_group_common_notrace',
+        },
+      },
+      'angle-android-arm64-google-pixel6-exp-rel': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu_pixel_6_experimental',
+          'limited_capacity_bot',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_vulkan_gtests',
+          'isolated_scripts': 'isolated_scripts_group_pixel6',
+        },
+      },
+      'angle-android-arm64-google-pixel6-rel': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu_pixel_6_stable',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_vulkan_gtests',
+          'isolated_scripts': 'isolated_scripts_group_pixel6',
+        },
+      },
+      'angle-android-arm64-samsung-s24-rel': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu-swarming-pool',
+          'samsung_s24',
+          # crbug.com/419062315
+          'no_tombstones',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_vulkan_gtests',
+          'isolated_scripts': 'isolated_scripts_group_s24',
+        },
+      },
       'angle-linux-x64-amd-rx5500xt-rel': {
         'os_type': 'linux',
         'mixins': [

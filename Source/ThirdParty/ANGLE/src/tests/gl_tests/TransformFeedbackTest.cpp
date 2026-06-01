@@ -4824,6 +4824,124 @@ TEST_P(TransformFeedbackTest, ResumeWithDifferentProgram)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test validation of buffer bounds checking for transform feedback with multidraw commands
+TEST_P(WebGLTransformFeedbackTest, TooSmallBuffersMultiDraw)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_RASTERIZER_DISCARD);
+
+    // Set the program's transform feedback varyings (just gl_Position)
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
+
+    glUseProgram(mProgram);
+
+    const GLfloat vertices[] = {
+        -1.0f, 1.0f, 0.5f, -1.0f, -1.0f, 0.5f, 1.0f, -1.0f, 0.5f,
+        -1.0f, 1.0f, 0.5f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f,  0.5f,
+    };
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    const GLsizei verticesToDraw = 3;
+    const size_t stride          = sizeof(float) * 4;
+    const GLsizei drawcount      = 2;
+    const size_t bytesNeeded     = stride * verticesToDraw * drawcount;
+
+    const GLsizei firsts[drawcount] = {0, 0};
+    const GLsizei counts[drawcount] = {verticesToDraw, verticesToDraw};
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    // Set up the buffer to be the right size
+    uint8_t tfData[bytesNeeded] = {0};
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded, &tfData, GL_STATIC_DRAW);
+
+    glBeginTransformFeedback(GL_POINTS);
+    glMultiDrawArraysANGLE(GL_POINTS, firsts, counts, drawcount);
+    EXPECT_GL_NO_ERROR();
+    glEndTransformFeedback();
+
+    // Set up the buffer to be too small
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded - 1, &tfData, GL_STATIC_DRAW);
+
+    glBeginTransformFeedback(GL_POINTS);
+    EXPECT_GL_NO_ERROR();
+    glMultiDrawArraysANGLE(GL_POINTS, firsts, counts, drawcount);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glEndTransformFeedback();
+}
+
+// Test validation of buffer bounds checking for transform feedback with multidraw instanced
+// commands
+TEST_P(WebGLTransformFeedbackTest, TooSmallBuffersMultiDrawInstanced)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_RASTERIZER_DISCARD);
+
+    // Set the program's transform feedback varyings (just gl_Position)
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("gl_Position");
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    GLint positionLocation = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
+
+    glUseProgram(mProgram);
+
+    const GLfloat vertices[] = {
+        -1.0f, 1.0f, 0.5f, -1.0f, -1.0f, 0.5f, 1.0f, -1.0f, 0.5f,
+        -1.0f, 1.0f, 0.5f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f,  0.5f,
+    };
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    const GLsizei verticesToDraw = 3;
+    const size_t stride          = sizeof(float) * 4;
+    const GLsizei drawcount      = 2;
+    const GLsizei instanceCount  = 2;
+    const size_t bytesNeeded     = stride * verticesToDraw * drawcount * instanceCount;
+
+    const GLsizei firsts[drawcount]         = {0, 0};
+    const GLsizei counts[drawcount]         = {verticesToDraw, verticesToDraw};
+    const GLsizei instanceCounts[drawcount] = {instanceCount, instanceCount};
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    // Set up the buffer to be the right size
+    uint8_t tfData[bytesNeeded] = {0};
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded, &tfData, GL_STATIC_DRAW);
+
+    glBeginTransformFeedback(GL_POINTS);
+    glMultiDrawArraysInstancedANGLE(GL_POINTS, firsts, counts, instanceCounts, drawcount);
+    EXPECT_GL_NO_ERROR();
+    glEndTransformFeedback();
+
+    // Set up the buffer to be too small
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, bytesNeeded - 1, &tfData, GL_STATIC_DRAW);
+
+    glBeginTransformFeedback(GL_POINTS);
+    EXPECT_GL_NO_ERROR();
+    glMultiDrawArraysInstancedANGLE(GL_POINTS, firsts, counts, instanceCounts, drawcount);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glEndTransformFeedback();
+}
+
 // Test that deleting a buffer bound to a transform feedback slot that is not used by the current
 // program.
 TEST_P(TransformFeedbackTest, StaleBufferBinding)
@@ -4859,6 +4977,110 @@ TEST_P(TransformFeedbackTest, StaleBufferBinding)
     glEndTransformFeedback();
 
     ASSERT_GL_NO_ERROR();
+}
+
+class TransformFeedbackTestVkEvent : public TransformFeedbackTest
+{};
+
+// Regression test for a potential VkEVent use after free.
+TEST_P(TransformFeedbackTestVkEvent, BufferVkEventUAF)
+{
+    // ---- Program 1: transform-feedback writer ----
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "out float varyingAttrib; void main(){ varyingAttrib = 1.0; gl_Position = vec4(0,0,0,1); "
+        "gl_PointSize = 1.0; }";
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "precision mediump float; out vec4 c; void main(){ c = vec4(1); }";
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("varyingAttrib");
+
+    mProgram = CompileProgramWithTransformFeedback(kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_NE(0u, mProgram);
+    glUseProgram(mProgram);
+
+    // ---- Program 2: vertex-attribute reader ----
+    constexpr char kDrawVS[] =
+        "#version 300 es\n"
+        "layout(location=0) in float a;\n"
+        "void main(){ gl_Position = vec4(a,0,0,1); gl_PointSize = 1.0; }";
+    constexpr char kDrawFS[] =
+        "#version 300 es\n"
+        "precision mediump float; out vec4 c; void main(){ c = vec4(0,1,0,1); }";
+
+    ANGLE_GL_PROGRAM(drawProg, kDrawVS, kDrawFS);
+
+    // ---- Target buffer A (small so the acquireAndUpdate path is taken) ----
+    constexpr GLsizeiptr kBufferSize = 256;
+    glBindBuffer(GL_ARRAY_BUFFER, mTransformFeedbackBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize, nullptr, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Render target setup
+    GLTexture colorTex;
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 4);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    glViewport(0, 0, 4, 4);
+
+    // ==== STEP 1: write to A via transform feedback. ====
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glUseProgram(mProgram);
+    glEnable(GL_RASTERIZER_DISCARD);
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+    glDisable(GL_RASTERIZER_DISCARD);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+
+    // ==== STEP 2: drop RP1's reference to E1. ====
+    glFinish();
+
+    // Accumulate >256 RefCountedEvents to force garbage collection sweep
+    GLubyte px[4];
+    for (int i = 0; i < 280; ++i)
+    {
+        GLBuffer tmpBuffer;
+        glBindBuffer(GL_ARRAY_BUFFER, tmpBuffer);
+        glBufferData(GL_ARRAY_BUFFER, 16, nullptr, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tmpBuffer);
+        glUseProgram(mProgram);
+        glEnable(GL_RASTERIZER_DISCARD);
+        glBeginTransformFeedback(GL_POINTS);
+        glDrawArrays(GL_POINTS, 0, 1);
+        glEndTransformFeedback();
+        glDisable(GL_RASTERIZER_DISCARD);
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+        glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    }
+
+    // ==== STEP 3: read A as a vertex attribute in a NEW render pass RP2. ====
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, mTransformFeedbackBuffer);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glUseProgram(drawProg);
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    // ==== STEP 4: full-size bufferSubData on A while RP2 is still open. ====
+    GLfloat subData[kBufferSize / sizeof(float)] = {0};  // SIZE / 4 (256 bytes = 64 floats)
+    glBufferSubData(GL_ARRAY_BUFFER, 0, kBufferSize, subData);
+
+    // ==== STEP 5: flush RP2. ====
+    glFinish();
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
@@ -4906,4 +5128,8 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(WebGLTransformFeedbackTest,
                                    .disable(Feature::SupportsTransformFeedbackExtension)
                                    .disable(Feature::SupportsSPIRV14));
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestVkEvent);
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    TransformFeedbackTestVkEvent,
+    ES3_VULKAN().enable(Feature::UseVkEventForBufferBarrier).disable(Feature::RecycleVkEvent));
 }  // anonymous namespace
