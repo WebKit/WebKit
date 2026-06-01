@@ -1048,7 +1048,7 @@ TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
 
     GLBuffer vb;
     glBindBuffer(GL_ARRAY_BUFFER, vb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size(), quadVertices.data(),
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size() * 3, quadVertices.data(),
                  GL_STATIC_DRAW);
 
     GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
