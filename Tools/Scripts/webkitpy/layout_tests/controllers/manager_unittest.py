@@ -31,6 +31,7 @@
 
 from collections import OrderedDict
 from io import StringIO
+import inspect
 import sys
 import time
 import unittest
@@ -141,3 +142,20 @@ passes/text.html                       ['PASS']
         # so if the output is not *exactly* as expected including whitespaces, this
         # could lead to unwanted effects, like blocking builds for a long time.
         self.assertEqual(get_printed_expectations(), out)
+
+    def test_configuration_for_upload_runs_before_run_test_subset(self):
+        """Regression guard: configuration_for_upload(target_host(0)) must execute
+        before _run_test_subset. _run_test_subset's finally calls clean_up_test_run,
+        which on iOS tears down the simulator; target_host(0) afterwards raises
+        'No initialized devices for testing' (see 314080@main).
+        """
+        source = inspect.getsource(Manager.run)
+        upload_call = source.find('configuration_for_upload(self._port.target_host(0))')
+        subset_call = source.find('self._run_test_subset(')
+        self.assertNotEqual(upload_call, -1, 'configuration_for_upload(target_host(0)) call not found in Manager.run')
+        self.assertNotEqual(subset_call, -1, '_run_test_subset call not found in Manager.run')
+        self.assertLess(
+            upload_call,
+            subset_call,
+            'configuration_for_upload(target_host(0)) must precede _run_test_subset; otherwise the iOS simulator is torn down before target_host(0) runs.',
+        )

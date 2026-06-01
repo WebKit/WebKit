@@ -525,6 +525,14 @@ class Manager(object):
                 if not self._set_up_run(test_inputs, device_type=device_type):
                     return test_run_results.RunDetails(exit_code=-1)
 
+                # Capture upload configuration before _run_test_subset; its finally
+                # calls clean_up_test_run, which tears down the iOS simulator and
+                # leaves target_host(0) with no initialized device.
+                if self._options.report_urls:
+                    configuration = self._port.configuration_for_upload(self._port.target_host(0))
+                    if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
+                        configuration['flavor'] = 'wk1' if self._port.is_webkitlegacy() else 'wk2'
+
                 temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(test_inputs, device_type=device_type)
 
                 skipped_results = TestRunResults(self._expectations[(self._current_driver_name, device_type)], len(aggregate_tests_to_skip))
@@ -535,9 +543,6 @@ class Manager(object):
                 temp_initial_results = temp_initial_results.merge(skipped_results)
 
                 if self._options.report_urls:
-                    configuration = self._port.configuration_for_upload(self._port.target_host(0))
-                    if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
-                        configuration['flavor'] = 'wk1' if self._port.is_webkitlegacy() else 'wk2'
                     self._printer.writeln('\n')
                     self._printer.write_update('Preparing upload data ...')
 
