@@ -155,8 +155,7 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
 angle::Result BufferPool::allocate(ContextMtl *contextMtl,
                                    size_t sizeInBytes,
                                    uint8_t **ptrOut,
-                                   BufferRef *bufferOut,
-                                   size_t *offsetOut,
+                                   BufferSlice *outBuffer,
                                    bool *newBufferAllocatedOut)
 {
     size_t sizeToAllocate = roundUp(sizeInBytes, mAlignment);
@@ -211,11 +210,6 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
 
     ASSERT(mBuffer != nullptr);
 
-    if (bufferOut != nullptr)
-    {
-        *bufferOut = mBuffer;
-    }
-
     // Optionally map() the buffer if possible
     if (ptrOut)
     {
@@ -224,9 +218,9 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
         *ptrOut = mBuffer->mapNoSync(contextMtl, mNextAllocationOffset).data();
     }
 
-    if (offsetOut)
+    if (outBuffer != nullptr)
     {
-        *offsetOut = mNextAllocationOffset;
+        *outBuffer = BufferSlice(mBuffer).subslice(mNextAllocationOffset, sizeInBytes);
     }
     mNextAllocationOffset += sizeToAllocate;
     return angle::Result::Continue;

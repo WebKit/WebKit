@@ -54,13 +54,12 @@ class BufferPool
 
     // This call will allocate a new region at the end of the buffer. It internally may trigger
     // a new buffer to be created (which is returned in the optional parameter
-    // `newBufferAllocatedOut`).  The new region will be in the returned buffer at given offset. If
+    // `newBufferAllocatedOut`).  The new region will be in the returned BufferSlice. If
     // a memory pointer is given, the buffer will be automatically map()ed.
     angle::Result allocate(ContextMtl *contextMtl,
                            size_t sizeInBytes,
                            uint8_t **ptrOut            = nullptr,
-                           BufferRef *bufferOut        = nullptr,
-                           size_t *offsetOut           = nullptr,
+                           BufferSlice *outBuffer      = nullptr,
                            bool *newBufferAllocatedOut = nullptr);
 
     // After a sequence of CPU writes, call commit to ensure the data is visible to the GPU.

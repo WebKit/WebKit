@@ -45,6 +45,33 @@ using TextureWeakRef = std::weak_ptr<Texture>;
 using BufferRef      = std::shared_ptr<Buffer>;
 using BufferWeakRef  = std::weak_ptr<Buffer>;
 
+class BufferSlice
+{
+  public:
+    BufferSlice() = default;
+    BufferSlice(const BufferSlice &)            = default;
+    BufferSlice(BufferSlice &&)                 = default;
+    BufferSlice &operator=(const BufferSlice &) = default;
+    BufferSlice &operator=(BufferSlice &&)      = default;
+
+    inline explicit BufferSlice(const BufferRef &buffer);
+
+    bool empty() const { return mSize == 0; }
+    const BufferRef &buffer() const { return mBuffer; }
+    size_t size() const { return mSize; }
+    size_t offset() const { return mOffset; }
+
+    inline BufferSlice subslice(size_t offset, size_t count) const;
+    inline BufferSlice subslice(size_t offset) const;
+
+  private:
+    inline BufferSlice(const BufferRef &buffer, size_t offset, size_t size);
+
+    BufferRef mBuffer;
+    size_t mSize   = 0;
+    size_t mOffset = 0;
+};
+
 class Resource : angle::NonCopyable
 {
   public:
@@ -524,12 +551,33 @@ inline angle::Span<uint8_t> Buffer::mapNoSync(ContextMtl *context, size_t offset
 }
 
 inline angle::Span<uint8_t> Buffer::mapWithOpt(ContextMtl *context,
-                                               bool readonly,
-                                               bool noSync,
-                                               size_t offset,
-                                               size_t length)
+                                                bool readonly,
+                                                bool noSync,
+                                                size_t offset,
+                                                size_t length)
 {
     return mapWithOpt(context, readonly, noSync, offset).first(length);
+}
+
+inline BufferSlice::BufferSlice(const BufferRef &buffer)
+    : mBuffer(buffer), mSize(buffer ? buffer->size() : 0), mOffset(0)
+{}
+
+inline BufferSlice::BufferSlice(const BufferRef &buffer, size_t offset, size_t size)
+    : mBuffer(buffer), mSize(size), mOffset(offset)
+{
+    RELEASE_ASSERT(buffer != nullptr && offset + size <= buffer->size());
+}
+
+inline BufferSlice BufferSlice::subslice(size_t offset, size_t count) const
+{
+    RELEASE_ASSERT(offset + count <= mSize);
+    return BufferSlice(mBuffer, mOffset + offset, count);
+}
+
+inline BufferSlice BufferSlice::subslice(size_t offset) const
+{
+    return subslice(offset, mSize - offset);
 }
 
 }  // namespace mtl
