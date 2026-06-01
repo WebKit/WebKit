@@ -2641,7 +2641,11 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     process->markProcessAsRecentlyUsed();
     if (!url.isEmpty()) {
         // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
+<<<<<<< HEAD
         maybeInitializeSandboxExtensionHandle(protect(legacyMainFrameProcess()), URL { url }, currentResourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, process = WTF::move(process), options = WTF::move(options), sandboxExtensionHandle = WTF::move(sandboxExtensionHandle), navigation](std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
+=======
+        maybeInitializeSandboxExtensionHandle(protectedLegacyMainFrameProcess(), URL { url }, currentResourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, process = WTF::move(process), options = WTF::move(options), sandboxExtensionHandle = WTF::move(sandboxExtensionHandle), navigation](std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
+>>>>>>> 79f65b10f8d8 (WebPageProxy crash in dispatchSetObscuredContentInsets() and clearTextIndicatorWithAnimation())
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -2651,8 +2655,12 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
             process->startResponsivenessTimer();
 
             if (protectedThis->shouldForceForegroundPriorityForClientNavigation())
+<<<<<<< HEAD
                 protectedThis->setClientNavigationActivity(navigation);
 
+=======
+                navigation->setClientNavigationActivity(process->protectedThrottler()->foregroundActivity("Client reload"_s));
+>>>>>>> 79f65b10f8d8 (WebPageProxy crash in dispatchSetObscuredContentInsets() and clearTextIndicatorWithAnimation())
 
 #if ENABLE(SPEECH_SYNTHESIS)
             protectedThis->resetSpeechSynthesizer();
