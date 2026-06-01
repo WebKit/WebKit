@@ -1129,12 +1129,12 @@ void NetworkConnectionToWebProcess::cookieEnabledStateMayHaveChanged()
     m_connection->send(Messages::NetworkProcessConnection::UpdateCachedCookiesEnabled(), 0);
 }
 
-bool NetworkConnectionToWebProcess::isFilePathAllowed(NetworkSession& session, String path)
+bool NetworkConnectionToWebProcess::isFilePathAllowed(String path)
 {
     path = FileSystem::lexicallyNormal(path);
     auto parentPath = FileSystem::parentPath(path);
     while (parentPath != path) {
-        if (m_allowedFilePaths.contains(path) || parentPath == session.storageManager().path() || parentPath == session.storageManager().customIDBStoragePath())
+        if (m_allowedFilePaths.contains(path))
             return true;
         path = parentPath;
         parentPath = FileSystem::parentPath(path);
@@ -1159,7 +1159,7 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
     if (!session)
         return;
     if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
-        MESSAGE_CHECK(isFilePathAllowed(*session, path));
+        MESSAGE_CHECK(isFilePathAllowed(path));
 
     RefPtr sandboxExtension = SandboxExtension::create(WTF::move(extensionHandle));
 
@@ -1175,9 +1175,9 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
                 MESSAGE_CHECK(false);
             }
         } else // No sandbox extension provided, fall back to path allowlist check
-            MESSAGE_CHECK(isFilePathAllowed(*session, replacementPath));
+            MESSAGE_CHECK(isFilePathAllowed(replacementPath));
 #else
-        MESSAGE_CHECK(isFilePathAllowed(*session, replacementPath));
+        MESSAGE_CHECK(isFilePathAllowed(replacementPath));
 #endif
     }
 
@@ -1212,7 +1212,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
     if (!session)
         return;
     if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
-        MESSAGE_CHECK(isFilePathAllowed(*session, fileBackedPath));
+        MESSAGE_CHECK(isFilePathAllowed(fileBackedPath));
 
     m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType, { });
@@ -1306,6 +1306,14 @@ void NetworkConnectionToWebProcess::registerBlobPathForTesting(const String& pat
         return completion();
     allowAccessToFile(path);
     completion();
+}
+
+void NetworkConnectionToWebProcess::generalStoragePathForTesting(CompletionHandler<void(String&&)>&& completion)
+{
+    CheckedPtr session = networkSession();
+    if (!session)
+        return completion({ });
+    completion(String { session->storageManager().path() });
 }
 
 void NetworkConnectionToWebProcess::allowAccessToFile(const String& path)

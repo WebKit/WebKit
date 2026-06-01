@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBStorageConnectionToClient.h"
 
+#include "NetworkStorageManager.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebIDBResult.h"
 #include <WebCore/IDBRequestData.h>
@@ -37,8 +38,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageConnectionToClient);
 
-IDBStorageConnectionToClient::IDBStorageConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier)
-    : m_connection(connection)
+IDBStorageConnectionToClient::IDBStorageConnectionToClient(NetworkStorageManager& manager, IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier)
+    : m_manager(manager)
+    , m_connection(connection)
     , m_identifier(identifier)
     , m_connectionToClient(WebCore::IDBServer::IDBConnectionToClient::create(*this))
 {
@@ -119,14 +121,43 @@ void IDBStorageConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& res
     IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidPutOrAdd(resultData), 0);
 }
 
+static Vector<String> resultBlobFilePaths(const WebCore::IDBResultData& resultData)
+{
+    Vector<String> paths;
+    switch (resultData.type()) {
+    case WebCore::IDBResultType::GetRecordSuccess:
+    case WebCore::IDBResultType::OpenCursorSuccess:
+    case WebCore::IDBResultType::IterateCursorSuccess:
+        paths.appendVector(resultData.getResult().value().blobFilePaths());
+        for (auto& record : resultData.getResult().prefetchedRecords())
+            paths.appendVector(record.value.blobFilePaths());
+        break;
+    case WebCore::IDBResultType::GetAllRecordsSuccess:
+        for (auto& value : resultData.getAllResult().values())
+            paths.appendVector(value.blobFilePaths());
+        break;
+    default:
+        break;
+    }
+    return paths;
+}
+
+template<typename Message>
+void IDBStorageConnectionToClient::sendResultWithBlobFileAccess(const WebCore::IDBResultData& resultData)
+{
+    m_manager.get()->allowAccessToBlobFilesForProcess(m_identifier, resultBlobFilePaths(resultData), [connection = m_connection, resultData] {
+        IPC::Connection::send(connection, Message(resultData), 0);
+    });
+}
+
 void IDBStorageConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetRecord(resultData), 0);
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidGetRecord>(resultData);
 }
 
 void IDBStorageConnectionToClient::didGetAllRecords(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetAllRecords(resultData), 0);
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidGetAllRecords>(resultData);
 }
 
 void IDBStorageConnectionToClient::didGetCount(const WebCore::IDBResultData& resultData)
@@ -141,12 +172,12 @@ void IDBStorageConnectionToClient::didDeleteRecord(const WebCore::IDBResultData&
 
 void IDBStorageConnectionToClient::didOpenCursor(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidOpenCursor(resultData), 0);
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidOpenCursor>(resultData);
 }
 
 void IDBStorageConnectionToClient::didIterateCursor(const WebCore::IDBResultData& resultData)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidIterateCursor(resultData), 0);
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidIterateCursor>(resultData);
 }
 
 void IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)
@@ -161,7 +192,9 @@ void IDBStorageConnectionToClient::fireVersionChangeEvent(WebCore::IDBServer::Un
 
 void IDBStorageConnectionToClient::generateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo& indexInfo, const std::optional<WebCore::IDBKeyPath>& keyPath, const WebCore::IDBKeyData& key, const WebCore::IDBValue& value, std::optional<int64_t> recordID)
 {
-    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::GenerateIndexKeyForRecord(requestIdentifier, indexInfo, keyPath, key, value, recordID), 0);
+    m_manager.get()->allowAccessToBlobFilesForProcess(m_identifier, Vector<String> { value.blobFilePaths() }, [connection = m_connection, requestIdentifier, indexInfo, keyPath, key, value, recordID] {
+        IPC::Connection::send(connection, Messages::WebIDBConnectionToServer::GenerateIndexKeyForRecord(requestIdentifier, indexInfo, keyPath, key, value, recordID), 0);
+    });
 }
 
 void IDBStorageConnectionToClient::didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBError& error)

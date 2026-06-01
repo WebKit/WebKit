@@ -32,11 +32,13 @@
 
 namespace WebKit {
 
+class NetworkStorageManager;
+
 class IDBStorageConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate {
     WTF_MAKE_TZONE_ALLOCATED(IDBStorageConnectionToClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageConnectionToClient);
 public:
-    IDBStorageConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
+    IDBStorageConnectionToClient(NetworkStorageManager&, IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
     ~IDBStorageConnectionToClient();
 
     std::optional<WebCore::IDBConnectionIdentifier> identifier() const final { return m_identifier; }
@@ -69,7 +71,9 @@ private:
     void fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
     void generateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo&, const std::optional<WebCore::IDBKeyPath>&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, std::optional<int64_t> recordID);
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
+    template<typename Message> void sendResultWithBlobFileAccess(const WebCore::IDBResultData&);
 
+    ThreadSafeWeakRef<NetworkStorageManager> m_manager;
     IPC::Connection::UniqueID m_connection;
     WebCore::IDBConnectionIdentifier m_identifier;
     const Ref<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;

@@ -76,6 +76,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     RegisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
     UnregisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
     RegisterBlobPathForTesting(String path) -> ();
+    [EnabledBy=AllowTestOnlyIPC] GeneralStoragePathForTesting() -> (String path);
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
