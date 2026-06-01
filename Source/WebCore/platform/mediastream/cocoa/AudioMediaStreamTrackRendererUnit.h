@@ -63,6 +63,8 @@ public:
     void removeSource(const String&, AudioSampleDataSource&) final;
     void addResetObserver(const String&, ResetObserver&) final;
 
+    WEBCORE_EXPORT void deleteUnitForTesting();
+
 private:
     AudioMediaStreamTrackRendererUnit();
 
@@ -87,6 +89,7 @@ private:
         void close();
         void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
         void setLastDeviceUsed(const String&);
+        void deleteUnitForTesting();
 
     private:
         explicit Unit(const String&);

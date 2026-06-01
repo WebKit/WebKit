@@ -31,6 +31,7 @@
 #include "AddEventListenerOptionsInlines.h"
 #include "AnimationTimeline.h"
 #include "AnimationTimelinesController.h"
+#include "AudioMediaStreamTrackRendererUnit.h"
 #include "AudioSession.h"
 #include "AudioTrackPrivateMediaStream.h"
 #include "Autofill.h"
@@ -6631,6 +6632,11 @@ bool Internals::supportsMultiMicrophoneCaptureWithoutEchoCancellation() const
 #else
     return false;
 #endif
+}
+
+void Internals::deleteAudioUnit()
+{
+    AudioMediaStreamTrackRendererUnit::singleton().deleteUnitForTesting();
 }
 
 bool Internals::isMediaStreamSourceInterrupted(MediaStreamTrack& track) const
