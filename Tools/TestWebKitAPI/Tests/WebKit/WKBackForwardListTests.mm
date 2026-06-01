@@ -1166,23 +1166,23 @@ TEST(WKBackForwardList, ForgedFileURLItemIsRejected)
     RetainPtr coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
     RetainPtr coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL.get()];
 
-+    TestWebKitAPI::HTTPServer server({
-+        { "/"_s, { forgedFileURLTestMainBytes } },
-+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData.get() } },
-+    });
-+
-+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-+    for (_WKFeature *feature in [WKPreferences _features]) {
-+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
-+            [[configuration preferences] _setEnabled:YES forFeature:feature];
-+            break;
-+        }
-+    }
-+
-+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
-+    [webView loadRequest:server.request("/"_s)];
-+
-+    EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS: forged file:// back-forward item was rejected by MESSAGE_CHECK");
-+}
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { forgedFileURLTestMainBytes } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData.get() } },
+    });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+    [webView loadRequest:server.request("/"_s)];
+
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS: forged file:// back-forward item was rejected by MESSAGE_CHECK");
+}
 
 #endif // ENABLE(IPC_TESTING_API)
