@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<html>
+<body>
+<p>This test passes if the UI process does not crash.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const log = (s) => { document.getElementById("log").textContent += s + "\n"; };
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function waitIPC(w) {
+    for (let i = 0; i < 200; i++) {
+        try { if (w.IPC && w.IPC.frameID) return; } catch (e) { }
+        await sleep(10);
+    }
+}
+
+async function main() {
+    if (!window.IPC) {
+        log("PASS");
+        return;
+    }
+
+    // Cross-site iframe so this page has remote frames under site isolation.
+    const remoteFrame = document.createElement('iframe');
+    remoteFrame.src = 'http://localhost:8000/site-isolation/resources/green-background.html';
+    document.body.appendChild(remoteFrame);
+    await new Promise(r => { remoteFrame.onload = r; setTimeout(r, 2000); });
+
+    // Same-origin popups B, C, D.
+    const B = window.open('about:blank');
+    const C = window.open('about:blank');
+    const D = window.open('about:blank');
+    await sleep(100);
+    await waitIPC(B); await waitIPC(C); await waitIPC(D);
+
+    // Nested iframes C1 -> C2 inside popup B.
+    B.document.body.innerHTML = '<iframe id=c1 src="about:blank"></iframe>';
+    const c1 = B.document.getElementById('c1').contentWindow;
+    await sleep(50); await waitIPC(c1);
+    c1.document.body.innerHTML = '<iframe id=c2 src="about:blank"></iframe>';
+    const c2 = c1.document.getElementById('c2').contentWindow;
+    await sleep(50); await waitIPC(c2);
+
+    function sendFocusedFrameChanged(targetPageProxyID, frameID) {
+        IPC.sendMessage('UI', targetPageProxyID, IPC.messages.WebPageProxy_FocusedFrameChanged.name, [
+            { type: 'bool', value: 1 },
+            { type: 'FrameID', value: frameID },
+        ]);
+    }
+    // A compromised web process could point each page's focused frame at frames belonging to popup B.
+    sendFocusedFrameChanged(IPC.webPageProxyID, c2.IPC.frameID);
+    sendFocusedFrameChanged(C.IPC.webPageProxyID, c1.IPC.frameID);
+    sendFocusedFrameChanged(D.IPC.webPageProxyID, B.IPC.frameID);
+    await sleep(100);
+
+    // Closing B clears C1's child frame set without clearing C2's parent pointer.
+    IPC.sendMessage('UI', B.IPC.webPageProxyID, IPC.messages.WebPageProxy_ClosePage.name, []);
+    await sleep(300);
+
+    // findString traverses from A's focused frame (C2); nextSibling() must not read past the parent's end().
+    await testRunner.findString('zzzNoMatch', []);
+    await sleep(200);
+
+    // Replace body content so dump output is consistent across configurations.
+    document.body.innerHTML = '<p>This test passes if the UI process does not crash.</p><pre id="log"></pre>';
+    log("PASS");
+}
+main().finally(() => window.testRunner?.notifyDone());
+setTimeout(() => window.testRunner?.notifyDone(), 30000);
+</script>
+</body>
+</html>

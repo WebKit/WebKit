@@ -187,8 +187,10 @@ WebProcessProxy& WebFrameProxy::provisionalLoadProcess()
 
 void WebFrameProxy::webProcessWillShutDown()
 {
-    for (auto& childFrame : std::exchange(m_childFrames, { }))
+    for (Ref childFrame : std::exchange(m_childFrames, { })) {
+        childFrame->m_parentFrame = nullptr;
         childFrame->webProcessWillShutDown();
+    }
 
     if (RefPtr page = m_page.get())
         page->inspectorController().destroyInspectorTarget(WebFrameInspectorTarget::toTargetID(frameID()));
@@ -679,7 +681,8 @@ void WebFrameProxy::setProcess(FrameProcess& process)
 
 void WebFrameProxy::removeChildFrames()
 {
-    m_childFrames.clear();
+    for (Ref childFrame : std::exchange(m_childFrames, { }))
+        childFrame->m_parentFrame = nullptr;
 }
 
 bool WebFrameProxy::isFocused() const
@@ -824,14 +827,14 @@ WebFrameProxy* WebFrameProxy::lastChild() const
 
 WebFrameProxy* WebFrameProxy::nextSibling() const
 {
-    if (!m_parentFrame)
+    if (!m_parentFrame || m_parentFrame->m_childFrames.isEmpty())
         return nullptr;
 
     if (m_parentFrame->m_childFrames.last().ptr() == this)
         return nullptr;
 
     auto it = m_parentFrame->m_childFrames.find(this);
-    if (it == m_childFrames.end()) {
+    if (it == m_parentFrame->m_childFrames.end()) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -840,14 +843,14 @@ WebFrameProxy* WebFrameProxy::nextSibling() const
 
 WebFrameProxy* WebFrameProxy::previousSibling() const
 {
-    if (!m_parentFrame)
+    if (!m_parentFrame || m_parentFrame->m_childFrames.isEmpty())
         return nullptr;
 
     if (m_parentFrame->m_childFrames.first().ptr() == this)
         return nullptr;
 
     auto it = m_parentFrame->m_childFrames.find(this);
-    if (it == m_childFrames.end()) {
+    if (it == m_parentFrame->m_childFrames.end()) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }

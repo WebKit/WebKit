@@ -582,12 +582,14 @@ inline bool ListHashSet<T, U>::isEmpty() const
 template<typename T, typename U>
 inline T& ListHashSet<T, U>::first()
 {
+    RELEASE_ASSERT(!isEmpty());
     return *begin();
 }
 
 template<typename T, typename U>
 inline const T& ListHashSet<T, U>::first() const
 {
+    RELEASE_ASSERT(!isEmpty());
     return *begin();
 }
 
@@ -611,6 +613,7 @@ inline T ListHashSet<T, U>::takeFirst()
 template<typename T, typename U>
 inline T& ListHashSet<T, U>::last()
 {
+    RELEASE_ASSERT(!isEmpty());
     auto last = --end();
     return *last;
 }
@@ -618,6 +621,7 @@ inline T& ListHashSet<T, U>::last()
 template<typename T, typename U>
 inline const T& ListHashSet<T, U>::last() const
 {
+    RELEASE_ASSERT(!isEmpty());
     auto last = --end();
     return *last;
 }
