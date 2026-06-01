@@ -1693,6 +1693,16 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
         Ref swServer = session->ensureSWServer();
         auto allowCookieAccess = session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain());
         MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler());
+
+        MESSAGE_CHECK_COMPLETION(swServer->hasPendingConnectionDomain(site.domain()), completionHandler());
+
+        // FIXME: We should MESSAGE_CHECK m_swContextConnection.
+        ASSERT(!m_swContextConnection);
+        if (m_swContextConnection) {
+            CONNECTION_RELEASE_LOG_ERROR(ServiceWorker, "NetworkConnectionToWebProcess::establishSWContextConnection is called with an existing context connection");
+            closeSWContextConnection();
+        }
+
         m_swContextConnection = WebSWServerToContextConnection::create(*this, webPageProxyID, WTF::move(site), serviceWorkerPageIdentifier, swServer);
     }
     completionHandler();
@@ -1714,9 +1724,7 @@ void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLong
 {
     CONNECTION_RELEASE_LOG(ServiceWorker, "serviceWorkerServerToContextConnectionNoLongerNeeded: WebProcess no longer useful for running service workers");
     m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::ServiceWorker, webProcessIdentifier() }, 0);
-
-    if (RefPtr connection = std::exchange(m_swContextConnection, nullptr))
-        connection->stop();
+    closeSWContextConnection();
 }
 
 void NetworkConnectionToWebProcess::terminateSWContextConnectionDueToUnresponsiveness()
