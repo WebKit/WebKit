@@ -106,6 +106,11 @@ static bool NODELETE isFirstElementChildButton(const Node& child)
     return is<HTMLButtonElement>(child) && !child.previousElementSibling();
 }
 
+static bool NODELETE hasBaseAppearance(const RenderStyle* style)
+{
+    return style && style->usedAppearance() == StyleAppearance::Base;
+}
+
 class SelectSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) final;
@@ -114,17 +119,18 @@ private:
 
 void SelectSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
 {
-    if (is<HTMLButtonElement>(childElement)) {
-        // Don't check whether this is the first button element
-        // since we don't know the answer when this function is called inside Element::removedFrom.
+    if (is<HTMLButtonElement>(childElement))
         didChangeSlot(buttonSlotName(), shadowRoot);
-    } else
-        didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
+    didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
 }
 
 SUPPRESS_NODELETE const AtomString& SelectSlotAssignment::slotNameForHostChild(const Node& child) const
 {
-    return isFirstElementChildButton(child) ? buttonSlotName() : NamedSlotAssignment::defaultSlotName();
+    if (!isFirstElementChildButton(child))
+        return NamedSlotAssignment::defaultSlotName();
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(child.parentNode()); select && hasBaseAppearance(select->existingComputedStyle()))
+        return buttonSlotName();
+    return NamedSlotAssignment::defaultSlotName();
 }
 
 // https://html.spec.whatwg.org/#dom-htmloptionscollection-length
@@ -218,11 +224,6 @@ HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, 
     return findOwnerSelect(startNode->parentNode(), excludeOptGroup);
 }
 
-static bool NODELETE hasBaseAppearance(const RenderStyle* style)
-{
-    return style && style->usedAppearance() == StyleAppearance::Base;
-}
-
 void HTMLSelectElement::didRecalcStyle(OptionSet<Style::Change> styleChange)
 {
     // Even though the options didn't necessarily change, we will call setOptionsChangedOnRenderer for its side effect
@@ -239,6 +240,13 @@ void HTMLSelectElement::didRecalcStyle(OptionSet<Style::Change> styleChange)
     }
 
     bool newIsBaseAppearance = hasBaseAppearance(existingComputedStyle());
+    if (m_wasBaseAppearance != newIsBaseAppearance) {
+        if (RefPtr button = buttonElement()) {
+            if (RefPtr root = userAgentShadowRoot())
+                root->hostChildElementDidChange(*button);
+        }
+        invalidateButtonText();
+    }
     if (m_wasBaseAppearance && !newIsBaseAppearance && m_popupIsVisible)
         queuePickerCloseForAppearanceChange();
     m_wasBaseAppearance = newIsBaseAppearance;
@@ -365,6 +373,12 @@ bool HTMLSelectElement::usesBaseAppearancePicker() const
 SelectPopoverElement* HTMLSelectElement::pickerPopoverElement() const
 {
     return m_popover;
+}
+
+Element* HTMLSelectElement::buttonElement() const
+{
+    auto* first = firstElementChild();
+    return is<HTMLButtonElement>(first) ? first : nullptr;
 }
 
 void HTMLSelectElement::hidePickerPopoverElement()
@@ -2350,7 +2364,7 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
     return { };
 }
 
-void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption) const
+void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
 {
     ASSERT(document().settings().htmlEnhancedSelectParsingEnabled());
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
@@ -2372,7 +2386,7 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
     }
 
     Vector<Ref<HTMLSelectedContentElement>> selectedContentElements;
-    for (Ref selectedContent : descendantsOfType<HTMLSelectedContentElement>(*const_cast<HTMLSelectElement*>(this))) {
+    for (Ref selectedContent : descendantsOfType<HTMLSelectedContentElement>(*this)) {
         if (!selectedContent->isDisabled())
             selectedContentElements.append(selectedContent);
     }
@@ -2383,6 +2397,9 @@ void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
         else
             selectedOptionRef->cloneIntoSelectedContent(selectedContent);
     }
+
+    setOptionsChangedOnRenderer();
+    invalidateButtonText();
 }
 
 void HTMLSelectElement::registerSelectedContentElement()

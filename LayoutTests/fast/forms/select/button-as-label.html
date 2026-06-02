@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MutationEventsEnabled=false ] -->
+<title>select with first-child button: button textContent (with optional selectedcontent) drives the displayed label and width in appearance:auto</title>
+<link rel=match href=button-as-label-expected.html>
+<p><select><button>Foo</button><option>One</option></select>
+<p><select><button><span>Foo</span></button><option>One</option></select>
+<p><select><button><img src=resources/dummy.png alt=ignored>Foo</button><option>One</option></select>
+<p><select><button><selectedcontent></selectedcontent></button><option>Foo</option><option>Two</option></select>
+<p><select><button>Pre <selectedcontent></selectedcontent></button><option>Foo</option><option>Two</option></select>
+<p><select><button><span><selectedcontent></selectedcontent></span></button><option>Foo</option><option>Two</option></select>
+<p><select><button>VeryLongButtonLabel</button><option>S</option></select>
+<p><select><button><selectedcontent></selectedcontent></button><option>S</option><option>VeryLongOptionLabel</option></select>

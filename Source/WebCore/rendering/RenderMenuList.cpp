@@ -32,8 +32,10 @@
 #include "ElementInlines.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSelectedContentElement.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "PlatformRenderTheme.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -42,9 +44,11 @@
 #include "RenderObjectInlines.h"
 #include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
+#include "Text.h"
 #include "TextRun.h"
 #include <math.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -76,23 +80,60 @@ void RenderMenuList::styleDidChange(Style::Difference diff, const RenderStyle* o
     }
 }
 
+static void appendButtonLabelText(StringBuilder& builder, ContainerNode& button, const String& selectedContentText)
+{
+    for (RefPtr<Node> node = button.firstChild(); node;) {
+        if (is<HTMLSelectedContentElement>(*node)) {
+            builder.append(selectedContentText);
+            node = NodeTraversal::nextSkippingChildren(*node, &button);
+            continue;
+        }
+        if (RefPtr text = dynamicDowncast<Text>(*node))
+            builder.append(text->data());
+        node = NodeTraversal::next(*node, &button);
+    }
+}
+
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    const auto& listItems = selectElement().listItems();
-    int size = listItems.size();    
+    Ref select = selectElement();
 
-    for (int i = 0; i < size; ++i) {
-        RefPtr option = dynamicDowncast<HTMLOptionElement>(listItems[i].get());
-        if (!option)
-            continue;
+    auto measure = [&](const String& text) {
+        String transformed = applyTextTransform(style(), text);
+        if (transformed.isEmpty())
+            return;
+        CheckedRef font = style().fontCascade();
+        TextRun run = RenderBlock::constructTextRun(transformed, style());
+        maxOptionWidth = std::max(maxOptionWidth, font->width(run));
+    };
 
-        String text = option->textIndentedToRespectGroupLabel();
-        text = applyTextTransform(style(), text);
-        if (!text.isEmpty()) {
-            CheckedRef font = style().fontCascade();
-            TextRun run = RenderBlock::constructTextRun(text, style());
-            maxOptionWidth = std::max(maxOptionWidth, font->width(run));
+    RefPtr button = select->buttonElement();
+
+    bool buttonHasSelectedContent = false;
+    if (button) {
+        for (RefPtr<Node> node = button->firstChild(); node; node = NodeTraversal::next(*node, button.get())) {
+            if (is<HTMLSelectedContentElement>(*node)) {
+                buttonHasSelectedContent = true;
+                break;
+            }
+        }
+    }
+
+    auto labelForOption = [&](HTMLOptionElement& option) {
+        if (!button)
+            return option.textIndentedToRespectGroupLabel();
+        StringBuilder builder;
+        appendButtonLabelText(builder, *button, option.textIndentedToRespectGroupLabel());
+        return builder.toString();
+    };
+
+    if (button && !buttonHasSelectedContent)
+        measure(button->textContent());
+    else {
+        for (auto& item : select->listItems()) {
+            if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get()))
+                measure(labelForOption(*option));
         }
     }
 
