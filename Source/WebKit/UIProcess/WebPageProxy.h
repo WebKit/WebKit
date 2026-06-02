@@ -491,6 +491,7 @@ class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteMediaSessionCoordinatorProxy;
 class RemoteMediaSessionManagerProxy;
+class RemoteObjectRegistry;
 class RemotePageProxy;
 class RemoteScrollingCoordinatorProxy;
 class RevealItem;
@@ -1311,6 +1312,9 @@ public:
     void scrollToEdge(WebCore::RectEdges<bool>, WebCore::ScrollIsAnimated);
 
 #if PLATFORM(COCOA)
+    _WKRemoteObjectRegistry* remoteObjectRegistry();
+    RemoteObjectRegistry* uiRemoteObjectRegistry();
+
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
@@ -1371,7 +1375,6 @@ public:
     void rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect);
 
     RetainPtr<NSView> inspectorAttachmentView();
-    _WKRemoteObjectRegistry *remoteObjectRegistry();
 
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;
 #endif // PLATFORM(MAC)

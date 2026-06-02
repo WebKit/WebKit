@@ -1024,11 +1024,6 @@ RetainPtr<NSView> PageClientImpl::inspectorAttachmentView()
     return checkedImpl()->inspectorAttachmentView();
 }
 
-_WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
-{
-    return checkedImpl()->remoteObjectRegistry();
-}
-
 void PageClientImpl::pageDidScroll(const WebCore::IntPoint& scrollPosition)
 {
     checkedImpl()->pageDidScroll(scrollPosition);

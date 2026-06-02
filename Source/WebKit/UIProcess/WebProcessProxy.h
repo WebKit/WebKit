@@ -629,8 +629,9 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
     bool shouldSendPendingMessage(const PendingMessage&) final;
-    
 #if PLATFORM(COCOA)
+    bool handleRemoteObjectRegistryMessage(IPC::Connection&, IPC::Decoder&);
+
     void cacheMediaMIMETypesInternal(const Vector<String>&);
 #endif
 

@@ -51,6 +51,9 @@ public:
     void sendReplyBlock(uint64_t replyID, const UserData& blockInvocation);
     void sendUnusedReply(uint64_t replyID);
 
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
 protected:
     explicit RemoteObjectRegistry(_WKRemoteObjectRegistry *);
     using MessageSender = Variant<std::reference_wrapper<WebProcessProxy>, std::reference_wrapper<WebPage>>;
@@ -59,9 +62,6 @@ private:
     virtual std::optional<MessageSender> messageSender() = 0;
     virtual std::optional<uint64_t> messageDestinationID() = 0;
     template<typename M> void send(M&&);
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
     void invokeMethod(const RemoteObjectInvocation&);

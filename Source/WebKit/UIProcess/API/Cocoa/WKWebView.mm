@@ -952,9 +952,6 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView _webViewDestroyed];
-
-    if (_page && _remoteObjectRegistry)
-        _page->configuration().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier());
 #endif
 
     if (_page)
@@ -4279,10 +4276,8 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #if PLATFORM(MAC)
     return _impl->remoteObjectRegistry();
 #else
-    if (!_remoteObjectRegistry) {
+    if (!_remoteObjectRegistry)
         _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithWebPageProxy:*_page]);
-        _page->configuration().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->identifier(), [_remoteObjectRegistry remoteObjectRegistry]);
-    }
 
     return _remoteObjectRegistry.get();
 #endif
