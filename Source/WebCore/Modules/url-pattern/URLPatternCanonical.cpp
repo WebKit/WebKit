@@ -139,7 +139,7 @@ ExceptionOr<String> canonicalizeIPv6Hostname(StringView value, BaseURLStringType
         return value.toString();
 
     StringBuilder result;
-    result.reserveCapacity(result.length());
+    result.reserveCapacity(value.length());
 
     for (auto codepoint : value.codePoints()) {
         if (!isValidIPv6HostCodePoint(codepoint))
