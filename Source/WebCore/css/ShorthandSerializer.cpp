@@ -1545,22 +1545,32 @@ String ShorthandSerializer::serializeSingleAnimationRange(const CSSValue& value,
         return value.isLength() || value.isPercentage() || value.isCalculatedPercentageWithLength();
     };
 
+    bool isStartValue = type == Style::SingleAnimationRangeType::Start;
+    bool startHasNoName = startValueID == CSSValueInvalid || startValueID == CSSValueNormal;
+
     if (RefPtr pair = dynamicDowncast<CSSValuePair>(value)) {
         bool isSameNameAsStart = isValueID(pair->first(), startValueID);
-        bool isStartValue = type == Style::SingleAnimationRangeType::Start;
         bool isDefaultValue = isDefault(dynamicDowncast<CSSPrimitiveValue>(pair->second()), Style::SingleAnimationRangeType::Start);
         if (isDefaultValue && (isStartValue || !isSameNameAsStart))
             return nameLiteral(valueID(pair->first()));
         return pair->cssText(m_serializationContext);
     }
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (isRangeOffset(*primitiveValue))
+        if (isRangeOffset(*primitiveValue)) {
+            // For a bare length/percentage start, the implicit default end is "normal"; a 100% end
+            // is equivalent and should be elided from the canonical shorthand serialization.
+            if (!isStartValue && startHasNoName && isDefault(primitiveValue, type))
+                return emptyString();
             return primitiveValue->cssText(m_serializationContext);
+        }
     } else if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         bool isNormal = keywordValue->valueID() == CSSValueNormal;
         bool isSameNameAsStart = keywordValue->valueID() == startValueID;
-        bool isStartValue = type == Style::SingleAnimationRangeType::Start;
-        if (isStartValue || (!isNormal && !isSameNameAsStart))
+        // The default end for a <timeline-range-name> start is the same name (i.e. <name> 100%);
+        // for any other start (length/percentage or "normal") the default end is "normal". Only
+        // elide an end keyword that matches that default.
+        bool isDefaultEnd = isSameNameAsStart || (isNormal && startHasNoName);
+        if (isStartValue || !isDefaultEnd)
             return nameLiteral(keywordValue->valueID());
     }
     return emptyString();

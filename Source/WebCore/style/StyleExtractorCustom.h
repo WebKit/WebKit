@@ -2677,7 +2677,12 @@ static Ref<CSSValueList> convertAnimationRange(ExtractorState& state, const Sing
 
     bool isNormal = range.end.isNormal();
     bool isDefaultAndSameNameAsStart = range.start.name() == range.end.name() && range.end.hasDefaultOffset();
-    if (endValue->length() && !endValueEqualsStart && !isNormal && !isDefaultAndSameNameAsStart)
+    // The default end for a length/percentage start (Name::Omitted) or "normal" start is "normal";
+    // for a <timeline-range-name> start the default end is the same name. Only elide an end of
+    // "normal" against starts where it's actually the default.
+    bool startHasNoName = range.start.name() == SingleAnimationRangeName::Normal || range.start.name() == SingleAnimationRangeName::Omitted;
+    bool isDefaultNormalEnd = isNormal && startHasNoName;
+    if (endValue->length() && !endValueEqualsStart && !isDefaultNormalEnd && !isDefaultAndSameNameAsStart)
         list.append(WTF::move(endValue));
 
     return CSSValueList::createSpaceSeparated(WTF::move(list));
