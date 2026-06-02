@@ -3,21 +3,25 @@ use strict;
 use warnings;
 use Cwd qw(getcwd);
 use File::Path qw(make_path);
+use File::Which qw(which);
+
+# Use Ninja from inside the Xcode toolchain if not otherwise available.
+my @ninja = defined which('ninja') ? 'ninja' : ('xcrun', 'ninja');
 
 # CMake configuration
 if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
-    exec('ninja', @ARGV);
+    exec(@ninja, @ARGV);
 }
 
 # CMake try_compile/check_*
 if (getcwd() =~ m{/CMakeFiles/}) {
-    exec('ninja', @ARGV);
+    exec(@ninja, @ARGV);
 }
 
 # Real compilation
 my $bundlePolicy = $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY};
 if (!defined($bundlePolicy)) {
-    my $dryRun = `ninja -n @ARGV 2>&1`;
+    my $dryRun = `@ninja -n @ARGV 2>&1`;
     my ($totalCommands) = $dryRun =~ m{/(\d+)\]};
 
     # No-op build
@@ -44,4 +48,4 @@ if (open(my $fh, '>', "DerivedSources/unified-sources-bundle-policy")) {
     close($fh);
 }
 
-exec('/usr/bin/caffeinate', '-i', 'ninja', @ARGV);
+exec('/usr/bin/caffeinate', '-i', @ninja, @ARGV);
