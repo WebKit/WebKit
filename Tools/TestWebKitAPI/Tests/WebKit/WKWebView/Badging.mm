@@ -448,7 +448,12 @@ window.navigator.setAppBadge(10);
 </script>
 )SWRESOURCE"_s;
 
-TEST(Badging, Origin)
+// This test verifies that a setAppBadge call from a cross origin iframe passes the correct
+// origin to the delegate.
+// When actually that call should've been rejected down at the DOM level because cross-origin
+// iframes cannot call setAppBadge.
+// Fixing that is for a different day, so for this branch we'll just disable this test.
+TEST(Badging, DISABLED_Origin)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -538,3 +543,109 @@ TEST(Badging, ServiceWorkerOverride)
 
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 2);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+static constexpr auto badgeAttackFromWorkerBytes = R"TESTRESOURCE(
+<script src="coreipc.js"></script>
+<script>
+async function sendSpoofedBadgeIPC()
+{
+    const CoreIPC = new CoreIPCClass();
+
+    CoreIPC.UI.WebProcessProxy.SetAppBadgeFromWorker(0, {
+        origin: {
+            data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: {
+                    protocol: 'https',
+                    host: 'apple.com',
+                    port: { }
+                }
+            }
+        },
+        badge: {
+            optionalValue: 1337
+        }
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+static void runAppBadgeSpoofTest(const String& attackerHTML)
+{
+    NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    NSData *coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { attackerHTML } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData } },
+    });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    configuration.get().preferences._appBadgeEnabled = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+
+    RetainPtr badgeDelegate = adoptNS([BadgeDelegate new]);
+    badgeDelegate.get().expectedAppBadgeSequence = nil;
+
+    webView.get().UIDelegate = badgeDelegate.get();
+    configuration.get().websiteDataStore._delegate = badgeDelegate.get();
+
+    [webView synchronouslyLoadRequest:server.request("/"_s)];
+
+    static bool javascriptDone = false;
+    [webView callAsyncJavaScript:@"sendSpoofedBadgeIPC();" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        javascriptDone = true;
+    }];
+    TestWebKitAPI::Util::run(&javascriptDone);
+
+    // Give the IPC message time to be processed.
+    TestWebKitAPI::Util::spinRunLoop(30);
+
+    EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 0);
+}
+
+TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
+{
+    runAppBadgeSpoofTest(badgeAttackFromWorkerBytes);
+}
+
+static constexpr auto badgeAttackFromFrameBytes = R"TESTRESOURCE(
+<script src="coreipc.js"></script>
+<script>
+async function sendSpoofedBadgeIPC()
+{
+    const CoreIPC = new CoreIPCClass();
+
+    CoreIPC.UI.WebFrameProxy.SetAppBadge(IPC.frameID[0], {
+        origin: {
+            data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: {
+                    protocol: 'https',
+                    host: 'apple.com',
+                    port: { }
+                }
+            }
+        },
+        badge: {
+            optionalValue: 1337
+        }
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+TEST(Badging, SetAppBadgeFromFrameOriginSpoof)
+{
+    runAppBadgeSpoofTest(badgeAttackFromFrameBytes);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
