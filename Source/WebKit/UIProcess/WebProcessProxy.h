@@ -275,6 +275,8 @@ public:
 
     enum class EndsUsingDataStore : bool { No, Yes };
     void removeWebPage(WebPageProxy&, EndsUsingDataStore);
+    void addPagePendingClose(WebPageProxyIdentifier);
+    void removePagePendingClose(WebPageProxyIdentifier);
 
     void sendPageCloseMessage(std::optional<WebPageProxyIdentifier>, WebCore::PageIdentifier, CompletionHandler<void()>&& = [] { });
 
@@ -812,7 +814,11 @@ private:
     WeakHashSet<RemotePageProxy> m_remotePages;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<SuspendedPageProxy> m_suspendedPages;
+<<<<<<< HEAD
     HashCountedSet<WebPageProxyIdentifier> m_pagesPendingClose;
+=======
+    HashSet<WebPageProxyIdentifier> m_pagesPendingClose;
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
     UserInitiatedActionMap m_userInitiatedActionMap;
     HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
     uint64_t m_frameProcessCount { 0 };
