@@ -913,7 +913,7 @@ Vector<String> Element::getAttributeNames() const
 bool Element::hasFocusableStyle() const
 {
     auto isFocusableStyle = [](const RenderStyle* style) {
-        return style && style->display().doesGenerateBox()
+        return style && style->display() != Style::DisplayType::None
             && style->visibility() == Visibility::Visible && !style->effectiveInert()
             && (style->usedContentVisibility() != ContentVisibility::Hidden || style->contentVisibility() != ContentVisibility::Visible);
     };
