@@ -4018,6 +4018,18 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case DebugProbeIntrinsic: {
+            RELEASE_ASSERT(argumentCountIncludingThis >= 3, "$vm.probe requires an id and a value: $vm.probe(id, x)");
+            Node* idNode = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            FrozenValue* idConstant = idNode->hasConstant() ? idNode->constant() : nullptr;
+            JSValue idValue = idConstant ? idConstant->value() : JSValue();
+            RELEASE_ASSERT(idValue && idValue.isString(), "$vm.probe id must be a constant string");
+            insertChecks();
+            Node* value = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            setResult(addToGraph(DebugProbe, OpInfo(idConstant), value));
+            return CallOptimizationResult::Inlined;
+        }
+
         case JSMapGetIntrinsic: {
             if (argumentCountIncludingThis < 2 || !is64Bit())
                 return CallOptimizationResult::DidNothing;
