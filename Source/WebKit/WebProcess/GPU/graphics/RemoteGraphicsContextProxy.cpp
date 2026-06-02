@@ -129,12 +129,14 @@ RenderingMode RemoteGraphicsContextProxy::renderingMode() const
 
 void RemoteGraphicsContextProxy::save(GraphicsContextState::Purpose purpose)
 {
+    flushPendingCTMIfNecessary();
     updateStateForSave(purpose);
     send(Messages::RemoteGraphicsContext::Save());
 }
 
 void RemoteGraphicsContextProxy::restore(GraphicsContextState::Purpose purpose)
 {
+    flushPendingCTMIfNecessary();
     if (!updateStateForRestore(purpose))
         return;
     send(Messages::RemoteGraphicsContext::Restore());
@@ -144,6 +146,7 @@ void RemoteGraphicsContextProxy::translate(float x, float y)
 {
     if (!updateStateForTranslate(x, y))
         return;
+    flushPendingCTMIfNecessary();
     send(Messages::RemoteGraphicsContext::Translate(x, y));
 }
 
@@ -151,6 +154,7 @@ void RemoteGraphicsContextProxy::rotate(float angle)
 {
     if (!updateStateForRotate(angle))
         return;
+    flushPendingCTMIfNecessary();
     send(Messages::RemoteGraphicsContext::Rotate(angle));
 }
 
@@ -158,19 +162,24 @@ void RemoteGraphicsContextProxy::scale(const FloatSize& scale)
 {
     if (!updateStateForScale(scale))
         return;
+    flushPendingCTMIfNecessary();
     send(Messages::RemoteGraphicsContext::Scale(scale));
 }
 
 void RemoteGraphicsContextProxy::setCTM(const AffineTransform& transform)
 {
     updateStateForSetCTM(transform);
-    send(Messages::RemoteGraphicsContext::SetCTM(transform));
+    m_pendingCTM = transform;
 }
 
 void RemoteGraphicsContextProxy::concatCTM(const AffineTransform& transform)
 {
     if (!updateStateForConcatCTM(transform))
         return;
+    if (m_pendingCTM) {
+        m_pendingCTM = transform * *m_pendingCTM;
+        return;
+    }
     send(Messages::RemoteGraphicsContext::ConcatCTM(transform));
 }
 
@@ -196,30 +205,35 @@ void RemoteGraphicsContextProxy::setMiterLimit(float limit)
 
 void RemoteGraphicsContextProxy::clip(const FloatRect& rect)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClip(rect);
     send(Messages::RemoteGraphicsContext::Clip(rect));
 }
 
 void RemoteGraphicsContextProxy::clipRoundedRect(const FloatRoundedRect& rect)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClipRoundedRect(rect);
     send(Messages::RemoteGraphicsContext::ClipRoundedRect(rect));
 }
 
 void RemoteGraphicsContextProxy::clipOut(const FloatRect& rect)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClipOut(rect);
     send(Messages::RemoteGraphicsContext::ClipOut(rect));
 }
 
 void RemoteGraphicsContextProxy::clipOutRoundedRect(const FloatRoundedRect& rect)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClipOutRoundedRect(rect);
     send(Messages::RemoteGraphicsContext::ClipOutRoundedRect(rect));
 }
 
 void RemoteGraphicsContextProxy::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClipToImageBuffer(destinationRect);
     if (!recordResourceUse(imageBuffer))
         return;
@@ -228,12 +242,14 @@ void RemoteGraphicsContextProxy::clipToImageBuffer(ImageBuffer& imageBuffer, con
 
 void RemoteGraphicsContextProxy::clipOut(const Path& path)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClipOut(path);
     send(Messages::RemoteGraphicsContext::ClipOutToPath(path));
 }
 
 void RemoteGraphicsContextProxy::clipPath(const Path& path, WindRule rule)
 {
+    flushPendingCTMIfNecessary();
     updateStateForClipPath(path);
     if (RefPtr impl = path.asImpl(); impl && !impl->isTransient()) {
         if (auto identifier = recordResourceUse(*impl)) {
@@ -247,6 +263,7 @@ void RemoteGraphicsContextProxy::clipPath(const Path& path, WindRule rule)
 
 void RemoteGraphicsContextProxy::resetClip()
 {
+    flushPendingCTMIfNecessary();
     updateStateForResetClip();
     send(Messages::RemoteGraphicsContext::ResetClip());
     clip(initialClip());
@@ -329,15 +346,17 @@ void RemoteGraphicsContextProxy::drawNativeImage(const NativeImage& image, const
     m_maxPaintedEDRHeadroom = std::max(m_maxPaintedEDRHeadroom, headroom.headroom);
     m_maxRequestedEDRHeadroom = std::max(m_maxRequestedEDRHeadroom, image.headroom().headroom);
     ImagePaintingOptions clampedOptions(options, headroom);
+    auto& effectiveOptions = clampedOptions;
+#else
+    auto& effectiveOptions = options;
 #endif
-    appendStateChangeItemIfNecessary();
+    auto inlineData = appendStateChangeItemForInlineDrawNativeImageIfNecessary();
     if (!recordResourceUse(const_cast<NativeImage&>(image)))
         return;
-#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
-    send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, clampedOptions));
-#else
-    send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, options));
-#endif
+    if (inlineData.ctm || inlineData.alpha)
+        send(Messages::RemoteGraphicsContext::DrawNativeImageWithTransformAndAlpha(image.renderingResourceIdentifier(), destRect, srcRect, effectiveOptions, inlineData.ctm, inlineData.alpha));
+    else
+        send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, effectiveOptions));
 }
 
 void RemoteGraphicsContextProxy::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
@@ -378,18 +397,21 @@ void RemoteGraphicsContextProxy::drawPattern(ImageBuffer& imageBuffer, const Flo
 
 void RemoteGraphicsContextProxy::beginTransparencyLayer(float opacity)
 {
+    flushPendingCTMIfNecessary();
     updateStateForBeginTransparencyLayer(opacity);
     send(Messages::RemoteGraphicsContext::BeginTransparencyLayer(opacity));
 }
 
 void RemoteGraphicsContextProxy::beginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
 {
+    flushPendingCTMIfNecessary();
     updateStateForBeginTransparencyLayer(compositeOperator, blendMode);
     send(Messages::RemoteGraphicsContext::BeginTransparencyLayerWithCompositeMode({ compositeOperator, blendMode }));
 }
 
 void RemoteGraphicsContextProxy::endTransparencyLayer()
 {
+    flushPendingCTMIfNecessary();
     if (updateStateForEndTransparencyLayer())
         send(Messages::RemoteGraphicsContext::EndTransparencyLayer());
 }
@@ -794,6 +816,7 @@ RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const F
 
 void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
 {
+    flushPendingCTMIfNecessary();
     auto& state = currentState().state;
     auto changes = state.changes();
     if (!changes)
@@ -913,6 +936,43 @@ RemoteGraphicsContextProxy::InlineStrokeData RemoteGraphicsContextProxy::appendS
     state.didApplyChanges();
     lastDrawingState->didApplyChanges();
     return { packedColor, strokeThickness };
+}
+
+void RemoteGraphicsContextProxy::flushPendingCTMIfNecessary()
+{
+    if (auto ctm = std::exchange(m_pendingCTM, std::nullopt))
+        send(Messages::RemoteGraphicsContext::SetCTM(*ctm));
+}
+
+RemoteGraphicsContextProxy::InlineDrawNativeImageData RemoteGraphicsContextProxy::appendStateChangeItemForInlineDrawNativeImageIfNecessary()
+{
+    auto& state = currentState().state;
+    auto changes = state.changes();
+
+    if (!changes && !m_pendingCTM)
+        return { };
+
+    if (changes && !changes.containsOnly({ GraphicsContextState::Change::Alpha })) {
+        flushPendingCTMIfNecessary();
+        appendStateChangeItemIfNecessary();
+        return { };
+    }
+
+    InlineDrawNativeImageData result;
+    result.ctm = std::exchange(m_pendingCTM, std::nullopt);
+
+    if (changes.contains(GraphicsContextState::Change::Alpha)) {
+        result.alpha = state.alpha();
+        auto& lastDrawingState = currentState().lastDrawingState;
+        if (!lastDrawingState)
+            lastDrawingState = state;
+        else
+            lastDrawingState->setAlpha(*result.alpha);
+        state.didApplyChanges();
+        lastDrawingState->didApplyChanges();
+    }
+
+    return result;
 }
 
 void RemoteGraphicsContextProxy::disconnect()
