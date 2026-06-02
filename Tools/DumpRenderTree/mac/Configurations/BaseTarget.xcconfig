@@ -24,3 +24,5 @@
 OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
+
+SWIFT_INCLUDE_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/lib/swift $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/swift $(DSTROOT)$(SYSTEM_PREFIX)/usr/local/lib/swift $(inherited);

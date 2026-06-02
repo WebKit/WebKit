@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <wtf/RetainPtr.h>
 
 namespace PAL {
@@ -32,3 +34,5 @@ namespace PAL {
 PAL_EXPORT RetainPtr<CFStringRef> defaultSearchProviderDisplayName();
 
 }
+
+#endif // __cplusplus

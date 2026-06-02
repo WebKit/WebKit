@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Apple Inc. All rights reserved.
+// Copyright (C) 2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,43 +21,31 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-// FIXME (rdar://164119356): Move StdLibExtras.swift from WebGPU to WTF
-
-private import CxxStdlib
-import WebGPU_Private.WebGPU
-
-#if !WTF_SUPPORTS_SWIFT
-
-extension MutableSpan where Element: BitwiseCopyable {
-    @_lifetime(self: copy self)
-    mutating func copyMemory(from source: Span<Element>) {
-        // Safety: This is lifetime safe because we have exclusive access to 'self' and we don't escape 'selfBuffer'
-        unsafe withUnsafeMutableBufferPointer { selfBuffer in
-            // Safety: This is lifetime safe because we have exclusive access to 'source' and we don't escape 'sourceBuffer'
-            unsafe source.withUnsafeBufferPointer { sourceBuffer in
-                // Safety: This is bounds safe because we do a manual bounds check
-                // Safety: This is type safe because we statically declare that our element types match and are BitwiseCopyable
-                precondition(sourceBuffer.count <= selfBuffer.count)
-                _ = unsafe memcpy(selfBuffer.baseAddress, sourceBuffer.baseAddress, sourceBuffer.count)
-            }
-        }
-    }
-}
-
 extension Comparable {
     /// Returns this comparable value clamped to the given limiting range.
     ///
     /// - Parameter limits: The range to clamp the bounds of this value.
     /// - Returns: A value guaranteed to be in the range `[limits.lowerBound, limits.upperBound]`
-    func clamped(to limits: ClosedRange<Self>) -> Self {
+    public func clamped(to limits: ClosedRange<Self>) -> Self {
         min(max(self, limits.lowerBound), limits.upperBound)
     }
 }
 
-#endif // !WTF_SUPPORTS_SWIFT
-
-// FIXME(rdar://130765784): We should be able use the built-in ===, but AnyObject currently excludes foreign reference types
-func === (_ lhs: WGPUTexture, _ rhs: WGPUTexture) -> Bool {
-    // Safety: Swift represents all reference types, including foreign reference types, as raw pointers
-    unsafe unsafeBitCast(lhs, to: UnsafeRawPointer.self) == unsafeBitCast(rhs, to: UnsafeRawPointer.self)
+extension MutableSpan where Element: BitwiseCopyable {
+    /// Copies the memory from `source` into this span.
+    ///
+    /// - Parameter source: The span to copy memory from. The `count` of `source` must not be greater than the `count` of `self`.
+    @_lifetime(self: copy self)
+    public mutating func copyMemory(from source: Span<Element>) {
+        // Safety: This is lifetime safe because we have exclusive access to 'self' and we don't escape 'selfBuffer'
+        unsafe withUnsafeMutableBytes { selfBuffer in
+            // Safety: This is lifetime safe because we have exclusive access to 'source' and we don't escape 'sourceBuffer'
+            unsafe source.withUnsafeBytes { sourceBuffer in
+                // Safety: This is bounds safe because we do a manual bounds check
+                // Safety: This is type safe because we statically declare that our element types match and are BitwiseCopyable
+                precondition(sourceBuffer.count <= selfBuffer.count)
+                unsafe selfBuffer.copyMemory(from: sourceBuffer)
+            }
+        }
+    }
 }

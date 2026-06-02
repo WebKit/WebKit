@@ -24,7 +24,7 @@
 private import CryptoKit
 import Foundation
 
-public import pal.Core.crypto.CryptoTypes
+public import pal.crypto.CryptoTypes
 
 // FIXME: (rdar://164560176) resolve the many 'unsafe' statements here
 

@@ -21,23 +21,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
-import pal.crypto.CryptoTypes
+#if JSC_SUPPORTS_SWIFT
 
-// FIXME: (rdar://164560176) resolve the many 'unsafe' statements here
+// `@_spiOnly` is used instead of `@_exported` because JSC is public and wtf is private.
 
-extension ContiguousBytes {
-    func copyToVectorUInt8() -> PAL.Crypto.VectorUInt8 {
-        unsafe self.withUnsafeBytes { buf in
-            let result = PAL.Crypto.VectorUInt8(buf.count)
-            unsafe buf.copyBytes(
-                to: UnsafeMutableRawBufferPointer(
-                    start: UnsafeMutableRawPointer(mutating: result.span().__dataUnsafe()),
-                    count: result.size()
-                ),
-                count: result.size()
-            )
-            return result
-        }
-    }
-}
+@_spiOnly public import wtf
+
+#endif // JSC_SUPPORTS_SWIFT

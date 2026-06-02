@@ -95,6 +95,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		072EB5122FAE48DD00E6753E /* JavaScriptCoreExports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072EB5112FAE48DD00E6753E /* JavaScriptCoreExports.swift */; };
 		072F534D2E3BEAFE00389E15 /* ParserFunctionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B4954E81A6640DB002815A6 /* ParserFunctionInfo.h */; };
 		072F534E2E3C0B7100389E15 /* CachedCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F8690E0F9584A100558697 /* CachedCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072F534F2E3C0BC200389E15 /* ProtoCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2850,6 +2851,7 @@
 		05517CA02C74004700ED0CD5 /* JSIteratorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIteratorConstructor.h; sourceTree = "<group>"; };
 		05517CA12C74004700ED0CD5 /* JSIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIterator.h; sourceTree = "<group>"; };
 		05517CA22C74004700ED0CD5 /* JSIteratorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIteratorConstructor.cpp; sourceTree = "<group>"; };
+		072EB5112FAE48DD00E6753E /* JavaScriptCoreExports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCoreExports.swift; sourceTree = "<group>"; };
 		07A564652E6250D900DEC7C4 /* JavaScriptCore_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = JavaScriptCore_Private.modulemap; sourceTree = "<group>"; };
 		07CEB6A12EF90E37008DCDEC /* TargetAssemblerDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TargetAssemblerDefinitions.h; sourceTree = "<group>"; };
 		0F0123301944EA1B00843A0C /* DFGValueStrength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGValueStrength.cpp; path = dfg/DFGValueStrength.cpp; sourceTree = "<group>"; };
@@ -6773,6 +6775,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				072EB5112FAE48DD00E6753E /* JavaScriptCoreExports.swift */,
 				530A63411FA3E31D0026A545 /* Sources.txt */,
 				530A63401FA3E31C0026A545 /* SourcesCocoa.txt */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
@@ -14311,6 +14314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				072EB5122FAE48DD00E6753E /* JavaScriptCoreExports.swift in Sources */,
 				44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

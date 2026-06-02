@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <cstdint>
 #include <span>
 #include <wtf/Vector.h>
@@ -88,3 +90,5 @@ constexpr auto ed25519KeySize = 32;
 constexpr auto ed25519SignatureSize = ed25519KeySize * 2;
 
 } // namespace PAL::Crypto
+
+#endif // __cplusplus

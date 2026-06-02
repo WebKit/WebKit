@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <pal/crypto/CryptoTypes.h>
 #include <wtf/Expected.h>
 
@@ -35,3 +37,5 @@ Expected<VectorUInt8, Error> signEd25519CryptoKit(const VectorUInt8& sk, const V
 Expected<bool, Error> verifyEd25519CryptoKit(const VectorUInt8& pubKey, const VectorUInt8& signature, const VectorUInt8& data);
 
 } // namespace PAL::Crypto
+
+#endif // __cplusplus
