@@ -2963,5 +2963,12 @@
     "pattern": [{ "pathname": "/([\\d&&[0-1]])" }],
     "inputs": [{ "pathname": "/3" }],
     "expected_match": null
+  },
+  {
+    "pattern": [{ "pathname": "/:𠀀" }],
+    "inputs": [{ "pathname": "/foo" }],
+    "expected_match": {
+      "pathname": { "input": "/foo", "groups": { "𠀀": "foo" } }
+    }
   }
 ]

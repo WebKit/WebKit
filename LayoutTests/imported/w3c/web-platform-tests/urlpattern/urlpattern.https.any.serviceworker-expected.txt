@@ -349,4 +349,5 @@ PASS Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/a"}]
 PASS Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/z"}]
 PASS Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/0"}]
 PASS Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/3"}]
+PASS Pattern: [{"pathname":"/:𠀀"}] Inputs: [{"pathname":"/foo"}]
 
