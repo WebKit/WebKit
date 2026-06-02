@@ -425,7 +425,11 @@ void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
 
     using BaselineJITRegisters::DelById::baseJSR;
     using BaselineJITRegisters::DelById::resultJSR;
+<<<<<<< HEAD
     using BaselineJITRegisters::DelById::propertyCacheGPR;
+=======
+    using BaselineJITRegisters::DelById::stubInfoGPR;
+>>>>>>> 7c715b4eeda1 (Fix baseline write barrier handling in OpDelBy{Id,Val})
     using BaselineJITRegisters::DelById::scratchJSR;
 
     emitGetVirtualRegister(base, baseJSR);
@@ -475,7 +479,11 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::DelByVal::baseJSR;
     using BaselineJITRegisters::DelByVal::propertyJSR;
     using BaselineJITRegisters::DelByVal::resultJSR;
+<<<<<<< HEAD
     using BaselineJITRegisters::DelByVal::propertyCacheGPR;
+=======
+    using BaselineJITRegisters::DelByVal::stubInfoGPR;
+>>>>>>> 7c715b4eeda1 (Fix baseline write barrier handling in OpDelBy{Id,Val})
     using BaselineJITRegisters::DelByVal::scratchJSR;
 
     emitGetVirtualRegister(base, baseJSR);

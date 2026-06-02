@@ -318,8 +318,13 @@ namespace DelById {
     static constexpr GPRReg scratch3GPR { scratchRegisters[2] };
     static constexpr JSValueRegs scratchJSR { JSValueRegs::withTwoAvailableRegs(scratch1GPR, scratch2GPR) };
 
+<<<<<<< HEAD
     static_assert(noOverlap(baseJSR, propertyCacheGPR, scratchJSR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR.payloadGPR(), propertyCacheGPR));
+=======
+    static_assert(noOverlap(baseJSR, stubInfoGPR, scratchJSR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
+    static_assert(noOverlap(resultJSR.payloadGPR(), stubInfoGPR));
+>>>>>>> 7c715b4eeda1 (Fix baseline write barrier handling in OpDelBy{Id,Val})
 }
 
 namespace DelByVal {
@@ -335,8 +340,13 @@ namespace DelByVal {
     static constexpr GPRReg scratch3GPR { scratchRegisters[2] };
     static constexpr JSValueRegs scratchJSR { JSValueRegs::withTwoAvailableRegs(scratch1GPR, scratch2GPR) };
 
+<<<<<<< HEAD
     static_assert(noOverlap(baseJSR, propertyJSR, propertyCacheGPR, scratchJSR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR.payloadGPR(), propertyCacheGPR));
+=======
+    static_assert(noOverlap(baseJSR, propertyJSR, stubInfoGPR, scratchJSR, scratch3GPR, GPRInfo::handlerGPR), "Required for call to slow operation");
+    static_assert(noOverlap(resultJSR.payloadGPR(), stubInfoGPR));
+>>>>>>> 7c715b4eeda1 (Fix baseline write barrier handling in OpDelBy{Id,Val})
 }
 
 namespace PrivateBrand {
