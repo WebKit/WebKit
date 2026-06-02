@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+user-select
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -126,6 +126,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-block-to-inline-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-block-to-inline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-block-to-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-c0.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-c0.tentative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-c0.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-capitalize-supplementary-char-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-capitalize-supplementary-char-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-capitalize-supplementary-char.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-digraph-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-digraph.html
@@ -145,6 +151,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-input-textarea.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-input-textarea.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-insert-text-node-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-insert-text-node-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-insert-text-node-dynamic.html
@@ -179,6 +187,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-skip-marker.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-text-and-display-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-text-and-display-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-trailing-punctuation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-trailing-punctuation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-trailing-punctuation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-width-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-width-2-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-letter-width-2.html
@@ -222,6 +233,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-inherited-with-transition-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-inherited-with-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-input-image-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-input-textarea.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-input-textarea.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-insert-text-node-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-insert-text-node-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/first-line-insert-text-node-dynamic.html
@@ -360,10 +373,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-z-index-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/hit-testing-active-pseudo-layout-on-mouseup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/hover-on-pseudo-elements.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/input-element-pseudo-open-click.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/input-element-pseudo-open.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/input-textarea-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/marker-and-other-pseudo-elements.html
@@ -554,6 +569,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/pseudo-element-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/pseudo-replaced-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/relative-box-order-of-pseudo-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/relative-box-order-of-pseudo-elements-ref.html
@@ -645,6 +661,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-001.html

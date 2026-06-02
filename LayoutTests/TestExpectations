@@ -3719,8 +3719,6 @@ webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-different-options.html [ Pass Failure ]
 
 # WPT css/css-pseudo import (webkit.org/b/235197, webkit.org/b/266986, webkit.org/b/277692)
-imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ ImageOnlyFailure ]
@@ -5237,8 +5235,6 @@ imported/w3c/web-platform-tests/css/css-images/repeating-conic-gradient.html [ S
 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Skip ]
 
 # Untriaged counter failures
-webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/change-list-descendant-display.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/change-list-style-position-002.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list-marker.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-list.html [ ImageOnlyFailure ]
@@ -5326,11 +5322,9 @@ imported/w3c/web-platform-tests/css/css-lists/li-list-item-counter-005.html [ Im
 imported/w3c/web-platform-tests/css/css-lists/marker-counter.html [ ImageOnlyFailure ]
 
 # list-style
-imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-line-height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-vertical-lr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-vertical-rl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/marker-webkit-text-fill-color.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html [ ImageOnlyFailure ]
 
 # list-style bidi support
 webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005a.html [ ImageOnlyFailure ]
@@ -5341,6 +5335,13 @@ webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-sy
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html [ ImageOnlyFailure ]
+
+# New failures after importing WPT css/css-lists on 2026-06
+webkit.org/b/316025 imported/w3c/web-platform-tests/css/css-lists/change-list-style-position-001.html [ ImageOnlyFailure ]
+webkit.org/b/316025 imported/w3c/web-platform-tests/css/css-lists/list-and-grid-001.html [ ImageOnlyFailure ]
+webkit.org/b/316025 imported/w3c/web-platform-tests/css/css-lists/list-marker-alignment.html [ ImageOnlyFailure ]
+webkit.org/b/316025 imported/w3c/web-platform-tests/css/css-lists/list-and-margin-collapse-001.html [ Failure ]
+webkit.org/b/316025 imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001.html [ Failure ]
 
 # -- CSS multicol -- #
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-003.html [ ImageOnlyFailure ]

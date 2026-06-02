@@ -1,0 +1,3 @@
+
+PASS Removing pseudo element under mouse should not crash
+
