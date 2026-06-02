@@ -1818,7 +1818,11 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
         loader->setOriginatorAdvancedPrivacyProtections(*advancedPrivacyProtections);
     Ref initiator = request.requester();
     addSameSiteInfoToRequestIfNeeded(loader->request(), SecurityPolicy::shouldInheritSecurityOriginFromOwner(initiator->url()) ? nullptr : initiator.ptr());
+<<<<<<< HEAD
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protect(m_frame), loader, request);
+=======
+    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protectedFrame(), loader, request);
+>>>>>>> 52a76d6c003e (Initiator-omitted samesite classification can lead to SameSite=Strict cookie cross-site leakage)
     loader->setIsHandledByAboutSchemeHandler(request.isHandledByAboutSchemeHandler());
 
     if (request.shouldTreatAsContinuingLoad() != ShouldTreatAsContinuingLoad::No) {

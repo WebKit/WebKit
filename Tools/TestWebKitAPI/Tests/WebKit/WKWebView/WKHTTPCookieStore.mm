@@ -1189,6 +1189,7 @@ TEST(WKHTTPCookieStore, PartitionedCookieShouldHavePartitionProperty)
     }];
     Util::run(&gotCookieCallback);
 }
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/WKHTTPCookieStore.mm
 
 TEST(WKHTTPCookieStore, DeletePartitionedCookie)
 {
@@ -1227,6 +1228,9 @@ TEST(WKHTTPCookieStore, DeletePartitionedCookie)
     Util::run(&done);
 }
 #endif // ENABLE(OPT_IN_PARTITIONED_COOKIES)
+=======
+#endif
+>>>>>>> 52a76d6c003e (Initiator-omitted samesite classification can lead to SameSite=Strict cookie cross-site leakage):Tools/TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm
 
 TEST(WKHTTPCookieStore, SameSiteStrictCookieNotSentOnCrossSiteNavigation)
 {
