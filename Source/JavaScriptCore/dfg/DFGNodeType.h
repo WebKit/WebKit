@@ -49,6 +49,7 @@ namespace JSC { namespace DFG {
     macro(Identity, NodeResultJS) \
     /* Used for debugging to force a profile to appear as anything we want. */ \
     macro(IdentityWithProfile, NodeResultJS | NodeMustGenerate) \
+    macro(DebugProbe, NodeResultJS | NodeMustGenerate) /* Used to keep track of a value by id for unit tests in later optimization phases. */ \
     \
     /* Nodes for handling functions (both as call and as construct). */\
     macro(ToThis, NodeResultJS) \

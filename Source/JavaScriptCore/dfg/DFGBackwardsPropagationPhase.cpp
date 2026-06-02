@@ -662,6 +662,10 @@ private:
             node->child1()->mergeFlags(flags);
             break;
 
+        case DebugProbe:
+            node->child1()->mergeFlags(flags);
+            break;
+
         case Int52Rep: {
             ASSERT(m_graph.afterFixup());
             auto& edge = node->child1();

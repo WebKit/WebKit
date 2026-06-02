@@ -447,6 +447,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case IdentityWithProfile:
+    case DebugProbe:
     case Identity: {
         setForNode(node, forNode(node->child1()));
         break;

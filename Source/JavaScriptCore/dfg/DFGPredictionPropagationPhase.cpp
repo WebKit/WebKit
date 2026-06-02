@@ -1610,6 +1610,12 @@ private:
             break;
         }
 
+        case DebugProbe: {
+            if (m_currentNode->child1())
+                mergePrediction(m_currentNode->child1()->prediction());
+            break;
+        }
+
         case ExtractCatchLocal: {
             setPrediction(m_currentNode->catchLocalPrediction());
             break;

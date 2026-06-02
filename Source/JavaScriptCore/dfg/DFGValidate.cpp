@@ -258,6 +258,7 @@ public:
                 switch (node->op()) {
                 case Identity:
                 case IdentityWithProfile:
+                case DebugProbe:
                     VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
                     break;
                 case SetLocal:

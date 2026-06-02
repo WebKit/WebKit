@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <utility>
 #include <wtf/Expected.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -70,6 +73,14 @@ public:
 #if USE(JSVALUE64)
     static bool verifyCell(VM&, JSCell*);
 #endif
+
+    // Testing helpers for DFGFTL Integer Range Optimization JS tests.
+    JS_EXPORT_PRIVATE static void storeIROFactDump(const void* key, String);
+    JS_EXPORT_PRIVATE static String getIROFactDump(const void* key);
+    // Accumulates probe-pinned op eliminations across the pipeline's multiple
+    // IRO runs, so the final dump reflects removals done in any run.
+    JS_EXPORT_PRIVATE static void addIROProbeElimination(const void* key, ASCIILiteral op, const String& probeId);
+    JS_EXPORT_PRIVATE static Vector<std::pair<String, String>> iroProbeEliminations(const void* key);
 };
 
 } // namespace JSC

@@ -2174,7 +2174,8 @@ void SpeculativeJIT::compile(Node* node)
         compileLazyJSConstant(node);
         break;
 
-    case Identity: {
+    case Identity:
+    case DebugProbe: {
         compileIdentity(node);
         break;
     }

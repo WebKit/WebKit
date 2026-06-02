@@ -641,6 +641,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
     v(Bool, useRecursiveJSONParse, true, Normal, nullptr) \
+    v(Bool, useTestingHelpers, false, Restricted, "Helpers for writing unit tests, e.g. $vm.iroFactDump"_s) \
     v(Unsigned, thresholdForStringReplaceCache, 0x1000, Normal, nullptr) \
     v(Bool, useWasmIPInt, ipintEnabledByDefault(), Normal, "Use the in-place interpereter for WASM instead of LLInt."_s) \
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues"_s) \
