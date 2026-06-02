@@ -600,6 +600,10 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
 
+    auto cachePartition = RegistrableDomain::uncheckedCreateFromHost(loadParameters.request.cachePartition());
+    auto allowCachePartition = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, cachePartition);
+    MESSAGE_CHECK(allowCachePartition != NetworkProcess::AllowCookieAccess::Terminate);
+
 #if ENABLE(SANDBOX_EXTENSIONS)
     MESSAGE_CHECK(sandboxExtensionsInRequestAreSufficient(loadParameters));
 #endif
