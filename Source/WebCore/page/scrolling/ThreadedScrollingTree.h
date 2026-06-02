@@ -78,6 +78,7 @@ protected:
     void scrollingTreeNodeDidStopAnimatedScroll(ScrollingTreeScrollingNode&) override;
     void scrollingTreeNodeWillStartWheelEventScroll(ScrollingTreeScrollingNode&) override;
     void scrollingTreeNodeDidStopWheelEventScroll(ScrollingTreeScrollingNode&) override;
+    void scrollingTreeNodeDidStopProgrammaticScroll(ScrollingTreeScrollingNode&) override;
     bool scrollingTreeNodeRequestsScroll(ScrollingNodeID, const RequestedScrollData&) override WTF_REQUIRES_LOCK(m_treeLock);
     bool scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID, const RequestedKeyboardScrollData&) override WTF_REQUIRES_LOCK(m_treeLock);
 

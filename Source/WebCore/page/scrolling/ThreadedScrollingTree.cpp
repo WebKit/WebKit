@@ -306,6 +306,12 @@ void ThreadedScrollingTree::scrollingTreeNodeDidStopAnimatedScroll(ScrollingTree
     scrollingTreeNodeScrollUpdated(node, ScrollUpdateType::AnimatedScrollDidEnd);
 }
 
+// Required so instant programmatic scrolls (e.g. scrollIntoView({behavior:'instant'})) fire 'scrollend'.
+void ThreadedScrollingTree::scrollingTreeNodeDidStopProgrammaticScroll(ScrollingTreeScrollingNode& node)
+{
+    scrollingTreeNodeScrollUpdated(node, ScrollUpdateType::ProgrammaticScrollDidEnd);
+}
+
 void ThreadedScrollingTree::scrollingTreeNodeWillStartWheelEventScroll(ScrollingTreeScrollingNode& node)
 {
     scrollingTreeNodeScrollUpdated(node, ScrollUpdateType::WheelEventScrollWillStart);
