@@ -71,6 +71,10 @@ void WebPermissionControllerProxy::deref() const
 void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(identifier || (source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker), completionHandler(std::nullopt));
+<<<<<<< HEAD
+=======
+    auto webPageProxy = identifier ? m_process->webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
+>>>>>>> 19c426cf207c (Bad IPC from WebProcess could cause UIProcess to crash in WebPermissionControllerProxy::mostReasonableWebPageProxy())
 
     RefPtr webPageProxy = identifier ? RefPtr { m_process->webPage(identifier.value()) } : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);
     if (!webPageProxy) {
