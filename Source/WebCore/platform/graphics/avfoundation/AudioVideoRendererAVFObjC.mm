@@ -103,6 +103,7 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
     }))
 #endif
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
     __block ThreadSafeWeakPtr weakThis { *this };
@@ -125,6 +126,12 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
 
 AudioVideoRendererAVFObjC::~AudioVideoRendererAVFObjC()
 {
+    invalidate();
+}
+
+void AudioVideoRendererAVFObjC::invalidate()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (RefPtr rateChangeListener = std::exchange(m_effectiveRateChangedListener, { }))
         rateChangeListener->stop();
     cancelStartupGateObserver();
@@ -132,10 +139,14 @@ AudioVideoRendererAVFObjC::~AudioVideoRendererAVFObjC()
     cancelTimeReachedAction();
     cancelTimeObserver();
     cancelPerformTaskAtTimeObserverIfNeeded();
-    if (m_timeJumpedObserver)
+    if (m_timeJumpedObserver) {
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
-    if (m_videoFrameMetadataGatheringObserver)
+        m_timeJumpedObserver = nil;
+    }
+    if (m_videoFrameMetadataGatheringObserver) {
         [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
+        m_videoFrameMetadataGatheringObserver = nil;
+    }
 
     destroyVideoTrack();
     destroyAudioRenderers();

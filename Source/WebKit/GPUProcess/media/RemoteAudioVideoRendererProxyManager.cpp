@@ -89,10 +89,10 @@ void RemoteAudioVideoRendererProxyManager::publishAndSend(RemoteAudioVideoRender
     m_gpuConnectionToWebProcess.get()->connection().send(std::forward<Message>(message), identifier);
 }
 
-RefPtr<AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::createRenderer()
+RefPtr<AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::createRenderer(uint64_t logSiteIdentifier)
 {
 #if USE(AVFOUNDATION)
-    return AudioVideoRendererAVFObjC::create(Ref { m_gpuConnectionToWebProcess.get()->logger() }, LoggerHelper::uniqueLogIdentifier());
+    return AudioVideoRendererAVFObjC::create(Ref { m_gpuConnectionToWebProcess.get()->logger() }, logSiteIdentifier);
 #else
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -110,6 +110,17 @@ RemoteAudioVideoRendererProxyManager::RemoteAudioVideoRendererProxyManager(GPUCo
 }
 
 RemoteAudioVideoRendererProxyManager::~RemoteAudioVideoRendererProxyManager() = default;
+
+void RemoteAudioVideoRendererProxyManager::close()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    auto renderers = std::exchange(m_renderers, { });
+    for (auto& renderContext : renderers.values()) {
+        if (RefPtr renderer = renderContext.renderer)
+            renderer->invalidate();
+    }
+    m_videoFrameObjectHeap->close();
+}
 
 void RemoteAudioVideoRendererProxyManager::ref() const
 {
@@ -129,11 +140,11 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioVideoRendererProxyManag
     return std::nullopt;
 }
 
-void RemoteAudioVideoRendererProxyManager::create(RemoteAudioVideoRendererIdentifier identifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&& completionHandler)
+void RemoteAudioVideoRendererProxyManager::create(RemoteAudioVideoRendererIdentifier identifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, uint64_t logSiteIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&& completionHandler)
 {
     MESSAGE_CHECK(!m_renderers.contains(identifier));
 
-    RefPtr renderer = createRenderer();
+    RefPtr renderer = createRenderer(logSiteIdentifier);
     ASSERT(renderer);
     if (!renderer) {
         completionHandler(std::nullopt);

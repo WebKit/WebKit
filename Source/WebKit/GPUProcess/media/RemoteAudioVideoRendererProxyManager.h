@@ -71,6 +71,8 @@ public:
     RemoteAudioVideoRendererProxyManager(GPUConnectionToWebProcess&);
     ~RemoteAudioVideoRendererProxyManager();
 
+    void close();
+
     void ref() const final;
     void deref() const final;
 
@@ -86,7 +88,7 @@ public:
 
 private:
     // Messages
-    void create(RemoteAudioVideoRendererIdentifier, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&&);
+    void create(RemoteAudioVideoRendererIdentifier, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, uint64_t logSiteIdentifier,  CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&&);
     void shutdown(RemoteAudioVideoRendererIdentifier);
 
     void setPreferences(RemoteAudioVideoRendererIdentifier, WebCore::VideoRendererPreferences);
@@ -178,7 +180,7 @@ private:
         MonotonicTime nextPlaybackQualityMetricsUpdateTime { };
         bool isGatheringVideoFrameMetadata { false };
     };
-    RefPtr<WebCore::AudioVideoRenderer> createRenderer();
+    RefPtr<WebCore::AudioVideoRenderer> createRenderer(uint64_t logSiteIdentifier);
     RefPtr<WebCore::AudioVideoRenderer> rendererFor(RemoteAudioVideoRendererIdentifier) const;
     RemoteAudioVideoRendererState stateFor(RemoteAudioVideoRendererIdentifier) const;
     RendererContext& NODELETE contextFor(RemoteAudioVideoRendererIdentifier);

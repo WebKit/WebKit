@@ -192,6 +192,7 @@ public:
 class WEBCORE_EXPORT AudioVideoRenderer : public AudioInterface, public VideoInterface, public VideoFullscreenInterface, public SynchronizerInterface, public TracksRendererManager, public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
 public:
     virtual ~AudioVideoRenderer() = default;
+    virtual void invalidate() = 0;
 };
 
 }

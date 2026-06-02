@@ -105,7 +105,7 @@ AudioVideoRendererRemote::AudioVideoRendererRemote(LoggerHelper* loggerHelper, G
     connection.connection().addWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), queueSingleton(), m_receiver, m_identifier.toUInt64());
     connection.addClient(*this);
 
-    connection.connection().sendWithAsyncReply(Messages::RemoteAudioVideoRendererProxyManager::Create(identifier, mediaElementIdentifier, playerIdentifier), [weakThis = ThreadSafeWeakPtr { *this }](auto&& handle) {
+    connection.connection().sendWithAsyncReply(Messages::RemoteAudioVideoRendererProxyManager::Create(identifier, mediaElementIdentifier, playerIdentifier, m_logIdentifier), [weakThis = ThreadSafeWeakPtr { *this }](auto&& handle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -131,34 +131,40 @@ AudioVideoRendererRemote::AudioVideoRendererRemote(LoggerHelper* loggerHelper, G
     }, 0);
 }
 
-AudioVideoRendererRemote::~AudioVideoRendererRemote() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+AudioVideoRendererRemote::~AudioVideoRendererRemote()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    invalidate();
+}
+
+void AudioVideoRendererRemote::invalidate()
+{
+    ensureOnDispatcherSync([&] {
+        Locker locker { m_lock };
+        assertIsCurrent(queueSingleton());
 
 #if PLATFORM(COCOA)
-    m_videoLayerManager->didDestroyVideoLayer();
+        m_videoLayerManager->didDestroyVideoLayer();
 #endif
 
-    ensureOnDispatcher([prepareSeekRequest = WTF::move(m_prepareSeekRequest), prepareSeekPromise = WTF::move(m_prepareSeekPromise), finishSeekRequest = WTF::move(m_finishSeekRequest), finishSeekPromise = WTF::move(m_finishSeekPromise)]() mutable {
-        if (prepareSeekRequest->hasCallback())
-            prepareSeekRequest->disconnect();
-        if (auto promise = std::exchange(prepareSeekPromise, std::nullopt))
+        if (m_prepareSeekRequest->hasCallback())
+            protect(m_prepareSeekRequest)->disconnect();
+        if (auto promise = std::exchange(m_prepareSeekPromise, std::nullopt))
             promise->reject(PlatformMediaError::Cancelled);
-        if (finishSeekRequest->hasCallback())
-            finishSeekRequest->disconnect();
-        if (auto promise = std::exchange(finishSeekPromise, std::nullopt))
+
+        if (m_finishSeekRequest->hasCallback())
+            protect(m_finishSeekRequest)->disconnect();
+        if (auto promise = std::exchange(m_finishSeekPromise, std::nullopt))
             promise->reject();
+
+        if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && !m_shutdown) {
+            gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Shutdown(m_identifier), 0);
+            gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), m_identifier.toUInt64());
+        }
+
+        for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
+            request({ });
     });
-
-    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && !m_shutdown) {
-        ensureOnDispatcher([gpuProcessConnection, identifier = m_identifier] {
-            gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Shutdown(identifier), 0);
-            gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), identifier.toUInt64());
-        });
-    }
-
-    for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-        request({ });
 }
 
 void AudioVideoRendererRemote::setVolume(float volume)

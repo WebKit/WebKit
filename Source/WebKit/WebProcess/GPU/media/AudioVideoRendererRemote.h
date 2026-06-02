@@ -109,6 +109,8 @@ private:
 
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
+    void invalidate() final;
+    void invalidateSync();
     void setVolume(float) final;
     void setMuted(bool) final;
     void setPreservesPitchAndCorrectionAlgorithm(bool, std::optional<PitchCorrectionAlgorithm>) final;

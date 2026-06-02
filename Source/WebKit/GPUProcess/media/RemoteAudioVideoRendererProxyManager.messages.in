@@ -31,7 +31,7 @@
     DispatchedTo=GPU
 ]
 messages -> RemoteAudioVideoRendererProxyManager {
-    Create(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::MediaPlayerClientIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (std::optional<WebCore::SharedTimebaseHandle> handle)
+    Create(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::MediaPlayerClientIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, uint64_t logSiteIdentifier) -> (std::optional<WebCore::SharedTimebaseHandle> handle)
     Shutdown(WebKit::RemoteAudioVideoRendererIdentifier identifier)
 
     SetPreferences(WebKit::RemoteAudioVideoRendererIdentifier identifier, OptionSet<WebCore::VideoRendererPreference> preferences)

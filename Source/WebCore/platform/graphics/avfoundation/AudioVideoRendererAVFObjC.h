@@ -70,6 +70,8 @@ public:
     ~AudioVideoRendererAVFObjC();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
+    void invalidate() final;
+
     WEBCORE_EXPORT void setPreferences(VideoRendererPreferences) final;
     void setHasProtectedVideoContent(bool) final;
 
