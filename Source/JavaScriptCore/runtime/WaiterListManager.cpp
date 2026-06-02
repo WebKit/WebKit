@@ -63,7 +63,11 @@ Waiter::Waiter(VM* vm)
 
 Waiter::Waiter(JSPromise* promise)
     : m_vm(&promise->vm())
+<<<<<<< HEAD
     , m_globalObject(promise->realm())
+=======
+    , m_globalObject(promise->globalObject())
+>>>>>>> 3b7488ef5bc6 ([JSC] Data race in WaiterListManager::unregister)
     , m_ticket(m_vm->deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::AtSomePoint, *m_vm, promise, { }))
     , m_isAsync(true)
 {
@@ -414,7 +418,11 @@ void Waiter::dump(PrintStream& out) const
     out.print(", ticket=", RawPointer(ticket.get()));
     out.print(", globalObject=", RawPointer(m_globalObject));
     if (ticket && !ticket->isCancelled()) {
+<<<<<<< HEAD
         out.print(", m_ticket->target=", RawPointer(uncheckedDowncast<JSObject>(ticket->dependencies().last())));
+=======
+        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(ticket->dependencies().last())));
+>>>>>>> 3b7488ef5bc6 ([JSC] Data race in WaiterListManager::unregister)
         out.print(", m_ticket->scriptExecutionOwner=", RawPointer(ticket->scriptExecutionOwner()));
     }
 

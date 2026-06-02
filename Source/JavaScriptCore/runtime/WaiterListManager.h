@@ -108,8 +108,13 @@ public:
 private:
     VM* m_vm { nullptr };
     // Cached at construction to avoid a cross-VM race: unregister(JSGlobalObject*) runs on
+<<<<<<< HEAD
     // one VM's sweep thread; reading ticket->target()->realm() would race with another VM's
     // GC End phase freeing m_dependencies via cancelAndClear(). Written before the Waiter
+=======
+    // one VM's sweep thread; reading ticket->target()->globalObject() would race with another
+    // VM's GC End phase freeing m_dependencies via cancelAndClear(). Written before the Waiter
+>>>>>>> 3b7488ef5bc6 ([JSC] Data race in WaiterListManager::unregister)
     // is added to any list, so readers acquiring list->lock always see the completed write.
     JSGlobalObject* m_globalObject { nullptr };
     ThreadSafeWeakPtr<DeferredWorkTimer::TicketData> m_ticket { nullptr };
