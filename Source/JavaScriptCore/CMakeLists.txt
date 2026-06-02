@@ -412,8 +412,10 @@ set(LLIntSettingsExtractor_DEPENDENCIES
     JavaScriptCore_CopyHeaders
     JavaScriptCore_CopyPrivateHeaders
     WTF_CopyHeaders
-    bmalloc_CopyHeaders
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND LLIntSettingsExtractor_DEPENDENCIES bmalloc_CopyHeaders)
+endif ()
 WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
 
 # LLIntSettingsExtractor target needs to have a direct or indirect
@@ -439,8 +441,10 @@ set(LLIntOffsetsExtractor_DEPENDENCIES
     JavaScriptCore_CopyHeaders
     JavaScriptCore_CopyPrivateHeaders
     WTF_CopyHeaders
-    bmalloc_CopyHeaders
 )
+if (NOT USE_SYSTEM_MALLOC)
+    list(APPEND LLIntOffsetsExtractor_DEPENDENCIES bmalloc_CopyHeaders)
+endif ()
 WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
