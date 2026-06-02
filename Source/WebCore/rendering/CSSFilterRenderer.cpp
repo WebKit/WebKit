@@ -127,7 +127,25 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& 
     RefPtr contextElement = dynamicDowncast<SVGElement>(renderer.element());
 
     auto geometry = filter.geometry();
-    geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), filter.referenceBox());
+    auto cssBorderBox = geometry.referenceBox;
+    auto cssOverflowBoundsBox = geometry.objectBoundingBoxReferenceBox;
+
+    // Inner SVGFilterRenderer geometry stays in painting coords so it matches the outer
+    // CSSFilterRenderer's source image (which is painted in painting coords).
+    geometry.referenceBox = cssOverflowBoundsBox;
+
+    // For primitiveUnits=userSpaceOnUse, primitive x/y resolved by SVGLengthContext are in
+    // raw user space (origin 0,0). Translate them by the box origin so they match painting
+    // coords (where the inner filter operates).
+    geometry.primitiveUserSpaceOffset = cssBorderBox.location();
+
+    // Resolve filter x/y/w/h per filterUnits, producing a filterRegion in painting coords.
+    if (filterElement->filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), cssOverflowBoundsBox);
+    else {
+        geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), FloatRect({ }, cssBorderBox.size()));
+        geometry.filterRegion.moveBy(cssBorderBox.location());
+    }
     if (geometry.filterRegion.isEmpty())
         return nullptr;
 

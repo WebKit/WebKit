@@ -157,28 +157,32 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
     return CSSFilterRenderer::calculateOutsets(renderer, filter, targetBoundingBox);
 }
 
-GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, OptionSet<PaintBehavior> paintBehavior, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)
+GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, OptionSet<PaintBehavior> paintBehavior, const LayoutRect& filterBoxRect, const LayoutRect& objectBoundingBoxFilterRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)
 {
     auto preferredFilterRenderingModes = renderer.page().preferredFilterRenderingModes(context);
     auto outsets = calculateOutsets(renderer, filterBoxRect);
 
-    auto dirtyFilterRegion = dirtyRect;
+    LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " beginFilterEffect: filterBoxRect " << filterBoxRect
+        << " objectBoundingBoxFilterRect " << objectBoundingBoxFilterRect
+        << " dirtyRect " << dirtyRect << " layerRepaintRect " << layerRepaintRect
+        << " clipRect " << clipRect << " outsets " << outsets);
+
+    // FIXME: This isn't the "filter region" per spec; this is affeted by dirty rect.
     auto filterRegion = dirtyRect;
+
+    auto dirtyRectPlusOutsets = dirtyRect;
+    if (!outsets.isZero()) {
+        // FIXME: This flipping was added for drop-shadow, but it's not obvious that it's correct.
+        LayoutBoxExtent flippedOutsets { outsets.bottom(), outsets.left(), outsets.top(), outsets.right() };
+        dirtyRectPlusOutsets.expand(flippedOutsets);
+    }
 
     if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
         // In LBSE, the filter region will be recomputed in createReferenceFilter().
-        // FIXME: The LBSE filter geometry is not correct.
-        filterRegion = dirtyFilterRegion = enclosingLayoutRect(shape->objectBoundingBox());
+        // FIXME: The LBSE filter geometry is not correct. The dirty rect must not impact the filter region here.
+        filterRegion = enclosingLayoutRect(shape->objectBoundingBox());
     } else {
-        if (!outsets.isZero()) {
-            // FIXME: This flipping was added for drop-shadow, but it's not obvious that it's correct.
-            LayoutBoxExtent flippedOutsets { outsets.bottom(), outsets.left(), outsets.top(), outsets.right() };
-            dirtyFilterRegion.expand(flippedOutsets);
-        }
-
-        dirtyFilterRegion = intersection(filterBoxRect, dirtyFilterRegion);
-        filterRegion = dirtyFilterRegion;
-
+        filterRegion = intersection(objectBoundingBoxFilterRect, dirtyRectPlusOutsets);
         if (!outsets.isZero())
             filterRegion.expand(toLayoutBoxExtent(outsets));
     }
@@ -187,7 +191,9 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         return nullptr;
 
     auto geometryReferenceGeometryChanged = [](auto& existingGeometry, auto& newGeometry) {
-        return existingGeometry.referenceBox != newGeometry.referenceBox || existingGeometry.scale != newGeometry.scale;
+        return existingGeometry.referenceBox != newGeometry.referenceBox
+            || existingGeometry.objectBoundingBoxReferenceBox != newGeometry.objectBoundingBoxReferenceBox
+            || existingGeometry.scale != newGeometry.scale;
     };
 
     auto filterScale = m_filterScale;
@@ -196,9 +202,14 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     auto geometry = FilterGeometry {
         .referenceBox = filterBoxRect,
+        .objectBoundingBoxReferenceBox = objectBoundingBoxFilterRect,
         .filterRegion = filterRegion,
+        .primitiveUserSpaceOffset = { },
         .scale = filterScale,
     };
+
+    LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " beginFilterEffect: referenceBox " << geometry.referenceBox << " objectBoundingBoxReferenceBox " << geometry.objectBoundingBoxReferenceBox
+        << " filterRegion " << geometry.filterRegion << " scale " << geometry.scale);
 
     bool hasUpdatedBackingStore = false;
     if (!m_filter || geometryReferenceGeometryChanged(m_filter->geometry(), geometry) || m_preferredFilterRenderingModes != preferredFilterRenderingModes) {
@@ -239,7 +250,9 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         if (is<RenderSVGShape>(renderer))
             sourceImageRect = renderer.objectBoundingBox();
         else
-            sourceImageRect = dirtyFilterRegion;
+            sourceImageRect = filterRegion;
+        LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " beginFilterEffect: sourceImageRect " << sourceImageRect
+            << " m_repaintRect " << m_repaintRect << " filter->filterRegion " << filter->filterRegion());
         m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { WTF::move(filter) });
     }
 

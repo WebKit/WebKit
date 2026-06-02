@@ -147,9 +147,11 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
     auto sourceImageRect = FloatRect { { }, size };
 
     auto renderingOptions(protect(renderer->settings())->showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
-    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(*renderer), m_filter, {
+    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(*renderer), m_filter, FilterGeometry {
             .referenceBox = sourceImageRect,
+            .objectBoundingBoxReferenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
+            .primitiveUserSpaceOffset = { },
             .scale = { 1, 1 },
         }, preferredFilterRenderingModes, renderingOptions, NullGraphicsContext());
     if (!cssFilter)

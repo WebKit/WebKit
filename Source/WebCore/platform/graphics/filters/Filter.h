@@ -36,8 +36,18 @@ class FilterImage;
 class FilterResults;
 
 struct FilterGeometry {
+    // Reference box used to resolve SVG filter percentages when filterUnits=userSpaceOnUse:
+    // the filtered element's own bounding box (border box for HTML, objectBoundingBox for SVG).
     FloatRect referenceBox;
+    // Reference box used when filterUnits=objectBoundingBox: the union of the layer's painted
+    // bounds (matches Firefox). May equal referenceBox when no separate value was supplied.
+    FloatRect objectBoundingBoxReferenceBox;
     FloatRect filterRegion;
+    // Offset added to primitive x/y when primitiveUnits=userSpaceOnUse, so primitive
+    // coordinates land in the inner SVGFilterRenderer's coordinate system. Zero for SVG
+    // filters (rendering happens in user space). For CSS-referenced filters on HTML
+    // elements, this is the box origin in body coords.
+    FloatPoint primitiveUserSpaceOffset;
     FloatSize scale;
 };
 
@@ -68,6 +78,8 @@ public:
     void setFilterRegion(const FloatRect& filterRegion) { m_geometry.filterRegion = filterRegion; }
 
     FloatRect referenceBox() const { return m_geometry.referenceBox; }
+    FloatRect objectBoundingBoxReferenceBox() const { return m_geometry.objectBoundingBoxReferenceBox; }
+    FloatPoint primitiveUserSpaceOffset() const { return m_geometry.primitiveUserSpaceOffset; }
 
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }

@@ -39,7 +39,13 @@ bool SourceGraphicSoftwareApplier::apply(const Filter&, std::span<const Ref<Filt
     if (!resultImage || !sourceImage)
         return false;
 
-    resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
+    // The result buffer's origin is result.absoluteImageRect().location() in absolute
+    // coords; the source buffer's origin is input->absoluteImageRect().location().
+    // When the source extends beyond the result (e.g. CSS-referenced SVG filters where
+    // the source canvas is layer bounds but the result is clipped to filterRegion),
+    // we need to draw the source at this offset to keep pixels in the same coord system.
+    auto offset = input->absoluteImageRect().location() - result.absoluteImageRect().location();
+    resultImage->context().drawImageBuffer(*sourceImage, IntPoint(offset));
     return true;
 }
 

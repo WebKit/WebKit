@@ -3628,7 +3628,25 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
     LayoutRect filterRepaintRect = paintingFilters->dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
-    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
+    // For filterUnits="objectBoundingBox", compute the ink overflow bounds (i.e. the bounds of the element
+    // and its descendants), which is the layer bounds.
+    auto objectBoundingBoxReferenceBox = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
+
+    // The SVG filter reference box (per CSS Filter Effects) is the filtered element's own
+    // bounding box — border box for HTML, object bounding box for SVG. This is used when
+    // resolving SVG filter percentages with filterUnits="userSpaceOnUse".
+    auto rootRelativeBounds = objectBoundingBoxReferenceBox;
+    if (is<RenderBox>(renderer())) {
+        rootRelativeBounds = enclosingLayoutRect(renderer().referenceBoxRect(CSSBoxType::BorderBox));
+        rootRelativeBounds.move(offsetFromRoot);
+    }
+
+    LOG_WITH_STREAM(Filters, stream << "RenderLayer " << this << " setupFilters: objectBoundingBox " << renderer().objectBoundingBox()
+        << " offsetFromRoot " << offsetFromRoot
+        << " rootRelativeBounds " << rootRelativeBounds
+        << " objectBoundingBoxReferenceBox " << objectBoundingBoxReferenceBox
+        << " paintDirtyRect " << paintingInfo.paintDirtyRect
+        << " backgroundRect " << backgroundRect.rect());
 
     // When the filter is applied via a transparency layer directly on the destination context (e.g. CG drop-shadow),
     // the switcher doesn't consult applyFilters's clipToRect path, so the ancestor border-radius clip would be lost.
@@ -3640,7 +3658,7 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
         };
     }
 
-    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(renderer(), destinationContext, paintingInfo.paintBehavior, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect),
+    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(renderer(), destinationContext, paintingInfo.paintBehavior, enclosingIntRect(rootRelativeBounds), enclosingIntRect(objectBoundingBoxReferenceBox), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect),
         backgroundRect.rect(), applyAdditionalDestinationClip);
     if (!filterContext)
         return nullptr;
