@@ -28,7 +28,6 @@
 
 #include "MessagePort.h"
 #include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -46,59 +45,40 @@ MessagePortChannelProviderImpl::~MessagePortChannelProviderImpl()
 
 void MessagePortChannelProviderImpl::createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local, remote] {
-        if (CheckedPtr registry = weakRegistry.get())
-            registry->didCreateMessagePortChannel(local, remote);
-    });
+    ASSERT(isMainThread());
+    m_registry.didCreateMessagePortChannel(local, remote);
 }
 
 void MessagePortChannelProviderImpl::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local, remote] {
-        if (CheckedPtr registry = weakRegistry.get())
-            registry->didEntangleLocalToRemote(local, remote, Process::identifier());
-    });
+    ASSERT(isMainThread());
+    m_registry.didEntangleLocalToRemote(local, remote, Process::identifier());
 }
 
 void MessagePortChannelProviderImpl::messagePortDisentangled(const MessagePortIdentifier& local)
 {
-    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local] {
-        if (CheckedPtr registry = weakRegistry.get())
-            registry->didDisentangleMessagePort(local);
-    });
+    ASSERT(isMainThread());
+    m_registry.didDisentangleMessagePort(local);
 }
 
 void MessagePortChannelProviderImpl::messagePortClosed(const MessagePortIdentifier& local)
 {
-    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local] {
-        if (CheckedPtr registry = weakRegistry.get())
-            registry->didCloseMessagePort(local);
-    });
+    ASSERT(isMainThread());
+    m_registry.didCloseMessagePort(local);
 }
 
 void MessagePortChannelProviderImpl::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
-    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, message = WTF::move(message), remoteTarget]() mutable {
-        CheckedPtr registry = weakRegistry.get();
-        if (!registry)
-            return;
-        if (registry->didPostMessageToRemote(WTF::move(message), remoteTarget))
-            MessagePort::notifyMessageAvailable(remoteTarget);
-    });
+    ASSERT(isMainThread());
+    if (m_registry.didPostMessageToRemote(WTF::move(message), remoteTarget))
+        MessagePort::notifyMessageAvailable(remoteTarget);
 }
 
-void MessagePortChannelProviderImpl::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& outerCallback)
+void MessagePortChannelProviderImpl::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& callback)
 {
-    // It is the responsibility of outerCallback to get itself to the appropriate thread (e.g. WebWorker thread)
-    auto callback = [outerCallback = WTF::move(outerCallback)](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& messageDeliveryCallback) mutable {
-        ASSERT(isMainThread());
-        outerCallback(WTF::move(messages), WTF::move(messageDeliveryCallback));
-    };
-
-    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, port, callback = WTF::move(callback)]() mutable {
-        if (CheckedPtr registry = weakRegistry.get())
-            registry->takeAllMessagesForPort(port, WTF::move(callback));
-    });
+    ASSERT(isMainThread());
+    // It is the responsibility of callback to get itself to the appropriate thread (e.g. WebWorker thread)
+    m_registry.takeAllMessagesForPort(port, WTF::move(callback));
 }
 
 } // namespace WebCore

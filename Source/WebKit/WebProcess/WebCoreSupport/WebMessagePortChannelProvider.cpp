@@ -60,6 +60,7 @@ static inline IPC::Connection& networkProcessConnection()
 
 void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {
+    ASSERT(isMainRunLoop());
     ASSERT(!m_inProcessPortMessages.contains(port1));
     ASSERT(!m_inProcessPortMessages.contains(port2));
     m_inProcessPortMessages.add(port1, Vector<MessageWithMessagePorts> { });
@@ -70,6 +71,7 @@ void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePor
 
 void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
+    ASSERT(isMainRunLoop());
     m_inProcessPortMessages.add(local, Vector<MessageWithMessagePorts> { });
 
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
@@ -77,11 +79,13 @@ void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const
 
 void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& port)
 {
+    ASSERT(isMainRunLoop());
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::MessagePortIdentifier& port)
 {
+    ASSERT(isMainRunLoop());
     auto inProcessPortMessages = m_inProcessPortMessages.take(port);
     for (auto& message : inProcessPortMessages)
         postMessageToRemote(WTF::move(message), port);
@@ -89,17 +93,20 @@ void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::Messa
 
 void WebMessagePortChannelProvider::dropNonSerializableInProcessCache(WebCore::NonSerializedDataIdentifier identifier)
 {
+    ASSERT(isMainRunLoop());
     m_nonSerializedDataRegistry.remove(identifier);
 }
 
 void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& port)
 {
+    ASSERT(isMainRunLoop());
     m_inProcessPortMessages.remove(port);
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
 }
 
 void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
     protect(networkProcessConnection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::TakeAllMessagesForPort { port }, [completionHandler = WTF::move(completionHandler), port](Vector<WebCore::MessageWithMessagePorts>&& messages, std::optional<MessageBatchIdentifier> messageBatchIdentifier) mutable {
         if (!messageBatchIdentifier)
             return completionHandler({ }, [] { }); // IPC failure.
@@ -131,6 +138,7 @@ void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIden
 
 void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
+    ASSERT(isMainRunLoop());
     auto iterator = m_inProcessPortMessages.find(remoteTarget);
     if (iterator != m_inProcessPortMessages.end()) {
         iterator->value.append(WTF::move(message));
