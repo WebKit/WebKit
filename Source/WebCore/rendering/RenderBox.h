@@ -439,6 +439,7 @@ public:
     WEBCORE_EXPORT virtual int verticalScrollbarWidth() const;
     WEBCORE_EXPORT virtual int horizontalScrollbarHeight() const;
     int intrinsicScrollbarLogicalWidthIncludingGutter() const;
+    WEBCORE_EXPORT int effectiveScrollbarGutterWidth() const;
     inline int scrollbarLogicalWidth() const;
     inline int scrollbarLogicalHeight() const;
     virtual bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint());
@@ -635,6 +636,7 @@ public:
 
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;
+    bool shouldReserveVerticalScrollbarGutterSpace() const;
 
     void NODELETE invalidateAncestorBackgroundObscurationStatus();
 

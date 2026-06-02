@@ -51,8 +51,6 @@ namespace JSC {
     class AssemblerDataImpl;
 
     using AssemblerData = AssemblerDataImpl<AssemblerDataType::Code>;
-    using ThreadSpecificAssemblerData = ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True>;
-    JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerData();
 
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
     using AssemblerHashes = AssemblerDataImpl<AssemblerDataType::Hashes>;
@@ -123,12 +121,7 @@ namespace JSC {
             // from initialization
             poisonInlineBuffer();
 #endif
-            if constexpr (type == AssemblerDataType::Code)
-                takeBufferIfLarger(*threadSpecificAssemblerData());
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            if constexpr (type == AssemblerDataType::Hashes)
-                takeBufferIfLarger(*threadSpecificAssemblerHashes());
-#else
+#if !ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
             static_assert(type != AssemblerDataType::Hashes);
 #endif
         }
@@ -185,12 +178,7 @@ namespace JSC {
 
         ~AssemblerDataImpl()
         {
-            if constexpr (type == AssemblerDataType::Code)
-                threadSpecificAssemblerData()->takeBufferIfLarger(*this);
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            if constexpr (type == AssemblerDataType::Hashes)
-                threadSpecificAssemblerHashes()->takeBufferIfLarger(*this);
-#else
+#if !ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
             static_assert(type != AssemblerDataType::Hashes);
 #endif
             clear();

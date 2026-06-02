@@ -293,6 +293,28 @@ public:
         return region;
     }
 
+    // Removes overlaps. May clip to grid.
+    Rects rectsForPainting() const
+    {
+        if (m_rects.rects.size() <= 1 || m_mode != Mode::Rectangles)
+            return rects();
+
+        Rects rects;
+        for (int row = 0; row < m_rects.gridCells.height(); ++row) {
+            for (int col = 0; col < m_rects.gridCells.width(); ++col) {
+                const IntRect cellRect = { { m_rect.x() + col * m_rects.cellSize.width(), m_rect.y() + row * m_rects.cellSize.height() }, m_rects.cellSize };
+                IntRect minimumBoundingRectangleContaingOverlaps;
+                for (const auto& rect : m_rects.rects) {
+                    if (!rect.isEmpty())
+                        minimumBoundingRectangleContaingOverlaps.unite(intersection(cellRect, rect));
+                }
+                if (!minimumBoundingRectangleContaingOverlaps.isEmpty())
+                    rects.append(minimumBoundingRectangleContaingOverlaps);
+            }
+        }
+        return rects;
+    }
+
     // May return overlapping rects.
     ALWAYS_INLINE Rects rects() const
     {

@@ -162,6 +162,10 @@ void JITWorklist::requestTemporaryStop()
 
 CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
 {
+    if (ExecutableAllocator::singleton().underMemoryPressure()) [[unlikely]] {
+        dataLogLnIf(Options::verboseCompilationQueue(), "Plan deferred due to executable memory pressure ", plan->key());
+        return CompilationResult::CompilationInvalidated;
+    }
     if (!Options::useConcurrentJIT()) {
 #if USE(PROTECTED_JIT)
         // Must be constructed before we allocate anything using SequesteredArenaMalloc

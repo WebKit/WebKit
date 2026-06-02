@@ -4587,13 +4587,16 @@ int jscmain(int argc, char** argv)
     if (!gigacageDisableRequested)
         Gigacage::forbidDisablingPrimitiveGigacage();
 
-#if PLATFORM(COCOA)
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+#if PLATFORM(COCOA)
     {
         // FIXME: This is a false positive. rdar://160931336
         SUPPRESS_RETAINPTR_CTOR_ADOPT auto queue = adoptOSObject(dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL));
         memoryPressureHandler.setDispatchQueue(WTF::move(queue));
     }
+#else
+    memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
+#endif
     Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);
     Box<Synchronous> memoryPressureSynchronousState = Box<Synchronous>::create(Synchronous::No);
     memoryPressureHandler.setLowMemoryHandler([=] (Critical critical, Synchronous synchronous) {
@@ -4606,6 +4609,7 @@ int jscmain(int argc, char** argv)
     memoryPressureHandler.setShouldLogMemoryMemoryPressureEvents(false);
     memoryPressureHandler.install();
 
+#if PLATFORM(COCOA)
     auto onEachMicrotaskTick = [&] (VM& vm) {
         if (*memoryPressureCriticalState == Critical::No)
             return;

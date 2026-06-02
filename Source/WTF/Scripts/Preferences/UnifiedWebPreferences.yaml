@@ -1695,7 +1695,7 @@ CanvasUsesAcceleratedDrawing:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
 
@@ -2903,7 +2903,7 @@ ExposeSpeakersEnabled:
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || USE(GSTREAMER)": true
       default: false
     WebCore:
       default: false
@@ -2917,7 +2917,7 @@ ExposeSpeakersWithoutMicrophoneEnabled:
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || USE(GSTREAMER)": true
       default: false
     WebCore:
       default: false
@@ -3841,7 +3841,7 @@ ImageCaptureEnabled:
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || USE(GSTREAMER)": true
       default: false
     WebCore:
       "PLATFORM(COCOA)": true
@@ -6513,12 +6513,12 @@ PropagateDamagingInformation:
    condition: ENABLE(DAMAGE_TRACKING)
    defaultValue:
      WebKitLegacy:
-       default: false
+       default: true
      WebKit:
        "PLATFORM(GTK)": true
-       default: false
+       default: true
      WebCore:
-       default: false
+       default: true
 
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
@@ -7894,8 +7894,10 @@ SpeakerSelectionRequiresUserGesture:
     WebKitLegacy:
       default: true
     WebKit:
+      "USE(GSTREAMER) && PLATFORM(WPE)": false
       default: true
     WebCore:
+      "USE(GSTREAMER) && PLATFORM(WPE)": false
       default: true
 
 SpeculationRulesPrefetchEnabled:
@@ -8738,11 +8740,11 @@ UseDamagingInformationForCompositing:
   condition: ENABLE(DAMAGE_TRACKING)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 UseGPUProcessForCanvasRenderingEnabled:
   type: bool

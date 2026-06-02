@@ -734,6 +734,19 @@ FloatRect LineLayout::applySVGTextFragments(SVGTextFragmentMap&& fragmentMap)
     return fullBoundaries;
 }
 
+bool LineLayout::preventsSkippingLayout() const
+{
+    // Line layout does not have enough information to tell if layout can be skipped but
+    // it has enough information to tell that it definitely cannot be skipped.
+
+    if (!m_inlineContent)
+        return true;
+
+    return m_inlineContent->displayContent().lines.size() != 1
+        || m_inlineContent->displayContent().boxes.size() != 2
+        || m_inlineContent->displayContent().boxes[0].isText() == m_inlineContent->displayContent().boxes[1].isText();
+}
+
 void LineLayout::preparePlacedFloats()
 {
     auto& placedFloats = m_blockFormattingState.placedFloats();
@@ -1481,6 +1494,23 @@ bool LineLayout::updateTextContent(const RenderText& textRenderer, std::optional
 
     int delta = inlineTextBox->content().length() - oldLength;
     return delta >= 0 ? invalidation.textInserted(inlineTextBox, offset) : invalidation.textWillBeRemoved(inlineTextBox, offset);
+}
+
+bool LineLayout::propagateInplaceTextContentChange(const RenderText& textRenderer)
+{
+    if (!m_inlineContent)
+        return false;
+
+    const CheckedPtr inlineTextBox = textRenderer.layoutBox();
+    auto box = std::find_if(m_inlineContent->displayContent().boxes.begin(), m_inlineContent->displayContent().boxes.end(), [&inlineTextBox](const auto& box) {
+        return &box.layoutBox() == inlineTextBox;
+    });
+    if (box == m_inlineContent->displayContent().boxes.end())
+        return false;
+    box->setText(InlineDisplay::Box::Text { 0, textRenderer.text().length(), textRenderer.text() });
+    box->removeFromGlyphDisplayListCache();
+
+    return true;
 }
 
 void LineLayout::releaseCaches(RenderView& view)

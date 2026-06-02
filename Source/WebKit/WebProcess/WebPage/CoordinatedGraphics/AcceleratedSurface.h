@@ -126,9 +126,11 @@ public:
     SkCanvas* canvas();
 
     void willDestroyGLContext();
+    void didCreateGLContext();
     void willRenderFrame(const WebCore::IntSize&);
     void didRenderFrame();
     void sendFrame();
+    void doClear(float, float, float, float);
     void clear(const OptionSet<WebCore::CompositionReason>&);
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -401,6 +403,8 @@ private:
 #endif
     };
 
+    static void checkClearShader();
+
     const WeakRef<WebPage> m_webPage;
     Function<void()> m_frameCompleteHandler;
     bool m_useSkia { false };
@@ -421,6 +425,14 @@ private:
     std::optional<WebCore::Damage> m_frameDamage;
     unsigned m_frameDamageRectangleThreshold { 4 };
 #endif
+
+    guint m_clearProgram;
+    guint m_clearColorUniformLocation;
+    guint m_vertexShader;
+    guint m_fragmentShader;
+    guint m_vao;
+    guint m_vbo;
+    static bool m_force_shader_clear;
 };
 
 } // namespace WebKit

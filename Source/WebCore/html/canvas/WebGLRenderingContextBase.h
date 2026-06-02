@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "Damage.h"
 #include "EventLoop.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
@@ -493,6 +494,9 @@ public:
 
     bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
     void prepareForDisplay() final;
+
+    void clearAccumulatedDirtyRect() final;
+
 protected:
     WebGLRenderingContextBase(CanvasBase&, CanvasRenderingContext::Type, WebGLContextAttributes&&);
 
@@ -1058,6 +1062,8 @@ private:
 
     bool m_isSuspended { false };
     bool m_packReverseRowOrderSupported { false };
+    std::optional<IntRect> m_latestScissor;
+    std::optional<Damage> m_damage;
 };
 
 template<typename T>

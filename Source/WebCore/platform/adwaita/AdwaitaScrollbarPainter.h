@@ -36,14 +36,16 @@ class GraphicsContext;
 
 namespace AdwaitaScrollbarPainter {
 
-static const unsigned scrollbarSize = 21;
-static const unsigned scrollbarBorderSize = 1;
-static const unsigned thumbBorderSize = 1;
+// Scrollbar style values adjusted per UX requirements.
+// https://github.com/philips-internal/synergy-project-external-partners/issues/441#issuecomment-3989163579
+static const unsigned scrollbarSize = 16;
+static const unsigned scrollbarBorderSize = 0;
+static const unsigned thumbBorderSize = 0;
 static const unsigned overlayThumbSize = 3;
 static const unsigned minimumThumbSize = 40;
-static const unsigned horizThumbMargin = 6;
+static const unsigned horizThumbMargin = 4;
 static const unsigned horizOverlayThumbMargin = 3;
-static const unsigned vertThumbMargin = 7;
+static const unsigned vertThumbMargin = 4;
 
 static constexpr auto scrollbarBackgroundColorLight = Color::white;
 static constexpr auto scrollbarBorderColorLight = Color::black.colorWithAlphaByte(38);

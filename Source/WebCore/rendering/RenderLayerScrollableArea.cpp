@@ -1007,6 +1007,27 @@ int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeReleva
     return vBar->width();
 }
 
+// Computes the width of the vertical scrollbar gutter.
+// If the current overflow state is 'hidden', the vertical scrollbar may not exist,
+// resulting in a width of 0. In that case, this function temporarily creates a vertical
+// scrollbar to measure its width and stores the result in m_gutterWidth.
+// As a fallback, if no measurement is available, returns the platform theme's
+// scrollbar thickness. Note: the fallback may not cover all cases, such as
+// certain custom scrollbars or platform-native variations.
+int RenderLayerScrollableArea::computeVerticalScrollbarGutterWidth()
+{
+    if (!m_gutterWidth) {
+        if (RefPtr<Scrollbar> tempVBar = createScrollbar(ScrollbarOrientation::Vertical)) {
+            m_gutterWidth = tempVBar->width();
+            if (!tempVBar->isCustomScrollbar())
+                willRemoveScrollbar(*tempVBar, ScrollbarOrientation::Vertical);
+            tempVBar->removeFromParent();
+            tempVBar = nullptr;
+        }
+    }
+    return (m_gutterWidth ? m_gutterWidth : ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle()));
+}
+
 int RenderLayerScrollableArea::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy, bool isHorizontalWritingMode) const
 {
     RefPtr hBar = m_hBar;

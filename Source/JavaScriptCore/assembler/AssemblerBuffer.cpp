@@ -30,35 +30,4 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AssemblerData);
 
-#if ENABLE(ASSEMBLER)
-
-static ThreadSpecificAssemblerData* threadSpecificAssemblerDataPtr;
-
-ThreadSpecificAssemblerData& threadSpecificAssemblerData()
-{
-    static std::once_flag flag;
-    std::call_once(
-        flag,
-        [] () {
-            threadSpecificAssemblerDataPtr = new ThreadSpecificAssemblerData();
-        });
-    return *threadSpecificAssemblerDataPtr;
-}
-
-#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-static ThreadSpecificAssemblerHashes* threadSpecificAssemblerHashesPtr;
-ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes()
-{
-    static std::once_flag flag;
-    std::call_once(
-        flag,
-        [] () {
-            threadSpecificAssemblerHashesPtr = new ThreadSpecificAssemblerHashes();
-        });
-    return *threadSpecificAssemblerHashesPtr;
-}
-#endif // ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-
-#endif // ENABLE(ASSEMBLER)
-
 } // namespace JSC

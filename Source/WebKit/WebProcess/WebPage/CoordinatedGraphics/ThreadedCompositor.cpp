@@ -130,6 +130,7 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
             m_textureMapper = TextureMapper::create();
             if (!nativeSurfaceHandle)
                 m_flipY = !m_flipY;
+            m_surface->didCreateGLContext();
         }
     });
 }

@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL)
 
 #include <WebCore/ANGLEUtilities.h>
+#include <WebCore/Damage.h>
 #include <WebCore/GCGLSpan.h>
 #include <WebCore/GraphicsContextGL.h>
 #include <WebCore/GraphicsContextGLState.h>
@@ -344,6 +345,8 @@ public:
 
     RefPtr<NativeImage> copyNativeImageYFlipped(SurfaceBuffer) override;
 
+    void setDamage(Damage&&) final;
+
     // Returns the span of valid data read on success.
     bool getBufferSubDataWithStatus(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data);
 
@@ -455,6 +458,10 @@ protected:
     HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglImages;
     HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglSyncs;
     IntSize m_maxInternalFramebufferSize;
+
+    bool m_useBlitFallback { false };
+    std::optional<Damage> m_damage;
+    std::optional<Damage> m_previousDamage;
 };
 
 

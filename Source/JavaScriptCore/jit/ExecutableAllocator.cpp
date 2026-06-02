@@ -1158,7 +1158,7 @@ bool ExecutableAllocator::underMemoryPressure()
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::underMemoryPressure();
-    return allocator->bytesAllocated() > allocator->bytesReserved() / 2;
+    return allocator->bytesAllocated() > allocator->bytesReserved() * 9 / 10;
 }
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)

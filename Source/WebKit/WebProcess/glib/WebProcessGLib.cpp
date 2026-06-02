@@ -209,8 +209,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
     IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-    if (enableCPURendering && strcmp(enableCPURendering, "0"))
+    if (!enableCPURendering || strcmp(enableCPURendering, "0"))
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
+    else
+        ProcessCapabilities::setCanUseAcceleratedBuffers(true);
     IGNORE_CLANG_WARNINGS_END
 
 #if ENABLE(MEDIA_STREAM)

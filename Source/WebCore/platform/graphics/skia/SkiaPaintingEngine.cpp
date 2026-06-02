@@ -410,13 +410,13 @@ bool SkiaPaintingEngine::shouldUseLinearTileTextures()
 bool SkiaPaintingEngine::shouldUseVivanteSuperTiledTileTextures()
 {
     static std::once_flag onceFlag;
-    static bool shouldUseVivanteSuperTiledTextures = false;
+    static bool shouldUseVivanteSuperTiledTextures = true;
 
     std::call_once(onceFlag, [] {
         if (const char* envString = getenv("WEBKIT_SKIA_USE_VIVANTE_SUPER_TILED_TILE_TEXTURES")) {
             auto envStringView = StringView::fromLatin1(envString);
-            if (envStringView == "1"_s)
-                shouldUseVivanteSuperTiledTextures = true;
+            if (envStringView == "0"_s)
+                shouldUseVivanteSuperTiledTextures = false;
         }
     });
 

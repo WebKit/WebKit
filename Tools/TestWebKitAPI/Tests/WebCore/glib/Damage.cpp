@@ -601,6 +601,71 @@ TEST(Damage, Unite)
     EXPECT_EQ(damage.rectsForTesting().size(), 1);
 }
 
+TEST(Damage, RectsForPainting)
+{
+    // The function should return the original rect when theres only a single one.
+    Damage damage(IntSize { 512, 512 });
+    damage.add(IntRect { 250, 250, 12, 12 });
+    ASSERT_EQ(damage.rectsForPainting().size(), 1);
+    EXPECT_EQ(damage.rectsForPainting()[0], IntRect(250, 250, 12, 12));
+
+    // The function should remove overlaps.
+    damage = Damage(IntSize { 512, 512 });
+    damage.add(IntRect { 0, 0, 100, 100 });
+    damage.add(IntRect { 50, 50, 100, 100 });
+    ASSERT_EQ(damage.rectsForPainting().size(), 1);
+    EXPECT_EQ(damage.rectsForPainting()[0], IntRect(0, 0, 150, 150));
+
+    // The function should clip the rects.
+    damage = Damage(IntSize { 512, 512 });
+    damage.add(IntRect { -2, -2, 10, 10 });
+    damage.add(IntRect { 504, 504, 10, 10 });
+    ASSERT_EQ(damage.rectsForPainting().size(), 2);
+    EXPECT_EQ(damage.rectsForPainting()[0], IntRect(0, 0, 8, 8));
+    EXPECT_EQ(damage.rectsForPainting()[1], IntRect(504, 504, 8, 8));
+
+    // The function should preserve the layout of cells when unification is enabled.
+    damage = Damage(IntSize { 512, 512 });
+    damage.add(IntRect { 0, 0, 10, 10 });
+    damage.add(IntRect { 10, 10, 10, 10 });
+    damage.add(IntRect { 0, 256, 10, 10 });
+    damage.add(IntRect { 256, 0, 10, 10 });
+    damage.add(IntRect { 256, 256, 10, 10 });
+    EXPECT_EQ(damage.rects().size(), 4);
+    EXPECT_EQ(damage.rects(), damage.rectsForPainting());
+
+    // The function should preserve the layout of cells when unification is enabled
+    // and the grid does not start at { 0, 0 }.
+    damage = Damage(IntRect { 256, 256, 512, 512 });
+    damage.add(IntRect { 256, 256, 10, 10 });
+    damage.add(IntRect { 256+10, 256+10, 10, 10 });
+    damage.add(IntRect { 256, 256+256, 10, 10 });
+    damage.add(IntRect { 256+256, 256, 10, 10 });
+    damage.add(IntRect { 256+256, 256+256, 10, 10 });
+    EXPECT_EQ(damage.rects().size(), 4);
+    EXPECT_EQ(damage.rects(), damage.rectsForPainting());
+
+    // The function should split a rect spanning multiple cells.
+    damage = Damage(IntSize { 512, 512 });
+    damage.add(IntRect { 250, 250, 12, 12 });
+    damage.add(IntRect { 249, 249, 1, 1 });
+    ASSERT_EQ(damage.rectsForPainting().size(), 4);
+    EXPECT_EQ(damage.rectsForPainting()[0], IntRect(249, 249, 7, 7));
+    EXPECT_EQ(damage.rectsForPainting()[1], IntRect(256, 250, 6, 6));
+    EXPECT_EQ(damage.rectsForPainting()[2], IntRect(250, 256, 6, 6));
+    EXPECT_EQ(damage.rectsForPainting()[3], IntRect(256, 256, 6, 6));
+
+    // The function should just return original rects when mode != Mode::Rectangles.
+    damage = Damage(IntRect { 1024, 512, 512, 512 }, Damage::Mode::BoundingBox);
+    damage.add(IntRect { 1278, 678, 9, 341 });
+    damage.add(IntRect { 1285, 678, 5, 341 });
+    damage.add(IntRect { 1279, 678, 9, 341 });
+    damage.add(IntRect { 1286, 678, 5, 341 });
+    EXPECT_EQ(damage.rects(), damage.rectsForPainting());
+    damage = Damage(IntRect { 1024, 512, 512, 512 }, Damage::Mode::Full);
+    EXPECT_EQ(damage.rects(), damage.rectsForPainting());
+}
+
 TEST(Damage, MaxRectangles)
 {
     Damage damage(IntSize { 512, 512 }, Damage::Mode::Rectangles, 2);

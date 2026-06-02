@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="../resources/runner.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<style>
+  html, body { height: 100%; }
+
+  #gridContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+  }
+
+  .gridItemContainStrict {
+      display: block;
+      width: 10px;
+      height: 10px;
+      background-color: #0F0;
+      contain: strict;
+      font-size: 6px;
+  }
+
+  .gridItemContainNone {
+      display: block;
+      width: 10px;
+      height: 10px;
+      background-color: #00F;
+      font-size: 6px;
+  }
+</style>
+
+</head>
+
+<body>
+    <pre id="log"></pre>
+
+    <div id="gridContainer">
+    </div>
+
+    <script>
+      var gridContainer = document.getElementById('gridContainer');
+
+      function makeid(length) {
+          let result = '';
+          const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          const charactersLength = characters.length;
+          let counter = 0;
+          while (counter < length) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+              counter += 1;
+          }
+          return result;
+      }
+
+      function createDivElement(className, htmlContent) {
+          let newElement = document.createElement('div');
+          newElement.className = className;
+          newElement.innerHTML = htmlContent;
+          return newElement;
+      }
+
+      function setup() {
+          gridContainer.appendChild(createDivElement("gridItemContainStrict", '<span class="text">qwertyui</span>'));
+          for (let i = 0; i < 5000; ++i) {
+              gridContainer.appendChild(createDivElement("gridItemContainNone", '<span>z</span>'));
+          }
+          gridContainer.appendChild(createDivElement("gridItemContainStrict", '<span class="text">asdfghjk</span>'));
+          for (let i = 0; i < 5000; ++i) {
+              gridContainer.appendChild(createDivElement("gridItemContainNone", '<span>z</span>'));
+          }
+          gridContainer.appendChild(createDivElement("gridItemContainStrict", '<span class="text">zxcvbnm,</span>'));
+      }
+
+      function test() {
+          for (element of document.getElementsByClassName("text")) {
+              element.innerText = makeid(8);
+          }
+          gridContainer.offsetHeight; // Force layout.
+      }
+
+      function done() {
+      }
+
+      setup();
+      PerfTestRunner.measureRunsPerSecond({
+          description: "Measures performance of getting offsetHeight of a large grid container.",
+          run: test,
+          done: done
+      });
+    </script>
+</body>
+
+</html>
