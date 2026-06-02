@@ -45,6 +45,8 @@ String URLDecomposition::protocol() const
 void URLDecomposition::setProtocol(StringView value)
 {
     URL copy = fullURL();
+    if (!copy.isValid())
+        return;
     copy.setProtocol(value);
     setFullURL(copy);
 }

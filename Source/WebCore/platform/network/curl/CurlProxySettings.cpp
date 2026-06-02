@@ -46,8 +46,8 @@ CurlProxySettings::CurlProxySettings(URL&& proxyUrl, String&& ignoreHosts)
     , m_url(WTF::move(proxyUrl))
     , m_ignoreHosts(WTF::move(ignoreHosts))
 {
-    if (m_url.protocol().isEmpty())
-        m_url.setProtocol("http"_s);
+    if (!m_url.isValid())
+        m_url = URL { makeString("http:"_s, m_url.string()) };
 
     rebuildUrl();
 }

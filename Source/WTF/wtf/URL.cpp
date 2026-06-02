@@ -419,15 +419,12 @@ StringView URL::path() const LIFETIME_BOUND
 
 bool URL::setProtocol(StringView newProtocol)
 {
+    ASSERT(m_isValid);
+
     auto newProtocolPrefix = newProtocol.left(newProtocol.find(':'));
     auto newProtocolCanonicalized = URLParser::maybeCanonicalizeScheme(newProtocolPrefix);
     if (!newProtocolCanonicalized)
         return false;
-
-    if (!m_isValid) {
-        parse(makeString(*newProtocolCanonicalized, ':', m_string));
-        return true;
-    }
 
     if (URLParser::isSpecialScheme(this->protocol()) != URLParser::isSpecialScheme(*newProtocolCanonicalized))
         return true;
