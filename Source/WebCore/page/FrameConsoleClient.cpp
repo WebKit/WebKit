@@ -182,8 +182,19 @@ void FrameConsoleClient::addMessage(MessageSource source, MessageLevel level, co
     String url;
     unsigned line = 0;
     unsigned column = 0;
-    if (document)
+    if (document) {
         document->getParserLocation(url, line, column);
+        if (url.isEmpty()) {
+            if (auto codePosition = document->codePosition()) {
+                url = codePosition->sourceURL;
+                line = codePosition->line.oneBasedInt();
+                column = codePosition->column.oneBasedInt();
+            } else if (source == MessageSource::Security) {
+                url = document->url().string();
+                line = 1;
+            }
+        }
+    }
 
     addMessage(source, level, message, url, line, column, nullptr, JSExecState::currentState(), requestIdentifier);
 }

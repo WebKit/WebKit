@@ -9,6 +9,8 @@ function loadResourceFetch(path) {
 }
 
 function loadResourceDOM(path) {
-    let img = document.body.appendChild(document.createElement("img"));
-    img.src = path + "?" + Math.random();
+    let style = document.createElement("link");
+    style.rel = "stylesheet";
+    style.href = path + "?" + Math.random();
+    document.head.appendChild(style);
 }

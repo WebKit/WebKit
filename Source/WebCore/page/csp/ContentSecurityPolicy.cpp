@@ -652,9 +652,9 @@ bool ContentSecurityPolicy::allowResourceFromSource(const URL& url, std::optiona
         return true;
     String sourceURL;
     const auto& blockedURL = !preRedirectURL.isNull() ? preRedirectURL : url;
-    auto handleViolatedDirective = [checkedThis = CheckedRef { *this }, &sourceURL, &blockedURL, sourcePosition = WTF::move(sourcePosition), &url](const ContentSecurityPolicyDirective& violatedDirective) mutable {
+    auto handleViolatedDirective = [checkedThis = CheckedRef { *this }, &sourceURL, &blockedURL, sourcePosition = WTF::move(sourcePosition), &url, &preRedirectURL](const ContentSecurityPolicyDirective& violatedDirective) mutable {
         String consoleMessage = consoleMessageForViolation(violatedDirective, url, "Refused to load"_s);
-        checkedThis->reportViolation(violatedDirective, blockedURL.string(), consoleMessage, sourceURL, StringView(), WTF::move(sourcePosition));
+        checkedThis->reportViolation(violatedDirective, blockedURL.string(), consoleMessage, sourceURL, StringView(), WTF::move(sourcePosition), preRedirectURL, JSExecState::currentState());
     };
     return allPoliciesAllow(handleViolatedDirective, resourcePredicate, url, redirectResponseReceived == RedirectResponseReceived::Yes);
 }
@@ -880,7 +880,7 @@ String ContentSecurityPolicy::createURLForReporting(const URL& url, const String
     return SecurityOrigin::create(url)->toString();
 }
 
-std::optional<CodePosition> ContentSecurityPolicy::getCurrentCodePosition()
+std::optional<CodePosition> ContentSecurityPolicy::currentCodePosition()
 {
     auto stack = createScriptCallStack(JSExecState::currentState(), 2);
     if (auto* callFrame = stack->firstNonNativeCallFrame()) {
@@ -949,12 +949,57 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
         info.documentURI = shouldReportProtocolOnly(document->url()) ? document->url().protocol().toString() : document->url().strippedForUseAsReferrer().string;
 
-        auto stack = createScriptCallStack(JSExecState::currentState(), 2);
-        auto* callFrame = stack->firstNonNativeCallFrame();
-        if (callFrame && callFrame->lineNumber()) {
-            info.sourceFile = createURLForReporting(URL { callFrame->preRedirectURL().isEmpty() ? callFrame->sourceURL() : callFrame->preRedirectURL() }, effectiveViolatedDirective, usesReportTo);
-            info.lineNumber = callFrame->lineNumber();
-            info.columnNumber = callFrame->columnNumber();
+        std::optional<CodePosition> javaScriptCodePosition = currentCodePosition();
+        std::optional<CodePosition> parserCodePosition;
+
+        String parserURL;
+        unsigned parserLine = 0;
+        unsigned parserColumn = 0;
+        document->getParserLocation(parserURL, parserLine, parserColumn);
+        if (!parserURL.isEmpty()) {
+            parserCodePosition = CodePosition {
+                parserURL,
+                OrdinalNumber::fromOneBasedInt(parserLine),
+                OrdinalNumber::fromOneBasedInt(parserColumn)
+            };
+        }
+
+        auto documentCodePosition = [&] () -> std::optional<CodePosition> {
+            auto codePosition = document->codePosition();
+            if (!codePosition)
+                return std::nullopt;
+            bool positionMatchesParserLocation = parserCodePosition
+                && codePosition->sourceURL == parserCodePosition->sourceURL
+                && codePosition->line == parserCodePosition->line
+                && codePosition->column == parserCodePosition->column;
+            if (positionMatchesParserLocation)
+                return std::nullopt;
+            if (codePosition->line == OrdinalNumber::beforeFirst())
+                return std::nullopt;
+            return codePosition;
+        };
+
+        std::optional<CodePosition> position;
+        if (usesReportTo) {
+            if (state) {
+                if (sourcePosition.m_line != OrdinalNumber::beforeFirst())
+                    position = CodePosition { document->url().string(), sourcePosition.m_line, sourcePosition.m_column };
+                else if (javaScriptCodePosition)
+                    position = javaScriptCodePosition;
+                else
+                    position = documentCodePosition();
+            }
+        } else {
+            if (javaScriptCodePosition)
+                position = javaScriptCodePosition;
+            else
+                position = documentCodePosition();
+        }
+
+        if (position) {
+            info.sourceFile = createURLForReporting(URL { position->sourceURL }, effectiveViolatedDirective, usesReportTo);
+            info.lineNumber = position->line.oneBasedInt();
+            info.columnNumber = usesReportTo ? 0 : position->column.oneBasedInt();
         }
     }
     ASSERT(m_client || is<Document>(m_scriptExecutionContext.get()));
