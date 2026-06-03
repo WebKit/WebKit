@@ -1,0 +1,16 @@
+
+PASS e.style['corner'] = "auto" should not set the property value
+PASS e.style['corner'] = "none" should not set the property value
+PASS e.style['corner'] = "scoop" should not set the property value
+PASS e.style['corner'] = "3% normal" should not set the property value
+PASS e.style['corner'] = "round round round round round" should not set the property value
+PASS e.style['corner'] = "-1px" should not set the property value
+PASS e.style['corner'] = "10px" should not set the property value
+PASS e.style['corner'] = "4px 12px" should not set the property value
+PASS e.style['corner'] = "4px 12px / normal" should not set the property value
+PASS e.style['corner'] = "4px 2% 1em 4% 2px" should not set the property value
+PASS e.style['corner'] = "4px / 2px 4% 1em 2% 2px" should not set the property value
+PASS e.style['corner'] = "4px / angle" should not set the property value
+PASS e.style['corner'] = "angle / 4px" should not set the property value
+PASS e.style['corner'] = "4px angle 2% round" should not set the property value
+

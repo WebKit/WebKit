@@ -1,0 +1,40 @@
+
+FAIL Property corner-top-left-shape value 'round' assert_equals: expected "superellipse(1)" but got "round"
+FAIL Property corner-top-left-shape value 'scoop' assert_equals: expected "superellipse(-1)" but got "scoop"
+PASS Property corner-top-left-shape value 'superellipse(5)'
+PASS Property corner-top-left-shape value 'superellipse(0.2)'
+FAIL Property corner-top-left-shape value 'superellipse(-infinity)' assert_true: 'superellipse(-infinity)' is a supported value for corner-top-left-shape. expected true got false
+FAIL Property corner-top-left-shape value 'superellipse(infinity)' assert_equals: expected "superellipse(infinity)" but got "straight"
+FAIL Property corner-top-left-shape value 'superellipse(1)' assert_equals: expected "superellipse(1)" but got "bevel"
+FAIL Property corner-top-left-shape value 'superellipse(0)' assert_equals: expected "superellipse(0)" but got "notch"
+FAIL Property corner-top-left-shape value 'superellipse(2)' assert_equals: expected "superellipse(2)" but got "round"
+FAIL Property corner-top-left-shape value 'superellipse( -1)' assert_true: 'superellipse( -1)' is a supported value for corner-top-left-shape. expected true got false
+FAIL Property corner-top-right-shape value 'round' assert_equals: expected "superellipse(1)" but got "round"
+PASS Property corner-top-right-shape value 'superellipse(5)'
+FAIL Property corner-bottom-right-shape value 'scoop' assert_equals: expected "superellipse(-1)" but got "scoop"
+PASS Property corner-bottom-left-shape value 'superellipse(5)'
+FAIL Property corner-shape value 'superellipse(5) round' assert_equals: expected "superellipse(5) superellipse(1)" but got "superellipse(5) round"
+FAIL Property corner-shape value 'round' assert_equals: expected "superellipse(1)" but got "round"
+FAIL Property corner-shape value 'bevel superellipse(0.1) round squircle' assert_equals: expected "superellipse(0) superellipse(0.1) superellipse(1) superellipse(2)" but got "bevel superellipse(0.1) round squircle"
+FAIL Property corner-shape value 'superellipse(-5) superellipse(3) superellipse(7) superellipse(-5.5)' assert_true: 'superellipse(-5) superellipse(3) superellipse(7) superellipse(-5.5)' is a supported value for corner-shape. expected true got false
+FAIL Property corner-shape value 'round round round round' assert_equals: expected "superellipse(1)" but got "round"
+FAIL Property corner-shape value 'round scoop' assert_equals: expected "superellipse(1) superellipse(-1)" but got "round scoop"
+FAIL Property corner-shape value 'round scoop round scoop' assert_equals: expected "superellipse(1) superellipse(-1)" but got "round scoop"
+FAIL Property corner-shape value 'bevel superellipse(1)' assert_equals: expected "superellipse(0) superellipse(1)" but got "bevel"
+FAIL Property corner-shape value 'superellipse(-1) superellipse(3) square' assert_true: 'superellipse(-1) superellipse(3) square' is a supported value for corner-shape. expected true got false
+FAIL Property corner-shape value 'superellipse(-1) superellipse(3) superellipse(0)' assert_true: 'superellipse(-1) superellipse(3) superellipse(0)' is a supported value for corner-shape. expected true got false
+FAIL Property corner-shape value 'bevel superellipse(1) squircle     round' assert_equals: expected "superellipse(0) superellipse(1) superellipse(2)" but got "bevel bevel squircle round"
+FAIL Property corner-shape value 'superellipse(-1) superellipse(3) superellipse(0) superellipse(infinity)' assert_true: 'superellipse(-1) superellipse(3) superellipse(0) superellipse(infinity)' is a supported value for corner-shape. expected true got false
+FAIL Property corner-left-shape value 'round scoop' assert_true: corner-left-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-shape value 'round scoop' assert_true: corner-top-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-shape value 'superellipse(4)' assert_true: corner-top-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-right-shape value 'superellipse(-1.5) superellipse(3)' assert_true: corner-right-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-right-shape value 'superellipse(-1) superellipse(2)' assert_true: corner-right-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-bottom-shape value 'scoop scoop' assert_true: corner-bottom-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-inline-start-shape value 'round scoop' assert_true: corner-inline-start-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-block-start-shape value 'round scoop' assert_true: corner-block-start-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-block-end-shape value 'superellipse(4)' assert_true: corner-block-end-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-inline-end-shape value 'superellipse(-1.5) superellipse(3)' assert_true: corner-inline-end-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-inline-start-shape value 'superellipse(-1) superellipse(2)' assert_true: corner-inline-start-shape doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-block-end-shape value 'scoop scoop' assert_true: corner-block-end-shape doesn't seem to be supported in the computed style expected true got false
+

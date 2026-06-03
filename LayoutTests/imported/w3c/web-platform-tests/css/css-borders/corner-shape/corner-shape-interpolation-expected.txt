@@ -1,0 +1,475 @@
+
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to neutral at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "round "
+PASS CSS Transitions: property <corner-top-left-shape> from [round] to neutral at (0) should be [round]
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to neutral at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "round "
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to neutral at (1) should be [bevel] assert_equals: expected "bevel " but got "round "
+PASS CSS Transitions: property <corner-top-left-shape> from [round] to neutral at (1.5) should be [superellipse(-0.46)]
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to neutral at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "round "
+PASS CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to neutral at (0) should be [round]
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to neutral at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "round "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to neutral at (1) should be [bevel] assert_equals: expected "bevel " but got "round "
+PASS CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to neutral at (1.5) should be [superellipse(-0.46)]
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to neutral at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to neutral at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to neutral at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to neutral at (1) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to neutral at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to neutral at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to neutral at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to neutral at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to neutral at (1) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to neutral at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Compositing: property <corner-bottom-left-shape> underlying [round] from replace [round] to replace [[object Object]] at (-0.3) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Compositing: property <corner-bottom-left-shape> underlying [round] from replace [round] to replace [[object Object]] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Compositing: property <corner-bottom-left-shape> underlying [round] from replace [round] to replace [[object Object]] at (0.6) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Compositing: property <corner-bottom-left-shape> underlying [round] from replace [round] to replace [[object Object]] at (1) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Compositing: property <corner-bottom-left-shape> underlying [round] from replace [round] to replace [[object Object]] at (1.5) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions: property <corner-top-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions: property <corner-top-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Animations: property <corner-top-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Animations: property <corner-top-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS Web Animations: property <corner-top-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL Web Animations: property <corner-top-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions: property <corner-top-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions: property <corner-top-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions with transition: all: property <corner-top-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Animations: property <corner-top-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Animations: property <corner-top-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS Web Animations: property <corner-top-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL Web Animations: property <corner-top-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions: property <corner-bottom-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS Web Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL Web Animations: property <corner-bottom-right-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions: property <corner-bottom-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS CSS Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL CSS Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (-0.3) should be [superellipse(1.4)] assert_equals: expected "superellipse ( 1.4 ) " but got "superellipse ( 2.64 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (0.6) should be [superellipse(0.36)] assert_equals: expected "superellipse ( 0.36 ) " but got "superellipse ( 1.28 ) "
+PASS Web Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (1) should be [bevel]
+FAIL Web Animations: property <corner-bottom-left-shape> from [round] to [bevel] at (1.5) should be [superellipse(-0.46)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions: property <corner-top-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions: property <corner-top-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions with transition: all: property <corner-top-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Animations: property <corner-top-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Animations: property <corner-top-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS Web Animations: property <corner-top-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL Web Animations: property <corner-top-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions: property <corner-top-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions: property <corner-top-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions with transition: all: property <corner-top-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Animations: property <corner-top-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Animations: property <corner-top-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Animations: property <corner-top-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL Web Animations: property <corner-top-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS Web Animations: property <corner-top-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL Web Animations: property <corner-top-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions: property <corner-bottom-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS Web Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL Web Animations: property <corner-bottom-right-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions: property <corner-bottom-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL CSS Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS CSS Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL CSS Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (-0.3) should be [superellipse(1.91)] assert_equals: expected "superellipse ( 1.91 ) " but got "superellipse ( 4.09 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (0) should be [round] assert_equals: expected "round " but got "superellipse ( 2 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.5) should be [bevel] assert_equals: expected "bevel " but got "superellipse ( 0.94 ) "
+FAIL Web Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (0.6) should be [superellipse(-0.18)] assert_equals: expected "round " but got "superellipse ( 0.83 ) "
+PASS Web Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (1) should be [scoop]
+FAIL Web Animations: property <corner-bottom-left-shape> from [initial] to [scoop] at (1.5) should be [superellipse(-2.95)] assert_equals: expected "round " but got "superellipse ( 0.18 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [inherit] to [squircle] at (-0.3) should be [superellipse(-0.45)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+PASS CSS Transitions: property <corner-top-left-shape> from [inherit] to [squircle] at (0) should be [bevel]
+FAIL CSS Transitions: property <corner-top-left-shape> from [inherit] to [squircle] at (0.6) should be [superellipse(0.98)] assert_equals: expected "superellipse ( 0.98 ) " but got "superellipse ( 1.98 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [inherit] to [squircle] at (1) should be [squircle] assert_equals: expected "squircle " but got "superellipse ( 4 ) "
+FAIL CSS Transitions: property <corner-top-left-shape> from [inherit] to [squircle] at (1.5) should be [square] assert_equals: expected "round " but got "superellipse ( - 61.45 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [inherit] to [squircle] at (-0.3) should be [superellipse(-0.45)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+PASS CSS Transitions with transition: all: property <corner-top-left-shape> from [inherit] to [squircle] at (0) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [inherit] to [squircle] at (0.6) should be [superellipse(0.98)] assert_equals: expected "superellipse ( 0.98 ) " but got "superellipse ( 1.98 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [inherit] to [squircle] at (1) should be [squircle] assert_equals: expected "squircle " but got "superellipse ( 4 ) "
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [inherit] to [squircle] at (1.5) should be [square] assert_equals: expected "round " but got "superellipse ( - 61.45 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (-0.3) should be [superellipse(-0.45)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+PASS CSS Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (0) should be [bevel]
+FAIL CSS Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (0.6) should be [superellipse(0.98)] assert_equals: expected "superellipse ( 0.98 ) " but got "superellipse ( 1.98 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (1) should be [squircle] assert_equals: expected "squircle " but got "superellipse ( 4 ) "
+FAIL CSS Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (1.5) should be [square] assert_equals: expected "round " but got "superellipse ( - 61.45 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (-0.3) should be [superellipse(-0.45)] assert_equals: expected "round " but got "superellipse ( 0.75 ) "
+PASS Web Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (0) should be [bevel]
+FAIL Web Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (0.6) should be [superellipse(0.98)] assert_equals: expected "superellipse ( 0.98 ) " but got "superellipse ( 1.98 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (1) should be [squircle] assert_equals: expected "squircle " but got "superellipse ( 4 ) "
+FAIL Web Animations: property <corner-top-left-shape> from [inherit] to [squircle] at (1.5) should be [square] assert_equals: expected "round " but got "superellipse ( - 61.45 ) "
+FAIL CSS Transitions: property <corner-top-right-shape> from [inherit] to [square] at (-0.3) should be [superellipse(-0.69)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [inherit] to [square] at (0) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [inherit] to [square] at (0.6) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [inherit] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [inherit] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [inherit] to [square] at (-0.3) should be [superellipse(-0.69)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [inherit] to [square] at (0) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [inherit] to [square] at (0.6) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [inherit] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [inherit] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [inherit] to [square] at (-0.3) should be [superellipse(-0.69)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [inherit] to [square] at (0) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [inherit] to [square] at (0.6) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [inherit] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [inherit] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [inherit] to [square] at (-0.3) should be [superellipse(-0.69)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [inherit] to [square] at (0) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [inherit] to [square] at (0.6) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [inherit] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [inherit] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [inherit] to [scoop] at (-0.3) should be [superellipse(0.27)] assert_equals: expected "superellipse ( 0.27 ) " but got "superellipse ( 1.25 ) "
+PASS CSS Transitions: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0) should be [bevel]
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0.6) should be [superellipse(-0.56)] assert_equals: expected "round " but got "superellipse ( 0.66 ) "
+PASS CSS Transitions: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1.5) should be [superellipse(-1.72)] assert_equals: expected "round " but got "superellipse ( 0.33 ) "
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [inherit] to [scoop] at (-0.3) should be [superellipse(0.27)] assert_equals: expected "superellipse ( 0.27 ) " but got "superellipse ( 1.25 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0.6) should be [superellipse(-0.56)] assert_equals: expected "round " but got "superellipse ( 0.66 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1) should be [scoop]
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1.5) should be [superellipse(-1.72)] assert_equals: expected "round " but got "superellipse ( 0.33 ) "
+FAIL CSS Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (-0.3) should be [superellipse(0.27)] assert_equals: expected "superellipse ( 0.27 ) " but got "superellipse ( 1.25 ) "
+PASS CSS Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0) should be [bevel]
+FAIL CSS Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0.6) should be [superellipse(-0.56)] assert_equals: expected "round " but got "superellipse ( 0.66 ) "
+PASS CSS Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1) should be [scoop]
+FAIL CSS Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1.5) should be [superellipse(-1.72)] assert_equals: expected "round " but got "superellipse ( 0.33 ) "
+FAIL Web Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (-0.3) should be [superellipse(0.27)] assert_equals: expected "superellipse ( 0.27 ) " but got "superellipse ( 1.25 ) "
+PASS Web Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0) should be [bevel]
+FAIL Web Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (0.6) should be [superellipse(-0.56)] assert_equals: expected "round " but got "superellipse ( 0.66 ) "
+PASS Web Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1) should be [scoop]
+FAIL Web Animations: property <corner-bottom-right-shape> from [inherit] to [scoop] at (1.5) should be [superellipse(-1.72)] assert_equals: expected "round " but got "superellipse ( 0.33 ) "
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [inherit] to [notch] at (-0.3) should be [superellipse(0.69)] assert_equals: expected "superellipse ( 0.69 ) " but got "superellipse ( 1.61 ) "
+PASS CSS Transitions: property <corner-bottom-left-shape> from [inherit] to [notch] at (0) should be [bevel]
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [inherit] to [notch] at (0.6) should be [superellipse(-1.64)] assert_equals: expected "round " but got "superellipse ( 0.43 ) "
+PASS CSS Transitions: property <corner-bottom-left-shape> from [inherit] to [notch] at (1) should be [notch]
+PASS CSS Transitions: property <corner-bottom-left-shape> from [inherit] to [notch] at (1.5) should be [notch]
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [inherit] to [notch] at (-0.3) should be [superellipse(0.69)] assert_equals: expected "superellipse ( 0.69 ) " but got "superellipse ( 1.61 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-left-shape> from [inherit] to [notch] at (0) should be [bevel]
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [inherit] to [notch] at (0.6) should be [superellipse(-1.64)] assert_equals: expected "round " but got "superellipse ( 0.43 ) "
+PASS CSS Transitions with transition: all: property <corner-bottom-left-shape> from [inherit] to [notch] at (1) should be [notch]
+PASS CSS Transitions with transition: all: property <corner-bottom-left-shape> from [inherit] to [notch] at (1.5) should be [notch]
+FAIL CSS Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (-0.3) should be [superellipse(0.69)] assert_equals: expected "superellipse ( 0.69 ) " but got "superellipse ( 1.61 ) "
+PASS CSS Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (0) should be [bevel]
+FAIL CSS Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (0.6) should be [superellipse(-1.64)] assert_equals: expected "round " but got "superellipse ( 0.43 ) "
+PASS CSS Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (1) should be [notch]
+PASS CSS Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (1.5) should be [notch]
+FAIL Web Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (-0.3) should be [superellipse(0.69)] assert_equals: expected "superellipse ( 0.69 ) " but got "superellipse ( 1.61 ) "
+PASS Web Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (0) should be [bevel]
+FAIL Web Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (0.6) should be [superellipse(-1.64)] assert_equals: expected "round " but got "superellipse ( 0.43 ) "
+PASS Web Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (1) should be [notch]
+PASS Web Animations: property <corner-bottom-left-shape> from [inherit] to [notch] at (1.5) should be [notch]
+FAIL CSS Transitions: property <corner-top-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [notch] to [square] at (-0.3) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [notch] to [square] at (0) should be [notch] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [notch] to [square] at (0.5) should be [bevel] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [notch] to [square] at (0.8) should be [superellipse(1.64)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [notch] to [square] at (1) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [notch] to [square] at (1.5) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-top-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-right-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (-0.3) should be [square] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0) should be [superellipse(3)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.5) should be [superellipse(0.16)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (0.8) should be [superellipse(-0.9)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1) should be [superellipse(-2)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <corner-bottom-left-shape> from [superellipse(3)] to [superellipse(-2)] at (1.1) should be [superellipse(-2.99)] assert_true: 'to' value should be supported expected true got false
+

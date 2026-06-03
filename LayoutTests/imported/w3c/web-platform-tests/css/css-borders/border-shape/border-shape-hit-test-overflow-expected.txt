@@ -1,0 +1,5 @@
+border-shape:
+hover here
+
+PASS CSS Borders Test: hit testing border-shape with overflow
+

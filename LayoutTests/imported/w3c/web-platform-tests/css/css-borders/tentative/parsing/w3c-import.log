@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-end-radius-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-end-radius-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-end-radius-valid.html
@@ -38,6 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-right-radius-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-right-radius-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-right-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-shape-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-shape-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-shape-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-top-radius-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-top-radius-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-top-radius-valid.html
@@ -56,9 +60,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-spread-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-spread-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-spread-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corner-shape-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corner-shape-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corner-shape-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corners-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corners-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corners-valid.html
