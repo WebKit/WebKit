@@ -811,7 +811,6 @@ void Options::notifyOptionsChanged()
     Options::useRandomizingExecutableIslandAllocation() = false;
 #endif
 
-    Options::useHandlerICInFTL() = false; // Currently, it is not completed. Disable forcefully.
     Options::forceUnlinkedDFG() = false; // Currently, IC is rapidly changing. We disable this until we get the final form of Data IC.
 
     if (!Options::allowDoubleShape())

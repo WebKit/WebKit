@@ -6458,6 +6458,24 @@ public:
 #endif
     }
 
+    // Same as replaceWithJump but emits CALL rel32 (0xE8) instead of JMP rel32 (0xE9).
+    // After the callee returns, execution resumes at instructionStart + 5 (the instruction after the call).
+    static void replaceWithCall(void* instructionStart, void* to)
+    {
+        uint8_t* ptr = std::bit_cast<uint8_t*>(instructionStart);
+        uint8_t* dstPtr = std::bit_cast<uint8_t*>(to);
+        intptr_t distance = (intptr_t)(dstPtr - (ptr + 5));
+#if ENABLE(MPROTECT_RX_TO_RWX)
+        uint8_t buffer[5];
+        buffer[0] = static_cast<uint8_t>(OP_CALL_rel32);
+        WTF::unalignedStore<int32_t>(buffer + 1, static_cast<int32_t>(distance));
+        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer, 5);
+#else
+        WTF::unalignedStore<uint8_t>(ptr, static_cast<uint8_t>(OP_CALL_rel32));
+        WTF::unalignedStore<int32_t>(ptr + 1, static_cast<int32_t>(distance));
+#endif
+    }
+
     static void replaceWithNops(void* instructionStart, size_t memoryToFillWithNopsInBytes)
     {
         fillNops(instructionStart, memoryToFillWithNopsInBytes);
@@ -6469,6 +6487,11 @@ public:
     }
 
     static constexpr ptrdiff_t patchableJumpSize()
+    {
+        return 5;
+    }
+
+    static constexpr ptrdiff_t patchableCallSize()
     {
         return 5;
     }

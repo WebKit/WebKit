@@ -937,9 +937,8 @@ void PropertyInlineCache::initializeWithUnitHandler(CodeBlock* codeBlock, Ref<In
             m_handler->removeOwner(codeBlock);
         m_handler = WTF::move(handler);
         m_handler->addOwner(codeBlock);
-    } else {
+    } else
         m_handler = WTF::move(handler);
-    }
 }
 
 void PropertyInlineCache::prependHandler(CodeBlock* codeBlock, Ref<InlineCacheHandler>&& handler, bool isMegamorphic)
@@ -967,7 +966,25 @@ void PropertyInlineCache::rewireStubAsJumpInAccess(CodeBlock* codeBlock, Ref<Inl
     ASSERT(!isHandlerIC());
     CodeLocationLabel label { handler->callTarget() };
     initializeWithUnitHandler(codeBlock, WTF::move(handler));
-    CCallHelpers::replaceWithJump(downcast<RepatchingPropertyInlineCache>(*this).startLocation.retagged<JSInternalPtrTag>(), label);
+    auto& repatchingIC = downcast<RepatchingPropertyInlineCache>(*this);
+    // Use call instead of jump so the stub is visible to sampling profilers.
+    // Layout the slab as [CALL at start][JUMP to done][NOP fill]. On entry the CALL
+    // enters the stub; the stub's ret lands on the JUMP, which skips the NOP fill
+    // to doneLocation, avoiding NOP execution on the hot path.
+    uint32_t slabSize = repatchingIC.inlineCodeSize();
+    CCallHelpers::replaceWithNops(repatchingIC.startLocation.retagged<JSInternalPtrTag>(), slabSize);
+#if CPU(ARM64) || CPU(X86_64)
+    size_t callSize = CCallHelpers::patchableCallSize();
+    size_t jumpSize = CCallHelpers::patchableJumpSize();
+    if (slabSize >= callSize + jumpSize) {
+        char* startPtr = repatchingIC.startLocation.dataLocation<char*>();
+        CodeLocationLabel<JSInternalPtrTag> jumpLocation { CodePtr<JSInternalPtrTag>::fromUntaggedPtr(startPtr + callSize) };
+        CCallHelpers::replaceWithJump(jumpLocation, doneLocation);
+        CCallHelpers::replaceWithCall(repatchingIC.startLocation.retagged<JSInternalPtrTag>(), label);
+        return;
+    }
+#endif
+    CCallHelpers::replaceWithCall(repatchingIC.startLocation.retagged<JSInternalPtrTag>(), label);
 }
 
 void PropertyInlineCache::resetStubAsJumpInAccess(CodeBlock* codeBlock)
@@ -984,7 +1001,9 @@ void PropertyInlineCache::resetStubAsJumpInAccess(CodeBlock* codeBlock)
         return;
     }
 
-    rewireStubAsJumpInAccess(codeBlock, InlineCacheHandler::createNonHandlerSlowPath(slowPathStartLocation));
+    auto& repatchingIC = downcast<RepatchingPropertyInlineCache>(*this);
+    initializeWithUnitHandler(codeBlock, InlineCacheHandler::createNonHandlerSlowPath(slowPathStartLocation));
+    CCallHelpers::replaceWithJump(repatchingIC.startLocation.retagged<JSInternalPtrTag>(), slowPathStartLocation);
 }
 
 Vector<AccessCase*, 16> PropertyInlineCache::listedAccessCases(const AbstractLocker&) const

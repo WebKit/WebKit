@@ -3890,6 +3890,26 @@ public:
         cacheFlush(where, sizeof(int));
     }
 
+    static void replaceWithCall(void* where, void* to)
+    {
+        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
+        ASSERT(static_cast<int>(offset) == offset);
+
+#if ENABLE(JUMP_ISLANDS)
+        if (!isInt<26>(offset)) {
+            to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(where, to);
+            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(where)) >> 2;
+            RELEASE_ASSERT(isInt<26>(offset));
+        }
+#endif
+
+        // BL imm26 — same as B but with link bit set (saves return address in LR).
+        int insn = unconditionalBranchImmediate(true, static_cast<int>(offset));
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
+        performJITMemcpy<jitMemcpyRepatchAtomic>(where, &insn, sizeof(int));
+        cacheFlush(where, sizeof(int));
+    }
+
     static void replaceWithNops(void* where, size_t memoryToFillWithNopsInBytes)
     {
         fillNops<jitMemcpyRepatch>(where, memoryToFillWithNopsInBytes);
@@ -3902,6 +3922,11 @@ public:
     }
 
     static constexpr ptrdiff_t patchableJumpSize()
+    {
+        return 4;
+    }
+
+    static constexpr ptrdiff_t patchableCallSize()
     {
         return 4;
     }

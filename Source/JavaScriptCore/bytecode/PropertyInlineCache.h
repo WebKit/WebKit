@@ -692,7 +692,7 @@ public:
         : PropertyInlineCache(PropertyInlineCacheType::Repatching, accessType, codeOrigin)
     { }
 
-    // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'instanceof' caches.
+    // Start of the out-of-line slab code (used by InlineAccess for in-place patching).
     CodeLocationLabel<JITStubRoutinePtrTag> startLocation;
     CodeLocationCall<JSInternalPtrTag> m_slowPathCallLocation;
     std::unique_ptr<PolymorphicAccess> m_stub;

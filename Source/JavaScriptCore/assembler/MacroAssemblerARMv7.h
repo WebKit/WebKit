@@ -2816,6 +2816,11 @@ public:
         return ARMv7Assembler::patchableJumpSize();
     }
 
+    static ptrdiff_t patchableCallSize()
+    {
+        return ARMv7Assembler::patchableCallSize();
+    }
+
     // Forwards / external control flow operations:
     //
     // This set of jump and conditional branch operations return a Jump
