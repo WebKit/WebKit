@@ -962,10 +962,14 @@ padding-box
 scoop
 // bevel
 notch
+// `straight` is an outdated WebKit-only alias retained for source compatibility;
+// the spec keyword (and the one we accept and serialize) is `square`.
 straight
+// square (already defined above)
 squircle
 superellipse
-// infinity
+// infinity (already defined further below)
+// -infinity (already defined further below)
 
 //
 // CSS_PROP_MASK_CLIP

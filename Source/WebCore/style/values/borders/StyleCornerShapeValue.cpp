@@ -51,8 +51,11 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
             return CSS::Keyword::Bevel { };
         case CSSValueNotch:
             return CSS::Keyword::Notch { };
+        case CSSValueSquare:
+            return CSS::Keyword::Square { };
         case CSSValueStraight:
-            return CSS::Keyword::Straight { };
+            // Outdated WebKit spelling of `square`; accept and canonicalise.
+            return CSS::Keyword::Square { };
         case CSSValueSquircle:
             return CSS::Keyword::Squircle { };
         default:
@@ -72,58 +75,56 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(superellipseDescriptor)) {
         switch (keywordValue->valueID()) {
         case CSSValueInfinity:
-            return { SuperellipseFunction { Number<CSS::Nonnegative>(std::numeric_limits<double>::infinity()) } };
+            return { SuperellipseFunction { Number<CSS::All>(std::numeric_limits<double>::infinity()) } };
+        case CSSValueNegativeInfinity:
+            return { SuperellipseFunction { Number<CSS::All>(-std::numeric_limits<double>::infinity()) } };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return { SuperellipseFunction { Number<CSS::Nonnegative>(std::numeric_limits<double>::infinity()) } };
+            return { SuperellipseFunction { Number<CSS::All>(std::numeric_limits<double>::infinity()) } };
         }
     }
 
-    return { SuperellipseFunction { toStyleFromCSSValue<Number<CSS::Nonnegative>>(state, superellipseDescriptor) } };
+    // The function parameter IS the spec `superellipse parameter` (logarithmic);
+    // we store it directly. The curve exponent is `pow(2, parameter)` (see
+    // CornerShapeValue::exponent()).
+    return { SuperellipseFunction { toStyleFromCSSValue<Number<CSS::All>>(state, superellipseDescriptor) } };
 }
 
 // MARK: - Blending
 
 // https://drafts.csswg.org/css-borders-4/#corner-shape-interpolation
 
-static Number<CSS::Nonnegative> convertExponentToInterpolationValue(const CornerShapeValue& cornerShape)
+// Maps a stored superellipse parameter (-∞..+∞) to a normalised interpolation
+// value in [0,1], per https://drafts.csswg.org/css-borders-4/#superellipse-interpolation.
+// Equivalent to interpValue = pow(0.5, pow(2, -parameter)).
+static Number<CSS::Nonnegative> convertParameterToInterpolationValue(const CornerShapeValue& cornerShape)
 {
-    auto exponent = cornerShape.superellipse->value;
-
-    // 1. If exponent is 0, return 0.
-    if (exponent == 0.0)
+    auto parameter = cornerShape.superellipse->value;
+    if (parameter == -std::numeric_limits<double>::infinity())
         return 0.0;
-
-    // 2. If exponent is ∞, return 1.
-    if (exponent == std::numeric_limits<double>::infinity())
+    if (parameter == std::numeric_limits<double>::infinity())
         return 1.0;
-
-    // 3. Return 1/(2^(1/exponent)).
-    return 1.0 / std::pow(2.0, 1.0 / exponent);
+    return std::pow(0.5, std::pow(2.0, -parameter));
 }
 
-static CornerShapeValue convertInterpolationValueToExponent(Number<CSS::Nonnegative> interpolationValue)
+static CornerShapeValue convertInterpolationValueToParameter(Number<CSS::Nonnegative> interpolationValue)
 {
-    // 1. If interpolationValue is 0, return 0.
     if (interpolationValue.value == 0.0)
-        return { SuperellipseFunction { 0.0 } };
-
-    // 2. If interpolationValue is 1, return ∞.
+        return { SuperellipseFunction { -std::numeric_limits<double>::infinity() } };
     if (interpolationValue.value == 1.0)
         return { SuperellipseFunction { std::numeric_limits<double>::infinity() } };
-
-    // 3. Return ln(0.5)/ln(interpolationValue).
-    return { SuperellipseFunction { std::log(0.5) / std::log(interpolationValue.value) } };
+    // Inverse of pow(0.5, pow(2, -s)): s = log2(log(0.5)/log(interpolationValue)).
+    return { SuperellipseFunction { std::log2(std::log(0.5) / std::log(interpolationValue.value)) } };
 }
 
 auto Blending<CornerShapeValue>::blend(const CornerShapeValue& a, const CornerShapeValue& b, const BlendingContext& context) -> CornerShapeValue
 {
-    auto aInterpolationValue = convertExponentToInterpolationValue(a);
-    auto bInterpolationValue = convertExponentToInterpolationValue(b);
+    auto aInterpolationValue = convertParameterToInterpolationValue(a);
+    auto bInterpolationValue = convertParameterToInterpolationValue(b);
 
     auto interpolatedValue = Style::blend(aInterpolationValue, bInterpolationValue, context);
 
-    return convertInterpolationValueToExponent(interpolatedValue);
+    return convertInterpolationValueToParameter(interpolatedValue);
 }
 
 } // namespace Style

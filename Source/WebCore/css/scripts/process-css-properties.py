@@ -168,6 +168,9 @@ class Schema:
 class Name(object):
     special_case_name_to_id = {
         "url": "URL",
+        # Spec values whose canonical id differs from the dash-stripped CamelCase
+        # of their textual name. Keep in sync with CSSValueKeywords.in.
+        "-infinity": "NegativeInfinity",
     }
 
     def __init__(self, name):

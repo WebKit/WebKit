@@ -1,0 +1,16 @@
+
+PASS e.style['corner-block-start'] = "10px bevel" should set the property value
+PASS e.style['corner-block-start'] = "round 10% / 2rem squircle" should set the property value
+PASS e.style['corner-block-start'] = "normal" should set the property value
+PASS e.style['corner-block-start'] = "4px 2% round / bevel 1em" should set the property value
+PASS e.style['corner-block-start'] = "10px bevel" should set border-start-end-radius
+PASS e.style['corner-block-start'] = "10px bevel" should set border-start-start-radius
+PASS e.style['corner-block-start'] = "10px bevel" should set corner-start-end-shape
+PASS e.style['corner-block-start'] = "10px bevel" should set corner-start-start-shape
+PASS e.style['corner-block-start'] = "10px bevel" should not set unrelated longhands
+PASS e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set border-start-end-radius
+PASS e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set border-start-start-radius
+PASS e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set corner-start-end-shape
+PASS e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set corner-start-start-shape
+PASS e.style['corner-block-start'] = "4px 2% round / 1em bevel" should not set unrelated longhands
+

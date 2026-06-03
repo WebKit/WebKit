@@ -1,0 +1,8 @@
+
+PASS Property corner-top-left value '0px round'
+PASS Property corner-top-left value 'normal'
+PASS Property corner-top-left value '4px round'
+PASS Property corner-top-left value '2% notch'
+PASS Property corner-top-left value '4px 2% squircle'
+PASS Property corner-top-left value 'superellipse(-0.5) 30% 10px'
+

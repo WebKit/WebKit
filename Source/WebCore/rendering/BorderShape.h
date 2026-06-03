@@ -32,6 +32,7 @@
 #include "LayoutRoundedRect.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
+#include <array>
 
 namespace WebCore {
 
@@ -58,6 +59,7 @@ public:
 
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&);
+    BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&, const std::array<float, 4>& cornerExponents);
 
     BorderShape(const BorderShape&) = default;
 
@@ -92,6 +94,11 @@ public:
     FloatRect snappedInnerRect(float deviceScaleFactor) const;
 
     bool isRounded() const { return m_borderRect.isRounded(); }
+
+    // Per-corner superellipse exponents in order { topLeft, topRight, bottomRight, bottomLeft }.
+    // 2.0 == round, 1.0 == bevel, 0.5 == scoop, 0.0 == notch, infinity == straight.
+    const std::array<float, 4>& cornerExponents() const LIFETIME_BOUND { return m_cornerExponents; }
+    bool hasNonRoundCornerShapes() const;
 
     bool NODELETE outerShapeIsRectangular() const;
     bool NODELETE innerShapeIsRectangular() const;
@@ -128,6 +135,8 @@ private:
     LayoutRoundedRect m_borderRect;
     LayoutRoundedRect m_innerEdgeRect;
     RectEdges<LayoutUnit> m_borderWidths;
+    // Per-corner superellipse exponents { TL, TR, BR, BL }. 2.0 is round (default).
+    std::array<float, 4> m_cornerExponents { 2.0f, 2.0f, 2.0f, 2.0f };
 };
 
 } // namespace WebCore
