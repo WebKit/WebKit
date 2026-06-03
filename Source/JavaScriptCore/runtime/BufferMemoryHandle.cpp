@@ -81,7 +81,12 @@ BufferMemoryResult BufferMemoryManager::tryAllocateFastMemory()
         if (m_fastMemories.size() >= m_maxFastMemoryCount)
             return BufferMemoryResult(nullptr, BufferMemoryResult::Kind::SyncTryToReclaimMemory);
 
+#if OS(WINDOWS)
+        // Windows has no overcommit, so reserve the region and commit lazily.
+        void* result = OSAllocator::tryReserveUncommitted(BufferMemoryHandle::fastMappedBytes());
+#else
         void* result = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, BufferMemoryHandle::fastMappedBytes());
+#endif
         if (!result)
             return BufferMemoryResult(nullptr, BufferMemoryResult::Kind::SyncTryToReclaimMemory);
 
@@ -101,7 +106,11 @@ void BufferMemoryManager::freeFastMemory(void* basePtr)
 {
     {
         Locker locker { m_lock };
+#if OS(WINDOWS)
+        OSAllocator::releaseDecommitted(basePtr, BufferMemoryHandle::fastMappedBytes(), 0);
+#else
         Gigacage::freeVirtualPages(Gigacage::Primitive, basePtr, BufferMemoryHandle::fastMappedBytes());
+#endif
         m_fastMemories.removeFirst(basePtr);
     }
 
@@ -112,7 +121,11 @@ BufferMemoryResult BufferMemoryManager::tryAllocateGrowableBoundsCheckingMemory(
 {
     BufferMemoryResult result = [&] {
         Locker locker { m_lock };
+#if OS(WINDOWS)
+        void* result = OSAllocator::tryReserveUncommitted(mappedCapacity);
+#else
         void* result = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, mappedCapacity);
+#endif
         if (!result)
             return BufferMemoryResult(nullptr, BufferMemoryResult::Kind::SyncTryToReclaimMemory);
 
@@ -130,7 +143,11 @@ void BufferMemoryManager::freeGrowableBoundsCheckingMemory(void* basePtr, size_t
 {
     {
         Locker locker { m_lock };
+#if OS(WINDOWS)
+        OSAllocator::releaseDecommitted(basePtr, mappedCapacity, 0);
+#else
         Gigacage::freeVirtualPages(Gigacage::Primitive, basePtr, mappedCapacity);
+#endif
         m_growableBoundsCheckingMemories.erase(std::make_pair(std::bit_cast<uintptr_t>(basePtr), mappedCapacity));
     }
 
@@ -249,10 +266,15 @@ BufferMemoryHandle::~BufferMemoryHandle()
         switch (m_mode) {
         case MemoryMode::Signaling: {
             // nullBasePointer's zero-sized memory is not used for MemoryMode::Signaling.
+#if OS(WINDOWS)
+            // The region was only reserved; releasing frees it without re-committing.
+            BufferMemoryManager::singleton().freeFastMemory(memory);
+#else
             constexpr bool readable = true;
             constexpr bool writable = true;
             OSAllocator::protect(memory, BufferMemoryHandle::fastMappedBytes(), readable, writable);
             BufferMemoryManager::singleton().freeFastMemory(memory);
+#endif
             break;
         }
         case MemoryMode::BoundsChecking: {
@@ -268,10 +290,14 @@ BufferMemoryHandle::~BufferMemoryHandle()
                     ASSERT(!m_size);
                     return;
                 }
+#if OS(WINDOWS)
+                BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
+#else
                 constexpr bool readable = true;
                 constexpr bool writable = true;
                 OSAllocator::protect(memory, m_mappedCapacity, readable, writable);
                 BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
+#endif
                 break;
             }
             }

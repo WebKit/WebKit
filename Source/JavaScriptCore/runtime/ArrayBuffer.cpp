@@ -134,6 +134,10 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
         return nullptr;
     }
 
+#if OS(WINDOWS)
+    if (initialBytes)
+        OSAllocator::commit(slowMemory, initialBytes, /* writable */ true, /* executable */ false);
+#endif
     constexpr bool readable = false;
     constexpr bool writable = false;
     OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
