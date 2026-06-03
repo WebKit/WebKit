@@ -546,9 +546,12 @@ macro(_WEBKIT_LIBRARY_LINK_FRAMEWORK _target)
     if (${_target}_LIBRARY_TYPE STREQUAL SHARED)
         _WEBKIT_TARGET_LINK_FRAMEWORK(${_target})
     else ()
-        # Include the framework headers but don't try and link the frameworks
+        # Include the framework headers as PRIVATE so they don't propagate to
+        # consumers. Each consumer declares its own framework dependencies,
+        # matching the Xcode model and avoiding duplicate include paths that
+        # break #pragma once when the generator relativizes one copy.
         foreach (framework IN LISTS ${_target}_FRAMEWORKS)
-            list(APPEND ${_target}_INCLUDE_DIRECTORIES
+            list(APPEND ${_target}_PRIVATE_INCLUDE_DIRECTORIES
                 ${${framework}_FRAMEWORK_HEADERS_DIR}
                 ${${framework}_PRIVATE_FRAMEWORK_HEADERS_DIR}
             )
