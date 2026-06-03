@@ -1,0 +1,42 @@
+<body>
+<div id="logger"></div>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+function log(msg) {
+    logger.innerHTML += msg + "<br>";
+}
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function runTest() {
+    testRunner.setMockGamepadDetails(0, "Test0", "", 2, 2, false, /*was connected*/ true);
+    let connected = new Promise(resolve => {
+        window.ongamepadconnected = (event) => {
+            log(`Connect: ${event.gamepad.index}`);
+            resolve();
+        };
+    });
+    let disconnected = new Promise(resolve => {
+        window.ongamepaddisconnected = (event) => {
+            log(`Disconnect: ${event.gamepad.index}`);
+            resolve();
+        };
+    });
+    testRunner.connectMockGamepad(0);
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    await connected;
+    testRunner.disconnectMockGamepad(0);
+    await disconnected;
+    log("barrier"); // No Connect:/Disconnect: after barrier.
+    testRunner.connectMockGamepad(0);
+    // This is being tested: at the time of writing, this would assert because
+    // the "[[exposed]]" state of a particular gamepad was being tracked per
+    // navigator, and only once.
+    testRunner.disconnectMockGamepad(0);
+    await timeout(200);
+    testRunner.notifyDone();
+}
+runTest();
+</script>
+</body>

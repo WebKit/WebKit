@@ -531,9 +531,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.h
 # The test is marked as Timeout for wk2. It has been flaky in GTK and WPE since added.
 crypto/subtle/ecdsa-import-compressed-spki-key-p384.html [ Skip ] # Timeout.
 
-# This test causes subsequent tests to crash with an assertion. Unskip when the referring bug is fixed.
-webkit.org/b/298476 gamepad/gamepad-visibility-1.html [ Skip ]
-
 # Conic gradient. Marked as failure in root expectations
 webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
 
