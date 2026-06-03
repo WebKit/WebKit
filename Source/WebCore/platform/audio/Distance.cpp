@@ -66,6 +66,9 @@ double DistanceEffect::gain(double distance) const
 double DistanceEffect::linearGain(double distance) const
 {
     auto clampedRolloffFactor = std::clamp(m_rolloffFactor, 0.0, 1.0);
+    // The spec permits refDistance == maxDistance; avoid the resulting division by zero.
+    if (m_refDistance == m_maxDistance)
+        return 1.0 - clampedRolloffFactor;
     // We want a gain that decreases linearly from m_refDistance to
     // m_maxDistance. The gain is 1 at m_refDistance.
     return (1.0 - clampedRolloffFactor * (distance - m_refDistance) / (m_maxDistance - m_refDistance));
@@ -73,11 +76,15 @@ double DistanceEffect::linearGain(double distance) const
 
 double DistanceEffect::inverseGain(double distance) const
 {
+    if (!m_refDistance)
+        return 0;
     return m_refDistance / (m_refDistance + m_rolloffFactor * (distance - m_refDistance));
 }
 
 double DistanceEffect::exponentialGain(double distance) const
 {
+    if (!m_refDistance)
+        return 0;
     return pow(distance / m_refDistance, -m_rolloffFactor);
 }
 
