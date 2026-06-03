@@ -47,6 +47,11 @@ public:
 
     bool operator==(const InheritedData&) const;
 
+    // MDC-only equality: same as operator== but uses FontData::equalsForMDC for the
+    // fontData comparison, so cross-document entries can match when descriptions are
+    // equal even if fontSelector identity differs. (rdar://173598541.)
+    bool equalsForMDC(const InheritedData&) const;
+
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const InheritedData&) const;
 #endif

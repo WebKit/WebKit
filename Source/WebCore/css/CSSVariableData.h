@@ -74,4 +74,6 @@ private:
     Style::IsAttrTainted m_isAttrTainted { };
 };
 
+void add(Hasher&, const CSSVariableData&);
+
 } // namespace WebCore

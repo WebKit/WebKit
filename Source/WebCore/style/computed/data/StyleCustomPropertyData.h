@@ -58,7 +58,11 @@ public:
     void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, Ref<const CustomProperty>>&)>&) const;
     AtomString findKeyAtIndex(unsigned) const;
 
+    unsigned hash() const;
+
 private:
+    friend void add(Hasher&, const CustomPropertyData&);
+
     CustomPropertyData() = default;
     CustomPropertyData(const CustomPropertyData&);
 
@@ -72,6 +76,7 @@ private:
 #if ASSERT_ENABLED
     mutable bool m_hasChildren { false };
 #endif
+    mutable unsigned m_hash { 0 };
 };
 
 } // namespace Style

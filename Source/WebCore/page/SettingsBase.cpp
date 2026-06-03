@@ -40,6 +40,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderWidget.h"
 #include "Settings.h"
+#include "StyleScope.h"
 #include "SystemFontDatabase.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -58,6 +59,10 @@ static void invalidateAfterGenericFamilyChange(Page* page)
     // do not respond to changes in Settings values.
     FontCascadeCache::forCurrentThread().invalidate();
     SystemFontDatabase::singleton().invalidate();
+
+    // A generic-family / system font Settings change re-resolves font-family:sans-serif etc., which
+    // the process-shared MatchedDeclarationsCache isn't keyed on; drop those entries. (rdar://173598541.)
+    Style::Scope::invalidateSharedMatchedDeclarationsCaches();
 
     if (page)
         page->setNeedsRecalcStyleInAllFrames();

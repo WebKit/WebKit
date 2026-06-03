@@ -72,6 +72,30 @@ bool CustomProperty::valueEquals(const CustomProperty& other) const
     );
 }
 
+void add(Hasher& hasher, const CustomProperty& property)
+{
+    add(hasher, property.name());
+    add(hasher, property.value().index());
+
+    return WTF::switchOn(property.value(),
+        [&](const CustomProperty::GuaranteedInvalid&) {
+        },
+        [&](const Ref<CSSVariableData>& value) {
+            add(hasher, value.get());
+        },
+        [&](const CustomProperty::Value& value) {
+            // FIXME: Hash values.
+            add(hasher, value.index());
+        },
+        [&](const CustomProperty::ValueList& value) {
+            // FIXME: Hash values.
+            add(hasher, value.values.size());
+            if (value.values.size())
+                add(hasher, value.values[0].index());
+        }
+    );
+}
+
 Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const RenderStyle& style) const
 {
     auto convertValue = [&](const Value& value) {

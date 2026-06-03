@@ -59,6 +59,13 @@ inline unsigned StyleProperties::propertyCount() const
     return uncheckedDowncast<ImmutableStyleProperties>(*this).propertyCount();
 }
 
+inline unsigned StyleProperties::mutationCount() const
+{
+    if (m_isMutable)
+        return uncheckedDowncast<MutableStyleProperties>(*this).mutationCount();
+    return 0;
+}
+
 inline void StyleProperties::deref() const
 {
     if (!derefBase())

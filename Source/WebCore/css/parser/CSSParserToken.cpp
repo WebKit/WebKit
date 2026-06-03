@@ -32,6 +32,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSPropertyParser.h"
+#include <wtf/Hasher.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -617,6 +618,36 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
         return m_whitespaceCount == other.m_whitespaceCount;
     default:
         return true;
+    }
+}
+
+void add(Hasher& hasher, const CSSParserToken& token)
+{
+    add(hasher, token.type());
+
+    switch (token.type()) {
+    case DelimiterToken:
+        add(hasher, token.delimiter());
+        break;
+    case HashToken:
+        add(hasher, token.m_hashTokenType);
+        [[fallthrough]];
+    case IdentToken:
+    case FunctionToken:
+    case StringToken:
+    case UrlToken:
+        add(hasher, token.value().toStringWithoutCopying());
+        break;
+    case DimensionToken:
+    case NumberToken:
+    case PercentageToken:
+        add(hasher, token.originalText().toStringWithoutCopying());
+        break;
+    case NonNewlineWhitespaceToken:
+        add(hasher, token.m_whitespaceCount);
+        break;
+    default:
+        break;
     }
 }
 

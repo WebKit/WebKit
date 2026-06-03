@@ -133,6 +133,10 @@ public:
     bool NODELETE hasCSSOMWrapper() const;
     bool isMutable() const { return m_isMutable; }
 
+    // 0 for ImmutableStyleProperties (can't mutate). Forwards to MutableStyleProperties::mutationCount()
+    // otherwise. Used by MatchedDeclarationsCache to detect in-place mutations of cached properties.
+    inline unsigned mutationCount() const;
+
     bool traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const;
     bool mayDependOnBaseURL() const;
 

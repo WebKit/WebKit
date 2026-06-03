@@ -115,4 +115,6 @@ private:
     std::span<const CSSParserToken> m_tokens;
 };
 
+void add(Hasher&, const CSSParserTokenRange&);
+
 } // namespace WebCore

@@ -979,6 +979,8 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
 
 void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedProperties, DeclarationOrigin declarationOrigin)
 {
+    // Snapshot mutationCount centrally so all paths that build MatchedProperties capture it.
+    matchedProperties.mutationCountAtCapture = matchedProperties.properties->mutationCount();
     auto& declarations = declarationsForOrigin(declarationOrigin);
     if (!declarations.isEmpty() && declarations.last() == matchedProperties) {
         // It might also be beneficial to overwrite the previous declaration (insteading of appending) if it affects the same exact properties.

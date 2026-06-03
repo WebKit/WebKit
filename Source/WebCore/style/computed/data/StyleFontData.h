@@ -44,6 +44,13 @@ public:
 
     bool operator==(const FontData&) const;
 
+    // MatchedDeclarationsCache-only equality. Same as operator== for the common case,
+    // but for documents with simple font selectors (no @font-face / feature values /
+    // palettes) treats two FontDatas with equal FontDescription as equal regardless of
+    // per-document fontSelector / version / generation. Lets MDC entries cached by one
+    // document be matched by another with the same descriptions. (rdar://173598541.)
+    bool equalsForMDC(const FontData&) const;
+
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const FontData&) const;
 #endif

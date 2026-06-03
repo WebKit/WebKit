@@ -31,6 +31,7 @@
 
 #include "CommonAtomStrings.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include "UserAgentStyle.h"
 #include <ranges>
@@ -87,7 +88,9 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
     std::ranges::stable_sort(matchedPageRules, comparePageRules);
 
     m_result->authorDeclarations.appendContainerWithMapping(matchedPageRules, [](auto& pageRule) {
-        return MatchedProperties { pageRule->properties() };
+        MatchedProperties result { pageRule->properties() };
+        result.mutationCountAtCapture = pageRule->properties().mutationCount();
+        return result;
     });
 }
 

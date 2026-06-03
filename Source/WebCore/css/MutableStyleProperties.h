@@ -89,10 +89,18 @@ public:
     bool setCustomProperty(const String& propertyName, const String& value, CSSParserContext, IsImportant = IsImportant::No);
     bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
 
+    // Monotonic counter incremented on every in-place mutation. Used by the
+    // MatchedDeclarationsCache to detect that a cached MatchedProperties was mutated
+    // after capture, so it can be evicted instead of returning stale style.
+    // (rdar://173598541.)
+    unsigned mutationCount() const { return m_mutationCount; }
+
 private:
     explicit MutableStyleProperties(CSSParserMode);
     explicit MutableStyleProperties(const StyleProperties&);
     MutableStyleProperties(Vector<CSSProperty>&&);
+
+    void didMutate() { ++m_mutationCount; }
 
     bool removeLonghandProperty(CSSPropertyID, String* returnText);
     bool removeShorthandProperty(CSSPropertyID, String* returnText);
@@ -105,6 +113,7 @@ private:
 
     const std::unique_ptr<CSSStyleProperties> m_cssomWrapper;
     Vector<CSSProperty, 4> m_propertyVector;
+    unsigned m_mutationCount { 0 };
 };
 
 inline void MutableStyleProperties::deref() const

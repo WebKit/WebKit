@@ -88,6 +88,7 @@ void CustomPropertyData::set(const AtomString& name, Ref<const CustomProperty>&&
     }());
 
     m_mayHaveAnimatableProperties = m_mayHaveAnimatableProperties || value->isAnimatable();
+    m_hash = 0;
 
     auto addResult = m_ownValues.set(name, WTF::move(value));
 
@@ -174,6 +175,22 @@ AtomString CustomPropertyData::findKeyAtIndex(unsigned index) const
         return IterationStatus::Continue;
     });
     return key;
+}
+
+unsigned CustomPropertyData::hash() const
+{
+    if (!m_hash) {
+        Hasher hasher;
+        if (m_parentValues)
+            add(hasher, m_parentValues->hash());
+
+        // Property names are included in values.
+        for (auto& value : m_ownValues.values())
+            add(hasher, value.get());
+
+        m_hash = hasher.hash();
+    }
+    return m_hash;
 }
 
 #if !LOG_DISABLED

@@ -47,23 +47,13 @@ namespace Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MatchedDeclarationsCache);
 
-MatchedDeclarationsCache::MatchedDeclarationsCache(const Resolver& owner)
-    : m_owner(owner)
+MatchedDeclarationsCache::MatchedDeclarationsCache(bool isSharedAcrossDocuments)
+    : m_isSharedAcrossDocuments(isSharedAcrossDocuments)
     , m_sweepTimer(*this, &MatchedDeclarationsCache::sweep)
 {
 }
 
 MatchedDeclarationsCache::~MatchedDeclarationsCache() = default;
-
-void MatchedDeclarationsCache::ref() const
-{
-    m_owner->ref();
-}
-
-void MatchedDeclarationsCache::deref() const
-{
-    m_owner->deref();
-}
 
 bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderStyle& style, const RenderStyle& parentStyle)
 {
@@ -91,8 +81,10 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     if (style.usesAnchorFunctions())
         return false;
 
-    // Getting computed style after a font environment change but before full style resolution may involve styles with non-current fonts.
-    // Avoid caching them.
+    // Getting computed style after a font environment change but before full style resolution may
+    // involve styles with non-current fonts. Avoid caching them. Required even with the simple-
+    // selector adoption gate, because the global FontCache generation can bump (system font
+    // installed, locale change, generic-family mapping change) for any document.
     Ref fontSelector = element.document().fontSelector();
     if (!style.fontCascade().isCurrent(fontSelector.get()))
         return false;
@@ -133,7 +125,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
         if (allNonCacheable)
             return 0;
     }
-    return AlreadyHashed::avoidDeletedValue(WTF::computeHash(matchResult, &inheritedCustomProperties));
+    return AlreadyHashed::avoidDeletedValue(WTF::computeHash(matchResult, inheritedCustomProperties.hash()));
 }
 
 std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const Style::CustomPropertyData& inheritedCustomProperties, const RenderStyle& parentStyle)
@@ -150,15 +142,22 @@ std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(u
         if (!matchResult.cacheablePropertiesEqual(*entry.matchResult))
             continue;
 
-        if (&entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)
+        if (!arePointingToEqualData(&entry.parentRenderStyle->inheritedCustomProperties(), &inheritedCustomProperties))
             continue;
 
-        if (parentStyle.inheritedEqual(*entry.parentRenderStyle))
+        // The shared (cross-document) cache uses the relaxed FontDescription-only equality so
+        // entries can match across documents with simple font selectors; the per-Resolver cache
+        // uses strict inherited equality, exactly matching ToT. (rdar://173598541.)
+        bool inheritedMatches = m_isSharedAcrossDocuments
+            ? parentStyle.inheritedEqualForMDC(*entry.parentRenderStyle)
+            : parentStyle.inheritedEqual(*entry.parentRenderStyle);
+        if (inheritedMatches)
             return std::make_optional(Result { .entry = entry, .inheritedEqual = true });
         partiallyMatchingEntry = &entry;
     }
     if (partiallyMatchingEntry)
         return std::make_optional(Result { .entry = *partiallyMatchingEntry, .inheritedEqual = false });
+
     return std::nullopt;
 }
 
@@ -200,6 +199,25 @@ void MatchedDeclarationsCache::remove(unsigned hash)
 void MatchedDeclarationsCache::invalidate()
 {
     m_entries.clear();
+}
+
+void MatchedDeclarationsCache::invalidateIfDocumentElementRelativeUnitsChanged(const RenderStyle& documentElementStyle)
+{
+    // Compare the relative-unit basis by length-resolution *value*, not by fontCascade identity or
+    // FontCache generation. styleChangeAffectsRelativeUnits() uses fontCascadeEqual() (per-document
+    // fontSelector identity) and the global generation is volatile across an SP3 run (unrelated
+    // webfont loads), either of which would flush away cross-document reuse on every reload.
+    // Style::equalForLengthResolution compares computed/specified size + the realized primary-font
+    // metrics (xHeight/zeroWidth) + zoom — stable for the same actual font, so identical reloads
+    // don't flush, but a real :root font change (incl. "sans-serif" remapping to a different system
+    // font, which changes the metrics) does. computedLineHeight covers rlh. (rdar://173598541.)
+    bool changed = !m_documentElementStyleForRelativeUnits
+        || !Style::equalForLengthResolution(*m_documentElementStyleForRelativeUnits, documentElementStyle)
+        || m_documentElementStyleForRelativeUnits->computedLineHeight() != documentElementStyle.computedLineHeight();
+    if (!changed)
+        return;
+    invalidate();
+    m_documentElementStyleForRelativeUnits = RenderStyle::clonePtr(documentElementStyle);
 }
 
 template<typename Callback>

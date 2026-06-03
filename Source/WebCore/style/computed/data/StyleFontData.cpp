@@ -27,6 +27,8 @@
 #include "config.h"
 #include "StyleFontData.h"
 
+#include "FontCascadeInlines.h"
+#include "FontSelector.h"
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleKeyword+Logging.h"
@@ -60,6 +62,23 @@ bool FontData::operator==(const FontData& o) const
     return letterSpacing == o.letterSpacing
         && wordSpacing == o.wordSpacing
         && fontCascade == o.fontCascade;
+}
+
+bool FontData::equalsForMDC(const FontData& o) const
+{
+    if (letterSpacing != o.letterSpacing || wordSpacing != o.wordSpacing)
+        return false;
+
+    // For simple-selector documents, FontDescription is sufficient to determine font
+    // resolution; skip the per-document selector identity / version / generation checks
+    // so cross-document MDC entries with identical descriptions match. Falls back to
+    // strict FontCascade::operator== otherwise.
+    RefPtr a = fontCascade.fontSelector();
+    RefPtr b = o.fontCascade.fontSelector();
+    if (a && b && a->isSimpleFontSelectorForDescription() && b->isSimpleFontSelectorForDescription())
+        return fontCascade.fontDescription() == o.fontCascade.fontDescription();
+
+    return fontCascade == o.fontCascade;
 }
 
 #if !LOG_DISABLED

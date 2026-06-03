@@ -38,10 +38,15 @@ namespace Style {
 
 class Resolver;
 
-class MatchedDeclarationsCache : public CanMakeWeakPtr<MatchedDeclarationsCache> {
+class MatchedDeclarationsCache : public RefCounted<MatchedDeclarationsCache>, public CanMakeWeakPtr<MatchedDeclarationsCache> {
     WTF_MAKE_TZONE_ALLOCATED(MatchedDeclarationsCache);
 public:
-    explicit MatchedDeclarationsCache(const Resolver&);
+    // A "shared" cache is the process-global instance reused across documents/iterations; it uses
+    // relaxed (FontDescription-only, for simple selectors) inherited equality so entries can match
+    // across documents. A non-shared (per-Resolver) cache uses strict inherited equality, exactly
+    // matching ToT — it is the fallback for entries excluded from the shared cache (e.g. viewport-
+    // unit styles) and for documents that don't qualify for sharing. (rdar://173598541.)
+    static Ref<MatchedDeclarationsCache> create(bool isSharedAcrossDocuments = false) { return adoptRef(*new MatchedDeclarationsCache(isSharedAcrossDocuments)); }
     ~MatchedDeclarationsCache();
 
     static bool isCacheable(const Element&, const RenderStyle&, const RenderStyle& parentStyle);
@@ -69,16 +74,22 @@ public:
     void invalidate();
     void clearEntriesAffectedByViewportUnits();
 
-    void NODELETE ref() const;
-    void deref() const;
+    // Flush only if the documentElement's relative-unit basis (font + line-height, what rem/rcap/
+    // rch/rex/ric/rlh resolve against) differs from what the cached entries were built under. Lets
+    // the shared cache survive identical reloads (cross-document reuse) while still invalidating on
+    // a real :root font change. (rdar://173598541.)
+    void invalidateIfDocumentElementRelativeUnitsChanged(const RenderStyle& documentElementStyle);
 
 private:
+    explicit MatchedDeclarationsCache(bool isSharedAcrossDocuments);
+
     template<typename Callback>
     void removeAllMatching(const Callback& matches);
 
     void sweep();
 
-    SingleThreadWeakRef<const Resolver> m_owner;
+    const bool m_isSharedAcrossDocuments;
+    std::unique_ptr<const RenderStyle> m_documentElementStyleForRelativeUnits; // rem/rcap/… basis the entries were built under (rdar://173598541)
     HashMap<unsigned, Vector<Entry>, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
