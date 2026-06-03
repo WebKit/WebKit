@@ -25,7 +25,11 @@
 
 #include "config.h"
 
+<<<<<<< HEAD
 #include "Helpers/Test.h"
+=======
+#include "Test.h"
+>>>>>>> 3efb02c6bee1 ([IndexedDB] IDBKeyData operator== and operator<=> define different equivalence classes)
 #include <WebCore/IDBKeyData.h>
 #include <wtf/StdSet.h>
 

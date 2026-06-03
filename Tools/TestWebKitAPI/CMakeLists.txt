@@ -223,7 +223,10 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/HTMLParserIdioms.cpp
         Tests/WebCore/HTTPParsers.cpp
         Tests/WebCore/IDBKeyData.cpp
+<<<<<<< HEAD
         Tests/WebCore/IDBSerializationTest.cpp
+=======
+>>>>>>> 3efb02c6bee1 ([IndexedDB] IDBKeyData operator== and operator<=> define different equivalence classes)
         Tests/WebCore/ImageBufferTests.cpp
         Tests/WebCore/IntPointTests.cpp
         Tests/WebCore/IntRectTests.cpp
