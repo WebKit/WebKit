@@ -1,0 +1,5 @@
+
+PASS Complex text is measured and painted
+PASS textAlign 'center' is honored for complex text
+PASS textAlign 'right' is honored for complex text
+

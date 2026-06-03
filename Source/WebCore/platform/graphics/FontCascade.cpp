@@ -1518,13 +1518,13 @@ TextShapingResult FontCascade::layoutComplexText(const TextRun& run, unsigned fr
     ComplexTextController controller(*this, run, false, 0, forTextEmphasis == ForTextEmphasis::Yes);
     GlyphBuffer glyphBufferForStartingIndex;
     controller.advance(from, &glyphBufferForStartingIndex);
-    float widthBeforeSegment = controller.totalAdvance().width();
+    float widthBeforeSegment = controller.runWidthSoFar();
     controller.advance(to, &result.glyphBuffer);
 
     if (result.glyphBuffer.isEmpty())
         return result;
 
-    result.width = controller.totalAdvance().width() - widthBeforeSegment;
+    result.width = controller.runWidthSoFar() - widthBeforeSegment;
 
     if (run.rtl()) {
         // Exploit the fact that the sum of the paint advances is equal to

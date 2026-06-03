@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Canvas textAlign center/right applies to complex-script (Thai) text</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="800" height="80"></canvas>
+<script>
+// Regression test: the cached shaped-text width was computed as 0 for complex
+// (e.g. Thai) text, so canvas textAlign "center"/"right" collapsed to "left" and
+// the text was mis-positioned / clipped. https://bugs.webkit.org/show_bug.cgi?id=316186
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const text = "นี่คือข้อความตัวอย่าง"; // complex-script string requiring shaping
+const anchorX = 400;
+const baselineY = 40;
+const tolerance = 3;
+
+ctx.font = "30px sans-serif";
+ctx.textBaseline = "middle";
+
+// Ground-truth advance width, measured independently of the drawing path.
+const measuredWidth = ctx.measureText(text).width;
+
+// Horizontal ink extent [min, max] of the white text, or null if nothing painted.
+function inkExtent(align) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.textAlign = align;
+    ctx.fillText(text, anchorX, baselineY);
+
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let minX = canvas.width, maxX = -1;
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            if (data[(y * canvas.width + x) * 4 + 3] > 30) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+            }
+        }
+    }
+    return maxX < 0 ? null : { min: minX, max: maxX };
+}
+
+const left = inkExtent("left");
+const center = inkExtent("center");
+const right = inkExtent("right");
+
+test(() => {
+    assert_greater_than(measuredWidth, 1, "measureText() reports a non-zero width");
+    assert_not_equals(left, null, "left-aligned text is painted");
+    assert_not_equals(center, null, "center-aligned text is painted");
+    assert_not_equals(right, null, "right-aligned text is painted");
+}, "Complex text is measured and painted");
+
+// With the same anchor and text, the rendered glyph run is identical for every
+// alignment, just translated by the alignment offset (left: 0, center: -width/2,
+// right: -width). So the ink shifts left by exactly width/2 and width. The bug made
+// both offsets 0. Comparing extents of the same glyph run cancels per-glyph side
+// bearings, so the relationship is exact within rounding.
+test(() => {
+    assert_approx_equals(left.min - center.min, measuredWidth / 2, tolerance,
+        "center shifts the text left by half the advance width");
+}, "textAlign 'center' is honored for complex text");
+
+test(() => {
+    assert_approx_equals(left.min - right.min, measuredWidth, tolerance,
+        "right shifts the text left by the full advance width");
+    // Original symptom: right-aligned text overran the right edge and was clipped.
+    assert_less_than_equal(right.max, anchorX + tolerance,
+        "right-aligned text ends at the anchor instead of overflowing");
+}, "textAlign 'right' is honored for complex text");
+</script>
+</body>
+</html>
