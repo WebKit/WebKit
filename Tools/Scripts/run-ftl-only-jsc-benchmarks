@@ -1,0 +1,317 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Igalia S.L. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# FTL-only JetStream3 A/B runner. Runs each subtest in its own jsc process via
+# PerformanceTests/JetStream3/ftl-only-cli.js with the JIT pinned so that the set
+# of compiled functions is deterministic and frozen during measurement (see
+# JSC_ENV below). Aggregates the per-process JSON reports into BenchmarkResults-
+# shape files that Tools/Scripts/compare-results reads as five FTL-only benchmark
+# types.
+#
+# A subtest whose compiled set never freezes within the warmup budget is dropped
+# (and listed under subtests_dropped in summary.json), because it would invalidate the A/B comparison.
+#
+# To run an A/B comparison:
+#   python3 Tools/Scripts/run-ftl-only-jsc-benchmarks --build-dir=<checkout-A>/WebKitBuild/JSCOnly/Release --out-dir=/tmp/ftl-A
+#   python3 Tools/Scripts/run-ftl-only-jsc-benchmarks --build-dir=<checkout-B>/WebKitBuild/JSCOnly/Release --out-dir=/tmp/ftl-B
+#   python3 Tools/Scripts/compare-ftl-only-results -a /tmp/ftl-A -b /tmp/ftl-B
+#
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+
+REPORT_PREFIX = "__FTL_ONLY_REPORT__"
+ERROR_PREFIX  = "__FTL_ONLY_ERROR__"
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JS3_DIR    = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "PerformanceTests", "JetStream3"))
+DRIVER_JS  = os.path.join(JS3_DIR, "ftl-only-cli.js")
+PLAN_PATH  = os.path.join(SCRIPT_DIR, "webkitpy", "benchmark_runner", "data", "plans", "jetstream3.plan")
+
+# Make the compiled set deterministic and freezable: synchronous JIT, no loop-OSR-
+# entry, no old-age jettison, GC on the main thread (concurrent GC was observed to
+# perturb tier-up counters), and the compile/phase stat hooks turned on.
+#
+# Reoptimization is deliberately left ON. A function with a failing speculation must
+# be allowed to reoptimize during warmup so the measurement window runs clean FTL;
+# pinning it off stranded such functions in a permanent OSR-exit storm, so their
+# "runtime" was really baseline-plus-exit overhead.
+JSC_ENV = {
+    "JSC_useDollarVM": "true",
+    "JSC_useConcurrentJIT": "false",
+    "JSC_useOSREntryToDFG": "false",
+    "JSC_useOSREntryToFTL": "false",
+    "JSC_disableCodeBlockJettisonDueToOldAge": "true",
+    "JSC_collectContinuously": "false",
+    "JSC_useConcurrentGC": "false",
+    "JSC_reportTotalCompileTimes": "true",
+    "JSC_reportTotalPhaseTimes": "true",
+}
+
+
+def load_subtests():
+    # The jetstream3 plan groups subtests under one or more suite keys; take them all.
+    with open(PLAN_PATH) as f:
+        suites = json.load(f)["subtests"]
+    return [name for group in suites.values() for name in group]
+
+
+def to_score(iter_ms):
+    # Matches JetStreamDriver.js's toScore(timeValue) = 5000 / max(time, 1).
+    return 5000.0 / max(iter_ms, 1.0)
+
+
+def median(xs):
+    s = sorted(xs)
+    n = len(s)
+    return s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2.0
+
+
+def run_one(jsc, lib_dir, subtest, measurement_iters, warmup_budget_mult, timeout):
+    env = os.environ.copy()
+    env.update(JSC_ENV)
+    if lib_dir:
+        env["LD_LIBRARY_PATH"] = lib_dir + os.pathsep + env.get("LD_LIBRARY_PATH", "")
+    cmd = [jsc, DRIVER_JS, "--",
+           "--test={}".format(subtest),
+           "--measurement-iters={}".format(measurement_iters),
+           "--warmup-budget-mult={}".format(warmup_budget_mult)]
+    try:
+        proc = subprocess.run(cmd, env=env, cwd=JS3_DIR, capture_output=True,
+                              text=True, timeout=timeout, check=False)
+    except subprocess.TimeoutExpired:
+        return None, "timeout after {}s".format(timeout)
+
+    for line in proc.stdout.splitlines():
+        if line.startswith(REPORT_PREFIX):
+            try:
+                return json.loads(line[len(REPORT_PREFIX):]), None
+            except json.JSONDecodeError as e:
+                return None, "malformed report JSON: {}".format(e)
+        if line.startswith(ERROR_PREFIX):
+            try:
+                err = json.loads(line[len(ERROR_PREFIX):])
+                return None, "benchmark error: {}".format(err.get("error"))
+            except json.JSONDecodeError:
+                return None, "malformed error JSON: {}".format(line)
+
+    return None, "no report in stdout (rc={}, stderr_tail={!r})".format(
+        proc.returncode, proc.stderr[-2000:] if proc.stderr else "")
+
+
+def collect(args):
+    subtests = load_subtests()
+    if args.subtest:
+        wanted = set(args.subtest)
+        subtests = [s for s in subtests if s in wanted]
+
+    results = {}
+    skipped = {}
+    dropped = {}  # reached warmup budget without freezing the compiled set
+    failed  = {}
+    total = len(subtests) * args.outer_iters
+    done  = 0
+    for iter_idx in range(args.outer_iters):
+        for subtest in subtests:
+            done += 1
+            print("[{}/{}] iter={} test={}".format(done, total, iter_idx, subtest),
+                  file=sys.stderr)
+            report, err = run_one(args.jsc, args.lib_dir, subtest, args.measurement_iters,
+                                  args.warmup_budget_mult, args.timeout)
+            if err:
+                failed.setdefault(subtest, []).append(err)
+            elif report.get("skipped"):
+                skipped.setdefault(subtest, []).append(report.get("reason"))
+            elif not report.get("reachedFrozenState"):
+                dropped.setdefault(subtest, []).append(report.get("warmupIterations"))
+            else:
+                results.setdefault(subtest, []).append(report)
+    return results, skipped, dropped, failed
+
+
+# --- Aggregation into BenchmarkResults shape ----------------------------------
+# Each builder produces {topKey: {"tests": {subtest: {"metrics": {...}, "tests":
+# {...}}}}}. Per-subtest "current" lists hold one value per successful outer-iter
+# (kept ragged on purpose: a subtest that failed/dropped on some iters simply has
+# fewer samples, and compare-results handles unequal sample counts).
+
+def _nested(metric_name, label_to_values, total_values):
+    nested = {label: {"metrics": {metric_name: {"current": values}}}
+              for label, values in label_to_values.items()}
+    return {"metrics": {metric_name: {"current": total_values}}, "tests": nested}
+
+
+def build_score_json(results):
+    tests = {}
+    for subtest, reports in results.items():
+        scores = [to_score(median(r["measurement"]["perIterMs"])) for r in reports
+                  if r["measurement"]["perIterMs"]]
+        if scores:
+            tests[subtest] = {"metrics": {"Score": {"current": scores}}}
+    return {"JetStream3-FTLOnly": {"tests": tests}}
+
+
+def build_compile_json(results):
+    # dfgMs/ftlMs are additive tier totals; ftlDfgMs/ftlB3Ms are sub-phases of
+    # ftlMs, reported as diagnostics but not summed into the per-subtest total.
+    tiers = [("DFG", "dfgMs"), ("FTL", "ftlMs"), ("FTL-DFG", "ftlDfgMs"), ("FTL-B3", "ftlB3Ms")]
+    tests = {}
+    for subtest, reports in results.items():
+        compile_ms = [r["frozen"]["compileTimeMs"] for r in reports]
+        per_tier = {label: [c.get(attr, 0.0) for c in compile_ms] for label, attr in tiers}
+        total = [c.get("dfgMs", 0.0) + c.get("ftlMs", 0.0) for c in compile_ms]
+        tests[subtest] = _nested("Time", per_tier, total)
+    return {"JetStream3-FTLOnly-CompileTime": {"tests": tests}}
+
+
+def build_phase_json(results):
+    tests = {}
+    for subtest, reports in results.items():
+        n = len(reports)
+        per_phase = {}
+        totals = [0.0] * n
+        for i, r in enumerate(reports):
+            for entry in r["frozen"].get("phaseTimeMs", []):
+                key = "{}/{}".format(entry.get("compiler", "?"), entry.get("phase", "?"))
+                per_phase.setdefault(key, [0.0] * n)[i] = entry.get("totalMs", 0.0)
+                totals[i] += entry.get("totalMs", 0.0)
+        tests[subtest] = _nested("Time", per_phase, totals)
+    return {"JetStream3-FTLOnly-PhaseTime": {"tests": tests}}
+
+
+def build_osrexits_json(results):
+    # Steady-state OSR exits: counted during the measurement window (zero for a
+    # healthy FTL-only run). A nonzero value means a function keeps exiting after
+    # the compiled set froze -- exactly the storm we must not silently accept.
+    tests = {}
+    for subtest, reports in results.items():
+        exits = [r["measurement"]["osrExitsDelta"] for r in reports]
+        per_tier = {"DFG": [float(e.get("dfg", 0)) for e in exits],
+                    "FTL": [float(e.get("ftl", 0)) for e in exits]}
+        total = [float(e.get("total", 0)) for e in exits]
+        tests[subtest] = _nested("Count", per_tier, total)
+    return {"JetStream3-FTLOnly-OSRExits": {"tests": tests}}
+
+
+def build_funcs_json(results):
+    # Live FTL/DFG/Baseline FunctionCodeBlock counts once the set froze. Used by
+    # compare-results to verify A and B compiled the same number of functions; if
+    # they differ, the compile/phase/OSR comparisons are not apples-to-apples.
+    tiers = [("FTL", "ftl"), ("DFG", "dfg"), ("Baseline", "baseline")]
+    tests = {}
+    for subtest, reports in results.items():
+        counts = [r["frozen"]["tierCounts"] for r in reports]
+        per_tier = {label: [float(c.get(attr, 0)) for c in counts] for label, attr in tiers}
+        total = [float(c.get("ftl", 0) + c.get("dfg", 0)) for c in counts]
+        tests[subtest] = _nested("Count", per_tier, total)
+    return {"JetStream3-FTLOnly-FunctionCounts": {"tests": tests}}
+
+
+OUTPUTS = [
+    ("score.json",    build_score_json),
+    ("compile.json",  build_compile_json),
+    ("phase.json",    build_phase_json),
+    ("osrexits.json", build_osrexits_json),
+    ("funcs.json",    build_funcs_json),
+]
+
+
+def write_json(path, payload):
+    with open(path, "w") as f:
+        json.dump(payload, f, indent=2)
+    print("wrote {}".format(path), file=sys.stderr)
+
+
+def main():
+    p = argparse.ArgumentParser(
+        description="FTL-only JetStream3 A/B benchmark runner.",
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    src = p.add_mutually_exclusive_group(required=True)
+    src.add_argument("--build-dir",
+                     help="path to a built jsc configuration directory (the one containing "
+                          "bin/jsc and lib/, e.g. WebKitBuild/JSCOnly/Release). The driver runs "
+                          "that directory's own jsc against its own libJavaScriptCore.")
+    src.add_argument("--jsc", help="path to a jsc binary directly (use --build-dir instead "
+                                   "unless you have a standalone binary)")
+    p.add_argument("--out-dir", required=True,
+                   help="directory for score/compile/phase/osrexits/funcs/summary .json")
+    p.add_argument("--outer-iters", type=int, default=5,
+                   help="independent jsc invocations per subtest -- the per-subtest sample "
+                        "count for Welch's t-test in compare-results (default: 5)")
+    p.add_argument("--measurement-iters", type=int, default=30,
+                   help="iterations measured in each frozen window (default: 30)")
+    p.add_argument("--warmup-budget-mult", type=int, default=10,
+                   help="warmup budget = measurement-iters * this; a subtest that does not "
+                        "freeze within it is dropped. With loop-OSR-entry off, functions tier "
+                        "up only by call count, so the tail can be long (e.g. delta-blue needs "
+                        "~190 iterations); raise this if too many subtests are dropped (default: 10)")
+    p.add_argument("--timeout", type=int, default=1200, help="per-subprocess timeout seconds")
+    p.add_argument("--subtest", action="append",
+                   help="run only the named subtest (repeatable). Default: every subtest in "
+                        "the jetstream3 plan")
+    args = p.parse_args()
+
+    if args.build_dir:
+        args.jsc = os.path.join(args.build_dir, "bin", "jsc")
+        args.lib_dir = os.path.join(args.build_dir, "lib")
+        if not os.path.isdir(args.build_dir):
+            p.error("build dir not found: {}".format(args.build_dir))
+    else:
+        args.lib_dir = None
+    if not os.path.exists(args.jsc):
+        p.error("jsc not found: {}".format(args.jsc))
+    if not os.path.exists(DRIVER_JS):
+        p.error("ftl-only-cli.js missing at {}".format(DRIVER_JS))
+    os.makedirs(args.out_dir, exist_ok=True)
+
+    results, skipped, dropped, failed = collect(args)
+
+    if not results:
+        print("ERROR: no subtest froze its compiled set", file=sys.stderr)
+        return 1
+
+    for name, builder in OUTPUTS:
+        write_json(os.path.join(args.out_dir, name), builder(results))
+    write_json(os.path.join(args.out_dir, "summary.json"), {
+        "subtests_run": sorted(results.keys()),
+        "subtests_skipped": skipped,
+        "subtests_dropped": dropped,
+        "subtests_failed":  failed,
+        "outer_iters": args.outer_iters,
+        "measurement_iters": args.measurement_iters,
+        "warmup_budget_mult": args.warmup_budget_mult,
+    })
+    if dropped:
+        print("dropped (never froze): {}".format(sorted(dropped)), file=sys.stderr)
+    if failed:
+        print("failed: {}".format(sorted(failed)), file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
