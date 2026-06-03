@@ -2433,6 +2433,8 @@ webkit.org/b/316016 [ Debug ] fast/mediastream/image-capture-take-photo.html [ S
 
 webkit.org/b/316014 fast/dom/move-embedded-during-update.html [ Pass Failure ]
 
+webkit.org/b/316126 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_root_selector.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/316020 [ Tahoe+ ] media/modern-media-controls/icon-service/icon-service-bundle-load.html [ Pass Failure ]
 
 webkit.org/b/316012 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-auto-resize-observer-removes-auto.html [ Pass Failure ]
