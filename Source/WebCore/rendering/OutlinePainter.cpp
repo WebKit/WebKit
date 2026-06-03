@@ -153,6 +153,11 @@ void OutlinePainter::paintOutline(const RenderInline& renderer, const LayoutPoin
     auto isHorizontalWritingMode = renderer.isHorizontalWritingMode();
     CheckedRef containingBlock = *renderer.containingBlock();
     auto isFlipped = containingBlock->writingMode().isBlockFlipped();
+    // Legacy SVG text fragments are laid out in absolute (physical) coordinates by the SVG
+    // text layout engine, so their inline box rects are already physical and must not be
+    // block-flipped (e.g. writing-mode="tb" maps to vertical-rl, which is block-flipped).
+    if (renderer.isRenderSVGInline())
+        isFlipped = false;
     Vector<LayoutRect> rects;
     for (auto box = InlineIterator::lineLeftmostInlineBoxFor(renderer); box; box.traverseInlineBoxLineRightward()) {
         // Start with the inline box's own rect as the base, ensuring the outline

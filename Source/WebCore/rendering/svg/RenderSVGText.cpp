@@ -522,8 +522,11 @@ FloatRect RenderSVGText::layoutChildBoxes(LegacyInlineFlowBox* start, SVGTextFra
             boxRect = textBox->calculateBoundaries();
             textBox->setX(boxRect.x());
             textBox->setY(boxRect.y());
-            textBox->setLogicalWidth(boxRect.width());
-            textBox->setLogicalHeight(boxRect.height());
+            // calculateBoundaries() returns a visual rect, but the inline box stores
+            // logical extents. width()/height() (and thus frameRect()) transpose these
+            // for vertical writing modes, so feed the logical setters accordingly.
+            textBox->setLogicalWidth(textBox->isHorizontal() ? boxRect.width() : boxRect.height());
+            textBox->setLogicalHeight(textBox->isHorizontal() ? boxRect.height() : boxRect.width());
         } else {
             // Skip generated content.
             if (!child->renderer().node())
@@ -535,8 +538,8 @@ FloatRect RenderSVGText::layoutChildBoxes(LegacyInlineFlowBox* start, SVGTextFra
             boxRect = flowBox.calculateBoundaries();
             flowBox.setX(boxRect.x());
             flowBox.setY(boxRect.y());
-            flowBox.setLogicalWidth(boxRect.width());
-            flowBox.setLogicalHeight(boxRect.height());
+            flowBox.setLogicalWidth(flowBox.isHorizontal() ? boxRect.width() : boxRect.height());
+            flowBox.setLogicalHeight(flowBox.isHorizontal() ? boxRect.height() : boxRect.width());
         }
         childRect.unite(boxRect);
     }

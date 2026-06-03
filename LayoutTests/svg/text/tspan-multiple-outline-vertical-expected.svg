@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+  <style>
+    text { font: 32px sans-serif; }
+  </style>
+  <text x="10" y="10" writing-mode="tb">
+    <tspan dx="1.5em">tspan1</tspan>
+    <tspan dx="1.5em">tspan2</tspan>
+  </text>
+  <g id="outlines" fill="none" stroke="black" stroke-width="1"/>
+  <script><![CDATA[
+    // Draw a 1px box around each <tspan> using the SVG-native getExtentOfChar(),
+    // which builds each glyph's extent from the same text fragments as the
+    // outline box (SVGInlineTextBox::calculateBoundaries) but via an independent
+    // DOM code path. Unioning the per-character extents reproduces the tspan's
+    // outline box exactly, independent of font and platform. A CSS
+    // "outline: 1px solid" is painted just outside the border box, so inflate by
+    // half the stroke width to align the center-drawn SVG stroke with it.
+    function drawOutlines() {
+      var svgNS = "http://www.w3.org/2000/svg";
+      var outlines = document.getElementById("outlines");
+      var text = document.querySelector("text");
+      // Force SVG text layout so character metrics are available.
+      text.getBBox();
+      var tspans = document.querySelectorAll("tspan");
+      for (var i = 0; i < tspans.length; ++i) {
+        var tspan = tspans[i];
+        var n = tspan.getNumberOfChars();
+        var left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+        for (var c = 0; c < n; ++c) {
+          var e = tspan.getExtentOfChar(c);
+          left = Math.min(left, e.x);
+          top = Math.min(top, e.y);
+          right = Math.max(right, e.x + e.width);
+          bottom = Math.max(bottom, e.y + e.height);
+        }
+        var rect = document.createElementNS(svgNS, "rect");
+        // Snap to integer device pixels so the centered SVG stroke renders as a
+        // crisp 1px line (matching the pixel-snapped CSS outline), rather than
+        // anti-aliasing across two rows/columns on fractional edges.
+        left = Math.round(left);
+        top = Math.round(top);
+        right = Math.round(right);
+        bottom = Math.round(bottom);
+        rect.setAttribute("x", left - 0.5);
+        rect.setAttribute("y", top - 0.5);
+        rect.setAttribute("width", (right - left) + 1);
+        rect.setAttribute("height", (bottom - top) + 1);
+        outlines.appendChild(rect);
+      }
+    }
+    window.addEventListener("load", drawOutlines);
+    drawOutlines();
+  ]]></script>
+</svg>
