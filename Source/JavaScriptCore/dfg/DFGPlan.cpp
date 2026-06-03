@@ -219,7 +219,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         changed |= phase(dfg);                                   \
     } while (false);                                             \
 
-    
+
     // By this point the DFG bytecode parser will have potentially mutated various tables
     // in the CodeBlock. This is a good time to perform an early shrink, which is more
     // powerful than a late one. It's safe to do so because we haven't generated any code
@@ -419,6 +419,9 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performCFA);
         RUN_PHASE(performLICM);
 
+        if (changed)
+            RUN_PHASE(performGlobalCSE);
+
         // FIXME: Currently: IntegerRangeOptimization *must* be run after LICM.
         //
         // IntegerRangeOptimization makes changes on nodes based on preceding blocks
@@ -428,8 +431,17 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // Ideally, the dependencies should be explicit. See https://bugs.webkit.org/show_bug.cgi?id=157534.
         RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performIntegerRangeOptimization);
+
+        RUN_PHASE(performCFA);
+        RUN_PHASE(performConstantFolding);
+        RUN_PHASE(performCFGSimplification);
+        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
+        RUN_PHASE(performIntegerRangeOptimization);
         RUN_PHASE(performDebugProbeElimination);
-        
+        RUN_PHASE(performCFA);
+        RUN_PHASE(performConstantFolding);
+        RUN_PHASE(performCFGSimplification);
+
         RUN_PHASE(performCleanUp);
         RUN_PHASE(performIntegerCheckCombining);
         RUN_PHASE(performGlobalCSE);
