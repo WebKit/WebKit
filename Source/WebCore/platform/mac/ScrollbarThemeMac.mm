@@ -276,9 +276,9 @@ inline constexpr unsigned NODELETE scrollbarWidthToIndex(ScrollbarWidth scrollba
 
 bool ScrollbarThemeMac::hasButtons(Scrollbar& scrollbar)
 {
-    if (scrollbar.enabled() && buttonsPlacement() != ScrollbarButtonsNone && (scrollbar.orientation() == ScrollbarOrientation::Horizontal))
-        return scrollbar.width();
-    return scrollbar.height() >= 2 * (cRealButtonLength[scrollbarWidthToIndex(scrollbar.widthStyle())] - cButtonHitInset[scrollbarWidthToIndex(scrollbar.widthStyle())]);
+    return scrollbar.enabled() && buttonsPlacement() != ScrollbarButtonsNone
+        && (scrollbar.orientation() == ScrollbarOrientation::Horizontal ? scrollbar.width() : scrollbar.height())
+            >= 2 * (cRealButtonLength[scrollbarWidthToIndex(scrollbar.widthStyle())] - cButtonHitInset[scrollbarWidthToIndex(scrollbar.widthStyle())]);
 }
 
 bool ScrollbarThemeMac::hasThumb(Scrollbar& scrollbar)
