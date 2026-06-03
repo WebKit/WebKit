@@ -31,6 +31,7 @@
 #include "CachedCall.h"
 #include "CharacterPropertyDataGenerator.h"
 #include "CodeBlock.h"
+#include "CompilerTimingScope.h"
 #include "Completion.h"
 #include "ControlFlowProfiler.h"
 #include "DOMAttributeGetterSetter.h"
@@ -45,6 +46,7 @@
 #include "HeapSnapshotBuilder.h"
 #include "InitializeThreading.h"
 #include "InterpreterInlines.h"
+#include "JIT.h"
 #include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
@@ -54,6 +56,7 @@
 #include "JSString.h"
 #include "LinkBuffer.h"
 #include "NativeCallee.h"
+#include "ObjectConstructor.h"
 #include "OperationResult.h"
 #include "Options.h"
 #include "Parser.h"
@@ -2242,6 +2245,11 @@ static JSC_DECLARE_HOST_FUNCTION(functionHeapExtraMemorySize);
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
+static JSC_DECLARE_HOST_FUNCTION(functionCompileTimeTotals);
+static JSC_DECLARE_HOST_FUNCTION(functionPhaseTimeTotals);
+static JSC_DECLARE_HOST_FUNCTION(functionOSRExitCounts);
+static JSC_DECLARE_HOST_FUNCTION(functionCodeBlockTierCounts);
+static JSC_DECLARE_HOST_FUNCTION(functionResetJITStats);
 #endif
 
 static JSC_DECLARE_HOST_FUNCTION(functionAllowDoubleShape);
@@ -4248,6 +4256,135 @@ JSC_DEFINE_HOST_FUNCTION(functionResetJITSizeStatistics, (JSGlobalObject* global
     vm.jitSizeStatistics->reset();
     return JSValue::encode(jsUndefined());
 }
+
+// Returns tier compile times accumulated since process start (or last
+// $vm.resetJITStats()). Requires JSC_reportTotalCompileTimes=true.
+// Usage: $vm.compileTimeTotals() -> { dfgMs, ftlMs, ftlDfgMs, ftlB3Ms }
+JSC_DEFINE_HOST_FUNCTION(functionCompileTimeTotals, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, Identifier::fromString(vm, "dfgMs"_s),    jsNumber(JIT::totalDFGCompileTimeValue().milliseconds()));
+    result->putDirect(vm, Identifier::fromString(vm, "ftlMs"_s),    jsNumber(JIT::totalFTLCompileTimeValue().milliseconds()));
+    result->putDirect(vm, Identifier::fromString(vm, "ftlDfgMs"_s), jsNumber(JIT::totalFTLDFGCompileTimeValue().milliseconds()));
+    result->putDirect(vm, Identifier::fromString(vm, "ftlB3Ms"_s),  jsNumber(JIT::totalFTLB3CompileTimeValue().milliseconds()));
+    return JSValue::encode(result);
+}
+
+// Returns per-phase compile-time totals. Requires JSC_reportTotalPhaseTimes=true
+// (otherwise CompilerTimingScope does not record anything and the array is empty).
+// Usage: $vm.phaseTimeTotals() -> [{ compiler, phase, totalMs, maxMs }, ...]
+JSC_DEFINE_HOST_FUNCTION(functionPhaseTimeTotals, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto compilerId = Identifier::fromString(vm, "compiler"_s);
+    auto phaseId    = Identifier::fromString(vm, "phase"_s);
+    auto totalMsId  = Identifier::fromString(vm, "totalMs"_s);
+    auto maxMsId    = Identifier::fromString(vm, "maxMs"_s);
+
+    for (auto& [compilerName, phaseName, total, max] : phaseTimeTotals()) {
+        JSObject* entry = constructEmptyObject(globalObject);
+        entry->putDirect(vm, compilerId, jsString(vm, String::fromLatin1(compilerName)));
+        entry->putDirect(vm, phaseId,    jsString(vm, String::fromLatin1(phaseName)));
+        entry->putDirect(vm, totalMsId,  jsNumber(total.milliseconds()));
+        entry->putDirect(vm, maxMsId,    jsNumber(max.milliseconds()));
+        result->push(globalObject, entry);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(result);
+}
+
+// Walks the heap CodeBlock set and returns OSR-exit counters summed by JIT tier.
+// Usage: $vm.osrExitCounts() -> { dfg, ftl, total }
+JSC_DEFINE_HOST_FUNCTION(functionOSRExitCounts, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+
+    uint64_t dfgExits = 0;
+    uint64_t ftlExits = 0;
+    vm.heap.forEachCodeBlock([&](CodeBlock* codeBlock) {
+        switch (codeBlock->jitType()) {
+        case JITType::DFGJIT:
+            dfgExits += codeBlock->osrExitCounter();
+            break;
+        case JITType::FTLJIT:
+            ftlExits += codeBlock->osrExitCounter();
+            break;
+        default:
+            break;
+        }
+    });
+
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, Identifier::fromString(vm, "dfg"_s),   jsNumber(static_cast<double>(dfgExits)));
+    result->putDirect(vm, Identifier::fromString(vm, "ftl"_s),   jsNumber(static_cast<double>(ftlExits)));
+    result->putDirect(vm, Identifier::fromString(vm, "total"_s), jsNumber(static_cast<double>(dfgExits + ftlExits)));
+    return JSValue::encode(result);
+}
+
+// Walks the heap CodeBlock set and counts live FunctionCodeBlocks by JIT tier.
+// "Live" means CodeBlock::replacement() returns the same CodeBlock -- i.e., this
+// is the current code for its owning executable (older tier CodeBlocks that have
+// been replaced still exist on the heap but their replacement() points to the new
+// one). Only FunctionCodeBlocks are counted: Program/Eval/ModuleProgram CodeBlocks
+// typically run once and never tier up, so including them would make
+// "all-function-code-is-FTL" checks impossible to satisfy.
+// Usage: $vm.codeBlockTierCounts() -> { none, hostCallThunk, llint, baseline, dfg, ftl }
+JSC_DEFINE_HOST_FUNCTION(functionCodeBlockTierCounts, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+
+    uint64_t counts[6] = { 0, 0, 0, 0, 0, 0 };
+    vm.heap.forEachCodeBlock([&](CodeBlock* codeBlock) {
+        if (codeBlock->classInfo() != FunctionCodeBlock::info())
+            return;
+        if (codeBlock->replacement() != codeBlock)
+            return;
+        switch (codeBlock->jitType()) {
+        case JITType::None:             counts[0]++; break;
+        case JITType::HostCallThunk:    counts[1]++; break;
+        case JITType::InterpreterThunk: counts[2]++; break;
+        case JITType::BaselineJIT:      counts[3]++; break;
+        case JITType::DFGJIT:           counts[4]++; break;
+        case JITType::FTLJIT:           counts[5]++; break;
+        }
+    });
+
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, Identifier::fromString(vm, "none"_s),          jsNumber(static_cast<double>(counts[0])));
+    result->putDirect(vm, Identifier::fromString(vm, "hostCallThunk"_s), jsNumber(static_cast<double>(counts[1])));
+    result->putDirect(vm, Identifier::fromString(vm, "llint"_s),         jsNumber(static_cast<double>(counts[2])));
+    result->putDirect(vm, Identifier::fromString(vm, "baseline"_s),      jsNumber(static_cast<double>(counts[3])));
+    result->putDirect(vm, Identifier::fromString(vm, "dfg"_s),           jsNumber(static_cast<double>(counts[4])));
+    result->putDirect(vm, Identifier::fromString(vm, "ftl"_s),           jsNumber(static_cast<double>(counts[5])));
+    return JSValue::encode(result);
+}
+
+// Zeros the tier compile-time totals, the per-phase compile-time totals, and
+// every live CodeBlock's OSR-exit counter. Intended to be called between
+// warmup and measurement in FTL-only benchmark runs.
+// Usage: $vm.resetJITStats()
+JSC_DEFINE_HOST_FUNCTION(functionResetJITStats, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JIT::resetCompileTimeStats();
+    resetPhaseTimeTotals();
+    vm.heap.forEachCodeBlock([&](CodeBlock* codeBlock) {
+        codeBlock->resetOSRExitCounter();
+    });
+    return JSValue::encode(jsUndefined());
+}
 #endif
 
 // Checks if DoubleShape is allowed.
@@ -4593,6 +4730,11 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "jitSizeStatistics"_s, functionJITSizeStatistics, 0);
     addFunction(vm, allowIfNotFuzz, "dumpJITSizeStatistics"_s, functionDumpJITSizeStatistics, 0);
     addFunction(vm, allowIfNotFuzz, "resetJITSizeStatistics"_s, functionResetJITSizeStatistics, 0);
+    addFunction(vm, allowIfNotFuzz, "compileTimeTotals"_s, functionCompileTimeTotals, 0);
+    addFunction(vm, allowIfNotFuzz, "phaseTimeTotals"_s, functionPhaseTimeTotals, 0);
+    addFunction(vm, allowIfNotFuzz, "osrExitCounts"_s, functionOSRExitCounts, 0);
+    addFunction(vm, allowIfNotFuzz, "codeBlockTierCounts"_s, functionCodeBlockTierCounts, 0);
+    addFunction(vm, allowIfNotFuzz, "resetJITStats"_s, functionResetJITStats, 0);
 #endif
 
     addFunction(vm, alwaysAllow, "allowDoubleShape"_s, functionAllowDoubleShape, 0);

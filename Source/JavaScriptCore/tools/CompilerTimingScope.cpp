@@ -67,7 +67,19 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 "total ms: ", FixedWidthDouble(std::get<2>(tuple).milliseconds(), 8, 3), " max ms: ", FixedWidthDouble(std::get<3>(tuple).milliseconds(), 7, 3), " [", std::get<0>(tuple), "] ", std::get<1>(tuple));
         }
     }
-    
+
+    Vector<std::tuple<const char*, const char*, Seconds, Seconds>> snapshotTotals()
+    {
+        Locker locker { lock };
+        return totals;
+    }
+
+    void resetTotals()
+    {
+        Locker locker { lock };
+        totals.clear();
+    }
+
 private:
     Vector<std::tuple<const char*, const char*, Seconds, Seconds>> totals;
     Lock lock;
@@ -108,6 +120,16 @@ CompilerTimingScope::~CompilerTimingScope()
 void logTotalPhaseTimes()
 {
     compilerTimingScopeState().logTotals();
+}
+
+Vector<std::tuple<const char*, const char*, Seconds, Seconds>> phaseTimeTotals()
+{
+    return compilerTimingScopeState().snapshotTotals();
+}
+
+void resetPhaseTimeTotals()
+{
+    compilerTimingScopeState().resetTotals();
 }
 
 } // namespace JSC

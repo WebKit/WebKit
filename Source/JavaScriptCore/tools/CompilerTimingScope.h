@@ -27,6 +27,8 @@
 
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Seconds.h>
+#include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
@@ -49,5 +51,9 @@ private:
 };
 
 JS_EXPORT_PRIVATE void logTotalPhaseTimes();
+
+// For $vm
+JS_EXPORT_PRIVATE Vector<std::tuple<const char*, const char*, Seconds, Seconds>> phaseTimeTotals();
+JS_EXPORT_PRIVATE void resetPhaseTimeTotals();
 
 } // namespace JSC

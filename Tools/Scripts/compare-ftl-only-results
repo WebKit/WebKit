@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Igalia S.L. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# A/B comparison for the FTL-only JetStream3 runner (run-ftl-only-jsc-benchmarks).
+# Takes the two out-dirs produced by that runner and, for each metric file,
+# prints a per-subtest Welch t-test breakdown plus a suite-level summary, then
+# runs the function-count consistency check.
+#
+# The metric tables are rendered by reusing compare-results' table/stats helpers,
+# so this script holds only what is specific to the FTL-only workflow: which files
+# carry which metric, how subtests aggregate into a suite number, and the rule that
+# a subtest is only comparable when both builds compiled the same functions.
+#
+# Usage:
+#   python3 Tools/Scripts/compare-ftl-only-results -a /tmp/ftl-A -b /tmp/ftl-B [--detailed] [--sort]
+
+import argparse
+import importlib.machinery
+import importlib.util
+import json
+import os
+import sys
+
+import warnings
+
+from scipy import stats
+import numpy
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Borrow the table renderer (dumpBreakdowns) and its row key (unitMarker) from
+# compare-results so the two tools render identically. It has no .py extension, so
+# load it by path; exec'ing it only defines functions (its main() is __main__-guarded).
+def _load_compare_results():
+    path = os.path.join(SCRIPT_DIR, "compare-results")
+    loader = importlib.machinery.SourceFileLoader("compare_results", path)
+    module = importlib.util.module_from_spec(importlib.util.spec_from_loader(loader.name, loader))
+    loader.exec_module(module)
+    return module
+
+try:
+    cr = _load_compare_results()
+    dumpBreakdowns = cr.dumpBreakdowns
+    unitMarker = cr.unitMarker
+except Exception as e:
+    sys.exit("error: could not load compare-results next to this script: {}".format(e))
+
+# Identical OSR-exit counts (zero variance) and 0/0 ratios are expected; the t-test
+# reports them as nan/not-significant, so silence the scipy/numpy noise.
+warnings.filterwarnings("ignore")
+numpy.seterr(divide="ignore", invalid="ignore")
+
+# file -> (top-level key, unit, how subtests combine into one suite number,
+#          whether a bigger suite number is better)
+METRICS = [
+    ("score.json",    "JetStream3-FTLOnly",               "pts",   stats.gmean, True),
+    ("compile.json",  "JetStream3-FTLOnly-CompileTime",   "ms",    sum,         False),
+    ("phase.json",    "JetStream3-FTLOnly-PhaseTime",      "ms",    sum,         False),
+    ("osrexits.json", "JetStream3-FTLOnly-OSRExits",       "exits", sum,         False),
+]
+FUNCTION_COUNTS = ("funcs.json", "JetStream3-FTLOnly-FunctionCounts", "fns")
+
+
+def load(out_dir, filename, top_key):
+    path = os.path.join(out_dir, filename)
+    if not os.path.exists(path):
+        return None
+    with open(path) as f:
+        return json.load(f)[top_key]["tests"]
+
+
+def single_metric_values(test_node):
+    # Each FTL-only test node carries exactly one metric (Score, Time, or Count).
+    metrics = test_node.get("metrics", {})
+    if not metrics:
+        return None
+    (only_metric,) = metrics.values()
+    return only_metric["current"]
+
+
+def breakdown(tests, unit, detailed=False):
+    result = {unitMarker: unit}
+    for name, node in tests.items():
+        if detailed:
+            for sub_name, sub in node.get("tests", {}).items():
+                values = single_metric_values(sub)
+                if values is not None:
+                    result["{}-{}".format(name, sub_name)] = values
+        else:
+            values = single_metric_values(node)
+            if values is not None:
+                result[name] = values
+    return result
+
+
+def median(values):
+    s = sorted(values)
+    n = len(s)
+    return s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2.0
+
+
+def subtest_keys(bd):
+    return {k for k in bd if k != unitMarker}
+
+
+def shared_subtests(a, b):
+    return sorted(subtest_keys(a) & subtest_keys(b))
+
+
+def restrict(bd, subtests):
+    out = {unitMarker: bd[unitMarker]}
+    out.update({k: bd[k] for k in subtests})
+    return out
+
+
+def suite_summary(a, b, subtests, suite_aggregate, bigger_is_better):
+    # One suite number per outer iteration, aggregated across the subtests both
+    # builds share, rectangular to each build's common sample count.
+    def series(bd):
+        if not subtests:
+            return []
+        n = min(len(bd[s]) for s in subtests)
+        return [suite_aggregate([bd[s][i] for s in subtests]) for i in range(n)]
+    series_a, series_b = series(a), series(b)
+    if not series_a or not series_b:
+        return
+    mean_a, mean_b = numpy.mean(series_a), numpy.mean(series_b)
+    _, p = stats.ttest_ind(series_a, series_b, equal_var=False)
+    print("suite: a={:.5f} b={:.5f}".format(mean_a, mean_b))
+    if mean_a == mean_b:
+        verdict = "no change"
+    else:
+        num, den = (mean_a, mean_b) if bigger_is_better else (mean_b, mean_a)
+        worse = num > den
+        verdict = "{:.3f}x {}".format(num / den, "worse" if worse else "better") if den \
+            else ("worse" if worse else "better") + " (vs 0)"
+    print("  {} ({} is better)".format(verdict, "bigger" if bigger_is_better else "smaller"))
+    if not numpy.isnan(p) and p <= 0.05:
+        print("  significant (pValue={:.6f})".format(p))
+    else:
+        print("  not significant (pValue={})".format("nan" if numpy.isnan(p) else "{:.6f}".format(p)))
+
+
+def check_function_counts(dir_a, dir_b):
+    filename, top_key, _ = FUNCTION_COUNTS
+    tests_a = load(dir_a, filename, top_key)
+    tests_b = load(dir_b, filename, top_key)
+    if tests_a is None or tests_b is None:
+        print("(no {} -- skipping compiled-function-count check)".format(filename))
+        return
+    a = breakdown(tests_a, "fns")
+    b = breakdown(tests_b, "fns")
+    # All metric files share this subtest set, so report dropped subtests once here.
+    only_a = sorted(subtest_keys(a) - subtest_keys(b))
+    only_b = sorted(subtest_keys(b) - subtest_keys(a))
+    if only_a:
+        print("WARNING: only in -a (dropped in -b, not compared): {}".format(", ".join(only_a)))
+    if only_b:
+        print("WARNING: only in -b (dropped in -a, not compared): {}".format(", ".join(only_b)))
+    differ = []
+    for subtest in shared_subtests(a, b):
+        if median(a[subtest]) != median(b[subtest]):
+            differ.append("{} (a={:g} b={:g})".format(subtest, median(a[subtest]), median(b[subtest])))
+    if differ:
+        print("WARNING: compiled-function counts differ between -a and -b; the compile/phase/OSR "
+              "comparison is NOT apples-to-apples for: {}".format(", ".join(differ)))
+    else:
+        print("compiled-function counts match for all shared subtests.")
+
+
+def main():
+    p = argparse.ArgumentParser(description="A/B compare two FTL-only JetStream3 out-dirs.")
+    p.add_argument("-a", required=True, help="out-dir for build A")
+    p.add_argument("-b", required=True, help="out-dir for build B")
+    p.add_argument("--detailed", action="store_true",
+                   help="break compile/phase/OSR down per tier/phase, not just per subtest")
+    p.add_argument("--sort", action="store_true", help="sort subtests by b/a")
+    args = p.parse_args()
+
+    print("=" * 78)
+    print("COMPILED-FUNCTION-COUNT CONSISTENCY (must match for a valid comparison)")
+    print("=" * 78)
+    check_function_counts(args.a, args.b)
+
+    for filename, top_key, unit, suite_aggregate, bigger_is_better in METRICS:
+        tests_a = load(args.a, filename, top_key)
+        tests_b = load(args.b, filename, top_key)
+        print("\n" + "=" * 78)
+        print("{}  ({})".format(top_key, unit))
+        print("=" * 78)
+        if tests_a is None or tests_b is None:
+            print("(missing {} in one of the out-dirs -- skipped)".format(filename))
+            continue
+        rows_a = breakdown(tests_a, unit, detailed=args.detailed)
+        rows_b = breakdown(tests_b, unit, detailed=args.detailed)
+        rows = shared_subtests(rows_a, rows_b)
+        dumpBreakdowns(restrict(rows_a, rows), restrict(rows_b, rows), args.sort)
+        # The suite number always aggregates whole subtests, even in --detailed mode.
+        per_subtest_a = breakdown(tests_a, unit)
+        per_subtest_b = breakdown(tests_b, unit)
+        suite_summary(per_subtest_a, per_subtest_b,
+                      shared_subtests(per_subtest_a, per_subtest_b),
+                      suite_aggregate, bigger_is_better)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

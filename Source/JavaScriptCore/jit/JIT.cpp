@@ -1106,6 +1106,20 @@ Seconds JIT::totalCompileTime()
     return totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime;
 }
 
+void JIT::resetCompileTimeStats()
+{
+    totalBaselineCompileTime = { };
+    totalDFGCompileTime = { };
+    totalFTLCompileTime = { };
+    totalFTLDFGCompileTime = { };
+    totalFTLB3CompileTime = { };
+}
+
+Seconds JIT::totalDFGCompileTimeValue()    { return totalDFGCompileTime; }
+Seconds JIT::totalFTLCompileTimeValue()    { return totalFTLCompileTime; }
+Seconds JIT::totalFTLDFGCompileTimeValue() { return totalFTLDFGCompileTime; }
+Seconds JIT::totalFTLB3CompileTimeValue()  { return totalFTLB3CompileTime; }
+
 void JIT::exceptionCheck(Jump jumpToHandler)
 {
     jumpToHandler.linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), this);

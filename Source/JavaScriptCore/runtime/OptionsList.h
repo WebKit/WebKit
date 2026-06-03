@@ -434,6 +434,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpHeapOnLowMemory, false, Normal, "Dump a heap dump when the memory handler is triggered. Use alongside $vm.triggerMemoryPressure() and enableStrongRefTracker."_s) \
     v(Bool, forceCodeBlockToJettisonDueToOldAge, false, Normal, "If true, this means that anytime we can jettison a CodeBlock due to old age, we do."_s) \
     v(Bool, useEagerCodeBlockJettisonTiming, false, Normal, "If true, the time slices for jettisoning a CodeBlock due to old age are shrunk significantly."_s) \
+    v(Bool, disableCodeBlockJettisonDueToOldAge, false, Normal, "If true, CodeBlocks are never jettisoned due to old age. Used by FTL-only benchmark mode."_s) \
     \
     v(Bool, useTypeProfiler, false, Normal, nullptr) \
     v(Bool, useControlFlowProfiler, false, Normal, nullptr) \
