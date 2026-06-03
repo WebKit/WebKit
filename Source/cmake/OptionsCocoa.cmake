@@ -109,14 +109,65 @@ unset(_additions_candidates)
 unset(_additions)
 unset(_additions_found)
 
-if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
-    set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
-    file(MAKE_DIRECTORY "${_apple_features_stub}")
-    file(CONFIGURE OUTPUT "${_apple_features_stub}/AppleFeatures.h" CONTENT
-        "/* Auto-generated stub -- AppleFeatures not available in this SDK. */\n")
-    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${CMAKE_BINARY_DIR}/generated-stubs>")
-    message(STATUS "AppleFeatures stub generated (WebKitAdditions present, AppleFeatures SDK absent)")
-    unset(_apple_features_stub)
+# An internal WebKitAdditions install provides headers that pull in internal-SDK-only headers. When
+# it is present but the build targets a non-internal SDK, those headers are missing; generate minimal
+# stubs for them so the build still succeeds, with the corresponding features disabled. Prefer the
+# internal SDK (e.g. -DCMAKE_OSX_SYSROOT=macosx.internal), which provides the real headers.
+# FIXME: Remove this once building against the internal SDK is fully supported.
+if (EXISTS "/usr/local/include/WebKitAdditions"
+    AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h"
+    AND NOT EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/AppleFeatures/AppleFeatures.h")
+    set(_stub_dir "${CMAKE_BINARY_DIR}/generated-stubs")
+
+    file(CONFIGURE OUTPUT "${_stub_dir}/AppleFeatures/AppleFeatures.h" CONTENT
+        "/* Auto-generated stub. */\n")
+
+    file(CONFIGURE OUTPUT "${_stub_dir}/CoreAnalytics/CoreAnalytics.h" CONTENT
+        "/* Auto-generated stub. */\n")
+
+    file(CONFIGURE OUTPUT "${_stub_dir}/os/feature_private.h" CONTENT
+"/* Auto-generated stub. */
+#pragma once
+#ifndef os_feature_enabled
+#define os_feature_enabled(NAMESPACE, FEATURE) (0)
+#endif
+#ifndef os_feature_enabled_simple
+#define os_feature_enabled_simple(NAMESPACE, FEATURE, DEFAULT_VALUE) (DEFAULT_VALUE)
+#endif
+")
+
+    # Mirror the declarations from WTF's OSVariantSPI.h; the symbols resolve at link time.
+    file(CONFIGURE OUTPUT "${_stub_dir}/os/variant_private.h" CONTENT
+"/* Auto-generated stub. */
+#pragma once
+#include <stdbool.h>
+#ifdef __cplusplus
+extern \"C\" {
+#endif
+bool os_variant_allows_internal_security_policies(const char *);
+bool os_variant_is_basesystem(const char *);
+#ifdef __cplusplus
+}
+#endif
+")
+
+    # Forward to the public dyld header; stub the one notifier the additions header uses.
+    file(CONFIGURE OUTPUT "${_stub_dir}/mach-o/dyld_priv.h" CONTENT
+"/* Auto-generated stub. */
+#pragma once
+#include <mach-o/dyld.h>
+#ifndef _dyld_register_dlsym_notifier
+#define _dyld_register_dlsym_notifier(NOTIFIER) ((void)(NOTIFIER))
+#endif
+")
+
+    # Apply to C-family and Swift; Swift needs it via -Xcc to reach the Clang importer.
+    add_compile_options(
+        "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${_stub_dir}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -isystem${_stub_dir}>"
+    )
+    message(STATUS "Using stubs for internal SDK headers absent from the selected SDK")
+    unset(_stub_dir)
 endif ()
 
 # FIXME: Audit and reduce these suppressions. https://bugs.webkit.org/show_bug.cgi?id=312034
