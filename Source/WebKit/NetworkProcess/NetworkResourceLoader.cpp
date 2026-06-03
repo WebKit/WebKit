@@ -1051,7 +1051,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         // a main resource because the embedding client must decide whether to allow the load.
         bool willWaitForContinueDidReceiveResponse = isMainResource();
         LOADER_RELEASE_LOG("didReceiveResponse: Sending WebResourceLoader::DidReceiveResponse IPC (willWaitForContinueDidReceiveResponse=%d)", willWaitForContinueDidReceiveResponse);
-        sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, privateRelayed, willWaitForContinueDidReceiveResponse);
+        sendDidReceiveResponseWithPotentialSwap(response, privateRelayed, willWaitForContinueDidReceiveResponse);
 
         if (shouldSendResourceLoadMessages())
             connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(webPageProxyID(), resourceLoadInfo, response), 0);
@@ -1071,40 +1071,69 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     });
 }
 
-void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
+void NetworkResourceLoader::sendDidReceiveResponseWithPotentialSwap(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
 {
     if (m_serviceWorkerTimingInfo)
         send(Messages::WebResourceLoader::SetServiceWorkerTimingInfo { *m_serviceWorkerTimingInfo }, coreIdentifier());
 
     Ref connection = m_connection;
     auto browsingContextGroupSwitchDecision = connection->usesSingleWebProcess()? BrowsingContextGroupSwitchDecision::StayInGroup: toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
-    if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
+
+    bool shouldTriggerEnhancedSecuritySwap = browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup
+        && !connection->usesSingleWebProcess()
+        && m_parameters.isMainFrameNavigation
+        && m_parameters.navigationID
+        && response.url().protocolIs("http"_s)
+        && !WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress(response.url().host());
+
+    if (!shouldTriggerEnhancedSecuritySwap && browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
         send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
         return;
     }
 
     auto loader = connection->takeNetworkResourceLoader(coreIdentifier());
     if (!loader) {
-        LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup: Failed to find loader with identifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
+        LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponseWithPotentialSwap: Failed to find loader with identifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
         send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
         return;
     }
     if (!m_parameters.navigationID) {
-        LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup: Missing navigationID, loaderIdentifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
+        LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponseWithPotentialSwap: Missing navigationID, loaderIdentifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
         send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
         return;
     }
 
     ASSERT(loader == this);
     auto existingNetworkResourceLoadIdentifierToResume = loader->identifier();
+    auto responseMetrics = computeResponseMetrics(response);
     if (CheckedPtr session = connection->networkSession())
         session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
     Site responseSite { response.url() };
+
+    if (shouldTriggerEnhancedSecuritySwap) {
+        LOADER_RELEASE_LOG("sendDidReceiveResponseWithPotentialSwap: Triggering ES process swap for HTTP response (url=%s)", response.url().string().utf8().data());
+        protect(connection->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerProcessSwapForEnhancedSecurity(webPageProxyID(), *m_parameters.navigationID, responseSite, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connection->networkSession() }, connection = WTF::Ref { connection }, response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics](bool success) {
+            if (success)
+                return;
+            if (!session)
+                return;
+            if (RefPtr loader = session->takeLoaderAwaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume)) {
+                auto loaderCoreIdentifier = loader->coreIdentifier();
+                loader->send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics }, loaderCoreIdentifier);
+                connection->restoreNetworkResourceLoader(loaderCoreIdentifier, loader.releaseNonNull());
+                return;
+            }
+            session->removeLoaderWaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume);
+        });
+        return;
+    }
+
     protect(connection->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, responseSite, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connection->networkSession() }](bool success) {
         if (success)
             return;
-        if (session)
-            session->removeLoaderWaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume);
+        if (!session)
+            return;
+        session->removeLoaderWaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume);
     });
 }
 
@@ -1734,7 +1763,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
     bool needsContinueDidReceiveResponseMessage = isMainResource();
     LOADER_RELEASE_LOG("didRetrieveCacheEntry: Sending WebResourceLoader::DidReceiveResponse IPC (needsContinueDidReceiveResponseMessage=%d)", needsContinueDidReceiveResponseMessage);
-    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, entry->privateRelayed(), needsContinueDidReceiveResponseMessage);
+    sendDidReceiveResponseWithPotentialSwap(response, entry->privateRelayed(), needsContinueDidReceiveResponseMessage);
 
     if (needsContinueDidReceiveResponseMessage) {
         m_response = WTF::move(response);

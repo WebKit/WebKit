@@ -593,6 +593,15 @@ void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPage
         completionHandler(false);
 }
 
+void NetworkProcessProxy::triggerProcessSwapForEnhancedSecurity(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, const WebCore::Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::triggerProcessSwapForEnhancedSecurity: pageID=%" PRIu64 ", navigationID=%" PRIu64 ", existingNetworkResourceLoadIdentifierToResume=%" PRIu64, this, pageID.toUInt64(), navigationID.toUInt64(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
+        page->triggerProcessSwapForEnhancedSecurity(navigationID, responseSite, existingNetworkResourceLoadIdentifierToResume, WTF::move(completionHandler));
+    else
+        completionHandler(false);
+}
+
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     RELEASE_LOG(Process, "%p - NetworkProcessProxy::didFinishLaunching", this);

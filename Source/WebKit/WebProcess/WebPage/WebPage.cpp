@@ -2365,14 +2365,17 @@ void WebPage::loadDidCommitInAnotherProcess(WebCore::FrameIdentifier frameID, st
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
     WEBPAGE_RELEASE_LOG_FORWARDABLE(Loading, WebPageLoadRequest, loadParameters.navigationID ? loadParameters.navigationID->toUInt64() : 0, static_cast<unsigned>(loadParameters.shouldTreatAsContinuingLoad), loadParameters.request.isAppInitiated(), loadParameters.existingNetworkResourceLoadIdentifierToResume ? loadParameters.existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
+    RELEASE_LOG(Loading, "WebPage::loadRequest: pageID=%" PRIu64 ", url=%s, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, m_identifier.toUInt64(), loadParameters.request.url().string().utf8().data(), loadParameters.existingNetworkResourceLoadIdentifierToResume ? loadParameters.existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
 
     RefPtr frame = loadParameters.frameIdentifier ? WebProcess::singleton().webFrame(*loadParameters.frameIdentifier) : m_mainFrame.ptr();
     if (!frame) {
+        RELEASE_LOG(Loading, "WebPage::loadRequest: FAILED - no frame (pageID=%" PRIu64 ")", m_identifier.toUInt64());
         ASSERT_NOT_REACHED();
         return;
     }
     RefPtr localFrame = frame->coreLocalFrame() ? frame->coreLocalFrame() : frame->provisionalFrame();
     if (!localFrame) {
+        RELEASE_LOG(Loading, "WebPage::loadRequest: FAILED - no localFrame (pageID=%" PRIu64 ")", m_identifier.toUInt64());
         ASSERT_NOT_REACHED();
         return;
     }

@@ -258,6 +258,7 @@ public:
 
     void broadcastConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
     RefPtr<NetworkResourceLoader> takeNetworkResourceLoader(WebCore::ResourceLoaderIdentifier);
+    void restoreNetworkResourceLoader(WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>&&);
 
     NetworkOriginAccessPatterns& originAccessPatterns() LIFETIME_BOUND { return m_originAccessPatterns.get(); }
 

@@ -233,6 +233,7 @@ private:
     bool m_needsDidStartProvisionalLoad { true };
     bool m_shouldClosePage { true };
     bool m_didFailProvisionalLoad { false };
+    std::optional<NetworkResourceLoadIdentifier> m_existingNetworkResourceLoadIdentifierToResume;
     std::optional<WebCore::Site> m_deferredRemoteTransitionSite;
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;

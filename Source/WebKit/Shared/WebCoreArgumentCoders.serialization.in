@@ -5626,6 +5626,7 @@ enum class WebCore::BrowsingContextGroupSwitchDecision : uint8_t {
     StayInGroup,
     NewSharedGroup,
     NewIsolatedGroup,
+    NewSharedGroupForEnhancedSecurity,
 };
 
 enum class WebCore::ShouldOpenExternalURLsPolicy : uint8_t {

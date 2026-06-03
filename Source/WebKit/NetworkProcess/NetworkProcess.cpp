@@ -3509,4 +3509,11 @@ void NetworkProcess::isEnhancedSecurityLink(const URL& url, CompletionHandler<vo
 }
 #endif
 
+void NetworkProcess::abortLoaderAwaitingTransfer(NetworkResourceLoadIdentifier identifier)
+{
+    forEachNetworkSession([&](auto& session) {
+        session.removeLoaderWaitingWebProcessTransfer(identifier);
+    });
+}
+
 } // namespace WebKit

@@ -154,6 +154,7 @@ enum class BrowsingContextGroupSwitchDecision : uint8_t {
     StayInGroup,
     NewSharedGroup,
     NewIsolatedGroup,
+    NewSharedGroupForEnhancedSecurity,
 };
 
 // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()

@@ -38,6 +38,8 @@
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
 #include "PageClient.h"
 #include "ProvisionalFrameCreationParameters.h"
 #include "RemotePageProxy.h"
@@ -180,6 +182,11 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         if (dataStore && dataStore!= &page->websiteDataStore())
             protect(process->processPool())->pageEndUsingWebsiteDataStore(page, *dataStore);
 
+        if (m_existingNetworkResourceLoadIdentifierToResume) {
+            if (RefPtr networkProcess = page->websiteDataStore().networkProcessIfExists())
+                networkProcess->send(Messages::NetworkProcess::AbortLoaderAwaitingTransfer(*m_existingNetworkResourceLoadIdentifierToResume), 0);
+        }
+
         if (process->hasConnection() && m_shouldClosePage)
             process->sendPageCloseMessage(page->identifier(), m_webPageID);
         process->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
@@ -230,7 +237,8 @@ void ProvisionalPageProxy::cancel()
     if (m_provisionalLoadURL.isEmpty() || !mainFrame)
         return;
 
-    ASSERT(process().state() == WebProcessProxy::State::Running);
+    PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "cancel: process state=%d, provisionalLoadURL=%s", (int)process().state(), m_provisionalLoadURL.string().ascii().data());
+    ASSERT(process().state() == WebProcessProxy::State::Launching || process().state() == WebProcessProxy::State::Running);
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame");
     ASSERT(mainFrame);
@@ -322,6 +330,8 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadRequest: existingNetworkResourceLoadIdentifierToResume=%" PRIu64, existingNetworkResourceLoadIdentifierToResume ? existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
     ASSERT(shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No);
+
+    m_existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
 
     // If this is a client-side redirect continuing in a new process, then the new process will overwrite the fromItem's URL. In this case,
     // we need to make sure we update fromItem's processIdentifier as we want future navigations to this BackForward item to happen in the

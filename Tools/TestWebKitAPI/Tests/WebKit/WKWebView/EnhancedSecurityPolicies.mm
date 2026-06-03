@@ -289,6 +289,42 @@ static void runHttpLoad(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLoad)
 
+static void runHttpLoadWithCOOP(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { { { "Cross-Origin-Opener-Policy"_s, "noopener-allow-popups"_s } }, "<script>alert('insecure-coop-page')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-coop-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLoadWithCOOP)
+
+static void runHttpsToHttpWithCOOP(bool useSiteIsolation)
+{
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { { { "Cross-Origin-Opener-Policy"_s, "noopener-allow-popups"_s } }, "<script>alert('insecure-coop-page')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.example.internal/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-coop-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsToHttpWithCOOP)
+
 static void runHttpsLoad(bool useSiteIsolation)
 {
     HTTPServer secureServer({
@@ -320,6 +356,24 @@ static void runSameSiteHttpsUpgrade(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(SameSiteHttpsUpgrade)
 
+static void runSameSiteHttpsUpgradeJavascript(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://example.co.uk/"_s, { "<script>window.onload = function() { alert('insecure-page'); window.location = 'https://example.co.uk/'; }</script>"_s } }
+    });
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://example.co.uk/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Enabled },
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(SameSiteHttpsUpgradeJavascript)
+
 static void runHttpLocalhostLoad(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
@@ -333,6 +387,41 @@ static void runHttpLocalhostLoad(bool useSiteIsolation)
     });
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLocalhostLoad)
+
+// MARK: - Process Cycling Tests
+
+static void runHttpToHttpsRedirectNoEnhancedSecurityProcess(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://redirect.example/"_s, { 302, { { "Location"_s, "https://redirect.example/"_s } }, emptyString() } },
+        { "http://insecure.example/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    __block bool sawEnhancedSecurityProcess = false;
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *wv, WKNavigation *) {
+        NSString *variant = [wv _webContentProcessVariantForFrame:nil];
+        if ([variant isEqualToString:@"secure"])
+            sawEnhancedSecurityProcess = true;
+    };
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://redirect.example/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    EXPECT_FALSE(sawEnhancedSecurityProcess);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpToHttpsRedirectNoEnhancedSecurityProcess)
 
 // MARK: - HTTPS First Upgrade Tests
 
@@ -1633,6 +1722,80 @@ TEST(EnhancedSecurityPolicies, MigrationAddsLastModifiedColumnToExistingDatabase
     verifyDB->close();
 
     cleanUpEnhancedSecuritySites();
+}
+
+static void runHttpsToHttpDowngradeSameDomain(bool useSiteIsolation)
+{
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    HTTPServer plaintextServer({
+        { "http://example.internal/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://example.internal/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    auto pid2 = [webView _webProcessIdentifier];
+    NSLog(@"HttpsToHttpDowngrade: After HTTPS load, PID=%d (was %d)", pid2, pid1);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://example.internal/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    auto pid3 = [webView _webProcessIdentifier];
+    NSLog(@"HttpsToHttpDowngrade: After HTTP load (same domain), PID=%d (was %d), swapped=%d, siteIsolation=%d", pid3, pid2, pid3 != pid2, useSiteIsolation);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsToHttpDowngradeSameDomain)
+
+// Non-ES equivalent of MultiHopThenBackToSecure for comparison: all HTTPS,
+// site isolation causes process swaps on cross-site navigations.
+TEST(EnhancedSecurityPolicies, CrossSiteMultiHopThenBackWithSiteIsolation)
+{
+    HTTPServer secureServer({
+        { "/site-a"_s, { "<script>window.addEventListener('pageshow', function() { alert('site-a'); });</script>"_s } },
+        { "/site-b"_s, { "<script>window.addEventListener('pageshow', function() { alert('site-b'); });</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(nullptr, &secureServer, /* useSiteIsolation */ true);
+
+    // 1. Load site A
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://site-a.example/site-a", {
+        { "site-a"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+    auto pidA1 = [webView _webProcessIdentifier];
+    NSLog(@"CrossSiteMultiHop: site-a loaded, PID=%d", pidA1);
+
+    // 2. Load site B (cross-site → process swap)
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://site-b.example/site-b", {
+        { "site-b"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+    auto pidB = [webView _webProcessIdentifier];
+    NSLog(@"CrossSiteMultiHop: site-b loaded, PID=%d (was %d)", pidB, pidA1);
+    EXPECT_NE(pidA1, pidB);
+
+    // 3. Load site A again (cross-site → should reuse process from BFCache)
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://site-a.example/site-a", {
+        { "site-a"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+    auto pidA2 = [webView _webProcessIdentifier];
+    NSLog(@"CrossSiteMultiHop: site-a again, PID=%d (original A=%d, B=%d)", pidA2, pidA1, pidB);
+
+    // 4. Go back to site B — should restore from BFCache
+    runActionAndCheckEnhancedSecurityAlerts(webView, [webView]() {
+        EXPECT_TRUE(!![webView backForwardList].backItem);
+        [webView goBack];
+    }, {
+        { "site-b"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+    auto pidB2 = [webView _webProcessIdentifier];
+    NSLog(@"CrossSiteMultiHop: goBack to site-b, PID=%d (original B=%d)", pidB2, pidB);
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/EnhancedSecurityPoliciesAdditions.mm>)

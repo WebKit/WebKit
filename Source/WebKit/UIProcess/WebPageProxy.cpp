@@ -1400,7 +1400,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
     ASSERT(!m_isClosed);
     ASSERT(!hasRunningProcess());
 
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess:");
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: site=%s, reason=%u, m_browsingContextGroup=%p", site.toString().utf8().data(), static_cast<unsigned>(reason), &m_browsingContextGroup.get());
 
     // In case we are currently connected to the dummy process, we need to make sure the inspector proxy
     // disconnects from the dummy process first. Do not call inspector() since it returns null after the
@@ -1577,7 +1577,7 @@ void WebPageProxy::hideCaptionDisplaySettingsPreview(const FrameInfoData& frameI
 void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisionalPage)
 {
     ASSERT(!m_isClosed);
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "swapToProvisionalPage: newWebPageID=%" PRIu64, provisionalPage->webPageID().toUInt64());
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "swapToProvisionalPage: newWebPageID=%" PRIu64 ", newPID=%i, oldMainFrame=%p", provisionalPage->webPageID().toUInt64(), provisionalPage->process().processID(), m_mainFrame.get());
 
     m_legacyMainFrameProcess = provisionalPage->process();
     m_webPageID = provisionalPage->webPageID();
@@ -1603,6 +1603,7 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
 
     ASSERT(!m_mainFrame);
     m_mainFrame = provisionalPage->mainFrame();
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "swapToProvisionalPage: m_mainFrame now set to %p (frameID=%" PRIu64 ")", m_mainFrame.get(), m_mainFrame ? m_mainFrame->frameID().toUInt64() : 0);
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
 
@@ -1799,6 +1800,8 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
 {
     if (!hasRunningProcess())
         return;
+
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "initializeWebPage: site=%s, m_browsingContextGroup=%p, siteIsolation=%d", site.toString().utf8().data(), &m_browsingContextGroup.get(), protect(preferences())->siteIsolationEnabled());
 
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
@@ -2266,7 +2269,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
         loadParameters.hadUserGesture = action->userGestureTokenIdentifier.has_value();
         loadParameters.requester = action->requester;
     }
-    if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision)
+    if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision || shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted)
         loadParameters.originalRequest = navigation.originalRequest();
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -5372,17 +5375,24 @@ Expected<WebPageProxy::DataStoreUpdateResult, WebCore::ResourceError> WebPagePro
 Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFrameProxy& frame, API::Navigation& navigation, WebsiteDataStore& websiteDataStore, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
     // Browsing context group can only be changed for main frame navigation.
-    if (!frame.isMainFrame())
+    if (!frame.isMainFrame()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "browsingContextGroupForNavigation: not main frame, reusing existing BCG");
         return m_browsingContextGroup;
+    }
 
     bool usesSameWebsiteDataStore = &websiteDataStore == &this->websiteDataStore();
     bool mainFrameSiteChanges = !m_mainFrame || Site { m_mainFrame->url() } != Site { navigation.currentRequest().url() };
-    if (RefPtr targetBackForwardItem = navigation.targetItem(); targetBackForwardItem && targetBackForwardItem->browsingContextGroup() && usesSameWebsiteDataStore)
+    if (RefPtr targetBackForwardItem = navigation.targetItem(); targetBackForwardItem && targetBackForwardItem->browsingContextGroup() && usesSameWebsiteDataStore) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "browsingContextGroupForNavigation: using BCG from back/forward item");
         return *targetBackForwardItem->browsingContextGroup();
+    }
 
-    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes || !usesSameWebsiteDataStore || (navigation.isRequestFromClientOrUserInput() && !navigation.isFromLoadData() && mainFrameSiteChanges))
+    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes || !usesSameWebsiteDataStore || (navigation.isRequestFromClientOrUserInput() && !navigation.isFromLoadData() && mainFrameSiteChanges)) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "browsingContextGroupForNavigation: creating NEW BCG (processSwapRequestedByClient=%d, sameDataStore=%d, siteChanges=%d, isClientOrUserInput=%d)", processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes, usesSameWebsiteDataStore, mainFrameSiteChanges, navigation.isRequestFromClientOrUserInput());
         return BrowsingContextGroup::create();
+    }
 
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "browsingContextGroupForNavigation: reusing existing BCG (siteChanges=%d)", mainFrameSiteChanges);
     return m_browsingContextGroup;
 }
 
@@ -5507,7 +5517,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, processSwapRequestedByClient);
     if (frame.isMainFrame() && preferences->enhancedSecurityHeuristicsEnabled())
-        internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), websitePolicies.get(), preferences.get(), sourceURL, internals().pageLoadState.httpFallbackInProgress());
+        internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), internals().pageLoadState.httpFallbackInProgress());
 
     auto enhancedSecurity = currentEnhancedSecurityState(websitePolicies.get());
 
@@ -5600,8 +5610,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             && processNavigatingTo->coreProcessIdentifier() == frame->process().coreProcessIdentifier()) {
             // If re-using the same process for navigation and the site is changing, call ensureProcessForSite for the new site, but don't InjectBrowsingContextIntoProcess
             // since BrowsingContextGroup is already keeping track of the process under the previous site.
-            if (frameProcessSite != site)
+            if (frameProcessSite != site) {
+                WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction: same process but site changing, registering new site in BCG %p (m_browsingContextGroup=%p), old site=%s, new site=%s", &this->browsingContextGroup(), &m_browsingContextGroup.get(), frameProcessSite->toString().utf8().data(), site.toString().utf8().data());
                 frame->setProcess(protect(this->browsingContextGroup())->ensureProcessForSite(site, mainFrameSite, frame->frameProcess().process(), preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
+            }
         }
 
         if (loadContinuingInNonInitiatingProcess) {
@@ -5810,7 +5822,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 {
     ASSERT(m_provisionalPage);
     RefPtr provisionalPage = std::exchange(m_provisionalPage, nullptr);
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "commitProvisionalPage: newPID=%i", provisionalPage->process().processID());
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "commitProvisionalPage: newPID=%i, provisionalPageID=%" PRIu64 ", m_mainFrame=%p", provisionalPage->process().processID(), provisionalPage->webPageID().toUInt64(), m_mainFrame.get());
 
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
     Ref preferences = m_preferences;
@@ -5905,7 +5917,7 @@ void WebPageProxy::destroyProvisionalPage()
 
 void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, WebFrameProxy& frame, RefPtr<SuspendedPageProxy>&& suspendedPage, BrowsingContextGroup& browsingContextGroup, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive loadedWebArchive, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition processSwapDisposition, WebsiteDataStore* replacedDataStoreForWebArchiveLoad)
 {
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "continueNavigationInNewProcess: newProcessPID=%i, hasSuspendedPage=%i", newProcess->processID(), !!suspendedPage);
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "continueNavigationInNewProcess: newProcessPID=%i, hasSuspendedPage=%i, bcg=%p, m_browsingContextGroup=%p, m_provisionalPage=%p, navID=%" PRIu64, newProcess->processID(), !!suspendedPage, &browsingContextGroup, &m_browsingContextGroup.get(), m_provisionalPage.get(), navigation.navigationID().toUInt64());
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID().toUInt64(), navigation.loggingString().utf8().data());
     RELEASE_ASSERT(!newProcess->isInProcessCache());
     ASSERT(shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::No);
@@ -5922,7 +5934,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     }
 
     if (RefPtr provisionalPage = m_provisionalPage; provisionalPage && frame.isMainFrame()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: There is already a pending provisional load, cancelling it (provisonalNavigationID=%" PRIu64 ", navigationID=%" PRIu64 ")", m_provisionalPage->navigationID().toUInt64(), navigation.navigationID().toUInt64());
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, ": There is already a pending provisional load, cancelling it (provisonalNavigationID=%" PRIu64 ", navigationID=%" PRIu64 ")", m_provisionalPage->navigationID().toUInt64(), navigation.navigationID().toUInt64());
         if (provisionalPage->navigationID() != navigation.navigationID())
             provisionalPage->cancel();
         m_provisionalPage = nullptr;
@@ -5989,7 +6001,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
             loadParameters.requester = action->requester;
             loadParameters.hadUserGesture = action->userGestureTokenIdentifier.has_value();
         }
-        if (navigation.currentRequestIsRedirect())
+        if (navigation.currentRequestIsRedirect() || navigation.originalRequest().url() != navigation.currentRequest().url())
             loadParameters.originalRequest = navigation.originalRequest();
 
         if (isPendingInitialHistoryItem)
@@ -6017,11 +6029,23 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
 
     // FIXME: Assert the equality of data stores regardless of whether site isolation is enabled or not.
     ASSERT(!preferences->siteIsolationEnabled() || newProcess->websiteDataStore() == &websiteDataStore());
+
+    // When doing a response-time process swap (e.g. Enhanced Security) for the main frame,
+    // the BCG may already have a FrameProcess registered for the navigation site from the
+    // initial page setup. Remove it so the new ES-enabled process can take its place.
+    if (isProcessSwappingOnNavigationResponse && frame.isMainFrame()) {
+        if (RefPtr existingFrameProcess = browsingContextGroup.processForSite(navigationSite)) {
+            ASSERT(browsingContextGroup.siteCount() == 1);
+            browsingContextGroup.removeFrameProcess(*existingFrameProcess);
+        }
+    }
+
     Ref frameProcess = browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, loadedWebArchive, BrowsingContextGroupUpdate::None);
     // Make sure we destroy any existing ProvisionalPageProxy object *before* we construct a new one.
     // It is important from the previous provisional page to unregister itself before we register a
     // new one to avoid confusion.
     m_provisionalPage = nullptr;
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: creating ProvisionalPageProxy, navigationSite=%s, newProcessPID=%i, isResponseSwap=%d", navigationSite.toString().utf8().data(), newProcess->processID(), isProcessSwappingOnNavigationResponse);
     Ref provisionalPage = ProvisionalPageProxy::create(*this, WTF::move(frameProcess), browsingContextGroup, WTF::move(suspendedPage), navigation, isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, isProcessSwappingOnNavigationResponse, websitePolicies.get(), replacedDataStoreForWebArchiveLoad);
     m_provisionalPage = provisionalPage.copyRef();
 
@@ -9286,7 +9310,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         , shouldExpectSafeBrowsingResult
 #endif
     ] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
-        WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%" PUBLIC_LOG_STRING ", isAppBoundDomain=%d, wasNavigationIntercepted=%d", frame->frameID().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, toString(policyAction).characters(), !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes);
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%" PUBLIC_LOG_STRING ", isAppBoundDomain=%d, wasNavigationIntercepted=%d navigationCurrentRequestURL=%s", frame->frameID().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, toString(policyAction).characters(), !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes, navigation ? navigation->currentRequest().url().string().ascii().data() : "<navigation-empty>");
 
         if (policies && !policies->alternateRequest().isNull())
             navigation->setCurrentRequest(ResourceRequest(policies->alternateRequest()), std::nullopt);
@@ -9778,8 +9802,9 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
 {
     // FIXME: When site isolation is enabled, this should probably switch the BrowsingContextGroup. <rdar://116203642>
     ASSERT(browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup);
+    ASSERT(browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::NewSharedGroupForEnhancedSecurity);
     RefPtr navigation = m_navigationState->navigation(navigationID);
-    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: Process-swapping due to Cross-Origin-Opener-Policy, newProcessIsCrossOriginIsolated=%d, navigation=%p existingNetworkResourceLoadIdentifierToResume=%" PRIu64, browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup, navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: browsingContextGroupSwitchDecision=%u, navigation=%p existingNetworkResourceLoadIdentifierToResume=%" PRIu64, (unsigned)browsingContextGroupSwitchDecision, navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
     if (!navigation)
         return completionHandler(false);
 
@@ -9790,15 +9815,17 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
     RefPtr provisionalPage = m_provisionalPage;
     auto lockdownMode = provisionalPage ? provisionalPage->process().lockdownMode() : m_legacyMainFrameProcess->lockdownMode();
     auto enhancedSecurity = provisionalPage ? provisionalPage->process().enhancedSecurity() : m_legacyMainFrameProcess->enhancedSecurity();
+    auto processSwapDisposition = WebCore::ProcessSwapDisposition::COOP;
+
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup) {
         auto enableWebAssemblyDebugger = protect(m_configuration->preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
         processForNavigation = protect(m_configuration->processPool())->createNewWebProcess(protect(websiteDataStore()).ptr(), lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
     } else
-        processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, { }, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP);
+        processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, { }, lockdownMode, enhancedSecurity, m_configuration, processSwapDisposition);
 
     ASSERT(processForNavigation);
     auto domain = RegistrableDomain { navigation->currentRequest().url() };
-    protect(protect(websiteDataStore())->networkProcess())->addAllowedFirstPartyForCookies(*processForNavigation, domain, LoadedWebArchive::No, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), processForNavigation = processForNavigation, preventProcessShutdownScope = processForNavigation->shutdownPreventingScope(), existingNetworkResourceLoadIdentifierToResume, navigationID]() mutable {
+    protect(protect(websiteDataStore())->networkProcess())->addAllowedFirstPartyForCookies(*processForNavigation, domain, LoadedWebArchive::No, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), processForNavigation = processForNavigation, preventProcessShutdownScope = processForNavigation->shutdownPreventingScope(), existingNetworkResourceLoadIdentifierToResume, navigationID, processSwapDisposition]() mutable {
         RefPtr navigation = m_navigationState->navigation(navigationID);
         RefPtr mainFrame = m_mainFrame;
         if (!navigation || !mainFrame)
@@ -9807,7 +9834,63 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
         // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
         if (!m_provisionalPage)
             send(Messages::WebPage::StopLoadingDueToProcessSwap());
-        continueNavigationInNewProcess(*navigation, *mainFrame, nullptr, m_browsingContextGroup, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, WebCore::ProcessSwapDisposition::COOP, nullptr);
+        continueNavigationInNewProcess(*navigation, *mainFrame, nullptr, m_browsingContextGroup, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, processSwapDisposition, nullptr);
+        completionHandler(true);
+    });
+}
+
+void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIdentifier navigationID, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    RefPtr navigation = m_navigationState->navigation(navigationID);
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerProcessSwapForEnhancedSecurity: navigation=%p existingNetworkResourceLoadIdentifierToResume=%" PRIu64, navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
+    if (!navigation)
+        return completionHandler(false);
+
+    ASSERT(responseSite.protocol() == "http"_s);
+    if (!protect(preferences())->enhancedSecurityHeuristicsEnabled()
+        || protect(preferences())->enhancedSecurityForceDisabled()
+        || !internals().enhancedSecurityTracker.shouldEnableForInsecureResponse(*navigation, hasOpenedPage())) {
+        return completionHandler(false);
+    }
+
+    internals().enhancedSecurityTracker.enableFor(EnhancedSecurityReason::InsecureProvisional, *navigation);
+
+    // If a process swap already occurred at nav-action time (e.g. SI treating https→http as
+    // cross-site), reuse that navigation's BCG so that continueNavigationInNewProcess can
+    // cleanly replace the existing ProvisionalPageProxy and its FrameProcess registration.
+    bool hasExistingProvisionalForNavigation = m_provisionalPage && m_provisionalPage->navigationID() == navigationID;
+    Ref bcgForSwap = hasExistingProvisionalForNavigation
+        ? Ref { m_provisionalPage->browsingContextGroup() }
+        : m_browsingContextGroup.copyRef();
+
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerProcessSwapForEnhancedSecurity: hasExistingProvisional=%d, m_provisionalPage=%p (navID=%" PRIu64 "), m_browsingContextGroup=%p, bcgForSwap=%p, targetNavID=%" PRIu64, hasExistingProvisionalForNavigation, m_provisionalPage.get(), m_provisionalPage ? m_provisionalPage->navigationID().toUInt64() : 0, &m_browsingContextGroup.get(), bcgForSwap.ptr(), navigationID.toUInt64());
+
+    RefPtr provisionalPage = m_provisionalPage;
+    auto lockdownMode = provisionalPage ? provisionalPage->process().lockdownMode() : m_legacyMainFrameProcess->lockdownMode();
+    auto enhancedSecurity = EnhancedSecurity::EnabledInsecure;
+
+    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, { }, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::None);
+
+    // Keep the process alive through BFCache eviction and until the ProvisionalPageProxy
+    // takes its own foreground activity. Without this, destroying the SuspendedPageProxy
+    // drops the suspended page count to zero, the ProcessThrottler sees no foreground
+    // activities, and suspends the process before CreateWebPage + LoadRequest arrive.
+    auto preventProcessShutdown = processForNavigation->shutdownPreventingScope();
+
+    // Clear any BFCache entries for this page in the destination process, matching the
+    // behavior of receivedNavigationActionPolicyDecision (line 5593).
+    backForwardCache().removeEntriesForPageAndProcess(*this, processForNavigation);
+
+    auto domain = RegistrableDomain { navigation->currentRequest().url() };
+    protect(protect(websiteDataStore())->networkProcess())->addAllowedFirstPartyForCookies(processForNavigation, domain, LoadedWebArchive::No, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), processForNavigation = WTF::move(processForNavigation), preventProcessShutdown = WTF::move(preventProcessShutdown), bcgForSwap = WTF::move(bcgForSwap), existingNetworkResourceLoadIdentifierToResume, navigationID]() mutable {
+        RefPtr navigation = m_navigationState->navigation(navigationID);
+        RefPtr mainFrame = m_mainFrame;
+        if (!navigation || !mainFrame)
+            return completionHandler(false);
+
+        if (!m_provisionalPage)
+            send(Messages::WebPage::StopLoadingDueToProcessSwap());
+        continueNavigationInNewProcess(*navigation, *mainFrame, nullptr, bcgForSwap, WTF::move(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, WebCore::ProcessSwapDisposition::None, nullptr);
         completionHandler(true);
     });
 }
@@ -12956,6 +13039,7 @@ void WebPageProxy::stopAllURLSchemeTasks(WebProcessProxy* process)
 
 void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "resetState: clearing m_mainFrame (reason=%u, m_mainFrame=%p)", static_cast<unsigned>(resetStateReason), m_mainFrame.get());
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
     m_suspendedPageKeptToPreventFlashing = nullptr;

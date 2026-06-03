@@ -1813,6 +1813,11 @@ RefPtr<NetworkResourceLoader> NetworkConnectionToWebProcess::takeNetworkResource
     return m_networkResourceLoaders.take(resourceLoadIdentifier);
 }
 
+void NetworkConnectionToWebProcess::restoreNetworkResourceLoader(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, Ref<NetworkResourceLoader>&& loader)
+{
+    m_networkResourceLoaders.add(resourceLoadIdentifier, WTF::move(loader));
+}
+
 #if ENABLE(CONTENT_FILTERING)
 void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockContentFilterSettings&& settings)
 {

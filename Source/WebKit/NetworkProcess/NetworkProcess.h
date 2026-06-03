@@ -33,6 +33,7 @@
 #include "DownloadManager.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkContentRuleListManager.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "QuotaIncreaseRequestIdentifier.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "UseDownloadPlaceholder.h"
@@ -497,6 +498,8 @@ public:
 #if HAVE(ENHANCED_SECURITY_LINKS)
     void isEnhancedSecurityLink(const URL&, CompletionHandler<void(bool)>&&);
 #endif
+
+    void abortLoaderAwaitingTransfer(NetworkResourceLoadIdentifier);
 
 private:
     explicit NetworkProcess(AuxiliaryProcessInitializationParameters&&);

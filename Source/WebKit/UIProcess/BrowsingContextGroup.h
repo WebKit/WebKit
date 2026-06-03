@@ -74,6 +74,7 @@ public:
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     bool addFrameProcessWithoutInjectingPageContext(FrameProcess&);
     void removeFrameProcess(FrameProcess&);
+    unsigned siteCount() const { return m_processMap.size(); }
     void processDidTerminate(WebPageProxy&, WebProcessProxy&);
 
     void addPage(WebPageProxy&);
