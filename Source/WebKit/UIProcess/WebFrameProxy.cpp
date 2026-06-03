@@ -996,8 +996,12 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
 
 void WebFrameProxy::setAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
+<<<<<<< HEAD
     Ref protectedProcess = process();
     auto firstPartyAccessResult = protectedProcess->allowsFirstPartyAccess(WebCore::RegistrableDomain { origin });
+=======
+    auto firstPartyAccessResult = process().allowsFirstPartyAccess(WebCore::RegistrableDomain { origin });
+>>>>>>> 3654a1bdf8a2 (App Badge origin spoofing from `window` contexts)
     if (firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::SilentFailure)
         return;
     MESSAGE_CHECK(firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::Pass);

@@ -581,7 +581,11 @@ static void runAppBadgeSpoofTest(const String& attackerHTML)
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { attackerHTML } },
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/Badging.mm
         { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCString.get() } },
+=======
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData } },
+>>>>>>> 3654a1bdf8a2 (App Badge origin spoofing from `window` contexts):Tools/TestWebKitAPI/Tests/WebKitCocoa/Badging.mm
     });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

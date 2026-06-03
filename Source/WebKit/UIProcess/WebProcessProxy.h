@@ -619,6 +619,7 @@ public:
     void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
+<<<<<<< HEAD
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }
     bool isEligibleForWebProcessCache() const { return m_isEligibleForWebProcessCache; }
 
@@ -626,6 +627,8 @@ public:
     void decrementFrameProcessCount() { --m_frameProcessCount; }
     uint64_t frameProcessCount() const { return m_frameProcessCount; }
 
+=======
+>>>>>>> 3654a1bdf8a2 (App Badge origin spoofing from `window` contexts)
     enum class FirstPartyAccessResult {
         Pass,
         SilentFailure,

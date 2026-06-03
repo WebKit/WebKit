@@ -2960,8 +2960,12 @@ WebProcessProxy::FirstPartyAccessResult WebProcessProxy::allowsFirstPartyAccess(
 void WebProcessProxy::setAppBadgeFromWorker(const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
     MESSAGE_CHECK(allowsFirstPartyAccess(WebCore::RegistrableDomain { origin }) == FirstPartyAccessResult::Pass);
+<<<<<<< HEAD
     if (RefPtr dataStore = websiteDataStore())
         dataStore->workerUpdatedAppBadge(origin, badge);
+=======
+    protectedWebsiteDataStore()->workerUpdatedAppBadge(origin, badge);
+>>>>>>> 3654a1bdf8a2 (App Badge origin spoofing from `window` contexts)
 }
 
 const WeakHashSet<WebProcessProxy>* WebProcessProxy::serviceWorkerClientProcesses() const
