@@ -54,7 +54,11 @@ public:
     const IDBResourceIdentifier& openRequestIdentifier() LIFETIME_BOUND { return m_openRequestIdentifier; }
     UniqueIDBDatabase* database() { return m_database.get(); }
     WEBCORE_EXPORT CheckedPtr<UniqueIDBDatabase> checkedDatabase();
+<<<<<<< HEAD
     UniqueIDBDatabaseManager* NODELETE manager();
+=======
+    UniqueIDBDatabaseManager* manager();
+>>>>>>> 95b97d3d6fc0 ([IndexedDB] Use-After-Free caused by use of `-0.0` for HashMap Key)
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
     WEBCORE_EXPORT void NODELETE connectionPendingCloseFromClient();
