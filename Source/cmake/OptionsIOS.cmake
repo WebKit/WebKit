@@ -104,36 +104,13 @@ WEBKIT_OPTION_END()
 # FIXME: Needs WebCore_Private Swift module. https://bugs.webkit.org/show_bug.cgi?id=312083
 SET_AND_EXPOSE_TO_BUILD(ENABLE_BACK_FORWARD_LIST_SWIFT OFF)
 
-include(WebKitXcrun)
 if (CMAKE_IOS_SIMULATOR OR CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-    WEBKIT_RESOLVE_SDK(iphonesimulator.internal iphonesimulator)
     set(WEBKIT_PLATFORM_NAME "iPhoneSimulator")
-    set(_sdk_prefix "iphonesimulator")
 else ()
-    WEBKIT_RESOLVE_SDK(iphoneos.internal iphoneos)
     set(WEBKIT_PLATFORM_NAME "iPhoneOS")
-    set(_sdk_prefix "iphoneos")
-endif ()
-string(REGEX MATCH "^[0-9]+\\.[0-9]+" _sdk_major_minor "${_sdk_version}")
-if (_sdk_major_minor AND (NOT CMAKE_OSX_DEPLOYMENT_TARGET OR CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS _sdk_major_minor))
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "${_sdk_major_minor}" CACHE STRING "Minimum iOS version" FORCE)
-    message(WARNING "Deployment target auto-set to SDK version: ${CMAKE_OSX_DEPLOYMENT_TARGET} (SPI header guards require this)")
-endif ()
-
-# Resolve the real clang once and pin it for the lifetime of this build tree.
-# This is a build speed optimization, and also a defense against tearing between
-# resolved toolchain and resolved SDK path / version.
-WEBKIT_XCRUN(_clang -f clang)
-if (EXISTS "${_clang}")
-    set(CMAKE_C_COMPILER "${_clang}")
-    set(CMAKE_CXX_COMPILER "${_clang}++")
-    set(CMAKE_OBJC_COMPILER "${_clang}")
-    set(CMAKE_OBJCXX_COMPILER "${_clang}++")
 endif ()
 
 include(OptionsCocoa)
-
-enable_language(OBJC OBJCXX)
 
 find_package(ZLIB REQUIRED)
 
@@ -169,7 +146,7 @@ if (CMAKE_OSX_SYSROOT)
     set(WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
 
-if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
+if (USE_APPLE_INTERNAL_SDK)
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-DUSE_APPLE_INTERNAL_SDK>")
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DUSE_APPLE_INTERNAL_SDK>")
 endif ()

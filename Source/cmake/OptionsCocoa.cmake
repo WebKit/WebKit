@@ -1,3 +1,10 @@
+# Enable Objective-C / Objective-C++ so .m/.mm sources use the OBJC/OBJCXX
+# compile rules and $<COMPILE_LANGUAGE:OBJC/OBJCXX> generator expressions
+# match. Without this CMake compiles .mm as CXX, CMAKE_OBJCXX_FLAGS are
+# ignored, and WEBKIT_ADD_PREFIX_HEADER produces no OBJCXX precompiled
+# header for .mm sources.
+enable_language(OBJC OBJCXX)
+
 set(_wka_found FALSE)
 set(_wka_cmake_paths
     "${CMAKE_SOURCE_DIR}/../Internal/WebKit"
@@ -68,7 +75,9 @@ foreach (_t SQLite::SQLite3 LibXml2::LibXml2 LibXslt::LibXslt LibXslt::LibExslt)
     endif ()
 endforeach ()
 
-string(REGEX MATCH "^[0-9]+" _sdk_major "${_sdk_version}")
+string(REGEX REPLACE "\\.internal$" "" _sdk_prefix "${WEBKIT_SDK}")
+string(REGEX MATCH "^[0-9]+" _sdk_major "${WEBKIT_SDK_VERSION}")
+string(REGEX MATCH "^[0-9]+\\.[0-9]+" _sdk_major_minor "${WEBKIT_SDK_VERSION}")
 set(_additions_candidates
     "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/${_sdk_prefix}${_sdk_major}.0-additions.sdk/usr/local/include"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries/SDKs/${_sdk_prefix}${_sdk_major_minor}-additions.sdk/usr/local/include"
@@ -101,7 +110,6 @@ endif ()
 if (NOT _additions_found)
     message(WARNING "No SDK additions overlay found -- API_UNAVAILABLE classes (AVAudioSession etc.) will fail to compile")
 endif ()
-unset(_sdk_version)
 unset(_sdk_major)
 unset(_sdk_major_minor)
 unset(_sdk_prefix)
@@ -139,7 +147,7 @@ add_compile_options(
     "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
 )
 
-if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
+if (USE_APPLE_INTERNAL_SDK)
     add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)
 endif ()
 
