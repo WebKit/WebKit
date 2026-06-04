@@ -42,7 +42,7 @@ namespace WebCore {
 
 static inline FindOptions matchAffectingOptions(FindOptions options)
 {
-    static constexpr OptionSet matchAffectingFlags { FindOption::CaseInsensitive, FindOption::AtWordStarts, FindOption::TreatMedialCapitalAsWordStart, FindOption::AtWordEnds, FindOption::DoNotTraverseFlatTree };
+    static constexpr OptionSet matchAffectingFlags { FindOption::CaseInsensitive, FindOption::AtWordStarts, FindOption::TreatMedialCapitalAsWordStart, FindOption::AtWordEnds, FindOption::DoNotTraverseFlatTree, FindOption::IcuOnlyWordBoundaries };
     return options & matchAffectingFlags;
 }
 
@@ -66,6 +66,9 @@ CachedMatchFinder::CachedMatchFinder(Document& document)
 
 void CachedMatchFinder::performSearch(StringView buffer, unsigned startOffset, const String& target, FindOptions options, NOESCAPE const Function<SearchShouldContinue(size_t, size_t)>& callback)
 {
+    // IcuOnlyWordBoundaries is intended for use with TextIterator/SearchBuffer. It's untested with CachedMatchFinder.
+    ASSERT(!options.contains(FindOption::IcuOnlyWordBoundaries));
+
     if (buffer.isEmpty() || target.isEmpty())
         return;
 
