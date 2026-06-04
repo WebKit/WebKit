@@ -1254,6 +1254,11 @@ void Storage::clear(String&& type, WallTime modifiedSinceTime, CompletionHandler
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
+    // Cancel queued writes that haven't been dispatched yet; otherwise they materialize on disk
+    // after clear() returns and resurrect cache entries the caller intended to delete.
+    m_writeOperationDispatchTimer.stop();
+    m_pendingWriteOperations.clear();
+
     if (m_recordFilter)
         m_recordFilter->clear();
     if (m_blobFilter)
