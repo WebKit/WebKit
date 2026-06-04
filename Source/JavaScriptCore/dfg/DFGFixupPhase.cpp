@@ -2772,6 +2772,20 @@ private:
             break;
         }
 
+        case IROFactPoison: {
+            RELEASE_ASSERT(Options::validateIntegerRangeOptimization());
+            // Only the FTL IRO phase consumes this; collapse elsewhere so later
+            // phases don't have to know about it.
+            if (!m_graph.m_plan.isFTL()) {
+                node->convertToIdentity();
+                break;
+            }
+            RELEASE_ASSERT_WITH_MESSAGE(isInt32Speculation(node->child1()->prediction()),
+                "iroFactPoison: input must be Int32-predicted; values IRO cannot consume cannot be meaningfully poisoned");
+            fixEdge<Int32Use>(node->child1());
+            break;
+        }
+
         case GetArrayLength: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             // We don't know how to handle generic and we only emit this in the Parser when we have checked the value is an Array/TypedArray.

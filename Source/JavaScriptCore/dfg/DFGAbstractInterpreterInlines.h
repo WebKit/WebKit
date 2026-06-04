@@ -5350,6 +5350,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case AssertInBounds:
         break;
 
+
+    case IROFactPoison:
     case CheckInBounds: {
         // We claim we result in Int32. It's not really important what our result is (though we
         // don't want to claim we may result in the empty value), other nodes with data flow edges

@@ -4018,6 +4018,43 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case IROFactPoisonIntrinsic: {
+            RELEASE_ASSERT(Options::validateIntegerRangeOptimization());
+            if (argumentCountIncludingThis != 4) {
+                dataLogLn("$vm.iroFactPoison requires 3 arguments: (value, asMin, asMax)");
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            Node* minNode = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            Node* maxNode = get(virtualRegisterForArgumentIncludingThis(3, registerOffset));
+
+            auto readBound = [] (Node* boundNode) -> int32_t {
+                if (!boundNode->isConstant() || !boundNode->constant()->value().isNumber()) {
+                    dataLogLn("iroFactPoison: bound must be a numeric constant");
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                if (!boundNode->constant()->value().isInt32AsAnyInt()) {
+                    dataLogLn("iroFactPoison: bound must be an integer in int32 range");
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                return boundNode->constant()->value().asInt32AsAnyInt();
+            };
+            int32_t minValue = readBound(minNode);
+            int32_t maxValue = readBound(maxNode);
+            if (minValue > maxValue) {
+                dataLogLn("iroFactPoison: asMin > asMax, fact range is empty");
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+
+            insertChecks();
+            VirtualRegister operand = virtualRegisterForArgumentIncludingThis(1, registerOffset);
+            setResult(addToGraph(
+                IROFactPoison,
+                OpInfo(static_cast<uint32_t>(minValue)),
+                OpInfo(static_cast<uint32_t>(maxValue)),
+                get(operand)));
+            return CallOptimizationResult::Inlined;
+        }
+
         case JSMapGetIntrinsic: {
             if (argumentCountIncludingThis < 2 || !is64Bit())
                 return CallOptimizationResult::DidNothing;

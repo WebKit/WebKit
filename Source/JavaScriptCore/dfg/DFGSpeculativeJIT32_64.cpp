@@ -4522,6 +4522,7 @@ void SpeculativeJIT::compile(Node* node)
     case FiatInt52:
     case Int52Constant:
     case AssertInBounds:
+    case IROFactPoison:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ArithIMul:

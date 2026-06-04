@@ -1291,7 +1291,10 @@ public:
                 }
             }
         }
-        
+
+        if (Options::validateIntegerRangeOptimization()) [[unlikely]]
+            insertTestingValidation();
+
         // Now we transform the code based on the results computed in the previous loop.
         changed = false;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -1299,11 +1302,18 @@ public:
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Transformation: at ", node, ": ", listDump(sortedRelationships()));
-                
+
                 // This ends up being pretty awkward to write because we need to decide if we
                 // optimize by using the relationships before the operation, but we need to
                 // call executeNode() before we optimize.
                 switch (node->op()) {
+                case IROFactPoison: {
+                    insertRangeAssertion(nodeIndex, node->origin, node->child1().node(), node->iroFactPoisonMin(), node->iroFactPoisonMax());
+                    executeNode(block->at(nodeIndex));
+                    node->convertToIdentity();
+                    changed = true;
+                    continue;
+                }
                 case ArithAbs: {
                     if (node->child1().useKind() != Int32Use)
                         break;
@@ -1312,6 +1322,8 @@ public:
                     if (!range)
                         break;
                     auto [minValue, maxValue] = range.value();
+
+                    insertRangeAssertion(nodeIndex, node->origin, node->child1().node(), minValue, maxValue);
 
                     executeNode(block->at(nodeIndex));
 
@@ -1346,11 +1358,13 @@ public:
                     if (!leftRange)
                         break;
                     auto [leftMinValue, leftMaxValue] = leftRange.value();
+                    insertRangeAssertion(nodeIndex, node->origin, node->child1().node(), leftMinValue, leftMaxValue);
 
                     auto rightRange = rangeFor(node->child2().node());
                     if (!rightRange)
                         break;
                     auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    insertRangeAssertion(nodeIndex, node->origin, node->child2().node(), rightMinValue, rightMaxValue);
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1384,11 +1398,13 @@ public:
                     if (!leftRange)
                         break;
                     auto [leftMinValue, leftMaxValue] = leftRange.value();
+                    insertRangeAssertion(nodeIndex, node->origin, node->child1().node(), leftMinValue, leftMaxValue);
 
                     auto rightRange = rangeFor(node->child2().node());
                     if (!rightRange)
                         break;
                     auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    insertRangeAssertion(nodeIndex, node->origin, node->child2().node(), rightMinValue, rightMaxValue);
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1422,11 +1438,13 @@ public:
                     if (!leftRange)
                         break;
                     auto [leftMinValue, leftMaxValue] = leftRange.value();
+                    insertRangeAssertion(nodeIndex, node->origin, node->child1().node(), leftMinValue, leftMaxValue);
 
                     auto rightRange = rangeFor(node->child2().node());
                     if (!rightRange)
                         break;
                     auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    insertRangeAssertion(nodeIndex, node->origin, node->child2().node(), rightMinValue, rightMaxValue);
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1512,6 +1530,7 @@ public:
                     for (Relationship relationship : iter->value)
                         minValue = std::max(minValue, relationship.minValueOfLeft());
 
+                    insertRangeAssertion(nodeIndex, node->origin, m_graph.varArgChild(node, 1).node(), minValue, std::numeric_limits<int32_t>::max());
                     if (minValue < 0)
                         break;
 
@@ -1524,11 +1543,12 @@ public:
                 default:
                     break;
                 }
-                
+
                 executeNode(block->at(nodeIndex));
             }
+            m_insertionSet.execute(block);
         }
-        
+
         return changed;
     }
 
@@ -1687,7 +1707,8 @@ private:
         }
 
         case ToLength: {
-            if (node->child1().useKind() == UntypedUse)
+            // FIXME
+            if (node->child1().useKind() != Int32Use)
                 break;
             // Consider b = ToLength(a)
             // If a < 0, then b == 0; b >= a
@@ -1753,7 +1774,9 @@ private:
                 case Array::Int32Array:
                     break;
                 case Array::Uint32Array:
-                    setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+                // FIXME
+                    if (node->hasInt32Result())
+                        setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
                     break;
                 default:
                     break;
@@ -1777,9 +1800,121 @@ private:
                 node);
             break;
         }
-            
+
+        case IROFactPoison: {
+            RELEASE_ASSERT(Options::validateIntegerRangeOptimization());
+            int32_t minValue = node->iroFactPoisonMin();
+            int32_t maxValue = node->iroFactPoisonMax();
+            if (minValue > std::numeric_limits<int32_t>::min())
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, minValue - 1));
+            if (maxValue < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, maxValue + 1));
+            break;
+        }
+
         default:
             break;
+        }
+    }
+
+    static Edge validatorEdgeFor(Node* n)
+    {
+        if (n->hasInt32Result() || n->isInt32Constant())
+            return Edge(n, KnownInt32Use);
+        return Edge(n, UntypedUse);
+    }
+
+    void insertOffsetAssertion(unsigned nodeIndex, NodeOrigin origin, Node* leftNode, Node* rightNode, int64_t offset, Node::AssertInBoundsCompare compare)
+    {
+        // AssertInBounds offsets are derived from int32 IRO offsets via ±1
+        // or negation, so they fit in [INT32_MIN-1, INT32_MAX+1]. Anything
+        // wider would indicate the caller is computing the offset wrong.
+        RELEASE_ASSERT(offset >= int64_t { std::numeric_limits<int32_t>::min() } - 1
+            && offset <= int64_t { std::numeric_limits<int32_t>::max() } + 1);
+        m_insertionSet.insertNode(
+            nodeIndex, SpecNone, AssertInBounds, origin,
+            OpInfo(static_cast<uint32_t>(compare)),
+            OpInfo(static_cast<uint64_t>(offset)),
+            validatorEdgeFor(leftNode), validatorEdgeFor(rightNode));
+    }
+
+    void insertRangeAssertion(unsigned nodeIndex, NodeOrigin origin, Node* checkedValue, int32_t minValue, int32_t maxValue)
+    {
+        if (!Options::validateIntegerRangeOptimization()) [[likely]]
+            return;
+        if (maxValue < std::numeric_limits<int32_t>::max()) {
+            // checkedValue < maxValue + 1 <=> checkedValue < m_zero + (maxValue + 1).
+            insertOffsetAssertion(nodeIndex, origin, checkedValue, m_zero, int64_t { maxValue } + 1, Node::AssertInBoundsCompareLessThan);
+        }
+        if (minValue > std::numeric_limits<int32_t>::min()) {
+            // checkedValue > minValue - 1 <=> m_zero < checkedValue + (1 - minValue).
+            insertOffsetAssertion(nodeIndex, origin, m_zero, checkedValue, 1 - int64_t { minValue }, Node::AssertInBoundsCompareLessThan);
+        }
+    }
+
+    void insertSingleRelationshipAssertion(unsigned nodeIndex, NodeOrigin origin, const Relationship& rel)
+    {
+        if (rel.left().kind() != NodeFlowProjection::Primary)
+            return;
+        if (rel.right().kind() != NodeFlowProjection::Primary)
+            return;
+        Node* left = rel.left().node();
+        Node* right = rel.right().node();
+        RELEASE_ASSERT(left && right);
+        int64_t offset = rel.offset();
+
+        // A zero-offset equality over a non-int32 operand (e.g. two boxed values
+        // proven identical) carries no integer bound, but IRO will still use it
+        // to substitute one operand for the other. Validate value sameness in
+        // that case rather than an int32 bound, so we neither skip it nor crash
+        // on a legitimate non-integer equivalence.
+        auto isInt32Rep = [] (Node* n) { return n->hasInt32Result() || n->isInt32Constant(); };
+        if (rel.kind() == Relationship::Equal && !offset && (!isInt32Rep(left) || !isInt32Rep(right))) {
+            m_insertionSet.insertNode(
+                nodeIndex, SpecNone, AssertInBounds, origin,
+                OpInfo(static_cast<uint32_t>(Node::AssertInBoundsCompareIdentical)),
+                OpInfo(static_cast<uint64_t>(0)),
+                Edge(left, UntypedUse), Edge(right, UntypedUse));
+            return;
+        }
+
+        switch (rel.kind()) {
+        case Relationship::LessThan:
+            // left < right + offset
+            insertOffsetAssertion(nodeIndex, origin, left, right, offset, Node::AssertInBoundsCompareLessThan);
+            return;
+        case Relationship::GreaterThan:
+            // left > right + offset  <=>  right < left + (-offset)
+            insertOffsetAssertion(nodeIndex, origin, right, left, -offset, Node::AssertInBoundsCompareLessThan);
+            return;
+        case Relationship::Equal:
+            // left == right + offset  <=>  left < right + (offset+1) AND right < left + (1-offset)
+            insertOffsetAssertion(nodeIndex, origin, left, right, offset + 1, Node::AssertInBoundsCompareLessThan);
+            insertOffsetAssertion(nodeIndex, origin, right, left, 1 - offset, Node::AssertInBoundsCompareLessThan);
+            return;
+        case Relationship::NotEqual:
+            insertOffsetAssertion(nodeIndex, origin, left, right, offset, Node::AssertInBoundsCompareNotEqual);
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void insertTestingValidation()
+    {
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            m_relationships = m_relationshipsAtHead[block];
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+                NodeOrigin originForInsertion = node->origin;
+                if (nodeIndex > 0)
+                    originForInsertion = block->at(nodeIndex - 1)->origin.forInsertingAfter(m_graph, block->at(nodeIndex - 1));
+                for (auto& entry : m_relationships) {
+                    for (const Relationship& rel : entry.value)
+                        insertSingleRelationshipAssertion(nodeIndex, originForInsertion, rel);
+                }
+                executeNode(node);
+            }
+            m_insertionSet.execute(block);
         }
     }
 

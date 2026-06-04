@@ -300,6 +300,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
     case AssertInBounds:
+    case IROFactPoison:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ConstantStoragePointer:

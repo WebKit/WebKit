@@ -2117,6 +2117,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionBreakpoint);
 static JSC_DECLARE_HOST_FUNCTION(functionExit);
 static JSC_DECLARE_HOST_FUNCTION(functionDFGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionFTLTrue);
+static JSC_DECLARE_HOST_FUNCTION(functionIROFactPoison);
 static JSC_DECLARE_HOST_FUNCTION(functionOMGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuMfence);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuRdtsc);
@@ -2339,6 +2340,15 @@ JSC_DEFINE_HOST_FUNCTION(functionFTLTrue, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
     return JSValue::encode(jsBoolean(false));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionIROFactPoison, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    RELEASE_ASSERT(Options::validateIntegerRangeOptimization());
+    if (callFrame->argumentCount() < 1)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(callFrame->uncheckedArgument(0));
 }
 
 // Returns true if the calling frame is an OMG frame.
@@ -4427,6 +4437,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"_s), 0, functionDFGTrue, ImplementationVisibility::Public, DFGTrueIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "ftlTrue"_s), 0, functionFTLTrue, ImplementationVisibility::Public, FTLTrueIntrinsic, jsDollarVMPropertyAttributes);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "iroFactPoison"_s), 3, functionIROFactPoison, ImplementationVisibility::Public, IROFactPoisonIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "omgTrue"_s), 0, functionOMGTrue, ImplementationVisibility::Public, NoIntrinsic, jsDollarVMPropertyAttributes);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuMfence"_s), 0, functionCpuMfence, ImplementationVisibility::Public, CPUMfenceIntrinsic, jsDollarVMPropertyAttributes);

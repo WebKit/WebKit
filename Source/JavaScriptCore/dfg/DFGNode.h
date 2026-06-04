@@ -2211,6 +2211,39 @@ public:
         return m_opInfo.as<uint32_t>();
     }
 
+    enum AssertInBoundsCompare : uint32_t {
+        AssertInBoundsCompareBelow = 0, // unsigned <
+        AssertInBoundsCompareLessThan = 1, // signed <
+        AssertInBoundsCompareNotEqual = 2, // signed !=
+        AssertInBoundsCompareIdentical = 3, // same JSValue; for equalities over non-int32 operands
+    };
+
+    AssertInBoundsCompare assertInBoundsCompare() const
+    {
+        RELEASE_ASSERT(op() == AssertInBounds);
+        return static_cast<AssertInBoundsCompare>(m_opInfo.as<uint32_t>());
+    }
+    int64_t assertInBoundsOffset() const
+    {
+        RELEASE_ASSERT(op() == AssertInBounds);
+        int64_t offset = static_cast<int64_t>(m_opInfo2.as<uint64_t>());
+        RELEASE_ASSERT(offset >= int64_t { std::numeric_limits<int32_t>::min() } - 1
+            && offset <= int64_t { std::numeric_limits<int32_t>::max() } + 1);
+        return offset;
+    }
+
+    int32_t iroFactPoisonMin() const
+    {
+        RELEASE_ASSERT(op() == IROFactPoison);
+        return static_cast<int32_t>(m_opInfo.as<uint32_t>());
+    }
+
+    int32_t iroFactPoisonMax() const
+    {
+        RELEASE_ASSERT(op() == IROFactPoison);
+        return static_cast<int32_t>(m_opInfo2.as<uint32_t>());
+    }
+
     SpeculatedType catchLocalPrediction()
     {
         ASSERT(op() == ExtractCatchLocal);

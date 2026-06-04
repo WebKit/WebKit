@@ -468,6 +468,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, validateDFGClobberize, false, Normal, "Emits code in the DFG/FTL to validate the Clobberize phase"_s) \
     v(Bool, validateBoundsCheckElimination, false, Normal, "Emits code in the DFG/FTL to validate bounds check elimination"_s) \
+    v(Bool, validateIntegerRangeOptimization, false, Normal, "Emits code in the FTL to validate facts learned by IntegerRangeOptimizationPhase"_s) \
     v(Bool, validateDFGMayExit, ASSERT_ENABLED, Normal, "Emits code in the DFG/FTL to validate the MayExit phase"_s) \
     \
     v(Bool, validateVMEntryCalleeSaves, false, Configurable, "Causes vmEntryToJavaScript to validate VMEntry callee saves are properly restored"_s) \
@@ -725,6 +726,7 @@ enum OptionEquivalence {
     v(maximumFTLCandidateInstructionCount, maximumFTLCandidateBytecodeCost, SameOption) \
     v(maximumInliningCallerSize, maximumInliningCallerBytecodeCost, SameOption) \
     v(validateBCE, validateBoundsCheckElimination, SameOption) \
+    v(validateIRO, validateIntegerRangeOptimization, SameOption) \
 
 
 enum ExperimentalOptionFlags {

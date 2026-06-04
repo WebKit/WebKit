@@ -184,6 +184,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutCellButterflySlot:
     case ArraySortCommit:
     case AssertInBounds:
+    case IROFactPoison:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ConstantStoragePointer:

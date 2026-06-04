@@ -6314,16 +6314,81 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileAssertInBounds()
     {
-        ASSERT(Options::validateBoundsCheckElimination());
-        LValue index = lowInt32(m_node->child1());
-        LValue bounds = lowInt32(m_node->child2());
+        RELEASE_ASSERT(Options::validateBoundsCheckElimination() || Options::validateIntegerRangeOptimization());
 
+        if (m_node->assertInBoundsCompare() == Node::AssertInBoundsCompareIdentical) {
+            LValue left = lowJSValue(m_node->child1());
+            LValue right = lowJSValue(m_node->child2());
+            LBasicBlock notSameCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+            m_out.branch(m_out.equal(left, right), usually(continuation), rarely(notSameCase));
+            LBasicBlock lastNext = m_out.appendTo(notSameCase, continuation);
+            m_out.trap();
+            m_out.appendTo(continuation, lastNext);
+            return;
+        }
+
+        // Each operand is referenced in its own representation. An int32 operand
+        // is compared directly. A boxed operand is loaded as a JSValue: if it is
+        // an int32 at runtime it is compared like any other, but if it is
+        // anything else we crash (invalid relationship)
+        LValue nonInt32Operand = m_out.booleanFalse;
+        auto lowOperand = [&] (Edge edge) -> LValue {
+            if (edge.useKind() != UntypedUse)
+                return lowInt32(edge);
+            LValue jsValue = lowJSValue(edge);
+            nonInt32Operand = m_out.bitOr(nonInt32Operand, isNotInt32(jsValue));
+            return unboxInt32(jsValue);
+        };
+        LValue index = lowOperand(m_node->child1());
+        LValue bounds = lowOperand(m_node->child2());
+        int64_t offset = m_node->assertInBoundsOffset();
+        RELEASE_ASSERT(offset >= static_cast<int64_t>(INT32_MIN) - 1 && offset <= static_cast<int64_t>(INT32_MAX) + 1);
+
+        LValue inBounds;
+        Node::AssertInBoundsCompare compare = m_node->assertInBoundsCompare();
+        if (compare == Node::AssertInBoundsCompareNotEqual) {
+            LValue limit = offset
+                ? m_out.add(m_out.signExt32To64(bounds), m_out.constInt64(offset))
+                : m_out.signExt32To64(bounds);
+            inBounds = m_out.notEqual(m_out.signExt32To64(index), limit);
+        } else if (!offset) {
+            inBounds = (compare == Node::AssertInBoundsCompareLessThan)
+                ? m_out.lessThan(index, bounds)
+                : m_out.below(index, bounds);
+        } else {
+            LValue offsetExt = m_out.constInt64(offset);
+            if (compare == Node::AssertInBoundsCompareLessThan) {
+                LValue indexExt = m_out.signExt32To64(index);
+                LValue boundsExt = m_out.signExt32To64(bounds);
+                LValue limit = m_out.add(boundsExt, offsetExt);
+                inBounds = m_out.lessThan(indexExt, limit);
+            } else {
+                LValue indexExt = m_out.zeroExt(index, Int64);
+                LValue boundsExt = m_out.zeroExt(bounds, Int64);
+                LValue limit = m_out.add(boundsExt, offsetExt);
+                inBounds = m_out.below(indexExt, limit);
+            }
+        }
+
+        LBasicBlock nonInt32Case = m_out.newBlock();
+        LBasicBlock boundsCheckCase = m_out.newBlock();
         LBasicBlock outOfBoundsCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
-        m_out.branch(m_out.below(index, bounds), usually(continuation), rarely(outOfBoundsCase));
 
-        LBasicBlock lastNext = m_out.appendTo(outOfBoundsCase, continuation);
-        vmCall(Void, operationReportBoundsCheckEliminationErrorAndCrash,
+        // A non-int32 operand reached the validator. Trap to surface it rather
+        // than skipping, since the relationship will be consulted for further
+        // implications without re-checking int32-ness at the use site.
+        m_out.branch(nonInt32Operand, rarely(nonInt32Case), usually(boundsCheckCase));
+
+        LBasicBlock lastNext = m_out.appendTo(nonInt32Case, boundsCheckCase);
+        m_out.trap();
+
+        m_out.appendTo(boundsCheckCase, outOfBoundsCase);
+        m_out.branch(inBounds, usually(continuation), rarely(outOfBoundsCase));
+
+        m_out.appendTo(outOfBoundsCase, continuation);
+        m_out.call(Void, m_out.operation(operationReportBoundsCheckEliminationErrorAndCrash),
             m_out.constIntPtr(std::bit_cast<intptr_t>(codeBlock())),
             m_out.constInt32(m_node->index()),
             m_out.constInt32(m_node->child1()->index()),
@@ -6333,6 +6398,7 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
     }
+
 
     void compileCheckInBounds()
     {

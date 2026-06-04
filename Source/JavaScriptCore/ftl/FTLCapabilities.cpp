@@ -220,6 +220,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case ToBoolean:
     case LogicalNot:
     case AssertInBounds:
+    case IROFactPoison:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ConstantStoragePointer:

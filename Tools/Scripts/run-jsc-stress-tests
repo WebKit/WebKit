@@ -968,9 +968,9 @@ def mustCrash!
     $runCommandOptions[:mustCrash] = :any
 end
 
-#   :trap — IllegalInstruction / Breakpoint / Abort (CRASH/RELEASE_ASSERT/abort).
-#   :segv — SIGSEGV / SIGBUS.
-#   :fpe  — SIGFPE.
+#   :trap - IllegalInstruction / Breakpoint / Abort (CRASH/RELEASE_ASSERT/abort).
+#   :segv - SIGSEGV / SIGBUS.
+#   :fpe  - SIGFPE.
 def mustCrashWith!(kind, message = nil)
     raise "mustCrashWith! requires :trap, :segv, or :fpe (got #{kind.inspect})" unless %i[trap segv fpe].include?(kind)
     raise "mustCrashWith! message must be a String or nil" unless message.nil? || message.is_a?(String)
@@ -1251,6 +1251,15 @@ BASE_MODES = [
         "ftl-no-cjit-osr-validation",
         [
             "--validateFTLOSRExitLiveness=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITIROValidate",
+        "ftl-no-cjit-iro-validate",
+        [
+            "--validateIntegerRangeOptimization=true",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1624,6 +1633,7 @@ def defaultRunConfig(config, subsetOptions, *optionalTestSpecificOptions)
             runFTLNoCJITValidateConfig(config, *optionalTestSpecificOptions)
             runFTLNoCJITNoPutStackValidateConfig(config, *optionalTestSpecificOptions)
             runFTLNoCJITNoInlineValidateConfig(config, *optionalTestSpecificOptions)
+            runFTLNoCJITIROValidateConfig(config, *optionalTestSpecificOptions)
         end
     end
 end

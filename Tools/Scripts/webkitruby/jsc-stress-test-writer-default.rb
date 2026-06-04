@@ -50,7 +50,7 @@ def noisyOutputHandler
 end
 
 def getFailCondition(plan)
-    # Status codes assigned by jsc.cpp's --signal-expected handler — keep in sync.
+    # Status codes assigned by jsc.cpp's --signal-expected handler - keep in sync.
     case plan.expectCrash
     when :any then "-le 130"
     when :trap then "-ne 137"

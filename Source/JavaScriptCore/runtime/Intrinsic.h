@@ -259,6 +259,7 @@ namespace JSC {
     macro(SetInt32HeapPredictionIntrinsic) \
     macro(CheckInt32Intrinsic) \
     macro(FiatInt52Intrinsic) \
+    macro(IROFactPoisonIntrinsic) \
     \
     /* These are used for $vm performance debugging features. */ \
     macro(CPUMfenceIntrinsic) \

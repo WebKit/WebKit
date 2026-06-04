@@ -1542,6 +1542,11 @@ private:
             break;
         }
 
+        case IROFactPoison: {
+            setPrediction(SpecInt32Only);
+            break;
+        }
+
         case GetScope:
         case GetEvalScope:
             setPrediction(SpecObjectOther);

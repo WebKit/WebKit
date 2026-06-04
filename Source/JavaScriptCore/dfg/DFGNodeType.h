@@ -312,6 +312,7 @@ namespace JSC { namespace DFG {
     macro(AssertNotEmpty, NodeMustGenerate) \
     macro(CheckBadValue, NodeMustGenerate) \
     macro(AssertInBounds, NodeMustGenerate) \
+    macro(IROFactPoison, NodeResultInt32) \
     macro(CheckInBounds, NodeMustGenerate | NodeResultJS) \
     macro(CheckInBoundsInt52, NodeMustGenerate | NodeResultJS) \
     macro(CheckIdent, NodeMustGenerate) \
