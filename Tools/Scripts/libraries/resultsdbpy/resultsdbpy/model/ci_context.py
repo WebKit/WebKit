@@ -194,8 +194,7 @@ class CIContext(UploadCallbackContext):
                 data = self.configuration_context.select_from_table_with_configurations(
                     table.__table_name__, configurations=[configuration], recent=recent,
                     suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
-                    uuid__gte=CommitContext.convert_to_uuid(begin),
-                    uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()),
+                    **CommitContext.uuid_range_kwargs(begin, end),
                     start_time__gte=get_time(begin_query_time), start_time__lte=get_time(end_query_time),
                     limit=limit,
                 ).items()

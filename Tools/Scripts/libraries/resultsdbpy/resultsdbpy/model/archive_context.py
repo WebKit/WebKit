@@ -152,8 +152,7 @@ class ArchiveContext(object):
                 metadata_by_config.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
                     self.ArchiveMetaDataByCommit.__table_name__, configurations=[configuration], recent=recent,
                     suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
-                    uuid__gte=CommitContext.convert_to_uuid(begin),
-                    uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()),
+                    **CommitContext.uuid_range_kwargs(begin, end),
                     start_time__gte=_get_time(begin_query_time), start_time__lte=_get_time(end_query_time),
                     limit=limit,
                 ).items()})

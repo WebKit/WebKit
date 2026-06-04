@@ -139,7 +139,11 @@ class CommitContextTest(WaitForDockerTestCase):
             self.init_database(redis=redis, cassandra=cassandra)
             self.add_all_commits_to_database()
             self.assertEqual(
-                [self.stash_repository.commit(ref='bae5d1e90999'), self.stash_repository.commit(ref='1abe25b443e9')],
+                [
+                    self.stash_repository.commit(ref='d8bce26fa65c'),
+                    self.stash_repository.commit(ref='bae5d1e90999'),
+                    self.stash_repository.commit(ref='1abe25b443e9'),
+                ],
                 self.database.find_commits_in_range(repository_id='safari', branch='main', begin=1601663000, end=1601668000),
             )
 

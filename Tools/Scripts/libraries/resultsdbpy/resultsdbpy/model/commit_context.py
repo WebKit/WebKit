@@ -115,6 +115,29 @@ class CommitContext(object):
             return cls.timestamp_to_uuid(value)
 
     @classmethod
+    def convert_to_uuid_floor(cls, value=None):
+        if value is None:
+            return 0
+        if isinstance(value, Commit):
+            return value.uuid
+        return cls.timestamp_to_uuid(value)
+
+    @classmethod
+    def convert_to_uuid_ceiling(cls, value=None):
+        if value is None:
+            return cls.timestamp_to_uuid() + Commit.UUID_MULTIPLIER - 1
+        if isinstance(value, Commit):
+            return value.uuid
+        return cls.timestamp_to_uuid(value) + Commit.UUID_MULTIPLIER - 1
+
+    @classmethod
+    def uuid_range_kwargs(cls, begin=None, end=None):
+        return dict(
+            uuid__gte=cls.convert_to_uuid_floor(begin),
+            uuid__lte=cls.convert_to_uuid_ceiling(end),
+        )
+
+    @classmethod
     def uuid_for_commits(cls, commits):
         return max([commit.uuid for commit in commits])
 
@@ -214,15 +237,12 @@ class CommitContext(object):
             branch = self.repositories[repository_id].default_branch
 
         use_ascending = begin and not end
-        begin = self.convert_to_uuid(begin)
-        end = self.convert_to_uuid(end, self.timestamp_to_uuid())
 
         with self:
             result = [model.to_commit() for model in self.cassandra.select_from_table(
                 self.CommitByUuidAscending.__table_name__ if use_ascending else self.CommitByUuidDescending.__table_name__,
                 limit=limit, repository_id=repository_id, branch=branch,
-                uuid__gte=begin,
-                uuid__lte=end,
+                **self.uuid_range_kwargs(begin, end),
             )]
             if use_ascending:
                 result.reverse()

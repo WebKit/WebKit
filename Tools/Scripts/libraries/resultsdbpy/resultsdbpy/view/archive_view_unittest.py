@@ -23,6 +23,7 @@
 import base64
 import io
 import json
+import time
 import zipfile
 from unittest.mock import patch
 
@@ -40,12 +41,17 @@ from webkitscmpy import Commit
 
 
 class ArchiveViewUnittest(WebSiteTestCase):
+    # Commit timestamps must be recent — ArchiveContext.register derives the
+    # row's TTL from `commit_timestamp + archive_ttl_seconds - now`, so stale
+    # commit timestamps result in a negative TTL and the row is dropped on
+    # the next read.
+    _NOW = int(time.time())
     COMMITS = [
         dict(
             repository_id='safari',
             id='d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
             branch='main',
-            timestamp=1601668000,
+            timestamp=_NOW,
             order=1,
             committer='jbedard@apple.com',
             message='Patch Series\n',
@@ -54,7 +60,7 @@ class ArchiveViewUnittest(WebSiteTestCase):
             repository_id='webkit',
             id='6',
             branch='main',
-            timestamp=1601665100,
+            timestamp=_NOW - 2900,
             order=0,
             committer='jbedard@apple.com',
             message='6th commit\n',
@@ -120,10 +126,10 @@ class ArchiveViewUnittest(WebSiteTestCase):
     def test_html_rewrites_modern_link_template(self, client, **kwargs):
         template = b"<a href=\"' + encodeURI(path + suffix) + '\">x</a>"
         self.register_archive_with_files(client, {'index.html': template})
-        response = client.get(f'{self.URL}/archive/index.html?platform=mac&suite=layout-tests')
+        response = client.get(f'{self.URL}/archive/index.html?platform=Mac&suite=layout-tests')
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            b"href=\"' + encodeURI(path + suffix) + '?platform=mac&suite=layout-tests' + '\"",
+            b"href=\"' + encodeURI(path + suffix) + '?platform=Mac&suite=layout-tests' + '\"",
             response.data,
         )
 
@@ -132,10 +138,10 @@ class ArchiveViewUnittest(WebSiteTestCase):
     def test_html_rewrites_legacy_link_template(self, client, **kwargs):
         template = b"<a href=\"' + testPrefix + suffix + '\">x</a>"
         self.register_archive_with_files(client, {'legacy.html': template})
-        response = client.get(f'{self.URL}/archive/legacy.html?platform=mac&suite=layout-tests')
+        response = client.get(f'{self.URL}/archive/legacy.html?platform=Mac&suite=layout-tests')
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            b"href=\"' + testPrefix + suffix + '?platform=mac&suite=layout-tests' + '\"",
+            b"href=\"' + testPrefix + suffix + '?platform=Mac&suite=layout-tests' + '\"",
             response.data,
         )
 
