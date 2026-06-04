@@ -705,7 +705,7 @@ class BasePlan
     attr_accessor :retryParameters
 
     @@index = 0
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters, expectCrash)
+    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters, expectCrash, expectCrashMessage = nil)
         @directory = directory
         @arguments = argumentsMapper(arguments)
         @family = family
@@ -713,6 +713,7 @@ class BasePlan
         @outputHandler = outputHandler
         @errorHandler = errorHandler
         @expectCrash = expectCrash
+        @expectCrashMessage = expectCrashMessage
         # A plan for which @retryParameters is not nil is being
         # treated as potentially flaky.
         @retryParameters = retryParameters
@@ -727,11 +728,14 @@ class BasePlan
         if $runCommandOptions[:mustCrash]
             outputHandler = noisyOutputHandler
         end
-        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky], $runCommandOptions[:mustCrash])
+        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky], $runCommandOptions[:mustCrash], $runCommandOptions[:mustCrashMessage])
     end
 
     def expectCrash
         @expectCrash
+    end
+    def expectCrashMessage
+        @expectCrashMessage
     end
     def argumentsMapper(args)
         args
@@ -961,7 +965,18 @@ end
 
 def mustCrash!
     $testSpecificRequiredOptions += ["--signal-expected"]
-    $runCommandOptions[:mustCrash] = true
+    $runCommandOptions[:mustCrash] = :any
+end
+
+#   :trap — IllegalInstruction / Breakpoint / Abort (CRASH/RELEASE_ASSERT/abort).
+#   :segv — SIGSEGV / SIGBUS.
+#   :fpe  — SIGFPE.
+def mustCrashWith!(kind, message = nil)
+    raise "mustCrashWith! requires :trap, :segv, or :fpe (got #{kind.inspect})" unless %i[trap segv fpe].include?(kind)
+    raise "mustCrashWith! message must be a String or nil" unless message.nil? || message.is_a?(String)
+    $testSpecificRequiredOptions += ["--signal-expected"]
+    $runCommandOptions[:mustCrash] = kind
+    $runCommandOptions[:mustCrashMessage] = message
 end
 
 def serial!

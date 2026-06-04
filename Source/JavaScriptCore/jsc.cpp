@@ -4164,10 +4164,21 @@ void CommandLine::parseArguments(int argc, char** argv, int start)
         }
         if (!strcmp(arg, "--signal-expected")) {
 #if OS(UNIX)
+            // Keep in sync with getFailCondition in jsc-stress-test-writer-default.rb.
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal signal, SigInfo&, PlatformRegisters&) {
-                dataLogLn("Signal handler for ", ScopedEnumDump(signal), " hit. Exiting with status 137");
-                // Deliberate exit with a SIGKILL code greater than 130.
-                terminateProcess(137);
+                int status = 137;
+                switch (signal) {
+                case Signal::AccessFault:
+                    status = 138;
+                    break;
+                case Signal::FloatingPoint:
+                    status = 139;
+                    break;
+                default:
+                    break;
+                }
+                dataLogLn("Signal handler for ", ScopedEnumDump(signal), " hit. Exiting with status ", status);
+                terminateProcess(status);
                 return SignalAction::ForceDefault;
             };
 

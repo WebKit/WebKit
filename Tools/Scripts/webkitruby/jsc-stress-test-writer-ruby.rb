@@ -65,6 +65,20 @@ def noisyOutputHandler
     }
 end
 
+# Ruby expression that evaluates to true iff `status` matches the plan's
+# expected exit. Keep in sync with getFailCondition in
+# jsc-stress-test-writer-default.rb and the --signal-expected handler in jsc.cpp.
+def successCheckFor(plan)
+    case plan.expectCrash
+    when :any then "((status.exitstatus || 0) > 130)"
+    when :trap then "(status.exitstatus == 137)"
+    when :segv then "(status.exitstatus == 138)"
+    when :fpe then "(status.exitstatus == 139)"
+    when false, nil then "status.success?"
+    else raise "Unknown expectCrash value: #{plan.expectCrash.inspect}"
+    end
+end
+
 # Error handler for tests that fail exactly when they return non-zero exit status.
 # This is useful when a test is expected to fail.
 def simpleErrorHandler
@@ -73,6 +87,12 @@ def simpleErrorHandler
         outp.puts "if !success(status)\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "        " + plan.failCommand
+        if plan.expectCrashMessage
+            outp.puts "elsif !out.include?(#{plan.expectCrashMessage.inspect})\n"
+            outp.puts "    print " + prefixString("out", plan.name) + "\n"
+            outp.puts "    print " + prefixString("\"ERROR: Crashed as expected, but stdout/stderr did not contain expected message: #{plan.expectCrashMessage}\\n\"", plan.name) + "\n"
+            outp.puts "    " + plan.failCommand
+        end
         outp.puts "else\n"
         outp.puts "    " + plan.successCommand
         outp.puts "end\n"
@@ -284,7 +304,7 @@ class Plan < BasePlan
         script += "    <<-END_OF_SCRIPT\n"
         script += "        require 'open3'\n"
         script += "        def success(status)\n"
-        script += "            status.success?\n"
+        script += "            #{successCheckFor(self)}\n"
         script += "        end\n"
         script += "        script_location = File.expand_path(File.dirname(__FILE__))\n"
         script += "        Dir.chdir(\"\\\#{script_location}"
@@ -360,7 +380,7 @@ class Plan < BasePlan
             outp.puts "require 'open3'"
             outp.puts "require 'fileutils'"
             outp.puts "def success(status)"
-            outp.puts "   status.success?"
+            outp.puts "   #{successCheckFor(self)}"
             outp.puts "end"
 
             cmd = shellCommand
