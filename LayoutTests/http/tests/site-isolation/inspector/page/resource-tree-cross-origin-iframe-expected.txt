@@ -1,0 +1,15 @@
+Test that Page.getResourceTree returns the cross-origin frame tree under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.GetResourceTreeCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.GetResourceTreeCrossOriginIFrame.MainFrameAndChild
+PASS: Main frame should have a non-empty id.
+PASS: Main frame should have no parentId.
+PASS: Main frame URL should be on the test host.
+PASS: Main frame security origin should be on the test host.
+PASS: Should have exactly one child frame in the tree.
+PASS: Child frame should have a non-empty id.
+PASS: Child frame id should differ from main frame id.
+PASS: Child frame's parentId should match main frame's id.
+PASS: Child frame's name attribute should be reported.
+

@@ -197,7 +197,15 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     initializeTarget(target)
     {
-        if (target.hasDomain("Page")) {
+        // In the frontend, enabling the Page domain on the Page target is the first
+        // step to bootstrap the page resource tree. However, under Site Isolation, the
+        // Page domain on the WebPage (multiplexing) target is initialized prior to
+        // committing any load, so enabling it here would clobber the actual resource
+        // tree that arrives later with an empty snapshot. We therefore skip the WebPage
+        // target and bootstrap from the per-page target, as it always has been; the
+        // aggregated cross-origin tree is fetched on demand via
+        // WI.backendTarget.PageAgent.getResourceTree().
+        if (target.hasDomain("Page") && target.type !== WI.TargetType.WebPage) {
             target.PageAgent.enable();
 
             if (!target.isProvisional)

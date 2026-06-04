@@ -68,6 +68,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/RemoteFrameLayoutInfo.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/ShareableBitmapHandle.h>
 #include <WebCore/WebKitJSHandle.h>
@@ -775,6 +776,13 @@ Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const
 {
     ASSERT(m_documentSecurityOrigin);
     return *m_documentSecurityOrigin;
+}
+
+SecurityOriginData WebFrameProxy::documentSecurityOriginData() const
+{
+    if (RefPtr origin = m_documentSecurityOrigin)
+        return origin->data();
+    return SecurityOriginData::fromURL(url());
 }
 
 bool WebFrameProxy::isSameOriginAs(const WebFrameProxy& frame) const

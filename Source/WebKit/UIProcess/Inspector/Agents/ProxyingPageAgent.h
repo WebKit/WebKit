@@ -41,6 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+class WebFrameProxy;
 class WebProcessProxy;
 }
 
@@ -106,6 +107,8 @@ private:
     void frameDetached(WebCore::FrameIdentifier);
 
     void removeAllRegisteredReceivers();
+
+    Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const String* parentProtocolId) const;
 
     const UniqueRef<PageFrontendDispatcher> m_frontendDispatcher;
     const Ref<PageBackendDispatcher> m_backendDispatcher;

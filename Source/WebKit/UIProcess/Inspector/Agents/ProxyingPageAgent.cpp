@@ -28,11 +28,13 @@
 
 #include "HandleMessage.h"
 #include "ProxyingPageAgentMessages.h"
+#include "WebFrameProxy.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
@@ -214,10 +216,62 @@ CommandResult<void> ProxyingPageAgent::disable()
 
 // MARK: - Stubbed command handlers
 
-// FIXME: <https://webkit.org/b/308896> Merge remote frame subtrees into page resource tree.
+Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const WebFrameProxy& frame, const String* parentProtocolId) const
+{
+    auto protocolId = IdentifierRegistry::protocolFrameId(frame.frameID());
+
+    // The UIProcess WebFrameProxy tree is the authoritative cross-process frame
+    // tree under Site Isolation: childFrames() spans every WebContent process, so
+    // walking it yields the full structure (frame ids, parent linkage, name)
+    // regardless of which process hosts each frame.
+    //
+    // FIXME: <https://webkit.org/b/308896> url()/documentSecurityOriginData() are
+    // still stale for cross-origin children because the inspectedPage's
+    // WebFrameProxy never observes their owning process's didCommitLoadForFrame.
+    // WebFrameProxy state propagation across processes is the remaining follow-up.
+    SecurityOriginData securityOrigin = frame.documentSecurityOriginData();
+    String mimeType = frame.mimeType();
+    String name = frame.frameName();
+
+    auto frameObject = Protocol::Page::Frame::create()
+        .setId(protocolId)
+        .setLoaderId(emptyString()) // FIXME: <https://webkit.org/b/308895> get loaderId from document identifier
+        .setUrl(frame.url().string())
+        .setMimeType(mimeType.isEmpty() ? "text/html"_s : mimeType)
+        .setSecurityOrigin(securityOrigin.toString())
+        .release();
+
+    if (parentProtocolId)
+        frameObject->setParentId(*parentProtocolId);
+    if (!name.isEmpty())
+        frameObject->setName(name);
+
+    auto result = Protocol::Page::FrameResourceTree::create()
+        .setFrame(WTF::move(frameObject))
+        .setResources(JSON::ArrayOf<Protocol::Page::FrameResource>::create())
+        .release();
+
+    if (!frame.childFrames().isEmpty()) {
+        auto childrenArray = JSON::ArrayOf<Protocol::Page::FrameResourceTree>::create();
+        for (auto& child : frame.childFrames())
+            childrenArray->addItem(buildFrameTree(child, &protocolId));
+        result->setChildFrames(WTF::move(childrenArray));
+    }
+
+    return result;
+}
+
 CommandResult<Ref<Protocol::Page::FrameResourceTree>> ProxyingPageAgent::getResourceTree()
 {
-    return makeUnexpected("Not yet implemented under Site Isolation"_s);
+    if (!m_enabled)
+        return makeUnexpected("Not supported without Site Isolation"_s);
+
+    Ref inspectedPage = m_inspectedPage.get();
+    RefPtr mainFrame = inspectedPage->mainFrame();
+    if (!mainFrame)
+        return makeUnexpected("Missing main frame"_s);
+
+    return buildFrameTree(*mainFrame, nullptr);
 }
 
 // FIXME: <https://webkit.org/b/308898> Forward emulation overrides to all WebContent processes.
