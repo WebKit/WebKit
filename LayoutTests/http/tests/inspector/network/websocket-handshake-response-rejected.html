@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createRejectedWebSocket() {
+    let ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/websocket-reject");
+    ws.addEventListener('error', () => ws.close());
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.WebSocket.RejectedHandshake");
+
+    suite.addTestCase({
+        name: "Resource.WebSocket.RejectedHandshake.ResponseStatus",
+        description: "Check that a rejected WebSocket upgrade reports the server's HTTP status code.",
+        test(resolve, reject) {
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => {
+                let resource = event.target;
+                InspectorTest.expectEqual(resource.statusCode, 403, "Response status should be 403.");
+                InspectorTest.expectEqual(resource.statusText, "Forbidden", "Response status text should be 'Forbidden'.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createRejectedWebSocket()`)
+            .catch(reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for rejected WebSocket handshake response status reporting.</p>
+</body>
+</html>

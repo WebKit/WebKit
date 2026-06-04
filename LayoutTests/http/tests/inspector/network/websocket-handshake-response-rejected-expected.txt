@@ -1,0 +1,8 @@
+Tests for rejected WebSocket handshake response status reporting.
+
+
+== Running test suite: Resource.WebSocket.RejectedHandshake
+-- Running test case: Resource.WebSocket.RejectedHandshake.ResponseStatus
+PASS: Response status should be 403.
+PASS: Response status text should be 'Forbidden'.
+
