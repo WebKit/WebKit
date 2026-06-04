@@ -7798,7 +7798,7 @@ ShrinksStandaloneImagesToFit:
 
 SiteIsolationEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: security
   humanReadableName: "Site Isolation"
   humanReadableDescription: "Put cross-origin iframes in a different process"
@@ -7806,7 +7806,7 @@ SiteIsolationEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
