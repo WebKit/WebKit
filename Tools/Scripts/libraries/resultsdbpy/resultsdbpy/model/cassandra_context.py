@@ -63,7 +63,7 @@ class CassandraContext(object):
 
     @classmethod
     def drop_keyspace(cls, nodes=None, keyspace='results_database', auth_provider=None, protocol_version=4):
-        nodes = nodes if nodes else ['localhost']
+        nodes = nodes if nodes else ['127.0.0.1']
         connection_id = uuid.uuid4()
 
         try:
@@ -79,7 +79,7 @@ class CassandraContext(object):
         self._depth = 0
         self._connection_id = uuid.uuid4()
         self._models = {}
-        self._nodes = nodes if nodes else ['localhost']
+        self._nodes = nodes if nodes else ['127.0.0.1']
         self._auth_provider = auth_provider
         self._protocol_version = protocol_version
         self._batch = []

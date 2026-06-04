@@ -130,7 +130,7 @@ class Docker(object):
             for port in ports:
                 soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 try:
-                    soc.connect(('localhost', port))
+                    soc.connect(('127.0.0.1', port))
                     soc.shutdown(2)
                     continue
                 except BaseException:
@@ -139,7 +139,7 @@ class Docker(object):
             if all_ports_open:
                 try:
                     if has_cassandra:
-                        connection = Cluster(['localhost'], protocol_version=4).connect()
+                        connection = Cluster(['127.0.0.1'], protocol_version=4).connect()
                         connection.cluster.shutdown()
                     return
                 except NoHostAvailable:
