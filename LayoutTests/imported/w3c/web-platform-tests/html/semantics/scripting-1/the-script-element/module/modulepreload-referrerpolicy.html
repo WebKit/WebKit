@@ -20,6 +20,7 @@
 -->
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
 <script>
 // Initialize the window.referrers object that will be used by echo-referrer.py
 window.referrers = {};
@@ -27,11 +28,6 @@ window.referrers = {};
 </head>
 <body>
 <script>
-// Helper function to create a unique ID for each test
-function generateUniqueId() {
-  return Date.now() + Math.floor(Math.random() * 1000);
-}
-
 // Helper function to create a modulepreload element with a given referrer policy
 function createModulePreload(url, referrerPolicy = null) {
   const link = document.createElement('link');
@@ -55,7 +51,7 @@ function waitForPreload(link) {
 
 // Test default referrer policy behavior
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // First import to establish baseline
@@ -78,7 +74,7 @@ promise_test(async t => {
 
 // Test explicit no-referrer policy
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // Create modulepreload with no-referrer policy
@@ -98,7 +94,7 @@ promise_test(async t => {
 
 // Test origin referrer policy
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // Create modulepreload with origin policy
@@ -118,7 +114,7 @@ promise_test(async t => {
 
 // Test same-origin referrer policy
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // Create modulepreload with same-origin policy
@@ -138,7 +134,7 @@ promise_test(async t => {
 
 // Test strict-origin referrer policy
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // Create modulepreload with strict-origin policy
@@ -158,7 +154,7 @@ promise_test(async t => {
 
 // Test strict-origin-when-cross-origin referrer policy
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // Create modulepreload with strict-origin-when-cross-origin policy
@@ -178,7 +174,7 @@ promise_test(async t => {
 
 // Test unsafe-url referrer policy
 promise_test(async t => {
-  const uid = generateUniqueId();
+  const uid = token();
   const url = `/preload/resources/echo-referrer.py?uid=${uid}`;
 
   // Create modulepreload with unsafe-url policy
