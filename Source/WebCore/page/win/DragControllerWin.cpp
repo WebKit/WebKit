@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
+#include "NodeInlines.h"
 #include "Pasteboard.h"
 #include "markup.h"
 #include "windows.h"

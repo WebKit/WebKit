@@ -34,6 +34,7 @@
 #include "ChromeClient.h"
 #include "DocumentPage.h"
 #include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "Page.h"
 #include "RenderObject.h"
 #include "RenderView.h"

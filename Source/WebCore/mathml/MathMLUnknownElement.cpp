@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "NodeInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

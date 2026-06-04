@@ -30,6 +30,7 @@
 #include "AccessibilityObject.h"
 #include "BString.h"
 #include "HTMLNames.h"
+#include "NodeInlines.h"
 #include "QualifiedName.h"
 #include <wtf/text/MakeString.h>
 

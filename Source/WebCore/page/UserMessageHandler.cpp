@@ -32,6 +32,7 @@
 #include "JSDOMConvertAny.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrameInlines.h"
+#include "NodeInlines.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>

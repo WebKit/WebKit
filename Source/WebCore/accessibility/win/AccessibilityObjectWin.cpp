@@ -27,6 +27,7 @@
 #include "AccessibilityObject.h"
 
 #include "AXObjectCache.h"
+#include "NodeInlines.h"
 
 namespace WebCore {
 

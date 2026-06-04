@@ -30,6 +30,7 @@
 
 #include "Element.h"
 #include "KeyboardEvent.h"
+#include "NodeInlines.h"
 
 namespace WebCore {
 

@@ -52,6 +52,11 @@ inline ContainerNode* Node::parentOrShadowHostNode() const
     return parentNode();
 }
 
+inline WebCoreOpaqueRoot Node::opaqueRoot() const
+{
+    return WebCoreOpaqueRoot { m_shadowIncludingRoot };
+}
+
 inline Document* Node::ownerDocument() const
 {
     auto* document = &this->document();
@@ -167,7 +172,7 @@ inline Node& Node::rootNode() const
 {
     if (isInTreeScope())
         return treeScope().rootNode();
-    return traverseToRootNode();
+    return *m_shadowIncludingRoot;
 }
 
 inline void Node::setParentNode(ContainerNode* parent)

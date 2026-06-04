@@ -34,6 +34,7 @@
 #include "FullScreenControllerClient.h"
 #include "FullScreenWindow.h"
 #include "IntRect.h"
+#include "NodeInlines.h"
 #include "Timer.h"
 #include "WebCoreInstanceHandle.h"
 #include <wtf/RefPtr.h>

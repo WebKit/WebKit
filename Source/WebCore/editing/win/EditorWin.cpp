@@ -31,6 +31,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "LocalFrameInlines.h"
+#include "NodeInlines.h"
 #include "Pasteboard.h"
 #include "Range.h"
 #include "SimpleRange.h"

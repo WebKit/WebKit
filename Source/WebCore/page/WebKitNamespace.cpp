@@ -34,6 +34,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
+#include "NodeInlines.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "WebKitBuffer.h"

@@ -31,6 +31,7 @@
 #include "FrameSelection.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "NodeInlines.h"
 #include "NotImplemented.h"
 #include "PrintContext.h"
 #include "RenderObject.h"

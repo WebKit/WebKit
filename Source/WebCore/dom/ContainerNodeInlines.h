@@ -34,7 +34,7 @@ inline ContainerNode& ContainerNode::rootNode() const
 {
     if (isInTreeScope())
         return treeScope().rootNode();
-    return traverseToRootNode();
+    return downcast<ContainerNode>(shadowIncludingRoot());
 }
 
 inline RenderElement* ContainerNode::renderer() const

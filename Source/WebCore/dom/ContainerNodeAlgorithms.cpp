@@ -172,6 +172,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         next = node->nextSibling();
         node->setNextSibling(nullptr);
         node->setParentNode(nullptr);
+        node->resetShadowIncludingRoot();
         container.setFirstChild(next.get());
         if (next)
             next->setPreviousSibling(nullptr);
