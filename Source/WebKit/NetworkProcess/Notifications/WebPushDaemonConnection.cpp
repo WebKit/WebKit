@@ -50,8 +50,6 @@ Connection::Connection(CString&& machServiceName, WebPushDaemonConnectionConfigu
     LOG(Push, "Creating WebPushD connection to mach service: %s", this->machServiceName().data());
 }
 
-Connection::~Connection() = default;
-
 } // namespace WebKit::WebPushD
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
