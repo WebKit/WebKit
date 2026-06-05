@@ -30,7 +30,6 @@
 #include "NetworkProcess.h"
 #include "NotificationManagerMessageHandler.h"
 #include "SharedPreferencesForWebProcess.h"
-#include "WebPushDaemonConnection.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
@@ -50,6 +49,7 @@ class SecurityOriginData;
 namespace WebKit {
 
 namespace WebPushD {
+class Connection;
 enum class MessageType : uint8_t;
 }
 
@@ -57,6 +57,7 @@ class NetworkNotificationManager : public NotificationManagerMessageHandler, pub
     WTF_MAKE_TZONE_ALLOCATED(NetworkNotificationManager);
 public:
     static Ref<NetworkNotificationManager> create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
+    ~NetworkNotificationManager();
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

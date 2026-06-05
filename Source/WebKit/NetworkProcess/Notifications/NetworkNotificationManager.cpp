@@ -36,6 +36,7 @@
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
 #include "PushClientConnectionMessages.h"
+#include "WebPushDaemonConnection.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
 #include <WebCore/NotificationData.h>
@@ -58,6 +59,8 @@ NetworkNotificationManager::NetworkNotificationManager(const String& webPushMach
     if (!webPushMachServiceName.isEmpty())
         m_connection = WebPushD::Connection::create(webPushMachServiceName.utf8(), WTF::move(configuration));
 }
+
+NetworkNotificationManager::~NetworkNotificationManager() = default;
 
 void NetworkNotificationManager::setPushAndNotificationsEnabledForOrigin(const SecurityOriginData& origin, bool enabled, CompletionHandler<void()>&& completionHandler)
 {
