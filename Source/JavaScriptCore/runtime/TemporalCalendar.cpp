@@ -83,6 +83,10 @@ static void calendarResolveFields(JSGlobalObject* globalObject, std::optional<in
         return;
     }
     if (monthCode) {
+        if (!monthCode->monthNumber) [[unlikely]] {
+            throwRangeError(globalObject, scope, "monthCode is not valid for this calendar"_s);
+            return;
+        }
         if (isISO) {
             if (monthCode->isLeapMonth) [[unlikely]] {
                 throwRangeError(globalObject, scope, "iso8601 calendar does not have leap months"_s);
