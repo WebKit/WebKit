@@ -1917,6 +1917,7 @@ void WebPageProxy::close()
     };
     Vector<ProcessToClose> processesToClose;
     forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.addPagePendingClose(identifier());
         processesToClose.append({
             process,
             pageID,
@@ -1924,9 +1925,13 @@ void WebPageProxy::close()
         });
     });
     // Delay sending close message to next runloop cycle to avoid white flash.
-    RunLoop::currentSingleton().dispatch([processesToClose = WTF::move(processesToClose)] {
-        for (auto [process, pageID, scope] : processesToClose)
-            Ref { process }->send(Messages::WebPage::Close(), pageID);
+    RunLoop::currentSingleton().dispatch([processesToClose = WTF::move(processesToClose), pageProxyID = identifier()] {
+        for (auto [process, pageID, scope] : processesToClose) {
+            protect(process)->sendPageCloseMessage(std::nullopt, pageID, [scope = WTF::move(scope), pageProxyID, weakProcess = WeakPtr { process }] {
+                if (RefPtr process = weakProcess.get())
+                    process->removePagePendingClose(pageProxyID);
+            });
+        }
     });
 
     process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
@@ -5492,14 +5497,8 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         m_mainFrameWebsitePolicies = mainFrameWebsitePolicies->copy();
 
     // There is no way we'll be able to return to the page in the previous page so close it.
-    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage)) {
-        auto pageID = identifier();
-        Ref oldProcess = legacyMainFrameProcess();
-        oldProcess->addPagePendingClose(pageID);
-        sendWithAsyncReply(Messages::WebPage::CloseWithReply(), [oldProcess, pageID] {
-            oldProcess->removePagePendingClose(pageID);
-        });
-    }
+    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage))
+        protect(legacyMainFrameProcess())->sendPageCloseMessage(identifier(), webPageIDInMainFrameProcess());
 
     const auto oldWebPageID = m_webPageID;
     swapToProvisionalPage(provisionalPage.releaseNonNull());
