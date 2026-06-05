@@ -1,0 +1,4 @@
+
+
+PASS Select popup closes when all options are removed while popup is open
+

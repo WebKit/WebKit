@@ -739,6 +739,15 @@ void HTMLSelectElement::childrenChanged(const ChildChange& change)
     updateValidity();
     m_lastOnChangeSelection.clear();
 
+    if (listItems().isEmpty()) {
+        if (usesBaseAppearancePicker())
+            hidePickerPopoverElement();
+#if !PLATFORM(IOS_FAMILY)
+        else if (m_popupIsVisible)
+            hidePopup();
+#endif
+    }
+
     HTMLFormControlElement::childrenChanged(change);
 
     invalidateButtonText();
