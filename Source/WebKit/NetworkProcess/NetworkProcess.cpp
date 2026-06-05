@@ -580,7 +580,7 @@ static void addPathsBlockedForSandboxExtensions(const WebsiteDataStoreParameters
         "/private/var/Managed Preferences"_s,
         "/private/var/MobileAsset"_s,
         "/private/var/preferences"_s,
-        FileSystem::parentPath(getDarwinTempDir()),
+        getDarwinTempDir(),
         containerCachesDirectory,
 #endif
         homeRelativePreferencesDirectory,
