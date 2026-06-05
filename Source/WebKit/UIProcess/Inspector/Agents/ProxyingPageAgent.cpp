@@ -107,8 +107,17 @@ void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, 
 
     if (parentFrameID)
         frameObject->setParentId(protocolFrameIdForFrameID(*parentFrameID));
-    if (!name.isEmpty())
-        frameObject->setName(name);
+
+    // The event's name is empty for a cross-origin child: it fires in the child's own
+    // process where the owning <iframe> element is remote (frame.ownerElement() is null).
+    // Resolve it from the authoritative UIProcess WebFrameProxy tree, matching buildFrameTree().
+    String effectiveName = name;
+    if (effectiveName.isEmpty()) {
+        if (RefPtr webFrame = WebFrameProxy::webFrame(frameID))
+            effectiveName = webFrame->frameName();
+    }
+    if (!effectiveName.isEmpty())
+        frameObject->setName(effectiveName);
 
     m_frontendDispatcher->frameNavigated(WTF::move(frameObject));
 }
@@ -125,6 +134,14 @@ void ProxyingPageAgent::loadEventFired(double timestamp)
 
 void ProxyingPageAgent::frameDetached(FrameIdentifier frameID)
 {
+    // A cross-origin process swap tears down the frame's LocalFrame in its old process,
+    // firing frameDetached there -- but the frame still exists, now hosted by another
+    // process (the authoritative WebFrameProxy tree still contains it). Forwarding that to
+    // the frontend would remove a live frame. Only report frames that are genuinely gone
+    // from the tree. See webkit.org/b/308896.
+    if (WebFrameProxy::webFrame(frameID))
+        return;
+
     m_frameDocumentInfo.remove(frameID);
     m_frontendDispatcher->frameDetached(protocolFrameIdForFrameID(frameID));
 }

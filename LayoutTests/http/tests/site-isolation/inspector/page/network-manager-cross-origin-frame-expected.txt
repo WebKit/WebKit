@@ -1,0 +1,12 @@
+Test that a cross-origin child frame appears in the frontend frame model under Site Isolation.
+
+
+== Running test suite: SiteIsolation.NetworkManager.CrossOriginFrame
+-- Running test case: SiteIsolation.NetworkManager.CrossOriginFrame.AppearsInFrameModel
+PASS: There should be a main frame.
+PASS: Cross-origin child frame should appear in WI.networkManager.frames.
+PASS: Cross-origin child's parent should be the main frame.
+PASS: Cross-origin child's name attribute should be reported.
+PASS: Cross-origin child's url should point at the iframe document.
+PASS: Cross-origin child should have a different security origin from the main frame.
+
