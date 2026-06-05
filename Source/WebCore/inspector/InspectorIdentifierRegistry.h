@@ -75,22 +75,30 @@ public:
     // independently compute the same ID from the same typed identifier.
     // Format: "type-processID.objectID" (e.g., "frame-12345.3", "request-12345.17")
     //
+    // For frames the objectID is the full FrameIdentifier value (globally unique), and the
+    // processID is the frame's *hosting* process. Encoding the full FrameIdentifier (rather
+    // than only its lower 32 bits) keeps IDs collision-free: two frames minted in different
+    // processes can share the same lower-32-bit counter, and once both are hosted in the same
+    // process (e.g. main(A) -> child(B) -> grandchild(A)) a counter-only object part would
+    // collide. See webkit.org/b/310164.
+    //
     // Prefer the 2-arg protocolFrameId(FrameIdentifier, ProcessIdentifier) which uses
     // an explicit hosting process. The 1-arg version extracts the process from the
-    // FrameIdentifier's upper bits, which is incorrect for provisional frames where
-    // the identifier is preserved across process swaps. See webkit.org/b/310164.
+    // FrameIdentifier's upper bits (its creating process), which is incorrect for
+    // provisional frames where the identifier is preserved across process swaps.
     static inline String protocolFrameId(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
     {
-        return makeString("frame-"_s, processID.toUInt64(), '.', static_cast<uint32_t>(frameID.toRawValue()));
+        return makeString("frame-"_s, processID.toUInt64(), '.', frameID.toUInt64());
     }
 
     // FIXME: <https://webkit.org/b/310164> Callers that receive FrameIdentifier via IPC
     // without a separate ProcessIdentifier should be updated to pass one explicitly.
-    // This extracts the process from FrameIdentifier upper bits, which is incorrect
-    // for provisional frames.
+    // This qualifies by the process encoded in the FrameIdentifier's upper bits (its
+    // creating process), which equals the hosting process for frames that have not moved
+    // across processes, so both forms agree in the common case.
     static inline String protocolFrameId(WebCore::FrameIdentifier frameID)
     {
-        return makeString("frame-"_s, frameID.toRawValue() >> 32, '.', static_cast<uint32_t>(frameID.toRawValue()));
+        return protocolFrameId(frameID, ObjectIdentifier<WebCore::ProcessIdentifierType>(frameID.toRawValue() >> 32));
     }
 
     static inline String protocolRequestId(WebCore::ProcessIdentifier pid, WebCore::ResourceLoaderIdentifier resourceID)

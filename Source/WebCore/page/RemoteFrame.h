@@ -28,6 +28,8 @@
 #include <WebCore/AXObjectTypes.h>
 #include <WebCore/Frame.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
@@ -64,6 +66,16 @@ public:
     WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
 
     Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+
+    // The WebContent process whose LocalFrame actually hosts this frame's content.
+    // A RemoteFrame is a stub in every other process, so the hosting process must be
+    // recorded explicitly (it is plumbed in when the stub is created or when a local
+    // frame transitions to remote on a process swap). When it has not been recorded,
+    // this falls back to the process encoded in the FrameIdentifier's upper bits, which
+    // matches the legacy IdentifierRegistry::protocolFrameId(FrameIdentifier) behavior.
+    // See webkit.org/b/310164.
+    WEBCORE_EXPORT ProcessIdentifier hostingProcessIdentifier() const;
+    void setHostingProcessIdentifier(ProcessIdentifier processID) { m_hostingProcessIdentifier = processID; }
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
     void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
@@ -123,6 +135,7 @@ private:
     RefPtr<RemoteFrameView> m_view;
     const UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
+    Markable<ProcessIdentifier> m_hostingProcessIdentifier;
     String m_customUserAgent;
     String m_customUserAgentAsSiteSpecificQuirks;
     String m_customNavigatorPlatform;

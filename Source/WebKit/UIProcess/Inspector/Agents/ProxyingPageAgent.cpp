@@ -78,10 +78,22 @@ void ProxyingPageAgent::removeAllRegisteredReceivers()
 
 // MARK: - IPC event handlers
 
+// Resolve a frame's protocol ID from the authoritative UIProcess frame tree so the
+// hosting process matches buildFrameTree() and the WebContent agents. The events
+// carry only a FrameIdentifier; the hosting process can differ from the identifier's
+// creating process after a process swap. Falls back to the identifier-derived process
+// when the frame is no longer in the tree (e.g. already detached). See webkit.org/b/310164.
+static String protocolFrameIdForFrameID(FrameIdentifier frameID)
+{
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+        return IdentifierRegistry::protocolFrameId(frameID, frame->process().coreProcessIdentifier());
+    return IdentifierRegistry::protocolFrameId(frameID);
+}
+
 void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, SecurityOriginData&& securityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name)
 {
     auto frameObject = Protocol::Page::Frame::create()
-        .setId(IdentifierRegistry::protocolFrameId(frameID))
+        .setId(protocolFrameIdForFrameID(frameID))
         .setLoaderId(String()) // FIXME: <https://webkit.org/b/308895> get loaderId from document identifier
         .setUrl(url.string())
         .setMimeType(mimeType)
@@ -89,7 +101,7 @@ void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, 
         .release();
 
     if (parentFrameID)
-        frameObject->setParentId(IdentifierRegistry::protocolFrameId(*parentFrameID));
+        frameObject->setParentId(protocolFrameIdForFrameID(*parentFrameID));
     if (!name.isEmpty())
         frameObject->setName(name);
 
@@ -108,7 +120,7 @@ void ProxyingPageAgent::loadEventFired(double timestamp)
 
 void ProxyingPageAgent::frameDetached(FrameIdentifier frameID)
 {
-    m_frontendDispatcher->frameDetached(IdentifierRegistry::protocolFrameId(frameID));
+    m_frontendDispatcher->frameDetached(protocolFrameIdForFrameID(frameID));
 }
 
 // MARK: - Frontend lifecycle
@@ -218,7 +230,7 @@ CommandResult<void> ProxyingPageAgent::disable()
 
 Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const WebFrameProxy& frame, const String* parentProtocolId) const
 {
-    auto protocolId = IdentifierRegistry::protocolFrameId(frame.frameID());
+    auto protocolId = IdentifierRegistry::protocolFrameId(frame.frameID(), frame.process().coreProcessIdentifier());
 
     // The UIProcess WebFrameProxy tree is the authoritative cross-process frame
     // tree under Site Isolation: childFrames() spans every WebContent process, so

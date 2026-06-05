@@ -416,7 +416,7 @@ void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID fram
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID);
+    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
     auto requestObject = buildObjectForResourceRequest(request);
 
@@ -438,7 +438,7 @@ void ProxyingNetworkAgent::responseReceived(ResourceID resourceID, FrameID frame
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID);
+    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
     auto responseObject = buildObjectForResourceResponse(response);
 
@@ -480,7 +480,7 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID);
+    auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto loaderId = IdentifierRegistry::protocolLoaderId(contextID);
     auto requestObject = buildObjectForResourceRequest(request);
     auto responseObject = buildObjectForResourceResponse(response);

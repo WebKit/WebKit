@@ -849,7 +849,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
     if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(frame)) {
         auto& origin = remoteFrame->frameDocumentSecurityOriginOrOpaque();
         auto frameObject = Inspector::Protocol::Page::Frame::create()
-            .setId(Inspector::IdentifierRegistry::protocolFrameId(remoteFrame->frameID()))
+            .setId(Inspector::IdentifierRegistry::protocolFrameId(remoteFrame->frameID(), remoteFrame->hostingProcessIdentifier()))
             .setLoaderId(emptyString())
             .setUrl(origin.toRawString())
             .setMimeType("text/html"_s)
