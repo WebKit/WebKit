@@ -348,7 +348,6 @@
         {
             "name": "frameDetached",
             "description": "Fired when frame has been detached from its parent.",
-            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
             ]

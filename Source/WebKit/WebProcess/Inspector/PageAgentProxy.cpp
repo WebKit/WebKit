@@ -141,14 +141,20 @@ void PageAgentProxy::frameNavigated(LocalFrame& frame)
             name = ownerElement->attributeWithoutSynchronization(WebCore::HTMLNames::idAttr);
     }
 
-    protect(WebProcess::singleton().parentProcessConnection())->send(
+    RefPtr connection = WebProcess::singleton().parentProcessConnection();
+    if (!connection)
+        return;
+    connection->send(
         Messages::ProxyingPageAgent::FrameNavigated(frameID, url, mimeType, securityOrigin, parentFrameID, name),
         m_page->identifier());
 }
 
 void PageAgentProxy::frameDetached(LocalFrame& frame)
 {
-    protect(WebProcess::singleton().parentProcessConnection())->send(
+    RefPtr connection = WebProcess::singleton().parentProcessConnection();
+    if (!connection)
+        return;
+    connection->send(
         Messages::ProxyingPageAgent::FrameDetached(frame.frameID()),
         m_page->identifier());
 }

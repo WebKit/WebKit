@@ -921,7 +921,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _mainFrameDidChange(event)
     {
-        this._speculativelyResolveDOMBreakpointsForURL(WI.networkManager.mainFrame.url);
+        // The main frame can be transiently null (e.g. while frame events from multiple
+        // Site Isolation processes are being reconciled). webkit.org/b/308896
+        if (WI.networkManager.mainFrame)
+            this._speculativelyResolveDOMBreakpointsForURL(WI.networkManager.mainFrame.url);
     }
 
     _mainResourceDidChange(event)

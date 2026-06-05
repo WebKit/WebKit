@@ -436,6 +436,12 @@ void WebInspectorBackend::disablePageInstrumentation()
     if (!m_pageInstrumentationEnabled)
         return;
 
+    // disable() clears the enabledPageProxy slot in the page's InstrumentingAgents. Without it,
+    // destroying m_pageAgentProxy below would leave a dangling pointer there, and the next frame
+    // commit in this process would crash dereferencing it from InspectorInstrumentation. The page
+    // is still alive here (this is an explicit DisablePageInstrumentation IPC, not process teardown).
+    if (m_pageAgentProxy)
+        m_pageAgentProxy->disable();
     m_pageAgentProxy = nullptr;
     m_pageInstrumentationEnabled = false;
 }

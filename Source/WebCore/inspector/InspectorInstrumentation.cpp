@@ -62,6 +62,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "NetworkAgentInstrumentation.h"
+#include "PageAgentInstrumentation.h"
 #include "PageCanvasAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebuggerAgent.h"
@@ -767,6 +768,11 @@ void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents& 
 {
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->frameDetached(frame);
+
+    // Under Site Isolation the cross-process proxy (PageAgentProxy) forwards this to the
+    // UIProcess ProxyingPageAgent, so frames hosted in non-main processes are reported too.
+    if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
+        pageProxy->frameDetached(frame);
 }
 
 void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, DocumentLoader* loader)
@@ -812,6 +818,11 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
 
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->frameNavigated(frame);
+
+    // Under Site Isolation the cross-process proxy (PageAgentProxy) forwards this to the
+    // UIProcess ProxyingPageAgent, so frames hosted in non-main processes are reported too.
+    if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
+        pageProxy->frameNavigated(frame);
 
     if (auto* pageRuntimeAgent = instrumentingAgents.enabledPageRuntimeAgent())
         pageRuntimeAgent->frameNavigated(frame);
