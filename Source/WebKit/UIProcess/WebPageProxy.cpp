@@ -4896,10 +4896,15 @@ void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent
     }
 #else
     UNUSED_PARAM(touchStartEvent);
-    internals().touchEventTracking.touchForceChangedTracking = TrackingType::Synchronous;
-    internals().touchEventTracking.touchStartTracking = TrackingType::Synchronous;
-    internals().touchEventTracking.touchMoveTracking = TrackingType::Synchronous;
-    internals().touchEventTracking.touchEndTracking = TrackingType::Synchronous;
+#if ENABLE(WPE_PLATFORM)
+    auto trackingType = m_hasActiveTouchEventHandlers ? TrackingType::Synchronous : TrackingType::NotTracking;
+#else
+    auto trackingType = TrackingType::Synchronous;
+#endif
+    internals().touchEventTracking.touchForceChangedTracking = trackingType;
+    internals().touchEventTracking.touchStartTracking = trackingType;
+    internals().touchEventTracking.touchMoveTracking = trackingType;
+    internals().touchEventTracking.touchEndTracking = trackingType;
 #endif // PLATFORM(COCOA)
 }
 
@@ -5164,8 +5169,17 @@ void WebPageProxy::handleTouchEvent(IPC::Connection* connection, const NativeWeb
 
     updateTouchEventTracking(event);
 
-    if (touchEventTrackingType(event) == TrackingType::NotTracking)
+    if (touchEventTrackingType(event) == TrackingType::NotTracking) {
+#if ENABLE(WPE_PLATFORM)
+        if (RefPtr pageClient = this->pageClient())
+            pageClient->doneWithTouchEvent(event, false);
+        if (event.allTouchPointsAreReleased()) {
+            internals().touchEventTracking.reset();
+            didReleaseAllTouchPoints();
+        }
+#endif
         return;
+    }
 
     // If the page is suspended, which should be the case during panning, pinching
     // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
@@ -10679,6 +10693,11 @@ void WebPageProxy::setHasActiveAnimatedScrolls(bool isRunning)
 #if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif
+}
+
+void WebPageProxy::setHasActiveTouchEventHandlers(bool hasHandlers)
+{
+    m_hasActiveTouchEventHandlers = hasHandlers;
 }
 
 #if USE(COORDINATED_GRAPHICS) && HAVE(DISPLAY_LINK)

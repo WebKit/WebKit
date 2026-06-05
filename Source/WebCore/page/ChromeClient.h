@@ -605,6 +605,7 @@ public:
     virtual std::optional<ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() { return std::nullopt; }
 
     virtual void wheelEventHandlersChanged(bool hasHandlers) = 0;
+    virtual void touchEventHandlersChanged(bool hasHandlers) { UNUSED_PARAM(hasHandlers); }
         
     virtual bool isSVGImageChromeClient() const { return false; }
 

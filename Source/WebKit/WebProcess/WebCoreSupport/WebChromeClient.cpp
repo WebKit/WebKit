@@ -1765,6 +1765,12 @@ void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)
         page->wheelEventHandlersChanged(hasHandlers);
 }
 
+void WebChromeClient::touchEventHandlersChanged(bool hasHandlers)
+{
+    if (RefPtr page = m_page.get())
+        page->touchEventHandlersChanged(hasHandlers);
+}
+
 void WebChromeClient::enableSuddenTermination()
 {
     if (RefPtr page = m_page.get())

@@ -1090,6 +1090,7 @@ public:
     void setNeedsScrollGeometryUpdates(bool);
 
     void setHasActiveAnimatedScrolls(bool isRunning);
+    void setHasActiveTouchEventHandlers(bool hasHandlers);
 #if USE(COORDINATED_GRAPHICS) && HAVE(DISPLAY_LINK)
     void setHasActiveAnimatedScrollsForAsyncScrolling(DisplayLinkObserverID, bool isRunning);
 #endif
@@ -3938,6 +3939,7 @@ private:
     bool m_isPerformingDOMPrintOperation { false };
 
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
+    bool m_hasActiveTouchEventHandlers { false };
 
     bool m_hasActiveAnimatedScroll { false };
     bool m_registeredForFullSpeedUpdates { false };
