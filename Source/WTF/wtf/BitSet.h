@@ -62,6 +62,8 @@ public:
     constexpr void clear(size_t);
     constexpr void clearAll();
     constexpr void setAll();
+    constexpr void setRange(size_t start, size_t end); // end is exclusive
+    constexpr void setFirstNBits(size_t n);
     constexpr void invert();
     constexpr int64_t findRunOfZeros(size_t runLength) const;
     constexpr size_t count(size_t start = 0) const;
@@ -275,6 +277,41 @@ inline constexpr void BitSet<bitSetSize, WordType>::setAll()
 {
     memsetSpan(std::span { bits }, 0xFF);
     cleanseLastWord();
+}
+
+template<size_t bitSetSize, typename WordType>
+inline constexpr void BitSet<bitSetSize, WordType>::setRange(size_t start, size_t end)
+{
+    ASSERT(start >= 0);
+    ASSERT(start <= end);
+    ASSERT(end <= bitSetSize);
+
+    WordType ones = ~((WordType)0x00);
+
+    size_t startWordIndex = start / wordSize;
+    size_t endWordIndex = (end - 1) / wordSize;
+    bits[startWordIndex] = ones << (start % wordSize);
+    for (size_t i = startWordIndex + 1; i < endWordIndex; ++i) {
+        bits[i] = ones;
+    }
+    bits[endWordIndex] = ones >> (end % wordSize);
+}
+
+template<size_t bitSetSize, typename WordType>
+inline constexpr void BitSet<bitSetSize, WordType>::setFirstNBits(size_t n)
+{
+    ASSERT(n <= bitSetSize);
+
+    WordType ones = ~((WordType)0x00);
+
+    if (!n)
+        return;
+
+    size_t endWordIndex = (n - 1) / wordSize;
+    for (size_t i = 0; i < endWordIndex; ++i) {
+        bits[i] = ones;
+    }
+    bits[endWordIndex] = ones >> (n % wordSize);
 }
 
 template<size_t bitSetSize, typename WordType>

@@ -25,40 +25,73 @@
 
 #include "config.h"
 #include "FreeList.h"
+#include <wtf/Assertions.h>
 
 namespace JSC {
 
 FreeList::FreeList(unsigned cellSize)
     : m_cellSize(cellSize)
 {
+    ASSERT(!(cellSize % MarkedBlock::atomSize));
+    // We only use every Nth bit in m_live.
+    // Precompute a bitmask filter so that allocation is fast.
+
+    // Wait, can't we just do N**k - 1?
+
+    // todo: should really do this in BlockDirectory
+    unsigned numberOfUnallocatableAtoms = MarkedBlock::numberOfPayloadAtoms % atomsPerCell();
+    unsigned startAtom = MarkedBlock::firstPayloadRegionAtom + numberOfUnallocatableAtoms;
+
+    WTF::BitSet<MarkedBlock::atomsPerBlock> bitmask;
+    unsigned stride = atomsPerCell();
+    for (uint64_t i = startAtom; i < MarkedBlock::atomsPerBlock; i += stride) {
+        // bitmask |= 1 << (63 - i); // wrong because bitset is little endian
+        // bitmask |= one << i;
+        bitmask.set(i);
+        // WTFLogAlways("afryer_bitmask_wip %llu : %llx\n", i, bitmask);
+    }
+    m_bitmask = bitmask;
+    // WTFLogAlways("afryer_bitmask %u : %llx\n", atomsPerCell(), m_bitmask);
 }
 
 FreeList::~FreeList() = default;
 
 void FreeList::clear()
 {
-    m_intervalStart = nullptr;
-    m_intervalEnd = nullptr;
-    m_nextInterval = std::bit_cast<FreeCell*>(static_cast<uintptr_t>(1));
-    m_secret = 0;
+    m_nextCachedInterval = nullptr;
+    m_intervalEnd = nullptr; // No more cells in current interval
+    m_startIndex = MarkedBlock::atomsPerBlock; // No more intervals to find. Note that we are lazy and don't clear m_live
     m_originalSize = 0;
 }
 
-void FreeList::initialize(FreeCell* start, uint64_t secret, unsigned bytes)
+void FreeList::initialize(MarkedBlock::Handle* block, const WTF::BitSet<MarkedBlock::atomsPerBlock>& live, unsigned startIndex, unsigned bytes)
 {
-    if (!start) [[unlikely]] {
-        clear();
-        return;
-    }
-    m_secret = secret;
-    m_nextInterval = start;
-    FreeCell::advance(m_secret, m_nextInterval, m_intervalStart, m_intervalEnd);
+    m_nextCachedInterval = nullptr;
+    // WTFLogAlways("afryer_initalize\n");
+    m_block = block;
+    m_live = live;
+    m_startIndex = startIndex;
     m_originalSize = bytes;
+    // WTFLogAlways("afryer_initialize %u\n", countIntervals());
+    findNextInterval();
+}
+
+void FreeList::initializeEmpty(MarkedBlock::Handle* block, char* intervalStart, char* intervalEnd)
+{
+    m_nextCachedInterval = nullptr;
+    // WTFLogAlways("afryer_initalizeEmpty\n");
+    m_block = block;
+    m_originalSize = intervalEnd - intervalStart;
+    m_intervalStart = intervalStart;
+    m_intervalEnd = intervalEnd;
+    m_startIndex = MarkedBlock::atomsPerBlock; // No more intervals to find. Note that we are lazy and don't clear m_live
+    // WTFLogAlways("afryer_initializeEmpty %u\n", (unsigned)1);
+    // m_live.clearAll(); // just for now; I think this might be important for stopAllocating
 }
 
 void FreeList::dump(PrintStream& out) const
 {
-    out.print("{nextInterval = ", RawPointer(nextInterval()), ", secret = ", m_secret, ", intervalStart = ", RawPointer(m_intervalStart), ", intervalEnd = ", RawPointer(m_intervalEnd), ", originalSize = ", m_originalSize, "}");
+    out.print("{intervalStart = ", RawPointer(m_intervalStart), ", intervalEnd = ", RawPointer(m_intervalEnd), ", cellSize = ", m_cellSize, ", block = ", m_block, ", bitmask = ", m_bitmask, ", startIndex = ", m_startIndex, ", live = ", m_live, ", originalSize = ", m_originalSize, "}");
 }
 
 } // namespace JSC

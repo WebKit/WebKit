@@ -35,43 +35,34 @@ namespace JSC {
 template<typename Func>
 ALWAYS_INLINE HeapCell* FreeList::allocateWithCellSize(const Func& slowPath, size_t cellSize)
 {
-    if (m_intervalStart < m_intervalEnd) [[likely]] {
+    if (m_intervalStart < m_intervalEnd) [[likely]] { // maybe this should be unlikely since we do this check in jitted code...?
+        // WTFLogAlways("afryer_allocateWithCellSize_fast\n");
         char* result = m_intervalStart;
         m_intervalStart += cellSize;
         return std::bit_cast<HeapCell*>(result);
     }
-    
-    FreeCell* cell = nextInterval();
-    if (isSentinel(cell)) [[unlikely]]
-        return slowPath();
-
-    FreeCell::advance(m_secret, m_nextInterval, m_intervalStart, m_intervalEnd);
-    
-    // It's an invariant of our allocator that we don't create empty intervals, so there 
-    // should always be enough space remaining to allocate a cell.
-    char* result = m_intervalStart;
-    m_intervalStart += cellSize;
-    return std::bit_cast<HeapCell*>(result);
+    ASSERT(cellSize == m_cellSize);
+    if (findNextInterval()) [[likely]] {
+        // WTFLogAlways("afryer_allocateWithCellSize_medium\n");
+        char* result = m_intervalStart;
+        m_intervalStart += cellSize;
+        return std::bit_cast<HeapCell*>(result);
+    }
+    // WTFLogAlways("afryer_allocateWithCellSize_slow\n");
+    return slowPath();
 }
 
 template<typename Func>
-void FreeList::forEach(const Func& func) const
+void FreeList::forEachRemaining(const Func& func)
 {
-    FreeCell* cell = nextInterval();
-    char* intervalStart = m_intervalStart;
-    char* intervalEnd = m_intervalEnd;
-    ASSERT(intervalEnd - intervalStart < (ptrdiff_t)(16 * KB));
-
+    // WTFLogAlways("afryer_forEachRemaining %u\n", m_cellSize);
     while (true) {
-        for (; intervalStart < intervalEnd; intervalStart += m_cellSize)
-            func(std::bit_cast<HeapCell*>(intervalStart));
-
-        // If we explore the whole interval and the cell is the sentinel value, though, we should
-        // immediately exit so we don't decode anything out of bounds.
-        if (isSentinel(cell))
+        while (m_intervalStart < m_intervalEnd) {
+            func(std::bit_cast<HeapCell*>(m_intervalStart));
+            m_intervalStart += m_cellSize;
+        }
+        if (!(findNextInterval()))
             break;
-
-        FreeCell::advance(m_secret, cell, intervalStart, intervalEnd);
     }
 }
 

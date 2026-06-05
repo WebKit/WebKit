@@ -118,7 +118,7 @@ void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
     m_directory->didFinishUsingBlock(this);
 }
 
-void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
+void MarkedBlock::Handle::stopAllocating(FreeList& freeList)
 {
     Locker locker { blockHeader().m_lock };
     
@@ -143,23 +143,109 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
     // allocated from our free list are not currently marked, so we need another
     // way to tell what's live vs dead. 
     
-    blockHeader().m_newlyAllocated.clearAll();
+    // WTFLogAlways("afryer_stopAllocating %d\n", space()->isMarking());
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> newlyAllocatedBitSet = blockHeader().m_newlyAllocated;
+
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> original = blockHeader().m_newlyAllocated;
+    // blockHeader().m_newlyAllocated.clearAll();
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> cleared = blockHeader().m_newlyAllocated;
+    // blockHeader().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
+
+    // forEachCell(
+    //     [&] (size_t, HeapCell* cell, HeapCell::Kind) -> IterationStatus {
+    //         block().setNewlyAllocated(cell);
+    //         return IterationStatus::Continue;
+    //     });
+
+    // freeList.forEachRemaining(
+    //     [&] (HeapCell* cell) {
+    //         if constexpr (MarkedBlockInternal::verbose)
+    //             dataLog("Free cell: ", RawPointer(cell), "\n");
+    //         if (m_attributes.destruction != DoesNotNeedDestruction)
+    //             cell->zap(HeapCell::StopAllocating);
+    //         block().clearNewlyAllocated(cell);
+    //     });
+
+    // blockHeader().m_newlyAllocated = freeList.allocatedBits(m_startAtom);
+    // unsigned allocIndex = freeList.currentAllocationIndex();
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> originalLiveBits = freeList.live();
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> allocatedBits = freeList.allocatedBits(m_startAtom);
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> nonRemainingBits = freeList.nonRemainingBits(); // currently off by one and something else weird
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> allocatedBitsIncludingPreviouslyMarked = freeList.allocatedBitsIncludingPreviouslyMarked();
+
+    blockHeader().m_newlyAllocated = freeList.allocatedBitsIncludingPreviouslyMarked();
     blockHeader().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
 
-    forEachCell(
-        [&] (size_t, HeapCell* cell, HeapCell::Kind) -> IterationStatus {
-            block().setNewlyAllocated(cell);
-            return IterationStatus::Continue;
-        });
+    // forEachCell(
+    //     [&] (size_t, HeapCell* cell, HeapCell::Kind) -> IterationStatus {
+    //         block().setNewlyAllocated(cell);
+    //         return IterationStatus::Continue;
+    //     });
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> setted = blockHeader().m_newlyAllocated;
 
-    freeList.forEach(
-        [&] (HeapCell* cell) {
-            if constexpr (MarkedBlockInternal::verbose)
-                dataLog("Free cell: ", RawPointer(cell), "\n");
-            if (m_attributes.destruction != DoesNotNeedDestruction)
+    if (m_attributes.destruction != DoesNotNeedDestruction) {
+        freeList.forEachRemaining(
+            [&] (HeapCell* cell) {
+                if constexpr (MarkedBlockInternal::verbose)
+                    dataLog("Free cell: ", RawPointer(cell), "\n");
+                // if (true)
+                //     WTFLogAlways("afryer_free_cell: %u\n", block().atomNumber(cell));
                 cell->zap(HeapCell::StopAllocating);
-            block().clearNewlyAllocated(cell);
-        });
+                // block().clearNewlyAllocated(cell);
+                // if (freeList.live().get(block().atomNumber(cell)))
+                //     WTFLogAlways("afryer_free_cell_is_live\n");
+            });
+    }
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> settedWithFreListCleared = blockHeader().m_newlyAllocated;
+
+    // unsigned currentAllocationIndex = freeList.currentAllocationIndex();
+    // block().newlyAllocated().setFirstNBits(currentAllocationIndex);
+    // // block().newlyAllocated().setAll(); // todo: I think this is not necessary
+
+    // if (m_attributes.destruction != DoesNotNeedDestruction || true) {
+    //     // block().newlyAllocated().setAll();
+    //     freeList.forEachRemaining(
+    //         [&] (HeapCell* cell) {
+    //             if constexpr (MarkedBlockInternal::verbose)
+    //                 dataLog("Free cell: ", RawPointer(cell), "\n");
+    //             if (m_attributes.destruction != DoesNotNeedDestruction)
+    //                 cell->zap(HeapCell::StopAllocating);
+    //         });
+    // }
+    // if (blockHeader().m_newlyAllocated != allocatedBitsIncludingPreviouslyMarked) {
+    //     WTFLogAlways("afryer_ERROR: %u %zu\n", allocIndex, cellSize());
+    //     uint64_t* bits = std::bit_cast<uint64_t*>(&original);
+    //     WTFLogAlways("afryer_1: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&blockHeader().m_newlyAllocated);
+    //     WTFLogAlways("afryer_2: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&allocatedBits);
+    //     WTFLogAlways("afryer_3: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&nonRemainingBits);
+    //     WTFLogAlways("afryer_4: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&allocatedBitsIncludingPreviouslyMarked);
+    //     WTFLogAlways("afryer_5: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&freeList.live());
+    //     WTFLogAlways("afryer_6: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&cleared);
+    //     WTFLogAlways("afryer_7: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&setted);
+    //     WTFLogAlways("afryer_8: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&freeList.bitmask());
+    //     WTFLogAlways("afryer_9: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&settedWithFreListCleared);
+    //     WTFLogAlways("afryer10: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    //     bits = std::bit_cast<uint64_t*>(&originalLiveBits);
+    //     WTFLogAlways("afryer10: %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx %llx\n", bits[0], bits[1], bits[2], bits[3], bits[4], bits[5], bits[6], bits[7], bits[8], bits[9], bits[10], bits[11], bits[12], bits[13], bits[14], bits[15]);
+    // } else
+    //     WTFLogAlways("afryer_NOERROR\n");
+    // WTF::BitSet<MarkedBlock::atomsPerBlock> newlyAllocatedFilter = freeList.live();
+    // newlyAllocatedFilter.setRange(0, currentAllocationIndex);
+    // // block().clearNewlyAllocated(freeList.live()); // I think this would be fast as a bit operation (not in this loop), but this probably doesn't matter for perf anyway
+    // block().newlyAllocated() &= newlyAllocatedFilter;
+
+    // block().newlyAllocated().setFirstNBits(currentAllocationIndex);
+    // blockHeader().m_newlyAllocated = allocatedBits;
+    // blockHeader().m_newlyAllocated = allocatedBitsIncludingPreviouslyMarked;
     
     m_isFreeListed = false;
     directory()->didFinishUsingBlock(this);

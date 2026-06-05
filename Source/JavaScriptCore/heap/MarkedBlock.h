@@ -167,7 +167,7 @@ public:
         // cell liveness data. To restore accurate cell liveness data, call one
         // of these functions:
         void didConsumeFreeList(); // Call this once you've allocated all the items in the free list.
-        void stopAllocating(const FreeList&);
+        void stopAllocating(FreeList&);
         void resumeAllocating(FreeList&); // Call this if you canonicalized a block for some non-collection related purpose.
             
         size_t cellSize();
@@ -364,8 +364,10 @@ public:
     
     bool isNewlyAllocated(const void*);
     void setNewlyAllocated(const void*);
+    void setAllNewlyAllocated();
     void clearNewlyAllocated(const void*);
-    const WTF::BitSet<atomsPerBlock>& newlyAllocated() const;
+    void clearNewlyAllocated(WTF::BitSet<MarkedBlock::atomsPerBlock> filter);
+    WTF::BitSet<atomsPerBlock>& newlyAllocated();
     
     HeapVersion newlyAllocatedVersion() const { return header().m_newlyAllocatedVersion; }
     
@@ -641,7 +643,17 @@ inline void MarkedBlock::clearNewlyAllocated(const void* p)
     header().m_newlyAllocated.clear(atomNumber(p));
 }
 
-inline const WTF::BitSet<MarkedBlock::atomsPerBlock>& MarkedBlock::newlyAllocated() const
+inline void MarkedBlock::setAllNewlyAllocated()
+{
+    header().m_newlyAllocated.setAll();
+}
+
+inline void MarkedBlock::clearNewlyAllocated(WTF::BitSet<MarkedBlock::atomsPerBlock> filter)
+{
+    header().m_newlyAllocated &= filter;
+}
+
+inline WTF::BitSet<MarkedBlock::atomsPerBlock>& MarkedBlock::newlyAllocated()
 {
     return header().m_newlyAllocated;
 }
