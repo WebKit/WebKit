@@ -85,8 +85,9 @@ FILTERS = {
         'start_printing': lambda line: 'TESTS SUMMARY---' in line or 'tests run' in line,
         'always_print': lambda line: line.startswith('! NEW FAIL'),
     },
-    'minibrowser': {
-        'start_printing': lambda line: 'Bundle passed tests on all this' in line,
+    'test-bundle': {
+        'start_printing': lambda line: 'Bundle passed tests on' in line,
+        'always_print': lambda line: line.startswith('[BUNDLETEST]'),
     },
     'swift': {
         'start_printing': lambda line: line.startswith('ERROR:') or line.startswith('FAILURE:') or '--- Build Script Analyzer ---' in line,
