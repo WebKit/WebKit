@@ -41,6 +41,7 @@
 @implementation RemoteObjectRegistryPlugIn {
     RetainPtr<WKWebProcessPlugInBrowserContextController> _browserContextController;
     RetainPtr<WKWebProcessPlugInController> _plugInController;
+    BOOL _shouldCallUIProcessOnClose;
 }
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
@@ -144,6 +145,23 @@
 - (void)getGroupIdentifier:(void(^)(NSString *))completionHandler
 {
     completionHandler([_browserContextController _groupIdentifier]);
+}
+
+- (void)triggerCallToUIProcessOnClose
+{
+    _shouldCallUIProcessOnClose = YES;
+}
+
+- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
+{
+    if (!_shouldCallUIProcessOnClose)
+        return;
+
+    // Send an InvokeMethod IPC to the UIProcess from inside WebPage::Close handling.
+    // Reproduces the race where the UIProcess receives the message after the page has
+    // been removed from WebProcessProxy's page maps.
+    id<LocalObjectProtocol> localObject = [[browserContextController _remoteObjectRegistry] remoteObjectProxyWithInterface:localObjectInterface()];
+    [localObject doSomethingWithCompletionHandler:^{ }];
 }
 
 @end

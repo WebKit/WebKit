@@ -364,6 +364,11 @@ WebProcessProxy::~WebProcessProxy()
     ASSERT(m_pageURLRetainCountMap.isEmpty());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "destructor:");
 
+    // ~AuxiliaryProcessProxy() replies to pending messages after our members are gone; a reply
+    // handler that upgrades its still-live WeakPtr<WebProcessProxy> would then touch freed members
+    // (e.g. m_pagesPendingClose). Cancel them now, while our state is intact.
+    replyToPendingMessages();
+
     liveProcessesLRU().remove(*this);
 
     for (auto identifier : m_speechRecognitionServerMap.keys())
@@ -949,6 +954,20 @@ void WebProcessProxy::didCommitLoadClientOrigin(WebCore::ClientOrigin&& clientOr
     m_committedClientOrigins.add(WTF::move(clientOrigin));
 }
 
+void WebProcessProxy::sendPageCloseMessage(std::optional<WebPageProxyIdentifier> pageProxyID, WebCore::PageIdentifier pageID, CompletionHandler<void()>&& completionHandler)
+{
+    if (pageProxyID)
+        m_pagesPendingClose.add(*pageProxyID);
+    sendWithAsyncReply(Messages::WebPage::Close(), [weakThis = WeakPtr { *this }, pageProxyID, completionHandler = WTF::move(completionHandler)]() mutable {
+        if (RefPtr protectedThis = weakThis; protectedThis && pageProxyID) {
+            protectedThis->m_pagesPendingClose.remove(*pageProxyID);
+            protectedThis->reportProcessDisassociatedWithPageIfNecessary(*pageProxyID);
+        }
+        if (completionHandler)
+            completionHandler();
+    }, pageID);
+}
+
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(visitedLinkStore, [] {
@@ -1286,35 +1305,21 @@ bool WebProcessProxy::handleRemoteObjectRegistryMessage(IPC::Connection& connect
 {
     if (!WebPageProxyIdentifier::isValidIdentifier(decoder.destinationID()))
         return false;
+
     WebPageProxyIdentifier pageID(decoder.destinationID());
-
-    auto receiveMessage = [&] (WebPageProxy& page) {
-        if (RefPtr registry = page.uiRemoteObjectRegistry()) {
-            registry->didReceiveMessage(connection, decoder);
-            return true;
-        }
+    if (!isAssociatedWithPage(pageID))
         return false;
-    };
 
-    if (RefPtr page = m_pageMap.get(pageID))
-        return receiveMessage(*page);
+    RefPtr page = WebPageProxy::fromIdentifier(pageID);
+    if (!page)
+        return false;
 
-    for (Ref remotePage : m_remotePages) {
-        if (RefPtr page = remotePage->page(); page && page->identifier() == pageID)
-            return receiveMessage(*page);
-    }
+    RefPtr registry = page->uiRemoteObjectRegistry();
+    if (!registry)
+        return false;
 
-    for (Ref provisionalPage : m_provisionalPages) {
-        if (RefPtr page = provisionalPage->page(); page && page->identifier() == pageID)
-            return receiveMessage(*page);
-    }
-
-    for (Ref suspendedPage : m_suspendedPages) {
-        if (RefPtr page = suspendedPage->page(); page && page->identifier() == pageID)
-            return receiveMessage(*page);
-    }
-
-    return false;
+    registry->didReceiveMessage(connection, decoder);
+    return true;
 }
 #endif
 
