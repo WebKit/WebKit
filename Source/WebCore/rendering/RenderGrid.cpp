@@ -2061,6 +2061,15 @@ GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& grid
     return GridAxisPosition::GridAxisStart;
 }
 
+bool RenderGrid::inlineSizeDependsOnIntrinsicColumnTrackForGridItem(const RenderBox& gridItem) const
+{
+    // If the grid has a definite, non-fit-content inline size, its column tracks resolve without
+    // depending cyclically on grid items.
+    if (contentBoxLogicalWidth() && !sizesPreferredLogicalWidthToFitContent())
+        return false;
+    return m_trackSizingAlgorithm.isIntrinsicSizedGridArea(gridItem, Style::GridTrackSizingDirection::Columns);
+}
+
 GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridItem) const
 {
     if (gridItem.isOutOfFlowPositioned() && !hasStaticPositionForGridItem(gridItem, Style::GridTrackSizingDirection::Columns))
@@ -2099,14 +2108,24 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
     case ItemPosition::Stretch:
         return GridAxisPosition::GridAxisStart;
     case ItemPosition::Baseline:
-        // FIXME: Handle non-inline matching orthogonal grid items properly.
-        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) && !WritingMode().isInlineMatchingAny(gridItem.writingMode()))
-            return GridAxisPosition::GridAxisStart;
+        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)) {
+            // https://drafts.csswg.org/css-grid-2/#row-align
+            // The grid's inline axis baseline is dependent on the grid item's size in that axis.
+            // For orthogonal items, the grid's inline axis is the grid item's block axis.
+            // If this size depends on the grid's column tracks due to intrinsic sizing,
+            // we should use the fallback alignment, GridAxisStart.
+            if (inlineSizeDependsOnIntrinsicColumnTrackForGridItem(gridItem))
+                return GridAxisPosition::GridAxisStart;
+            return writingMode().isInlineMatchingAny(gridItem.writingMode()) ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
+        }
         return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
     case ItemPosition::LastBaseline:
-        // FIXME: Handle non-inline matching orthogonal grid items properly.
-        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) && !WritingMode().isInlineMatchingAny(gridItem.writingMode()))
-            return GridAxisPosition::GridAxisStart;
+        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)) {
+            // Symmetric to ItemPosition::Baseline above; last-baseline falls back to GridAxisEnd.
+            if (inlineSizeDependsOnIntrinsicColumnTrackForGridItem(gridItem))
+                return GridAxisPosition::GridAxisEnd;
+            return writingMode().isInlineMatchingAny(gridItem.writingMode()) ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
+        }
         return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
     case ItemPosition::Legacy:
     case ItemPosition::Auto:

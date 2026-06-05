@@ -132,6 +132,7 @@ public:
     LayoutUnit maxContentSize() const { return m_maxContentSize; };
 
     LayoutUnit baselineOffsetForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    bool isIntrinsicSizedGridArea(const RenderBox&, Style::GridTrackSizingDirection gridAreaDirection) const;
 
     // The estimated grid area should be use pre-layout versus the grid area, which should be used once
     // layout is complete.
@@ -238,7 +239,6 @@ private:
     bool canParticipateInBaselineAlignment(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
     bool participateInBaselineAlignment(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
 
-    bool isIntrinsicSizedGridArea(const RenderBox&, Style::GridTrackSizingDirection gridAreaDirection) const;
     void computeGridContainerIntrinsicSizes();
 
     // Helper methods for step 4. Stretch flexible tracks.
