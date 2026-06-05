@@ -35,7 +35,7 @@
 #include <WebCore/PasteboardItemInfo.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/SetForScope.h>
 
 namespace WebKit {
@@ -101,7 +101,7 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection& connecti
 {
     auto& clipboard = Clipboard::get(pasteboardName);
     clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTF::move(completionHandler)](auto&& buffer) mutable {
-        ListHashSet<String> domTypes;
+        OrderedHashSet<String> domTypes;
         auto customData = PasteboardCustomData::fromSharedBuffer(WTF::move(buffer));
         if (customData.origin() == origin) {
             for (auto& type : customData.orderedTypes())

@@ -31,7 +31,7 @@
 #include <WebCore/TextResourceDecoder.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Expected.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WallTime.h>
@@ -159,7 +159,7 @@ private:
     void ensureNoDataForId(WebCore::ResourceLoaderIdentifier);
     bool ensureFreeSpace(size_t);
 
-    ListHashSet<WebCore::ResourceLoaderIdentifier> m_resourceIdsDeque;
+    OrderedHashSet<WebCore::ResourceLoaderIdentifier> m_resourceIdsDeque;
     HashMap<WebCore::ResourceLoaderIdentifier, UniqueRef<ResourceData>> m_resourceDataMap;
     size_t m_contentSize { 0 };
     Settings m_settings;

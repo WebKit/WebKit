@@ -34,7 +34,7 @@
 #include <WebCore/WorkerOptions.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Identified.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -116,7 +116,7 @@ private:
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
-    ListHashSet<Object> m_sharedWorkerObjects;
+    OrderedHashSet<Object> m_sharedWorkerObjects;
     WebCore::WorkerFetchResult m_fetchResult;
     WebCore::WorkerInitializationData m_initializationData;
     bool m_isRunning { false };

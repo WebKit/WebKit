@@ -161,6 +161,18 @@ public:
     void addVoid(const ValueType& value) { add(value); }
     void addVoid(ValueType&& value) { add(std::forward<ValueType>(value)); }
 
+    AddResult appendOrMoveToLast(const ValueType& value) LIFETIME_BOUND
+    {
+        remove(value);
+        return add(value);
+    }
+
+    AddResult appendOrMoveToLast(ValueType&& value) LIFETIME_BOUND
+    {
+        remove(value);
+        return add(WTF::move(value));
+    }
+
     template<typename ContainerType>
     bool addAll(ContainerType&& container)
     {

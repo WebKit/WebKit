@@ -24,8 +24,8 @@
 #include <WebCore/SQLiteStatement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 
@@ -46,7 +46,7 @@ public:
 
     void checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool, bool)>&&);
     void loadIconsForPageURL(const String&, AllowDatabaseWrite, CompletionHandler<void(Vector<WebCore::PlatformImagePtr>&&)>&&);
-    ListHashSet<String> iconURLsForPageURL(const String&);
+    OrderedHashSet<String> iconURLsForPageURL(const String&);
     void setIconForPageURL(const String& iconURL, std::span<const uint8_t>, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
     void clear(CompletionHandler<void()>&&);
 
@@ -70,7 +70,7 @@ private:
     Ref<WorkQueue> m_workQueue;
     AllowDatabaseWrite m_allowDatabaseWrite { AllowDatabaseWrite::Yes };
     UniqueRef<WebCore::SQLiteDatabase> m_db;
-    HashMap<String, ListHashSet<String>> m_pageURLToIconURLMap;
+    HashMap<String, OrderedHashSet<String>> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
     HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
     Lock m_loadedIconsLock;

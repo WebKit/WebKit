@@ -199,7 +199,7 @@ void IconDatabase::populatePageURLToIconURLsMap()
     Locker locker { m_pageURLToIconURLMapLock };
     while (result == SQLITE_ROW) {
         auto iconURLs = m_pageURLToIconURLMap.ensure(query->columnText(0), []() {
-            return ListHashSet<String> { };
+            return OrderedHashSet<String> { };
         });
         iconURLs.iterator->value.add(query->columnText(1));
         result = query->step();
@@ -491,7 +491,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
         if (m_db->isOpen()) {
             bool canWriteToDatabase = m_allowDatabaseWrite == AllowDatabaseWrite::Yes && allowDatabaseWrite == AllowDatabaseWrite::Yes;
             bool expired = false;
-            ListHashSet<String> cachedIconURLs;
+            OrderedHashSet<String> cachedIconURLs;
             {
                 Locker locker { m_pageURLToIconURLMapLock };
                 cachedIconURLs = m_pageURLToIconURLMap.get(pageURL);
@@ -509,7 +509,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
                     if (!canWriteToDatabase || setIconIDForPageURL(iconID.value(), pageURL)) {
                         Locker locker { m_pageURLToIconURLMapLock };
                         auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-                            return ListHashSet<String> { };
+                            return OrderedHashSet<String> { };
                         });
                         iconURLs.iterator->value.add(iconURL);
                         changed = true;
@@ -526,7 +526,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
                     result = true;
                     Locker locker { m_pageURLToIconURLMapLock };
                     auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-                        return ListHashSet<String> { };
+                        return OrderedHashSet<String> { };
                     });
                     iconURLs.iterator->value.add(iconURL);
                     changed = true;
@@ -545,7 +545,7 @@ void IconDatabase::loadIconsForPageURL(const String& pageURL, AllowDatabaseWrite
     ASSERT(isMainRunLoop());
 
     m_workQueue->dispatch([this, protectedThis = protect(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTF::move(completionHandler)]() mutable {
-        ListHashSet<String> iconURLs;
+        OrderedHashSet<String> iconURLs;
         {
             Locker locker { m_pageURLToIconURLMapLock };
             iconURLs = m_pageURLToIconURLMap.get(pageURL);
@@ -618,7 +618,7 @@ void IconDatabase::loadIconsForPageURL(const String& pageURL, AllowDatabaseWrite
     });
 }
 
-ListHashSet<String> IconDatabase::iconURLsForPageURL(const String& pageURL)
+OrderedHashSet<String> IconDatabase::iconURLsForPageURL(const String& pageURL)
 {
     ASSERT(isMainRunLoop());
 
@@ -648,7 +648,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
         startClearLoadedIconsTimer();
         Locker locker { m_pageURLToIconURLMapLock };
         auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-            return ListHashSet<String> { };
+            return OrderedHashSet<String> { };
         });
         iconURLs.iterator->value.add(iconURL);
         completionHandler(result);
@@ -671,7 +671,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
                 if (setIconIDForPageURL(iconID.value(), pageURL)) {
                     Locker locker { m_pageURLToIconURLMapLock };
                     auto iconURLs = m_pageURLToIconURLMap.ensure(pageURL, []() {
-                        return ListHashSet<String> { };
+                        return OrderedHashSet<String> { };
                     });
                     iconURLs.iterator->value.add(iconURL);
                 }

@@ -30,7 +30,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
@@ -59,10 +59,10 @@ using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
 using CharKey = String;
-using CharKeySet = ListHashSet<String>;
+using CharKeySet = OrderedHashSet<String>;
 #else
 using CharKey = char32_t;
-using CharKeySet = ListHashSet<uint32_t>;
+using CharKeySet = OrderedHashSet<uint32_t>;
 #endif
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
