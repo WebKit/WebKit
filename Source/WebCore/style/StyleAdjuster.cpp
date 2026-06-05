@@ -1172,7 +1172,7 @@ void Adjuster::adjustColumnStylesForPaginationMode(Style::ComputedStyle& style, 
     }
 }
 
-void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)
+void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, Document& document)
 {
     RefPtr body = document.body();
     auto* bodyStyle = body ? update.elementStyle(*body) : nullptr;
@@ -1180,6 +1180,17 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
 
     if (!documentElementStyle)
         return;
+
+    // https://drafts.csswg.org/css-writing-modes-4/#principal-flow
+    // Propagation from the body only affects the used values of writing-mode and direction on the document
+    // element, not their computed values. Remember the document element's own computed values here, before
+    // they are overwritten below, so that getComputedStyle() can report them.
+    document.setDocumentElementComputedWritingMode(documentElementStyle->hasExplicitlySetWritingMode()
+        ? documentElementStyle->writingMode().computedWritingMode()
+        : ComputedStyle::initialWritingMode());
+    document.setDocumentElementComputedTextDirection(documentElementStyle->hasExplicitlySetDirection()
+        ? documentElementStyle->writingMode().computedTextDirection()
+        : ComputedStyle::initialDirection());
 
     // https://drafts.csswg.org/css-contain-2/#contain-property
     // "Additionally, when any containments are active on either the HTML html or body elements, propagation of

@@ -352,6 +352,7 @@ enum class ScheduleLocationChangeResult : uint8_t;
 enum class ScrollEventType : bool;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
 enum class StyleColorOptions : uint8_t;
+enum class StyleWritingMode : uint8_t;
 enum class ViolationReportType : uint8_t;
 enum class VisibilityState : bool;
 
@@ -623,6 +624,16 @@ public:
     void setDocumentElementLanguage(const AtomString&);
     TextDirection documentElementTextDirection() const { return m_documentElementTextDirection; }
     void setDocumentElementTextDirection(TextDirection textDirection) { m_documentElementTextDirection = textDirection; }
+
+    // The computed (not used) writing-mode and direction of the document element. These can differ from the
+    // values on the document element's render style: when those properties are propagated from the body, only
+    // the used values on the document element are affected, not the computed values (see
+    // Style::Adjuster::propagateToDocumentElementAndInitialContainingBlock and
+    // https://drafts.csswg.org/css-writing-modes-4/#principal-flow). getComputedStyle must report these.
+    StyleWritingMode documentElementComputedWritingMode() const { return m_documentElementComputedWritingMode; }
+    void setDocumentElementComputedWritingMode(StyleWritingMode writingMode) { m_documentElementComputedWritingMode = writingMode; }
+    TextDirection documentElementComputedTextDirection() const { return m_documentElementComputedTextDirection; }
+    void setDocumentElementComputedTextDirection(TextDirection direction) { m_documentElementComputedTextDirection = direction; }
 
     void addElementWithLangAttrMatchingDocumentElement(Element&);
     void removeElementWithLangAttrMatchingDocumentElement(Element&);
@@ -2697,6 +2708,8 @@ private:
     DocumentClasses m_documentClasses;
 
     TextDirection m_documentElementTextDirection;
+    StyleWritingMode m_documentElementComputedWritingMode { };
+    TextDirection m_documentElementComputedTextDirection { };
 
     DesignMode m_designMode { DesignMode::Off };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
