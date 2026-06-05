@@ -399,6 +399,50 @@ void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, C
         completionHandler(String(), false, result.error());
 }
 
+void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
+{
+    if (!m_pageInstrumentationEnabled)
+        return;
+
+    auto frameID = frame.frameID();
+    if (m_framePageAgentProxies.contains(frameID))
+        return;
+
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr corePage = page->corePage();
+    if (!corePage)
+        return;
+
+    // Register the PageAgentProxy on the frame's OWN InstrumentingAgents (mirroring
+    // FrameNetworkAgentProxy in ensureInstrumentationForFrame), rather than the page's.
+    // The frame's first commit dispatches frameNavigated via instrumentingAgents(frame),
+    // which resolves the frame's own InstrumentingAgents; setting the slot there fires
+    // the proxy directly without depending on the frame->page fallback. Under Site
+    // Isolation a cross-origin child loads in a brand-new process whose page-level slot
+    // is set up too late / via a fallback that doesn't fire, so the page-level + fallback
+    // model never delivered the child's initial frameNavigated. See webkit.org/b/308896.
+    auto& pageInspectorController = corePage->inspectorController();
+    auto& frameController = frame.inspectorController();
+    Inspector::AgentContext baseContext = {
+        frameController,
+        pageInspectorController.injectedScriptManager(),
+        pageInspectorController.frontendRouter(),
+        pageInspectorController.backendDispatcher()
+    };
+    Ref instrumentingAgents = frameController.instrumentingAgents();
+    WebAgentContext webContext = {
+        baseContext,
+        instrumentingAgents.get()
+    };
+
+    auto proxy = makeUnique<PageAgentProxy>(webContext, *page);
+    proxy->enable();
+    m_framePageAgentProxies.add(frameID, WTF::move(proxy));
+}
+
 void WebInspectorBackend::enablePageInstrumentation()
 {
     if (!m_page || !m_page->corePage())
@@ -409,26 +453,12 @@ void WebInspectorBackend::enablePageInstrumentation()
 
     m_pageInstrumentationEnabled = true;
 
-    RefPtr page = m_page.get();
-    RefPtr corePage = page->corePage();
+    RefPtr corePage = m_page->corePage();
     corePage->settings().setDeveloperExtrasEnabled(true);
 
-    auto& pageInspectorController = corePage->inspectorController();
-    Inspector::AgentContext baseContext = {
-        pageInspectorController,
-        pageInspectorController.injectedScriptManager(),
-        pageInspectorController.frontendRouter(),
-        pageInspectorController.backendDispatcher()
-    };
-    Ref instrumentingAgents = pageInspectorController.instrumentingAgents();
-    WebAgentContext webContext = {
-        baseContext,
-        instrumentingAgents.get()
-    };
-
-    m_pageAgentProxy = makeUnique<PageAgentProxy>(webContext, *page);
-    CheckedRef pageAgentProxy { *m_pageAgentProxy };
-    pageAgentProxy->enable();
+    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+        ensurePageInstrumentationForFrame(frame);
+    });
 }
 
 void WebInspectorBackend::disablePageInstrumentation()
@@ -436,14 +466,18 @@ void WebInspectorBackend::disablePageInstrumentation()
     if (!m_pageInstrumentationEnabled)
         return;
 
-    // disable() clears the enabledPageProxy slot in the page's InstrumentingAgents. Without it,
-    // destroying m_pageAgentProxy below would leave a dangling pointer there, and the next frame
-    // commit in this process would crash dereferencing it from InspectorInstrumentation. The page
-    // is still alive here (this is an explicit DisablePageInstrumentation IPC, not process teardown).
-    if (m_pageAgentProxy)
-        m_pageAgentProxy->disable();
-    m_pageAgentProxy = nullptr;
+    // Clearing the map destroys each PageAgentProxy, whose destructor (via disable())
+    // clears the enabledPageProxy slot on its frame's InstrumentingAgents. Without that,
+    // a later frame commit in this process would dereference a freed pointer from
+    // InspectorInstrumentation. The page is still alive here (this is an explicit
+    // DisablePageInstrumentation IPC, not process teardown).
+    m_framePageAgentProxies.clear();
     m_pageInstrumentationEnabled = false;
+}
+
+void WebInspectorBackend::removePageInstrumentationForFrame(FrameIdentifier frameID)
+{
+    m_framePageAgentProxies.remove(frameID);
 }
 
 } // namespace WebKit

@@ -21,19 +21,34 @@ function test() {
         description: "getResourceTree should return the main frame plus a cross-origin child frame with parentId/name/origin populated.",
         async test() {
             let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
-            // Add the cross-origin iframe from within the test so we can await the
-            // frame target it spawns in a separate WebContent process. The child
-            // commits in its own process, so the inspectedPage's WebFrameProxy never
-            // observes its didCommitLoadForFrame; the frame target appearing is the
-            // reliable signal that the cross-process frame exists.
-            await InspectorTest.evaluateInPage("addCrossOriginIFrame()");
-            await targetAddedPromise;
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let targetEvent = await targetAddedPromise;
+            let frameTarget = targetEvent.data.target;
 
-            // Under Site Isolation, use the multiplexing backendTarget because
-            // its PageAgent is the UIProcess proxy that sees every WebContent
-            // process. The per-page target's PageAgent (== window.PageAgent)
-            // would only return the local frame's view.
-            let { frameTree } = await WI.backendTarget.PageAgent.getResourceTree();
+            // Under Site Isolation, use the multiplexing backendTarget because its PageAgent is the
+            // UIProcess proxy that sees every WebContent process. The per-page target's PageAgent
+            // (== window.PageAgent) would only return the local frame's view.
+            //
+            // The cross-origin child loads provisionally in its own process and commits with
+            // CommitTiming::WaitForLoad. Its committed url/origin only reach the proxy via the
+            // Page.frameNavigated event (which fires at commit and populates the proxy's per-frame
+            // cache). Drive/await the frame target's execution context (created right after commit)
+            // and poll getResourceTree until the child's committed url is reported.
+            let frameTree;
+            let child;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+                child = frameTree.childFrames?.[0];
+                if (child && child.frame.url.endsWith("/resource-tree-frame.html"))
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
 
             InspectorTest.expectThat(!!frameTree.frame.id, "Main frame should have a non-empty id.");
             InspectorTest.expectEqual(frameTree.frame.parentId, undefined, "Main frame should have no parentId.");
@@ -42,17 +57,12 @@ function test() {
 
             InspectorTest.expectEqual(frameTree.childFrames?.length, 1, "Should have exactly one child frame in the tree.");
 
-            let child = frameTree.childFrames[0];
             InspectorTest.expectThat(!!child.frame.id, "Child frame should have a non-empty id.");
             InspectorTest.expectThat(child.frame.id !== frameTree.frame.id, "Child frame id should differ from main frame id.");
             InspectorTest.expectEqual(child.frame.parentId, frameTree.frame.id, "Child frame's parentId should match main frame's id.");
             InspectorTest.expectEqual(child.frame.name, "child-frame", "Child frame's name attribute should be reported.");
-            // FIXME: <https://webkit.org/b/308896> The inspectedPage's WebFrameProxy never
-            // observes the cross-origin child's didCommitLoadForFrame, so its url() and
-            // documentSecurityOriginData() remain stale. Re-enable these once cross-process
-            // WebFrameProxy state propagation lands.
-            // InspectorTest.expectThat(child.frame.url.endsWith("/resource-tree-frame.html"), "Child frame URL should point at the iframe document.");
-            // InspectorTest.expectThat(child.frame.securityOrigin !== frameTree.frame.securityOrigin, "Child frame should have a different (cross-origin) security origin from the main frame.");
+            InspectorTest.expectThat(child.frame.url.endsWith("/resource-tree-frame.html"), "Child frame URL should point at the iframe document.");
+            InspectorTest.expectThat(child.frame.securityOrigin !== frameTree.frame.securityOrigin, "Child frame should have a different (cross-origin) security origin from the main frame.");
         }
     });
 

@@ -12,4 +12,6 @@ PASS: Child frame should have a non-empty id.
 PASS: Child frame id should differ from main frame id.
 PASS: Child frame's parentId should match main frame's id.
 PASS: Child frame's name attribute should be reported.
+PASS: Child frame URL should point at the iframe document.
+PASS: Child frame should have a different (cross-origin) security origin from the main frame.
 

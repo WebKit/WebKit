@@ -98,6 +98,8 @@ public:
 
     void enablePageInstrumentation();
     void disablePageInstrumentation();
+    void ensurePageInstrumentationForFrame(WebCore::LocalFrame&);
+    void removePageInstrumentationForFrame(WebCore::FrameIdentifier);
 
     void setFrontendConnection(IPC::Connection::Handle&&);
 
@@ -130,7 +132,7 @@ private:
     UniqueRef<BackendResourceDataStore> m_resourceDataStore;
     bool m_networkInstrumentationEnabled { false };
 
-    std::unique_ptr<PageAgentProxy> m_pageAgentProxy;
+    HashMap<WebCore::FrameIdentifier, std::unique_ptr<PageAgentProxy>> m_framePageAgentProxies;
     bool m_pageInstrumentationEnabled { false };
 };
 

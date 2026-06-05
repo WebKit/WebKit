@@ -92,6 +92,11 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
 
 void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, SecurityOriginData&& securityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name)
 {
+    // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()
+    // can report it for cross-origin children, whose commit the inspectedPage's WebFrameProxy
+    // never observes (its url/origin stay stale). See webkit.org/b/308896.
+    m_frameDocumentInfo.set(frameID, FrameDocumentInfo { url, mimeType, securityOrigin });
+
     auto frameObject = Protocol::Page::Frame::create()
         .setId(protocolFrameIdForFrameID(frameID))
         .setLoaderId(String()) // FIXME: <https://webkit.org/b/308895> get loaderId from document identifier
@@ -120,6 +125,7 @@ void ProxyingPageAgent::loadEventFired(double timestamp)
 
 void ProxyingPageAgent::frameDetached(FrameIdentifier frameID)
 {
+    m_frameDocumentInfo.remove(frameID);
     m_frontendDispatcher->frameDetached(protocolFrameIdForFrameID(frameID));
 }
 
@@ -201,6 +207,7 @@ CommandResult<void> ProxyingPageAgent::disable()
         return { };
 
     m_enabled = false;
+    m_frameDocumentInfo.clear();
 
     // Force-teardown: disable all processes unconditionally, bypassing the
     // refcount discipline in disableInstrumentationForProcess(). This is
@@ -237,18 +244,27 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
     // walking it yields the full structure (frame ids, parent linkage, name)
     // regardless of which process hosts each frame.
     //
-    // FIXME: <https://webkit.org/b/308896> url()/documentSecurityOriginData() are
-    // still stale for cross-origin children because the inspectedPage's
-    // WebFrameProxy never observes their owning process's didCommitLoadForFrame.
-    // WebFrameProxy state propagation across processes is the remaining follow-up.
+    // For url/origin/mimeType, prefer the per-frame cache populated from the live
+    // cross-process frameNavigated events: the inspectedPage's WebFrameProxy never
+    // observes a cross-origin child's commit, so its url() stays about:blank and its
+    // securityOrigin inherits the parent. The cache carries the child's owning process's
+    // real committed values. Fall back to the WebFrameProxy state when no event has
+    // arrived yet (e.g. same-origin frames before their first navigation).
+    URL url = frame.url();
     SecurityOriginData securityOrigin = frame.documentSecurityOriginData();
     String mimeType = frame.mimeType();
+    if (auto it = m_frameDocumentInfo.find(frame.frameID()); it != m_frameDocumentInfo.end()) {
+        url = it->value.url;
+        securityOrigin = it->value.securityOrigin;
+        if (!it->value.mimeType.isEmpty())
+            mimeType = it->value.mimeType;
+    }
     String name = frame.frameName();
 
     auto frameObject = Protocol::Page::Frame::create()
         .setId(protocolId)
         .setLoaderId(emptyString()) // FIXME: <https://webkit.org/b/308895> get loaderId from document identifier
-        .setUrl(frame.url().string())
+        .setUrl(url.string())
         .setMimeType(mimeType.isEmpty() ? "text/html"_s : mimeType)
         .setSecurityOrigin(securityOrigin.toString())
         .release();

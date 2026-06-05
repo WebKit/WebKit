@@ -211,8 +211,10 @@ void WebLocalFrameLoaderClient::detachedFromParent2()
     if (!webPage)
         return;
 
-    if (RefPtr backend = webPage->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+    if (RefPtr backend = webPage->inspector(WebPage::LazyCreationPolicy::UseExistingOnly)) {
         backend->removeInstrumentationForFrame(m_frame->frameID());
+        backend->removePageInstrumentationForFrame(m_frame->frameID());
+    }
 
     removeStorageAccess();
 

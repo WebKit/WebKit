@@ -98,6 +98,7 @@ public:
     void browserExtensionsDisabled(HashSet<String>&&);
 
     bool isNetworkInstrumentationEnabled() const;
+    bool isPageInstrumentationEnabled() const;
 
 private:
     WebPageAgentContext NODELETE webPageAgentContext();

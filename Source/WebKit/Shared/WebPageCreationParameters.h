@@ -392,6 +392,7 @@ struct WebPageCreationParameters {
     WebCore::AccessibilityMode accessibilityMode { };
     bool shouldForceSiteIsolationAlwaysOnForTesting { false };
     bool shouldEnableNetworkInstrumentation { false };
+    bool shouldEnablePageInstrumentation { false };
 };
 
 } // namespace WebKit

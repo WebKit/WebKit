@@ -181,8 +181,10 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     ASSERT(ownerElement.document().frame());
     coreFrame->init();
 
-    if (RefPtr backend = Ref { page }->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+    if (RefPtr backend = Ref { page }->inspector(WebPage::LazyCreationPolicy::UseExistingOnly)) {
         backend->ensureInstrumentationForFrame(coreFrame.get());
+        backend->ensurePageInstrumentationForFrame(coreFrame.get());
+    }
 
     return frame;
 }
@@ -486,11 +488,17 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
     if (!localFrame->isMainFrame())
         protect(localFrame->document())->setURL(URL { aboutBlankURL() });
 
-    // If network instrumentation was enabled via WebPageCreationParameters (before
-    // this frame existed), create the FrameNetworkAgentProxy for it now.
+    // If network/page instrumentation was enabled via WebPageCreationParameters (before
+    // this frame existed), create the per-frame proxies for it now. Under Site Isolation
+    // a cross-origin child provisional-loads in a brand-new process; registering the
+    // PageAgentProxy on this frame's own InstrumentingAgents here guarantees its initial
+    // frameNavigated reaches the UIProcess ProxyingPageAgent. See webkit.org/b/308896.
     if (RefPtr page = m_page.get()) {
-        if (RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+        RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly);
+        if (backend) {
             backend->ensureInstrumentationForFrame(localFrame.get());
+            backend->ensurePageInstrumentationForFrame(localFrame.get());
+        }
     }
 
     if (parameters.layerHostingContextIdentifier)

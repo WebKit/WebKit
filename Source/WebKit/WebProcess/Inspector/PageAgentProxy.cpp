@@ -64,7 +64,13 @@ PageAgentProxy::PageAgentProxy(WebAgentContext& context, WebPage& page)
 {
 }
 
-PageAgentProxy::~PageAgentProxy() = default;
+PageAgentProxy::~PageAgentProxy()
+{
+    // Clear the enabledPageProxy slot on our InstrumentingAgents so a later frame commit
+    // doesn't dereference this freed proxy from InspectorInstrumentation. Mirrors
+    // FrameNetworkAgentProxy::~FrameNetworkAgentProxy().
+    disable();
+}
 
 void PageAgentProxy::didCreateFrontendAndBackend()
 {
