@@ -42,8 +42,8 @@ namespace TemporalCore {
 // and shared across call sites.
 static constexpr ASCIILiteral icuOpenTimeZoneFailed = "Failed to open ICU calendar for time zone"_s;
 static constexpr ASCIILiteral icuTimeZoneOffsetFailed = "Failed to get time zone offset from ICU"_s;
-static constexpr ASCIILiteral icuSetCalendarFailed = "Failed to set ICU calendar"_s;
-static constexpr ASCIILiteral icuCalendarArithmeticFailed = "Failed to perform ICU calendar arithmetic"_s;
+static constexpr ASCIILiteral icuTimeZoneSetCalendarFailed = "Failed to set ICU calendar"_s;
+static constexpr ASCIILiteral icuTimeZoneArithmeticFailed = "Failed to perform ICU calendar arithmetic"_s;
 static constexpr ASCIILiteral icuTransitionFailed = "Failed to get time zone transition date from ICU"_s;
 static constexpr ASCIILiteral epochNanosecondsOutOfRange = "Epoch nanoseconds out of valid Temporal range"_s;
 
@@ -195,13 +195,13 @@ static TemporalResult<PossibleEpochNanoseconds> getNamedTimeZoneEpochNanoseconds
         time.hour(), time.minute(), time.second(),
         &status);
     if (U_FAILURE(status)) [[unlikely]]
-        return makeUnexpected(rangeError(icuSetCalendarFailed));
+        return makeUnexpected(rangeError(icuTimeZoneSetCalendarFailed));
     ucal_set(calendar.get(), UCAL_MILLISECOND, time.millisecond());
 
     // ICU resolves the local time to one epoch (its "default" interpretation).
     double icuEpochMs = ucal_getMillis(calendar.get(), &status);
     if (U_FAILURE(status)) [[unlikely]]
-        return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
+        return makeUnexpected(rangeError(icuTimeZoneArithmeticFailed));
 
     auto icuOffsetMs = getOffsetMsAtEpoch(calendar.get(), icuEpochMs);
     if (!icuOffsetMs)
@@ -389,7 +389,7 @@ TemporalResult<std::optional<ISO8601::ExactTime>> getTimeZoneTransition(const Ti
         epochMs = static_cast<double>(exactTime.floorEpochMilliseconds());
     ucal_setMillis(calendar.get(), epochMs, &status);
     if (U_FAILURE(status)) [[unlikely]]
-        return makeUnexpected(rangeError(icuSetCalendarFailed));
+        return makeUnexpected(rangeError(icuTimeZoneSetCalendarFailed));
 
     UTimeZoneTransitionType transType = (direction == TransitionDirection::Next) ? UCAL_TZ_TRANSITION_NEXT : UCAL_TZ_TRANSITION_PREVIOUS;
 
