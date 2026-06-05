@@ -918,7 +918,8 @@ ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue 
     if (!smallest) {
         auto smallestUnitMaybeAuto = getTemporalUnitValuedOption(globalObject, options, vm.propertyNames->smallestUnit);
         RETURN_IF_EXCEPTION(scope, { });
-        ASSERT(std::holds_alternative<std::optional<TemporalUnit>>(smallestUnitMaybeAuto));
+        validateTemporalUnitValue(globalObject, smallestUnitMaybeAuto, UnitGroup::DateTime, AllowedUnit::None, "smallestUnit"_s);
+        RETURN_IF_EXCEPTION(scope, { });
         auto smallestUnitOptional = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
         if (smallestUnitOptional)
             smallest = smallestUnitOptional.value();

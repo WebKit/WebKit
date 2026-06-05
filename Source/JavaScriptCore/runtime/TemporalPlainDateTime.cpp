@@ -735,7 +735,8 @@ TemporalPlainDateTime* TemporalPlainDateTime::round(JSGlobalObject* globalObject
     if (!smallest) {
         auto smallestUnitMaybeAuto = getTemporalUnitValuedOption(globalObject, options, vm.propertyNames->smallestUnit);
         RETURN_IF_EXCEPTION(scope, { });
-        ASSERT(std::holds_alternative<std::optional<TemporalUnit>>(smallestUnitMaybeAuto));
+        validateTemporalUnitValue(globalObject, smallestUnitMaybeAuto, UnitGroup::Time, AllowedUnit::Day, "smallestUnit"_s);
+        RETURN_IF_EXCEPTION(scope, { });
         smallest = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
         if (!smallest) [[unlikely]] {
             throwRangeError(globalObject, scope, "Cannot round without a smallestUnit option"_s);

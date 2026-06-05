@@ -446,17 +446,16 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncRound, (JSGlobalObjec
     RETURN_IF_EXCEPTION(scope, { });
     auto smallestUnitMaybeAuto = getTemporalUnitValuedOption(globalObject, options, vm.propertyNames->smallestUnit);
     RETURN_IF_EXCEPTION(scope, { });
-    ASSERT(std::holds_alternative<std::optional<TemporalUnit>>(smallestUnitMaybeAuto));
-    auto smallestOpt = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
 
     // Step 10: ValidateTemporalUnitValue(smallestUnit, ~time~, « ~day~ »). ~required~ → error if absent.
+    validateTemporalUnitValue(globalObject, smallestUnitMaybeAuto, UnitGroup::Time, AllowedUnit::Day, "smallestUnit"_s);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto smallestOpt = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
     if (!smallestOpt) [[unlikely]] {
         throwRangeError(globalObject, scope, "ZonedDateTime.round requires a smallestUnit option"_s);
         return { };
     }
     TemporalUnit smallestUnit = smallestOpt.value();
-    validateTemporalUnitValue(globalObject, smallestUnit, UnitGroup::Time, AllowedUnit::Day, "smallestUnit"_s);
-    RETURN_IF_EXCEPTION(scope, { });
 
     // Steps 11-13: Compute maximum increment and ValidateTemporalRoundingIncrement.
     if (smallestUnit == TemporalUnit::Day)

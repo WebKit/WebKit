@@ -305,9 +305,10 @@ ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue 
 
     if (!smallest) {
         auto smallestUnitMaybeAuto = getTemporalUnitValuedOption(globalObject, options, vm.propertyNames->smallestUnit);
-        ASSERT(std::holds_alternative<std::optional<TemporalUnit>>(smallestUnitMaybeAuto));
-        smallest = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
         RETURN_IF_EXCEPTION(scope, { });
+        validateTemporalUnitValue(globalObject, smallestUnitMaybeAuto, UnitGroup::Time, AllowedUnit::None, "smallestUnit"_s);
+        RETURN_IF_EXCEPTION(scope, { });
+        smallest = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
     }
 
     if (!smallest) [[unlikely]] {

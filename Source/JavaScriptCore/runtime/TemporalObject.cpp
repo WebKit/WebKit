@@ -288,8 +288,12 @@ void validateTemporalUnitValue(JSGlobalObject* globalObject, Variant<TemporalAut
 
     if (isAbsentUnit(unit))
         return;
-    if (extraValue == AllowedUnit::Auto && std::holds_alternative<TemporalAuto>(unit))
+    if (std::holds_alternative<TemporalAuto>(unit)) {
+        if (extraValue == AllowedUnit::Auto)
+            return;
+        throwRangeError(globalObject, scope, makeString(valueName, " is a disallowed unit"_s));
         return;
+    }
     TemporalUnit actualUnit = std::get<std::optional<TemporalUnit>>(unit).value();
     if (extraValue == AllowedUnit::Day && actualUnit == TemporalUnit::Day)
         return;
@@ -333,8 +337,6 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
     RETURN_IF_EXCEPTION(scope, { });
     Variant<TemporalAuto, std::optional<TemporalUnit>> smallestUnitMaybeAuto = getTemporalUnitValuedOption(globalObject, options, vm.propertyNames->smallestUnit);
     RETURN_IF_EXCEPTION(scope, { });
-    ASSERT(std::holds_alternative<std::optional<TemporalUnit>>(smallestUnitMaybeAuto));
-    auto smallestUnitOptional = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
 
     validateTemporalUnitValue(globalObject, largestUnitMaybeAuto, unitGroup, AllowedUnit::Auto, "largestUnit"_s);
     RETURN_IF_EXCEPTION(scope, { });
@@ -356,6 +358,7 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
 
     validateTemporalUnitValue(globalObject, smallestUnitMaybeAuto, unitGroup, AllowedUnit::None, "smallestUnit"_s);
     RETURN_IF_EXCEPTION(scope, { });
+    auto smallestUnitOptional = std::get<std::optional<TemporalUnit>>(smallestUnitMaybeAuto);
 
     auto smallestUnit = smallestUnitOptional.value_or(fallbackSmallestUnit);
 

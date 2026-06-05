@@ -264,7 +264,8 @@ ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValu
     if (!smallest) {
         auto smallestMaybeAuto = getTemporalUnitValuedOption(globalObject, options, vm.propertyNames->smallestUnit);
         RETURN_IF_EXCEPTION(scope, { });
-        ASSERT(std::holds_alternative<std::optional<TemporalUnit>>(smallestMaybeAuto));
+        validateTemporalUnitValue(globalObject, smallestMaybeAuto, UnitGroup::Time, AllowedUnit::None, "smallestUnit"_s);
+        RETURN_IF_EXCEPTION(scope, { });
         smallest = std::get<std::optional<TemporalUnit>>(smallestMaybeAuto);
     }
     if (!smallest) [[unlikely]] {
