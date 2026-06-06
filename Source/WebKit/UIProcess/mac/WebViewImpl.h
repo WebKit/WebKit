@@ -221,6 +221,10 @@ using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 
 namespace WebKit {
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+struct InteractionInformationAtPosition;
+#endif
+
 class PageClient;
 class PageClientImpl;
 class DrawingAreaProxy;

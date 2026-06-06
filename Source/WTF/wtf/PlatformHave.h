@@ -1847,3 +1847,9 @@
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 260400))
 #define HAVE_CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION 1
 #endif
+
+// WKTextSelectionController is a Swift class; builds that don't compile the WebKit
+// Swift UIProcess API turn this off in their options file.
+#if !defined(HAVE_WK_TEXT_SELECTION_CONTROLLER) && PLATFORM(MAC)
+#define HAVE_WK_TEXT_SELECTION_CONTROLLER 1
+#endif

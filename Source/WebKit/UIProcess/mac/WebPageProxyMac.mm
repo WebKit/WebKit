@@ -182,7 +182,7 @@ void WebPageProxy::speak(const String& string)
 void WebPageProxy::stopSpeaking()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    [NSApp stopSpeaking:nil];
+    [NSApp stopSpeaking:NSApp];
 }
 
 void WebPageProxy::searchTheWeb(const String& string)

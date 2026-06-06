@@ -965,12 +965,82 @@ WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
     "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-CPP.h")
 
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
+    # Some public headers carry `#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT` blocks Xcode
+    # inlines via replace-webkit-additions-includes.py. Run the marker-bearing headers
+    # through the script; symlink the rest. Mac only: replacing a header makes the public
+    # copy a distinct file from its PrivateHeaders symlink, which duplicates @interface
+    # when both are pulled into one iOS TU (iOS keeps the plain #if 0 headers, as before).
+    set(_wk_addn_replace_script "${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py")
+    set(_wk_headers_to_symlink ${WebKit_PUBLIC_FRAMEWORK_HEADERS})
+    set(_wk_headers_to_replace "")
+    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND WEBKIT_ADDITIONS_COMPILE_PATH AND USE_APPLE_INTERNAL_SDK AND EXISTS "${_wk_addn_replace_script}")
+        set(_wk_headers_to_symlink "")
+        foreach (_pubh IN LISTS WebKit_PUBLIC_FRAMEWORK_HEADERS)
+            if (IS_ABSOLUTE "${_pubh}")
+                set(_pubh_src "${_pubh}")
+            else ()
+                set(_pubh_src "${CMAKE_CURRENT_SOURCE_DIR}/${_pubh}")
+            endif ()
+            file(STRINGS "${_pubh_src}" _pubh_marker LIMIT_COUNT 1 REGEX "API_WEBKIT_ADDITIONS_REPLACEMENT")
+            if (_pubh_marker)
+                list(APPEND _wk_headers_to_replace "${_pubh}")
+            else ()
+                list(APPEND _wk_headers_to_symlink "${_pubh}")
+            endif ()
+        endforeach ()
+    endif ()
+
     WEBKIT_COPY_FILES(WebKit_CopyHeaders
         DESTINATION ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
-        FILES ${WebKit_PUBLIC_FRAMEWORK_HEADERS}
+        FILES ${_wk_headers_to_symlink}
         FLATTENED
     )
     list(APPEND WebKit_DEPENDENCIES WebKit_CopyHeaders)
+
+    if (_wk_headers_to_replace)
+        # The script gates replacement on a feature whose name lives in the (private)
+        # additions tree. Read it, resolve its value from AppleFeatures.h, and pass
+        # <feature>=<value> in the environment -- matching the compile without naming it.
+        set(_wk_addn_env "WK_LIBRARY_HEADERS_FOLDER_PATH=")
+        set(_wk_feature_file "${WEBKIT_ADDITIONS_COMPILE_PATH}/WebKitAdditions/FeatureNeededForHeaderReplacement")
+        set(_apple_features_h "${CMAKE_OSX_SYSROOT}/usr/local/include/AppleFeatures/AppleFeatures.h")
+        if (EXISTS "${_wk_feature_file}" AND EXISTS "${_apple_features_h}")
+            file(READ "${_wk_feature_file}" _wk_feature)
+            string(STRIP "${_wk_feature}" _wk_feature)
+            set(_wk_feature_value 0)
+            file(STRINGS "${_apple_features_h}" _wk_feature_def REGEX "^#define +${_wk_feature} +[01]")
+            if (_wk_feature_def MATCHES "${_wk_feature} +([01])")
+                set(_wk_feature_value "${CMAKE_MATCH_1}")
+            endif ()
+            list(APPEND _wk_addn_env "${_wk_feature}=${_wk_feature_value}")
+            unset(_wk_feature)
+            unset(_wk_feature_def)
+            unset(_wk_feature_value)
+        endif ()
+        unset(_wk_feature_file)
+        unset(_apple_features_h)
+        file(MAKE_DIRECTORY "${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit")
+        set(_wk_replaced_outputs "")
+        foreach (_pubh IN LISTS _wk_headers_to_replace)
+            if (IS_ABSOLUTE "${_pubh}")
+                set(_pubh_src "${_pubh}")
+            else ()
+                set(_pubh_src "${CMAKE_CURRENT_SOURCE_DIR}/${_pubh}")
+            endif ()
+            get_filename_component(_pubh_name "${_pubh}" NAME)
+            set(_pubh_out "${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit/${_pubh_name}")
+            add_custom_command(OUTPUT "${_pubh_out}"
+                COMMAND ${CMAKE_COMMAND} -E env ${_wk_addn_env}
+                    sh -c "rm -f '${_pubh_out}'; '${PYTHON_EXECUTABLE}' '${_wk_addn_replace_script}' '${WEBKIT_ADDITIONS_COMPILE_PATH}' '${CMAKE_OSX_SYSROOT}' < '${_pubh_src}' > '${_pubh_out}'"
+                MAIN_DEPENDENCY "${_pubh_src}"
+                COMMENT "Inlining WebKitAdditions into ${_pubh_name}"
+                VERBATIM
+            )
+            list(APPEND _wk_replaced_outputs "${_pubh_out}")
+        endforeach ()
+        add_custom_target(WebKit_CopyAdditionsHeaders ALL DEPENDS ${_wk_replaced_outputs})
+        list(APPEND WebKit_DEPENDENCIES WebKit_CopyAdditionsHeaders)
+    endif ()
 endif ()
 
 if (WebKit_PRIVATE_FRAMEWORK_HEADERS)
@@ -1051,6 +1121,13 @@ endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES SourcesMessageReceivers.txt)
 list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "^[A-Za-z0-9_]+MessageReceiver\\.cpp")
+# Mac jumbo only: these ARC files redefine @interface WKWebView when unified (an in-tree
+# header vs. its staged forwarding copy), so de-unify the directory. Excluding (rather
+# than @no-unify) keeps them off the non-ARC list; they're re-added to WebKit_ARC_SOURCES
+# below. iOS doesn't hit the collision at its bundle size, so leave its unification alone.
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|/)UIProcess/Extensions/Cocoa/[^ ]*\\.mm([ ]|$)")
+endif ()
 
 # Helper macro which wraps the bindings script
 #   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
@@ -1320,6 +1397,13 @@ endif ()
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
 WEBKIT_COMPUTE_SOURCES(WebKit)
+# Re-add the WebExtension files excluded above (Mac only) to the ARC library so they
+# compile with -fobjc-arc.
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    file(GLOB_RECURSE _webext_arc_sources "${WEBKIT_DIR}/UIProcess/Extensions/Cocoa/*.mm")
+    list(APPEND WebKit_ARC_SOURCES ${_webext_arc_sources})
+    unset(_webext_arc_sources)
+endif ()
 if (DEFINED WebKit_SWIFT_INTEROP_SOURCES)
     list(REMOVE_ITEM WebKit_SOURCES ${WebKit_SWIFT_INTEROP_SOURCES})
 endif ()

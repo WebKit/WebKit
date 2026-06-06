@@ -1163,7 +1163,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         endforeach ()
         target_compile_options(${_target} PRIVATE ${_swift_only_options})
 
-        if (CMAKE_SYSTEM_NAME STREQUAL "iOS" AND CMAKE_OSX_SYSROOT)
+        if (APPLE AND CMAKE_OSX_SYSROOT)
             target_compile_options(${_target} PRIVATE
                 # Our just-built frameworks must come before the SDK's
                 # PrivateFrameworks so `<WebCore/X.h>` etc. resolve to cmake-built

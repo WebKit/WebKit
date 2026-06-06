@@ -74,16 +74,25 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT CMAKE_SYSTEM_NAME STREQUAL 
     # only after project() via include(WebKitCommon), so it is too late.
     # WEBKIT_XCRUN is also unavailable here because WebKitXcrun.cmake is
     # included by OptionsMac.cmake.
-    execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
+    #
+    # Prefer the internal SDK (matching Xcode) with a public fallback; keep in sync
+    # with WEBKIT_RESOLVE_SDK(macosx.internal macosx) in OptionsMac.cmake.
+    execute_process(COMMAND xcrun --sdk macosx.internal --show-sdk-path
         OUTPUT_VARIABLE _macos_sysroot
         OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE _xcrun_result
+        RESULT_VARIABLE _internal_sdk_result
         ERROR_QUIET)
-    if (_xcrun_result EQUAL 0 AND _macos_sysroot)
+    if (NOT _internal_sdk_result EQUAL 0 OR NOT _macos_sysroot)
+        execute_process(COMMAND xcrun --sdk macosx --show-sdk-path
+            OUTPUT_VARIABLE _macos_sysroot
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET)
+    endif ()
+    if (_macos_sysroot)
         set(CMAKE_OSX_SYSROOT "${_macos_sysroot}" CACHE PATH "macOS SDK path" FORCE)
     endif ()
     unset(_macos_sysroot)
-    unset(_xcrun_result)
+    unset(_internal_sdk_result)
 endif ()
 
 project(WebKit LANGUAGES C CXX)

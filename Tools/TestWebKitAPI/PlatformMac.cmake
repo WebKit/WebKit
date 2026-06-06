@@ -95,6 +95,16 @@ list(APPEND TestWebKit_SOURCES
     Helpers/mac/TestFontOptions.mm
     Helpers/mac/TestInspectorBar.mm
     Helpers/mac/VirtualGamepad.mm
+
+    Helpers/mac/GamepadMappings/GoogleStadia.mm
+    Helpers/mac/GamepadMappings/LogitechF310.mm
+    Helpers/mac/GamepadMappings/LogitechF710.mm
+    Helpers/mac/GamepadMappings/MicrosoftXboxOne.mm
+    Helpers/mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm
+    Helpers/mac/GamepadMappings/SonyDualShock3.mm
+    Helpers/mac/GamepadMappings/SonyDualShock4.mm
+    Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
+    Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
     Helpers/mac/WKWebViewForTestingImmediateActions.mm
     Helpers/mac/WebKitAgnosticTest.mm
 
@@ -143,6 +153,12 @@ list(APPEND TestWebKit_LIBRARIES
     WebKitLegacy
     ${CARBON_LIBRARY}
 )
+
+# HID (private framework, HIDUserDevice) backs VirtualGamepad.mm's tests under
+# USE(APPLE_INTERNAL_SDK); absent from public SDKs, so only link it there.
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND TestWebKit_LIBRARIES "-framework HID")
+endif ()
 
 set_source_files_properties(Helpers/cocoa/WebExtensionUtilities.mm PROPERTIES
     COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_CURRENT_SOURCE_DIR}/Helpers/TestWebKitAPIPrefix.h"

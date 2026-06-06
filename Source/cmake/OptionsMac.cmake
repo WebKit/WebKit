@@ -1,15 +1,11 @@
 include(WebKitVersion)
 
-# Enable Objective-C / Objective-C++ so .m/.mm sources use the OBJC/OBJCXX
-# compile rules and $<COMPILE_LANGUAGE:OBJC/OBJCXX> generator expressions
-# match. Without this CMake compiles .mm as CXX, CMAKE_OBJCXX_FLAGS are
-# ignored, and WEBKIT_ADD_PREFIX_HEADER produces no OBJCXX precompiled
-# header for .mm sources.
+# Enable OBJC/OBJCXX so .mm sources use the OBJCXX compile rules, flags, and PCH;
+# otherwise CMake compiles them as CXX and the COMPILE_LANGUAGE expressions miss.
 enable_language(OBJC OBJCXX)
 
 WEBKIT_OPTION_BEGIN()
-# Private options shared with other WebKit ports. Add options here only if
-# we need a value different from the default defined in WebKitFeatures.cmake.
+# Override only options whose WebKitFeatures.cmake default differs from what Mac needs.
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS PRIVATE ON)
 
@@ -40,6 +36,10 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LEGACY_ENCRYPTED_MEDIA PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SOURCE PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_RECORDER PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_STREAM PRIVATE ON)
+# PlatformEnableCocoa.h enables all three on Mac (WebKitFeatures.cmake defaults them off).
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION_COORDINATOR PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION_PLAYLIST PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEMORY_SAMPLER PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MOUSE_CURSOR_SCALE PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PAYMENT_REQUEST PRIVATE ON)
@@ -79,9 +79,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PRIVATE OFF)
 
-# FIXME: These derived features are manually mirrored from PlatformEnableCocoa.h because
-# IDL/CSS generators don't evaluate it. https://bugs.webkit.org/show_bug.cgi?id=312033
-# PlatformEnableCocoa.h-derived: MEDIA_SOURCE && GPU_PROCESS
+# FIXME: mirrored from PlatformEnableCocoa.h because IDL/CSS generators don't evaluate it
+# (MEDIA_SOURCE && GPU_PROCESS). https://bugs.webkit.org/show_bug.cgi?id=312033
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SOURCE_IN_WORKERS PRIVATE ON)
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_OFFSCREEN_CANVAS PRIVATE ON)
@@ -136,15 +135,26 @@ WEBKIT_OPTION_END()
 # rdar://177360289
 SET_AND_EXPOSE_TO_BUILD(ENABLE_BACK_FORWARD_LIST_SWIFT ON)
 
+# The C++<->Swift interop this needs isn't wired up in the CMake build yet; pin it off
+# (the OpenSource default) so the WebKit Swift module builds. cmakeconfig.h is -include'd
+# before wtf/Platform.h, so this pre-empts the SDK's feature-defines header.
+SET_AND_EXPOSE_TO_BUILD(ENABLE_IPC_TESTING_SWIFT OFF)
+
+# This build doesn't compile the Swift class WKTextSelectionController, so turn the
+# capability off (PlatformHave.h defaults it on for Mac) and WebViewImpl.mm won't
+# reference it. cmakeconfig.h is -include'd first, pre-empting the PlatformHave.h default.
+SET_AND_EXPOSE_TO_BUILD(HAVE_WK_TEXT_SELECTION_CONTROLLER OFF)
+
 # -----------------------------------------------------------------------------
 # Toolchain / SDK resolution
 # -----------------------------------------------------------------------------
 include(WebKitXcrun)
-WEBKIT_RESOLVE_SDK(macosx)
+# Prefer the internal SDK with a public fallback, matching the top-level
+# CMakeLists.txt (the toolchain must match CMAKE_OSX_SYSROOT).
+WEBKIT_RESOLVE_SDK(macosx.internal macosx)
 
-# Resolve the real clang once and pin it for the lifetime of this build tree.
-# This is a build speed optimization, and also a defense against tearing between
-# resolved toolchain and resolved SDK path / version.
+# Resolve clang once and pin it for this build tree: faster, and avoids tearing
+# between the resolved toolchain and the SDK path/version.
 WEBKIT_XCRUN(_clang -f clang)
 if (EXISTS "${_clang}")
     set(CMAKE_C_COMPILER "${_clang}")
@@ -205,14 +215,71 @@ set(WebKit_LIBRARY_TYPE SHARED)
 
 set(WEBKIT_MAX_BUNDLE_SIZE 128)
 
-# Add PrivateFrameworks to framework search path (mirrors Base.xcconfig).
+# Framework search paths (mirrors Base.xcconfig / OptionsIOS.cmake): the internal SDK
+# ships SPI as PrivateFrameworks, needed by clang and swiftc.
 if (CMAKE_OSX_SYSROOT)
     add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
+    add_link_options("-F${CMAKE_OSX_SYSROOT}/System/Library/Frameworks")
+    add_link_options("-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Fsystem ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
+    set(WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
 
-# Regenerate the Xcode debug wrapper on every (re)configure so its scheme paths
-# and lldbinit source-map track this binary directory. Runs at configure time
-# (not as a build target) to keep the no-op ninja build at zero actions.
+# Swift can't auto-derive USE(APPLE_INTERNAL_SDK) (no __has_include), so define it
+# explicitly; the -Xcc arm keeps the Swift clang-importer consistent. Mirrors OptionsIOS.cmake.
+if (USE_APPLE_INTERNAL_SDK)
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-DUSE_APPLE_INTERNAL_SDK>")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -DUSE_APPLE_INTERNAL_SDK>")
+endif ()
+
+# Mask TextInput_Private's modulemap with an empty one: its umbrella drags in ICU
+# types that break explicit-module Swift builds (via AppKit_Private <- SwiftUI).
+# macOS frameworks are versioned, so remap every modulemap path variant.
+set(_textinput_fw "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks/TextInput.framework")
+set(_textinput_private "${_textinput_fw}/Modules/module.private.modulemap")
+if (EXISTS "${_textinput_private}")
+    set(_empty_modulemap "${CMAKE_BINARY_DIR}/empty-module.private.modulemap")
+    file(WRITE "${_empty_modulemap}" "")
+
+    get_filename_component(_textinput_private_real "${_textinput_private}" REALPATH)
+    set(_textinput_private_current "${_textinput_fw}/Versions/Current/Modules/module.private.modulemap")
+    set(_ti_paths "${_textinput_private}")
+    if (NOT _textinput_private_current STREQUAL _textinput_private)
+        list(APPEND _ti_paths "${_textinput_private_current}")
+    endif ()
+    if (NOT _textinput_private_real IN_LIST _ti_paths)
+        list(APPEND _ti_paths "${_textinput_private_real}")
+    endif ()
+
+    set(_ti_objs "")
+    foreach (_ti_path IN LISTS _ti_paths)
+        list(APPEND _ti_objs "    { \"name\": \"${_ti_path}\", \"type\": \"file\", \"external-contents\": \"${_empty_modulemap}\" }")
+    endforeach ()
+    list(JOIN _ti_objs ",\n" _ti_roots)
+
+    set(_vfs_overlay "${CMAKE_BINARY_DIR}/mac-swift-vfs-overlay.yaml")
+    file(WRITE "${_vfs_overlay}" "{\n  \"version\": 0,\n  \"case-sensitive\": false,\n  \"roots\": [\n${_ti_roots}\n  ]\n}\n")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -ivfsoverlay -Xcc ${_vfs_overlay}>")
+    unset(_textinput_private_real)
+    unset(_textinput_private_current)
+    unset(_ti_paths)
+    unset(_ti_objs)
+    unset(_ti_roots)
+    unset(_vfs_overlay)
+    unset(_empty_modulemap)
+endif ()
+unset(_textinput_private)
+unset(_textinput_fw)
+
+# The internal SDK ships additional WebKit SPI headers under usr/local/include.
+# Add it for clang and the Swift clang importer. Mirrors OptionsIOS.cmake.
+if (CMAKE_OSX_SYSROOT AND EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include")
+    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${CMAKE_OSX_SYSROOT}/usr/local/include>")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include>")
+endif ()
+
+# Regenerate the Xcode debug wrapper at configure time so its scheme/lldbinit paths
+# track this build dir, without adding a build action.
 if (EXISTS ${TOOLS_DIR}/Scripts/generate-cmake-xcode-project)
     execute_process(
         COMMAND ${Python_EXECUTABLE}

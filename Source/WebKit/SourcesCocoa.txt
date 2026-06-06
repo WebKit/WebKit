@@ -57,7 +57,7 @@ NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities
 NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm @nonARC
 NetworkProcess/ios/NetworkProcessIOS.mm @nonARC
 
-NetworkProcess/mac/NetworkProcessMac.mm @nonARC
+NetworkProcess/mac/NetworkProcessMac.mm @nonARC @no-unify
 NetworkProcess/mac/SecItemShim.mm @nonARC
 
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
@@ -117,7 +117,7 @@ Platform/ios/VideoPresentationInterfaceLMK.mm @nonARC
 Platform/ios/VideoReceiverEndpointMessage.mm @nonARC
 Platform/ios/WKAVContentSource.mm @nonARC @no-unify
 
-Platform/mac/MenuUtilities.mm @nonARC
+Platform/mac/MenuUtilities.mm @nonARC @no-unify
 Platform/mac/StringUtilities.mm @nonARC
 
 Shared/API/c/cf/WKErrorCF.cpp
@@ -403,7 +403,7 @@ UIProcess/API/Cocoa/WKWebExtensionTabConfiguration.mm
 UIProcess/API/Cocoa/WKWebExtensionWindowConfiguration.mm
 UIProcess/API/Cocoa/WKWebsiteDataRecord.mm @nonARC
 UIProcess/API/Cocoa/WKWebsiteDataStore.mm @nonARC
-UIProcess/API/Cocoa/WKWebView.mm @nonARC
+UIProcess/API/Cocoa/WKWebView.mm @nonARC @no-unify
 UIProcess/API/Cocoa/WKWebViewTesting.mm @nonARC
 UIProcess/API/Cocoa/WKWebViewConfiguration.mm @nonARC
 UIProcess/API/Cocoa/WKWebpagePreferences.mm @nonARC
@@ -479,7 +479,7 @@ UIProcess/Cocoa/ViewSnapshotStoreCocoa.mm @nonARC
 UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp
 UIProcess/Cocoa/WebKitSwiftSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm @nonARC
-UIProcess/Cocoa/WebPageProxyCocoa.mm @nonARC @cost:12
+UIProcess/Cocoa/WebPageProxyCocoa.mm @nonARC @cost:12 @no-unify
 UIProcess/Cocoa/WebPasteboardProxyCocoa.mm @nonARC @cost:5
 UIProcess/Cocoa/WebPreferencesCocoa.mm @nonARC
 UIProcess/Cocoa/WebProcessCacheCocoa.mm @nonARC
@@ -488,7 +488,7 @@ UIProcess/Cocoa/WebProcessProxyCocoa.mm @nonARC
 UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm @nonARC
 UIProcess/Cocoa/WKColorExtensionView.mm @nonARC
 UIProcess/Cocoa/WKContactPicker.mm @nonARC
-UIProcess/Cocoa/WKEditCommand.mm @nonARC
+UIProcess/Cocoa/WKEditCommand.mm @nonARC @no-unify
 UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm @nonARC
 UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm @nonARC
 UIProcess/Cocoa/WKScreenTimeConfigurationObserver.mm @nonARC
@@ -865,7 +865,7 @@ WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm @nonARC
 WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.mm @nonARC
 WebProcess/Plugins/PDF/UnifiedPDF/PDFPresentationController.mm @nonARC @cost:3
 WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm @nonARC @cost:3
-WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
+WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7 @no-unify
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp

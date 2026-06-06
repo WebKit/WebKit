@@ -150,7 +150,7 @@ bindings/js/ScriptControllerMac.mm @nonARC
 bridge/objc/ObjCRuntimeObject.mm @nonARC @no-unify-when(bundle<=8) @cost:4
 bridge/objc/WebScriptObject.mm @nonARC @no-unify-when(bundle<=8) @cost:6
 bridge/objc/objc_class.mm @nonARC @no-unify-when(bundle<=8) @cost:5
-bridge/objc/objc_instance.mm @nonARC @no-unify-when(bundle<=8) @cost:4
+bridge/objc/objc_instance.mm @nonARC @no-unify @cost:4
 bridge/objc/objc_runtime.mm @nonARC @no-unify-when(bundle<=8) @cost:5
 bridge/objc/objc_utility.mm @nonARC @no-unify-when(bundle<=8) @cost:5
 crypto/cocoa/CommonCryptoDERUtilities.cpp
@@ -358,49 +358,49 @@ platform/gamepad/mac/LogitechGamepad.cpp
 platform/gamepad/mac/MultiGamepadProvider.mm @nonARC
 platform/gamepad/mac/StadiaHIDGamepad.cpp
 platform/graphics/MediaPlaybackTargetPicker.cpp
-platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/AudioVideoRendererAVFObjC.mm @nonARC
+platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @nonARC @no-unify
+platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/AudioVideoRendererAVFObjC.mm @nonARC @no-unify
 platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
 platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.cpp
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
-platform/graphics/avfoundation/LegacyCDMPrivateAVFObjC.mm @nonARC
-platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm @nonARC
+platform/graphics/avfoundation/LegacyCDMPrivateAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm @nonARC @no-unify
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
-platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @nonARC
+platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @nonARC @no-unify
 platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
-platform/graphics/avfoundation/WebAVSampleBufferListener.mm @nonARC @no-unify-when(bundle<=8)
+platform/graphics/avfoundation/WebAVSampleBufferListener.mm @nonARC @no-unify
 platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
-platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm @nonARC
-platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm @nonARC
-platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm @nonARC
-platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm @nonARC
+platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm @nonARC @no-unify
 platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
-platform/graphics/avfoundation/objc/CDMFairPlayStreamingAVFObjC.mm @nonARC
-platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm @nonARC
-platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm @nonARC
-platform/graphics/avfoundation/objc/ContentKeyGroupFactoryAVFObjC.mm @nonARC
-platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm @nonARC
-platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @nonARC @no-unify-when(bundle<=8) @cost:9
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @nonARC @no-unify-when(bundle<=8) @cost:8
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm @nonARC @no-unify-when(bundle<=8) @cost:6
-platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm @nonARC
-platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm @nonARC
-platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @nonARC @no-unify-when(bundle<=8) @cost:7
-platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @nonARC @no-unify-when(bundle<=8) @cost:5
+platform/graphics/avfoundation/objc/CDMFairPlayStreamingAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/ContentKeyGroupFactoryAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @nonARC @no-unify @cost:9
+platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @nonARC @no-unify @cost:8
+platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm @nonARC @no-unify @cost:6
+platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @nonARC @no-unify @cost:7
+platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @nonARC @no-unify @cost:5
 platform/graphics/avfoundation/objc/TextTrackPrivateMediaSourceAVFObjC.cpp
-platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @nonARC @no-unify-when(bundle<=8)
+platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @nonARC @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
-platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @nonARC
-platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm @nonARC @no-unify-when(bundle<=8)
-platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @nonARC
+platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm @nonARC @no-unify
+platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @nonARC @no-unify
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp
 platform/graphics/ca/PlatformCAAnimation.cpp
@@ -492,7 +492,7 @@ platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm @nonARC
 platform/graphics/cocoa/WebCoreCALayerExtras.mm @nonARC
 platform/graphics/cocoa/WebCoreDecompressionSession.mm @nonARC
 platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm @nonARC
-platform/graphics/cocoa/VideoMediaSampleRenderer.mm @nonARC
+platform/graphics/cocoa/VideoMediaSampleRenderer.mm @nonARC @no-unify
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/cocoa/WebLayer.mm @nonARC
 platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm @nonARC
@@ -633,8 +633,8 @@ platform/mac/PasteboardMac.mm @nonARC
 platform/mac/PasteboardWriter.mm @nonARC
 platform/mac/PlatformEventFactoryMac.mm @nonARC
 platform/mac/PlatformPasteboardMac.mm @nonARC
-platform/mac/PlatformScreenMac.mm @nonARC
-platform/mac/PlaybackSessionInterfaceMac.mm @nonARC @no-unify-when(bundle<=8)
+platform/mac/PlatformScreenMac.mm @nonARC @no-unify
+platform/mac/PlaybackSessionInterfaceMac.mm @nonARC @no-unify
 platform/mac/PowerObserverMac.cpp
 platform/mac/RevealUtilities.mm @nonARC
 platform/mac/ScrollAnimatorMac.mm @nonARC @no-unify-when(bundle<=8) @cost:3
@@ -652,19 +652,19 @@ platform/mac/ThreadCheck.mm @nonARC @no-unify-when(bundle<=8)
 platform/mac/UserActivityMac.mm @nonARC
 platform/mac/UserAgentMac.mm @nonARC
 platform/mac/ValidationBubbleMac.mm @nonARC
-platform/mac/VideoPresentationInterfaceMac.mm @nonARC
+platform/mac/VideoPresentationInterfaceMac.mm @nonARC @no-unify
 platform/mac/WebCoreFullScreenPlaceholderView.mm @nonARC
 platform/mac/WebCoreFullScreenWarningView.mm @nonARC
 platform/mac/WebCoreFullScreenWindow.mm @nonARC
 platform/mac/WebCoreNSFontManagerExtras.mm @nonARC
-platform/mac/WebPlaybackControlsManager.mm @nonARC
+platform/mac/WebPlaybackControlsManager.mm @nonARC @no-unify
 platform/mac/WidgetMac.mm @nonARC
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterAVFObjC.mm @nonARC
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterWebM.cpp
 platform/mediastream/cocoa/AVCaptureDeviceManager.mm @nonARC @no-unify-when(bundle<=8)
-platform/mediastream/cocoa/AVVideoCaptureSource.mm @nonARC @no-unify-when(bundle<=8) @cost:3
+platform/mediastream/cocoa/AVVideoCaptureSource.mm @nonARC @no-unify @cost:3
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
@@ -680,7 +680,7 @@ platform/mediastream/cocoa/MediaStreamTrackAudioSourceProviderCocoa.cpp
 platform/mediastream/cocoa/MockAudioCaptureUnit.mm @nonARC
 platform/mediastream/cocoa/MockRealtimeVideoSourceCocoa.mm @nonARC
 platform/mediastream/cocoa/RealtimeIncomingAudioSourceCocoa.cpp
-platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm @nonARC
+platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm @nonARC @no-unify
 platform/mediastream/cocoa/RealtimeMediaSourceCenterCocoa.cpp
 platform/mediastream/cocoa/RealtimeMediaSourceCenterCocoa.mm @nonARC
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
@@ -715,7 +715,7 @@ platform/network/cocoa/ProtectionSpaceCocoa.mm @nonARC
 platform/network/cocoa/RangeResponseGenerator.mm @nonARC
 platform/network/cocoa/ResourceRequestCocoa.mm @nonARC
 platform/network/cocoa/ResourceErrorCocoa.mm @nonARC
-platform/network/cocoa/ResourceHandleCocoa.mm @nonARC
+platform/network/cocoa/ResourceHandleCocoa.mm @nonARC @no-unify // @TRUE boxed literal collides with unified macros.
 platform/network/cocoa/ResourceResponseCocoa.mm @nonARC
 platform/network/cocoa/SynchronousLoaderClient.mm @nonARC
 platform/network/cocoa/UTIUtilities.mm @nonARC
@@ -730,7 +730,7 @@ platform/text/cocoa/LocalizedDateCache.mm @nonARC
 platform/text/cocoa/TextBoundaries.mm @nonARC
 platform/text/mac/TextCheckingMac.mm @nonARC
 platform/video-codecs/cocoa/VideoDecoderVTB.mm @nonARC
-platform/video-codecs/cocoa/WebRTCVideoDecoder.mm @nonARC
+platform/video-codecs/cocoa/WebRTCVideoDecoder.mm @nonARC @no-unify // Includes libwebrtc headers with macro pollution.
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTB.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBVP9.mm @nonARC

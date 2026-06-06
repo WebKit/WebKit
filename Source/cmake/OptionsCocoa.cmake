@@ -111,7 +111,11 @@ unset(_additions_candidates)
 unset(_additions)
 unset(_additions_found)
 
-if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
+# Only stub AppleFeatures when no real header is reachable on the host or in the SDK
+# (the internal SDK ships the real one defining the APPLE_FEATURE_* macros).
+if (EXISTS "/usr/local/include/WebKitAdditions"
+    AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h"
+    AND NOT EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/AppleFeatures/AppleFeatures.h")
     set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
     file(MAKE_DIRECTORY "${_apple_features_stub}")
     file(CONFIGURE OUTPUT "${_apple_features_stub}/AppleFeatures.h" CONTENT
@@ -141,7 +145,7 @@ add_compile_options(
     "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
 )
 
-if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
+if (USE_APPLE_INTERNAL_SDK)
     add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)
 endif ()
 

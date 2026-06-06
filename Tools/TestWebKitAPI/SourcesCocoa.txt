@@ -110,7 +110,7 @@ Tests/WebKit/WKWebView/CookieAcceptPolicy.mm @nonARC
 Tests/WebKit/WKWebView/CookiePrivateBrowsing.mm @nonARC
 Tests/WebKit/WKWebView/CookieStoreAPI.mm @nonARC
 Tests/WebKit/WKWebView/CopyHTML.mm @nonARC
-Tests/WebKit/WKWebView/CopyRTF.mm @nonARC
+Tests/WebKit/WKWebView/CopyRTF.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/CopyURL.mm @nonARC
 Tests/WebKit/WKWebView/Copying.mm @nonARC
 Tests/WebKit/WKWebView/CreateWebArchive.mm @nonARC
@@ -138,7 +138,7 @@ Tests/WebKit/WKWebView/EventAttribution.mm @nonARC
 Tests/WebKit/WKWebView/ExitFullscreenOnEnterPiP.mm @nonARC
 Tests/WebKit/WKWebView/ExitPiPOnSuspendVideoElement.mm @nonARC
 Tests/WebKit/WKWebView/FTP.mm @nonARC
-Tests/WebKit/WKWebView/FileSystemAccess.mm @nonARC
+Tests/WebKit/WKWebView/FileSystemAccess.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/FindInPage.mm @nonARC
 Tests/WebKit/WKWebView/FindInPageAPI.mm @nonARC
 Tests/WebKit/WKWebView/FirstVisuallyNonEmptyMilestone.mm @nonARC
@@ -221,7 +221,7 @@ Tests/WebKit/WKWebView/NetworkProcessCrashNonPersistentDataStore.mm @nonARC
 Tests/WebKit/WKWebView/NoPauseWhenSwitchingTabs.mm @nonARC
 Tests/WebKit/WKWebView/NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm @nonARC
 Tests/WebKit/WKWebView/NotificationAPI.mm @nonARC
-Tests/WebKit/WKWebView/NowPlaying.mm @nonARC
+Tests/WebKit/WKWebView/NowPlaying.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/NowPlayingControlsTests.mm @nonARC
 Tests/WebKit/WKWebView/ObscuredContentInsets.mm @nonARC
 Tests/WebKit/WKWebView/ObservedRenderingProgressEventsAfterCrash.mm @nonARC
@@ -274,7 +274,7 @@ Tests/WebKit/WKWebView/RunScriptAfterDocumentLoad.mm @nonARC
 Tests/WebKit/WKWebView/SafeBrowsing.mm @nonARC
 Tests/WebKit/WKWebView/SampledPageTopColor.mm @nonARC
 Tests/WebKit/WKWebView/SchemeRegistry.mm @nonARC
-Tests/WebKit/WKWebView/ScreenTime.mm @nonARC
+Tests/WebKit/WKWebView/ScreenTime.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/ScreenWakeLock.mm @nonARC
 Tests/WebKit/WKWebView/SerializedNode.mm @nonARC
 Tests/WebKit/WKWebView/ScriptTrackingPrivacyTests.mm @nonARC
@@ -303,7 +303,7 @@ Tests/WebKit/WKWebView/TabOutOfWebView.mm @nonARC
 Tests/WebKit/WKWebView/TestAwakener.mm @nonARC
 Tests/WebKit/WKWebView/SOAuthorizationTests.mm @nonARC
 Tests/WebKit/WKWebView/TestURLSchemeHandler.mm @nonARC
-Tests/WebKit/WKWebView/TextExtractionTests.mm @nonARC
+Tests/WebKit/WKWebView/TextExtractionTests.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/TextFragments.mm @nonARC
 Tests/WebKit/WKWebView/TextManipulation.mm @nonARC
 Tests/WebKit/WKWebView/TextSize.mm @nonARC

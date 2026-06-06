@@ -91,7 +91,7 @@ Tests/WebKit/WKWebView/mac/ScrollingCoordinatorTests.mm @nonARC
 Tests/WebKit/WKWebView/mac/SetAndUpdateCacheModel.mm @nonARC
 Tests/WebKit/WKWebView/mac/SetDocumentURI.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/SimplifyMarkup.mm @nonARC @no-unify
-Tests/WebKit/WKWebView/mac/SkipAdInPictureInPicture.mm @nonARC
+Tests/WebKit/WKWebView/mac/SkipAdInPictureInPicture.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/SpellCheckerDocumentTag.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/StartLoadInDidFailProvisionalLoad.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/mac/StopLoadingFromDidFinishLoading.mm @nonARC @no-unify

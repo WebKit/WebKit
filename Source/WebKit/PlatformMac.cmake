@@ -42,9 +42,17 @@ list(APPEND WebKit_SOURCES
     UIProcess/PDF/WKPDFHUDView.mm
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
+    ${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 )
+
+# WebKitAdditions Swift sources, staged by WebKitAdditions/CMake/OptionsMac.cmake on
+# internal-SDK builds; only set when that ran.
+if (WEBKIT_ADDITIONS_SWIFT_SOURCES)
+    list(APPEND WebKit_SOURCES ${WEBKIT_ADDITIONS_SWIFT_SOURCES})
+endif ()
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
@@ -109,6 +117,9 @@ foreach (_dir IN LISTS WebKit_SWIFT_INCLUDE_DIRECTORIES)
     target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${_dir}>")
 endforeach ()
 
+# generate-derived-log-sources.py only emits the Stream receiver attribute when this
+# define (on for all Cocoa platforms) is in its argument list.
+set(_log_defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ENABLE_STREAMING_IPC_IN_LOG_FORWARDING")
 add_custom_command(
     OUTPUT ${_log_messages_generated}
     DEPENDS
@@ -119,7 +130,7 @@ add_custom_command(
         ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-derived-log-sources.py
         ${_log_messages_inputs}
         ${_log_messages_generated}
-        "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+        "${_log_defines}"
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )
@@ -608,6 +619,14 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_versi
 target_link_options(WebKit PRIVATE -lsandbox -framework AuthKit -F${CMAKE_BINARY_DIR} -weak_framework WebInspectorUI -Wl,-u,_WebInspectorUIFrameworkLoad)
 add_dependencies(WebKit WebInspectorUIFramework)
 
+# Mirror WebKit.xcconfig: text-extraction uses CoreML + NaturalLanguage, webpushd uses
+# libbsm. WebKit links via swiftc, which takes -weak_framework but not -weak_library.
+target_link_options(WebKit PRIVATE
+    "SHELL:-weak_framework CoreML"
+    "SHELL:-weak_framework NaturalLanguage"
+    "SHELL:-Xlinker -weak_library -Xlinker ${CMAKE_OSX_SYSROOT}/usr/lib/libbsm.tbd"
+)
+
 # Match WebKit.xcconfig REEXPORTED_FRAMEWORK_NAMES / REEXPORTED_LIBRARY_NAMES so
 # the CMake-built framework exports the same ABI as the Xcode build. Without the
 # WebKitLegacy re-export, clients that link WebKit.framework expecting WK1
@@ -708,7 +727,12 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             break ()
         endif ()
     endforeach ()
-    if (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures/AppleFeatures.h")
+    # wtf/Platform.h transitively #includes <AppleFeatures/AppleFeatures.h>, but this
+    # clang invocation has no -isysroot; point it at the SDK's usr/local/include, else
+    # fall back to the stub OptionsCocoa.cmake generates.
+    if (CMAKE_OSX_SYSROOT AND EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/AppleFeatures/AppleFeatures.h")
+        list(APPEND _sb_extra_includes "-isystem" "${CMAKE_OSX_SYSROOT}/usr/local/include")
+    elseif (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures/AppleFeatures.h")
         list(APPEND _sb_extra_includes "-isystem" "${CMAKE_BINARY_DIR}/generated-stubs")
     endif ()
     # Pass -fsanitize so sandbox preprocessor sees __has_feature(address_sanitizer).

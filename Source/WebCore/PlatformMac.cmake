@@ -1,5 +1,14 @@
 include(PlatformCocoa.cmake)
 
+# Mac gesture events (ENABLE_MAC_GESTURE_EVENTS, on for internal-SDK builds) are
+# implemented in WebKitAdditions. Wire in the additions IDL + sources when present.
+if (WEBKIT_ADDITIONS_INCLUDE_PATH AND EXISTS "${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/GestureEvents.cmake")
+    include("${WEBKIT_ADDITIONS_INCLUDE_PATH}/WebKitAdditions/CMake/GestureEvents.cmake")
+endif ()
+if (WEBKIT_ADDITIONS_COMPILE_PATH AND EXISTS "${WEBKIT_ADDITIONS_COMPILE_PATH}/WebKitAdditions")
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WEBKIT_ADDITIONS_COMPILE_PATH}/WebKitAdditions")
+endif ()
+
 # Localizable.strings for copyLocalizedString(). Xcode copies via CopyFiles build phase.
 # Configure-time -- files rarely change, no build edge needed.
 file(COPY "${WEBCORE_DIR}/en.lproj"

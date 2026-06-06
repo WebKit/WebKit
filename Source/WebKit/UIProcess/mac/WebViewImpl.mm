@@ -1430,7 +1430,9 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     m_appKitGestureController = adoptNS([[WKAppKitGestureController alloc] initWithPage:m_page viewImpl:*this]);
+#if HAVE(WK_TEXT_SELECTION_CONTROLLER)
     m_textSelectionController = adoptNS([[WKTextSelectionController alloc] initWithView:view]);
+#endif
 #endif
 
     WebProcessPool::statistics().wkViewCount++;
