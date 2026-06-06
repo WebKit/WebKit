@@ -1049,8 +1049,12 @@ String ShorthandSerializer::serializeFont() const
     if (widthKeyword == CSSValueInvalid) {
         Ref widthValue = downcast<CSSPrimitiveValue>(longhandValue(widthIndex));
         auto keyword = WTF::switchOn(widthValue.get(),
-            [](const CSSPrimitiveValue::Calc&) -> std::optional<CSSValueID> {
-                return std::nullopt;
+            [](const CSSPrimitiveValue::Calc& calc) -> std::optional<CSSValueID> {
+                // A calc() that resolves to a constant percentage (no length/font units) can be
+                // expressed as a font width keyword; anything requiring conversion data cannot.
+                if (calc.requiresConversionData())
+                    return std::nullopt;
+                return fontWidthKeyword(calc.evaluate(NoConversionDataRequiredToken { }));
             },
             [](const CSSPrimitiveValue::Raw& raw) -> std::optional<CSSValueID> {
                 if (raw.unit != CSSUnitType::CSS_PERCENTAGE)
