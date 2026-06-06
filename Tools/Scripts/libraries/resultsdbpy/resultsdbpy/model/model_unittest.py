@@ -25,15 +25,15 @@ from redis import StrictRedis
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 
-class ModelTest(WaitForDockerTestCase):
+class ModelTest(CassandraTestCase):
     KEYSPACE = 'model_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(
                 redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
                 async_processing=async_processing,
@@ -41,11 +41,11 @@ class ModelTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_health(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.assertTrue(self.model.healthy())
         self.assertTrue(self.model.healthy(writable=False))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_no_work(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
+        self.reset_database(redis=redis, cassandra=cassandra, async_processing=True)
         self.assertFalse(self.model.do_work())

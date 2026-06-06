@@ -29,22 +29,22 @@ from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.test_context import Expectations
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 
-class TestContextTest(WaitForDockerTestCase):
+class TestContextTest(CassandraTestCase):
     KEYSPACE = 'test_context_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             MockModelFactory.add_mock_results(self.model)
             MockModelFactory.process_results(self.model)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_list_all(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.names(suite='layout-tests')
         self.assertEqual(results, [
             'fast/encoding/css-cached-bom.html',
@@ -55,7 +55,7 @@ class TestContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_list_partial(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.names(suite='layout-tests', test='fast/encoding/css-charset')
         self.assertEqual(results, [
             'fast/encoding/css-charset-default.xhtml',
@@ -64,7 +64,7 @@ class TestContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_all(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.find_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', test='fast/encoding/css-link-charset.html', recent=True,
@@ -80,7 +80,7 @@ class TestContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_by_commit(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.find_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', test='fast/encoding/css-cached-bom.html', recent=False,
@@ -93,7 +93,7 @@ class TestContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_by_time(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', test='fast/encoding/css-charset.html', recent=False,

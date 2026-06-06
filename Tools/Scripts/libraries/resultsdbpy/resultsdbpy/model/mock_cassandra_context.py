@@ -22,6 +22,7 @@
 
 import re
 import time
+import uuid
 from collections import defaultdict
 from unittest import mock
 
@@ -79,7 +80,6 @@ class MockCQLEngineContext():
             mock.patch('resultsdbpy.model.cassandra_context.get_cluster', new=self.get_cluster),
             mock.patch('resultsdbpy.model.cassandra_context.create_keyspace_simple', new=self.create_keyspace_simple),
             mock.patch('resultsdbpy.model.cassandra_context.create_keyspace_network_topology', new=self.create_keyspace_network_topology),
-            mock.patch('resultsdbpy.model.cassandra_context.drop_keyspace', new=self.drop_keyspace),
             mock.patch('resultsdbpy.model.cassandra_context.sync_table', new=self.sync_table),
         ]
 
@@ -131,6 +131,16 @@ class MockCQLEngineContext():
                 del MockCluster.database[name]
 
     @classmethod
+    def truncate_keyspace_tables(cls, name, connections=[]):
+        for connection in connections:
+            assert connection in cls.connections
+            keyspace_meta = cls.get_cluster(connection).metadata.keyspaces.get(name)
+            if keyspace_meta is None:
+                continue
+            for table_name in keyspace_meta.tables:
+                MockCluster.database[name][table_name].clear()
+
+    @classmethod
     def sync_table(cls, model, keyspaces=[], connections=[]):
         for connection in connections:
             assert connection in cls.connections
@@ -170,9 +180,24 @@ class MockCQLEngineContext():
 class MockCassandraContext(CassandraContext):
 
     @classmethod
-    def drop_keyspace(cls, *args, **kwargs):
+    def drop_keyspace(cls, nodes=None, keyspace='results_database', auth_provider=None, protocol_version=4):
         with MockCQLEngineContext():
-            CassandraContext.drop_keyspace(*args, **kwargs)
+            connection_id = uuid.uuid4()
+            try:
+                MockCQLEngineContext.register_connection(name=str(connection_id), session=MockCluster().connect())
+                MockCQLEngineContext.drop_keyspace(keyspace, connections=[str(connection_id)])
+            finally:
+                MockCQLEngineContext.unregister_connection(name=str(connection_id))
+
+    @classmethod
+    def truncate_keyspace_tables(cls, nodes=None, keyspace='results_database', auth_provider=None, protocol_version=4):
+        with MockCQLEngineContext():
+            connection_id = uuid.uuid4()
+            try:
+                MockCQLEngineContext.register_connection(name=str(connection_id), session=MockCluster().connect())
+                MockCQLEngineContext.truncate_keyspace_tables(keyspace, connections=[str(connection_id)])
+            finally:
+                MockCQLEngineContext.unregister_connection(name=str(connection_id))
 
     def __init__(self, *args, **kwargs):
         self._mock_cql_engine = MockCQLEngineContext()

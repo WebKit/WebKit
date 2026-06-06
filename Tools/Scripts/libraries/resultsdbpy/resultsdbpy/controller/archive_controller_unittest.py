@@ -47,7 +47,7 @@ class ArchiveControllerUnittest(FlaskTestCase, WaitForDockerTestCase):
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari() as safari_mock, MockModelFactory.webkit() as webkit_mock:
             redis_instance = redis()
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
 
             model = Model(

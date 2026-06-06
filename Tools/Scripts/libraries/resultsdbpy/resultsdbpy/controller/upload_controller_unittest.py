@@ -39,7 +39,7 @@ class UploadControllerPostTest(FlaskTestCase, WaitForDockerTestCase):
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
             model.upload_context.register_upload_callback('python-tests', lambda **kwargs: dict(status='ok'))
             app.register_blueprint(APIRoutes(model))
@@ -116,7 +116,7 @@ class UploadControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
             model.upload_context.register_upload_callback('python-tests', lambda **kwargs: dict(status='ok'))
             MockModelFactory.add_mock_results(model)

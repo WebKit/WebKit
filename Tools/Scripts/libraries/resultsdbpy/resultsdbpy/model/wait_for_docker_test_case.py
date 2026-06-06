@@ -26,6 +26,7 @@ import unittest
 
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
+from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.docker import Docker
 
 
@@ -73,3 +74,16 @@ class WaitForDockerTestCase(unittest.TestCase):
             return cls.run_if_has_docker()(real_method)
 
         return decorator
+
+
+class CassandraTestCase(WaitForDockerTestCase):
+    KEYSPACE = None
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        if int(os.environ.get('slow_tests', '0')) and Docker.is_running():
+            docker_cm = Docker.instance()
+            docker_cm.__enter__()
+            cls.addClassCleanup(docker_cm.__exit__, None, None, None)
+            cls.addClassCleanup(CassandraContext.drop_keyspace, keyspace=cls.KEYSPACE)

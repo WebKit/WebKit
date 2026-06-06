@@ -44,7 +44,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
             safari = StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari')
             webkit = WebKitRepository()
 
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             cassandra_instance = cassandra(keyspace=cls.KEYSPACE, create_keyspace=True)
 
             model = Model(redis=redis_instance, cassandra=cassandra_instance, repositories=[safari, webkit])

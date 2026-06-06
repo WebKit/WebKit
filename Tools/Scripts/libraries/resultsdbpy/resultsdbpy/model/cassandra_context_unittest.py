@@ -35,7 +35,7 @@ class CassandraTest(WaitForDockerTestCase):
     KEYSPACE = 'keyspace_for_testing'
     TABLE = 'example_table'
 
-    def init_database(self, cassandra=CassandraContext):
+    def reset_database(self, cassandra=CassandraContext):
         cassandra.drop_keyspace(keyspace=self.KEYSPACE)
         self.database = cassandra(keyspace=self.KEYSPACE, create_keyspace=True)
 
@@ -46,7 +46,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_session_assertion(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.assertRaises(AssertionError):
             self.database.assert_connected()
 
@@ -64,14 +64,14 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_create_table(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             example_table = self.create_testing_table()
             self.assertTrue(self.database.does_table_model_match_schema(example_table))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_existing_table_more_columns(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.create_testing_table()
             with self.assertRaises(CassandraContext.SchemaException):
@@ -87,7 +87,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_existing_table_different_columns(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.create_testing_table()
             with self.assertRaises(CassandraContext.SchemaException):
@@ -102,7 +102,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_existing_table_different_primary_key(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.create_testing_table()
             with self.assertRaises(CassandraContext.SchemaException):
@@ -117,7 +117,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_existing_table_different_clustering_order(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.create_testing_table()
             with self.assertRaises(CassandraContext.SchemaException):
@@ -132,7 +132,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_existing_table_column_order(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -156,7 +156,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_insert_rows(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -179,7 +179,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_duplicate_row(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -199,7 +199,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_search_by_other_value(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -223,7 +223,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_search_with_multiple_keys(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -246,7 +246,7 @@ class CassandraTest(WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     @WaitForDockerTestCase.run_if_slow()
     def test_time_to_live(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -282,7 +282,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_limit(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             self.assertEqual(len(self.database.select_from_table(self.TABLE, value1='five')), 5)
@@ -291,7 +291,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_order(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             previous = None
@@ -313,7 +313,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_reverse_order(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table(clustering_order='DESC')
             previous = None
@@ -335,7 +335,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_gt(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             self.assertEqual(len(self.database.select_from_table(self.TABLE, value1='one', value2__gt=1)), 0)
@@ -344,7 +344,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_lt(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             self.assertEqual(len(self.database.select_from_table(self.TABLE, value1='one', value2__lt=1)), 0)
@@ -353,7 +353,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_gte(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             self.assertEqual(len(self.database.select_from_table(self.TABLE, value1='one', value2__gte=2)), 0)
@@ -362,7 +362,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_lte(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             self.assertEqual(len(self.database.select_from_table(self.TABLE, value1='one', value2__lte=0)), 0)
@@ -371,14 +371,14 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_between(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.populate_comparison_table()
             self.assertEqual(len(self.database.select_from_table(self.TABLE, value1='five', value2__gt=1, value2__lt=5)), 3)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_multiple_primary(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
 
             class ExampleTable(Model):
@@ -409,7 +409,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_query_with_none(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         self.create_testing_table()
 
         with self.database:
@@ -423,7 +423,7 @@ class CassandraTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
     def test_batch_query(self, cassandra=CassandraContext):
-        self.init_database(cassandra=cassandra)
+        self.reset_database(cassandra=cassandra)
         with self.database:
             self.create_testing_table()
 
@@ -437,3 +437,21 @@ class CassandraTest(WaitForDockerTestCase):
                 for index in range(len(results)):
                     self.assertEqual(index, results[index].value2)
                     self.assertEqual(index, results[index].value3)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_cassandra=MockCassandraContext)
+    def test_truncate_keyspace_tables(self, cassandra=CassandraContext):
+        self.reset_database(cassandra=cassandra)
+        with self.database:
+            example_table = self.create_testing_table()
+            self.database.insert_row(self.TABLE, value1='key', value2=1, value3=10)
+            self.assertEqual(1, len(self.database.select_from_table(self.TABLE, value1='key')))
+
+        cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
+
+        reopened = cassandra(keyspace=self.KEYSPACE)
+        with reopened:
+            self.assertTrue(reopened.does_table_model_match_schema(example_table))
+            reopened.create_table(example_table)
+            self.assertEqual(0, len(reopened.select_from_table(self.TABLE, value1='key')))
+            reopened.insert_row(self.TABLE, value1='key', value2=2, value3=20)
+            self.assertEqual(1, len(reopened.select_from_table(self.TABLE, value1='key')))

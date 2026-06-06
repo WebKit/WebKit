@@ -42,7 +42,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with URLFactoryTest.mock(), MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
             model.ci_context.add_url_factory(BuildbotURLFactory(master='build.webkit.org', redis=model.redis))
             app.register_blueprint(APIRoutes(model))

@@ -33,21 +33,21 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 
-class ArchiveContextTest(WaitForDockerTestCase):
+class ArchiveContextTest(CassandraTestCase):
     KEYSPACE = 'archive_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, configuration=Configuration(), archive=None):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext, configuration=Configuration(), archive=None):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             MockModelFactory.add_mock_archives(self.model, configuration=configuration, archive=archive)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_archive(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         archives = self.model.archive_context.find_archive(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
@@ -59,7 +59,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_archive_list(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.ls(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
@@ -71,7 +71,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_file_access(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.file(
             path='file.txt',
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
@@ -84,7 +84,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_file_list(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.file(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
@@ -106,7 +106,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
             ]:
                 archive.writestr(file, data.getvalue())
 
-        self.init_database(
+        self.reset_database(
             redis=redis, cassandra=cassandra,
             configuration=Configuration(platform='Mac', style='Release', flavor='wk1'),
             archive=buff,
