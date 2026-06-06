@@ -64,8 +64,8 @@ inline JSValue jsNumber(const MediaTime& t)
 
 inline JSValue::JSValue(double d)
 {
-    if (canBeStrictInt32(d)) {
-        *this = JSValue(static_cast<int32_t>(d));
+    if (auto int32Value = tryConvertToStrictInt32(d)) {
+        *this = JSValue(int32Value.value());
         return;
     }
     *this = JSValue(EncodeAsDouble, d);
@@ -309,8 +309,11 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
 
     if (isInt32() || isBigInt())
         return *this;
-    if (isDouble() && canBeInt32(asDouble()))
-        return jsNumber(static_cast<int32_t>(asDouble()));
+
+    if (isDouble()) {
+        if (auto int32Value = tryConvertToStrictInt32(asDouble()))
+            return jsNumber(int32Value.value());
+    }
 
     JSValue primValue = this->toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, { });

@@ -554,10 +554,11 @@ inline size_t sizeOfType(TypeKind kind)
 
 inline JSValue internalizeExternref(JSValue value)
 {
-    if (value.isDouble() && JSC::canBeStrictInt32(value.asDouble())) {
-        int32_t int32Value = JSC::toInt32(value.asDouble());
-        if (int32Value <= Wasm::maxI31ref && int32Value >= Wasm::minI31ref)
-            return jsNumber(int32Value);
+    if (value.isDouble()) {
+        if (auto int32Value = JSC::tryConvertToStrictInt32(value.asDouble())) {
+            if (int32Value.value() <= Wasm::maxI31ref && int32Value.value() >= Wasm::minI31ref)
+                return jsNumber(int32Value.value());
+        }
     }
 
     return value;
