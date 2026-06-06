@@ -462,7 +462,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32,
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
 static inline bool isStrictInt32(double value)
 {
-    int32_t valueAsInt32 = static_cast<int32_t>(value);
+    int32_t valueAsInt32 = truncateDoubleToInt32(value);
     if (value != valueAsInt32)
         return false;
 

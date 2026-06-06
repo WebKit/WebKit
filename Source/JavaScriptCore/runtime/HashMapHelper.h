@@ -30,6 +30,8 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/VMTrapsInlines.h>
+#include <wtf/Int128.h>
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 
@@ -59,7 +61,7 @@ ALWAYS_INLINE JSValue normalizeMapKey(JSValue key)
     if (std::isnan(d))
         return jsNaN();
 
-    int i = static_cast<int>(d);
+    int32_t i = truncateDoubleToInt32(d);
     if (i == d) {
         // When a key is -0, we convert it to positive zero.
         // When a key is the double representation for an integer, we convert it to an integer.

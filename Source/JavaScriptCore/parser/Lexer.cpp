@@ -34,6 +34,7 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
+#include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/MakeString.h>
 
@@ -511,7 +512,7 @@ Lexer<T>::Lexer(VM& vm, JSParserBuiltinMode builtinMode, JSParserScriptMode scri
 
 static inline JSTokenType tokenTypeForIntegerLikeToken(double doubleValue)
 {
-    if ((doubleValue || !std::signbit(doubleValue)) && static_cast<int64_t>(doubleValue) == doubleValue)
+    if ((doubleValue || !std::signbit(doubleValue)) && truncateDoubleToInt64(doubleValue) == doubleValue)
         return INTEGER;
     return DOUBLE;
 }

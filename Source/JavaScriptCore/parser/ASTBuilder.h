@@ -33,6 +33,7 @@
 #include "SyntaxChecker.h"
 #include "VariableEnvironment.h"
 #include <utility>
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 
@@ -1327,7 +1328,7 @@ ExpressionNode* ASTBuilder::makeDivNode(const JSTokenLocation& location, Express
         const NumberNode& numberExpr1 = static_cast<NumberNode&>(*expr1);
         const NumberNode& numberExpr2 = static_cast<NumberNode&>(*expr2);
         double result = numberExpr1.value() / numberExpr2.value();
-        if (static_cast<int64_t>(result) == result)
+        if (truncateDoubleToInt64(result) == result)
             return createNumberFromBinaryOperation(location, result, numberExpr1, numberExpr2);
         return createDoubleLikeNumber(location, result);
     }
