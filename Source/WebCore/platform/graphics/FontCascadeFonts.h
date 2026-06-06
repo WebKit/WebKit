@@ -104,6 +104,13 @@ struct MarkableTraits<WebCore::GlyphOverflow> {
 
 namespace WebCore {
 
+// FIXME: Remove. Temporary instrumentation to diagnose bug 316XXX: a flaky
+// "ASSERTION FAILED: refCount" over-deref of FontCascadeFonts during render-tree
+// teardown. Asserts every ref/deref happens on the instance's creation thread
+// (no refCount==1 ownership-transfer exemption), so a cross-thread ref/deref is
+// caught in the act with a backtrace. Set to 0 to compile out.
+#define FONTCASCADEFONTS_THREAD_AFFINITY_CHECK 1
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
     WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
@@ -113,6 +120,11 @@ public:
     static Ref<FontCascadeFonts> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontCascadeFonts(platformData)); }
 
     WEBCORE_EXPORT ~FontCascadeFonts();
+
+#if FONTCASCADEFONTS_THREAD_AFFINITY_CHECK
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
+#endif
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
@@ -205,6 +217,9 @@ private:
     TriState m_canTakeFixedPitchFastContentMeasuring : 2 { TriState::Indeterminate };
 #if ASSERT_ENABLED
     std::optional<uint32_t> m_creationThreadID;
+#endif
+#if FONTCASCADEFONTS_THREAD_AFFINITY_CHECK
+    uint32_t m_refDerefThreadID { currentThreadID() };
 #endif
 };
 

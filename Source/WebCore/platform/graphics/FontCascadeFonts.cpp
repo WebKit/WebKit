@@ -127,6 +127,26 @@ FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
 
 FontCascadeFonts::~FontCascadeFonts() = default;
 
+#if FONTCASCADEFONTS_THREAD_AFFINITY_CHECK
+void FontCascadeFonts::ref() const
+{
+    if (currentThreadID() != m_refDerefThreadID) {
+        WTFReportBacktrace();
+        RELEASE_ASSERT_WITH_MESSAGE(false, "FontCascadeFonts %p ref() on thread %u, created on thread %u, refCount %u", static_cast<const void*>(this), currentThreadID(), m_refDerefThreadID, refCount());
+    }
+    RefCounted::ref();
+}
+
+void FontCascadeFonts::deref() const
+{
+    if (currentThreadID() != m_refDerefThreadID) {
+        WTFReportBacktrace();
+        RELEASE_ASSERT_WITH_MESSAGE(false, "FontCascadeFonts %p deref() on thread %u, created on thread %u, refCount %u", static_cast<const void*>(this), currentThreadID(), m_refDerefThreadID, refCount());
+    }
+    RefCounted::deref();
+}
+#endif
+
 void FontCascadeFonts::determinePitch(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     auto& primaryRanges = realizeFallbackRangesAt(description, fontSelector, 0);
