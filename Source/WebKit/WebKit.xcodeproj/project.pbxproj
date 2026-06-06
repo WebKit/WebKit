@@ -1835,6 +1835,7 @@
 		9356F2DF2152B72300E6D5DF /* WebSWOriginStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */; };
 		9356F2E02152B75200E6D5DF /* WebSWServerToContextConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04DD2151ADF3007F455F /* WebSWServerToContextConnection.cpp */; };
 		9356F2E12152B76600E6D5DF /* WebSWServerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */; };
+		9FF8F1BA578F7E0223660770 /* WebPageProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */; };
 		935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */; };
 		935BF7FC2936BF1A00B41326 /* CacheStorageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 935BF7F22936BF1700B41326 /* CacheStorageCache.h */; };
 		935BF7FF2936BF1A00B41326 /* CacheStorageStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 935BF7F52936BF1800B41326 /* CacheStorageStore.h */; };
@@ -1848,6 +1849,7 @@
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
 		9395E68A1BF2C33200F49BCE /* WKPreviewElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9395E6891BF2C33200F49BCE /* WKPreviewElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939EF86E29D0C16400F23AEE /* WebPageProxyInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 939EF86D29D0C16400F23AEE /* WebPageProxyInternals.h */; };
+		BDB24306DA4BCE66298B977B /* WebPageProxyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A695B46B3EC75375E0A7AC0 /* WebPageProxyInlines.h */; };
 		939EF86F29D0C17300F23AEE /* WebPageProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCB10F4389F0058C15A /* WebPageProxy.h */; };
 		939EF87029D112EE00F23AEE /* WebPageInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A10937629BF8B71006BDB7B /* WebPageInlines.h */; };
 		939F401C19FB0BBC002B2B42 /* WKActionMenuTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 939F401B19FB0BBC002B2B42 /* WKActionMenuTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7457,6 +7459,7 @@
 		9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameNetworkingContext.mm; sourceTree = "<group>"; };
 		9395E6891BF2C33200F49BCE /* WKPreviewElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreviewElementInfo.h; sourceTree = "<group>"; };
 		9395E68B1BF2C35200F49BCE /* WKPreviewElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreviewElementInfo.mm; sourceTree = "<group>"; };
+		8A695B46B3EC75375E0A7AC0 /* WebPageProxyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyInlines.h; sourceTree = "<group>"; };
 		939EF86D29D0C16400F23AEE /* WebPageProxyInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyInternals.h; sourceTree = "<group>"; };
 		939EF87129D1181600F23AEE /* APIUIClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIUIClient.cpp; sourceTree = "<group>"; };
 		939F401B19FB0BBC002B2B42 /* WKActionMenuTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionMenuTypes.h; sourceTree = "<group>"; };
@@ -8026,6 +8029,7 @@
 		BC111AE3112F5C2600337BAB /* WebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcess.cpp; sourceTree = "<group>"; };
 		BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameProxy.cpp; sourceTree = "<group>"; };
+		F5D32BBB286627AAE13C4DF5 /* WebPageProxy+Swift.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = "WebPageProxy+Swift.cpp"; sourceTree = "<group>"; };
 		BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = WebPageProxy.cpp; sourceTree = "<group>"; };
 		BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessProxy.cpp; sourceTree = "<group>"; };
 		BC111B5B112F629800337BAB /* WebEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventFactory.h; sourceTree = "<group>"; };
@@ -15939,11 +15943,13 @@
 				2D9EA3101A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp */,
 				2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */,
 				9B7F8A502C785725000057F3 /* WebPageLoadTiming.h */,
+				F5D32BBB286627AAE13C4DF5 /* WebPageProxy+Swift.cpp */,
 				BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */,
 				BC032DCB10F4389F0058C15A /* WebPageProxy.h */,
 				BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */,
 				0715310E2F3037C100B56C0E /* WebPageProxy.swift */,
 				46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */,
+				8A695B46B3EC75375E0A7AC0 /* WebPageProxyInlines.h */,
 				939EF86D29D0C16400F23AEE /* WebPageProxyInternals.h */,
 				5CEB40A32A535E8E00563C91 /* WebPageProxyMessageReceiverRegistration.cpp */,
 				5CEB40A42A535E8E00563C91 /* WebPageProxyMessageReceiverRegistration.h */,
@@ -19170,6 +19176,7 @@
 				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				939EF86F29D0C17300F23AEE /* WebPageProxy.h in Headers */,
 				46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */,
+				BDB24306DA4BCE66298B977B /* WebPageProxyInlines.h in Headers */,
 				939EF86E29D0C16400F23AEE /* WebPageProxyInternals.h in Headers */,
 				BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */,
 				0201B9522C238F4800227220 /* WebPageProxyTesting.h in Headers */,
@@ -22504,6 +22511,7 @@
 				078B04A02CF18EAB00B453A6 /* WebPage+NavigationPreferences.swift in Sources */,
 				071467782DFE84E500F77867 /* WebPage+Transferable.swift in Sources */,
 				07CB79962CE9435700199C49 /* WebPage.swift in Sources */,
+				9FF8F1BA578F7E0223660770 /* WebPageProxy.cpp in Sources */,
 				0715310F2F3037C100B56C0E /* WebPageProxy.swift in Sources */,
 				7CE9CE101FA0767A000177DE /* WebPageUpdatePreferences.cpp in Sources */,
 				079A4DA12D72CC0D00CA387F /* WebPageWebView.swift in Sources */,

@@ -474,7 +474,8 @@ UIProcess/WebOpenPanelResultListenerProxy.cpp
 UIProcess/WebPageDiagnosticLoggingClient.cpp
 UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
-UIProcess/WebPageProxy.cpp
+UIProcess/WebPageProxy.cpp @no-unify-when(bundle<=8) @cost:170
+UIProcess/WebPageProxy+Swift.cpp
 UIProcess/WebPageProxyMessageReceiverRegistration.cpp @cost:3
 UIProcess/WebPageProxyTesting.cpp @cost:4
 UIProcess/WebPasteboardProxy.cpp

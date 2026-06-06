@@ -931,7 +931,7 @@ if (SWIFT_REQUIRED)
         UIProcess/RemotePageProxy.cpp
         UIProcess/ViewGestureController.cpp
         UIProcess/WebBackForwardList.cpp
-        UIProcess/WebPageProxy.cpp
+        UIProcess/WebPageProxy+Swift.cpp
         UIProcess/Automation/WebAutomationSession.cpp
         WebProcess/WebPage/IPCTestingAPI.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/UIProcess/WebBackForwardListMessageReceiver.cpp
@@ -947,6 +947,8 @@ if (SWIFT_REQUIRED)
     endif ()
     foreach (_f IN LISTS WebKit_SWIFT_INTEROP_SOURCES)
         cmake_path(GET _f FILENAME _fn)
+        # Escape regex metacharacters (e.g. the '+' in WebPageProxy+Swift.cpp).
+        string(REGEX REPLACE "([+.])" "\\\\\\1" _fn "${_fn}")
         list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}( |$)")
     endforeach ()
 
