@@ -35,12 +35,15 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Chrome.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentView.h>
 #include <WebCore/FrameInspectorController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/InspectorFrontendClient.h>
+#include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorPageAgent.h>
+#include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
@@ -478,6 +481,33 @@ void WebInspectorBackend::disablePageInstrumentation()
 void WebInspectorBackend::removePageInstrumentationForFrame(FrameIdentifier frameID)
 {
     m_framePageAgentProxies.remove(frameID);
+}
+
+void WebInspectorBackend::getFrameResourceData(CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, String>>&&)>&& completionHandler)
+{
+    // Return each local frame's loaderId and cached subresources (the latter as a JSON array of
+    // Page.FrameResource objects), encoded as a per-frame JSON object, so the UIProcess
+    // ProxyingPageAgent can aggregate them cross-process into Page.getResourceTree under Site
+    // Isolation. Cross-origin children live in other processes and are gathered from their own
+    // WebInspectorBackend. See webkit.org/b/308896.
+    Vector<std::pair<WebCore::FrameIdentifier, String>> resourcesByFrame;
+
+    RefPtr page = m_page.get();
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage) {
+        completionHandler(WTF::move(resourcesByFrame));
+        return;
+    }
+
+    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+        auto frameData = JSON::Object::create();
+        if (RefPtr document = frame.document())
+            frameData->setString("loaderId"_s, Inspector::IdentifierRegistry::protocolLoaderId(document->identifier()));
+        frameData->setArray("resources"_s, Inspector::ResourceUtilities::buildResourceObjectsForFrame(frame));
+        resourcesByFrame.append({ frame.frameID(), frameData->toJSONString() });
+    });
+
+    completionHandler(WTF::move(resourcesByFrame));
 }
 
 } // namespace WebKit

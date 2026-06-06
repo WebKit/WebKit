@@ -77,7 +77,7 @@ public:
     CommandResult<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> getCookies() final;
     CommandResult<void> setCookie(Ref<JSON::Object>&&, std::optional<bool>&& shouldPartition) final;
     CommandResult<void> deleteCookie(const String& cookieName, const String& url) final;
-    CommandResult<Ref<Protocol::Page::FrameResourceTree>> getResourceTree() final;
+    void getResourceTree(Ref<GetResourceTreeCallback>&&) final;
     CommandResultOf<String, bool /* base64Encoded */> getResourceContent(const Protocol::Network::FrameId&, const String& url) final;
     CommandResult<void> setBootstrapScript(const String& source) final;
     CommandResult<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> searchInResource(const Protocol::Network::FrameId&, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId&) final;
@@ -101,14 +101,14 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // IPC message handlers from WebProcess PageAgentProxy
-    void frameNavigated(WebCore::FrameIdentifier, const URL&, const String& mimeType, WebCore::SecurityOriginData&&, std::optional<WebCore::FrameIdentifier> parentFrameID, const String& name);
+    void frameNavigated(WebCore::FrameIdentifier, const URL&, const String& mimeType, WebCore::SecurityOriginData&&, std::optional<WebCore::FrameIdentifier> parentFrameID, const String& name, const String& loaderId);
     void domContentEventFired(double timestamp);
     void loadEventFired(double timestamp);
     void frameDetached(WebCore::FrameIdentifier);
 
     void removeAllRegisteredReceivers();
 
-    Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const String* parentProtocolId) const;
+    Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const String* parentProtocolId, const HashMap<WebCore::FrameIdentifier, String>& resourcesByFrame) const;
 
     const UniqueRef<PageFrontendDispatcher> m_frontendDispatcher;
     const Ref<PageBackendDispatcher> m_backendDispatcher;
@@ -133,6 +133,7 @@ private:
         URL url;
         String mimeType;
         WebCore::SecurityOriginData securityOrigin;
+        String loaderId;
     };
     HashMap<WebCore::FrameIdentifier, FrameDocumentInfo> m_frameDocumentInfo;
 };

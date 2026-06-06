@@ -98,6 +98,7 @@ public:
 
     void enablePageInstrumentation();
     void disablePageInstrumentation();
+    void getFrameResourceData(CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, String>>&&)>&&);
     void ensurePageInstrumentationForFrame(WebCore::LocalFrame&);
     void removePageInstrumentationForFrame(WebCore::FrameIdentifier);
 

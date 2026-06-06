@@ -200,6 +200,7 @@
         {
             "name": "getResourceTree",
             "description": "Returns present frame / resource tree structure.",
+            "async": true,
             "returns": [
                 { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
             ]

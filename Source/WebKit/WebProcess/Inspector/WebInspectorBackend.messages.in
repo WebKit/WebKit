@@ -49,5 +49,10 @@ messages -> WebInspectorBackend {
     EnablePageInstrumentation()
     DisablePageInstrumentation()
 
+    # Returns each local frame's cached subresources as a JSON array of Page.FrameResource
+    # objects (keyed by FrameIdentifier), for the UIProcess ProxyingPageAgent to aggregate
+    # cross-process into Page.getResourceTree under Site Isolation. See webkit.org/b/308896.
+    GetFrameResourceData() -> (Vector<std::pair<WebCore::FrameIdentifier, String>> resourcesByFrame) Async
+
     GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (String content, bool base64Encoded, String errorString) Async
 }

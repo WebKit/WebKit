@@ -1,0 +1,12 @@
+Test that Page.getResourceTree reports loaderId and aggregates cross-process subresources under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.GetResourceTreeResources
+-- Running test case: SiteIsolation.Page.GetResourceTreeResources.LoaderIdAndResources
+PASS: Main frame should have a non-empty loaderId.
+PASS: Should have exactly one child frame in the tree.
+PASS: Cross-origin child frame should have a non-empty loaderId.
+PASS: Child frame's loaderId should differ from the main frame's.
+PASS: Cross-origin child's cached stylesheet subresource should be reported in resources.
+PASS: Subresource type should be StyleSheet.
+

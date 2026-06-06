@@ -52,6 +52,7 @@ namespace ResourceUtilities {
 
 WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
 Vector<WebCore::CachedResource*> cachedResourcesForFrame(WebCore::LocalFrame*);
+WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObjectsForFrame(WebCore::LocalFrame&);
 void resourceContent(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*, const URL&, String* result, bool* base64Encoded);
 bool mainResourceContent(WebCore::LocalFrame*, bool withBase64Encode, String* result);
 

@@ -35,6 +35,9 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Box.h>
+#include <wtf/CallbackAggregator.h>
+#include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
@@ -90,16 +93,16 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
     return IdentifierRegistry::protocolFrameId(frameID);
 }
 
-void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, SecurityOriginData&& securityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name)
+void ProxyingPageAgent::frameNavigated(FrameIdentifier frameID, const URL& url, const String& mimeType, SecurityOriginData&& securityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
 {
     // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()
     // can report it for cross-origin children, whose commit the inspectedPage's WebFrameProxy
     // never observes (its url/origin stay stale). See webkit.org/b/308896.
-    m_frameDocumentInfo.set(frameID, FrameDocumentInfo { url, mimeType, securityOrigin });
+    m_frameDocumentInfo.set(frameID, FrameDocumentInfo { url, mimeType, securityOrigin, loaderId });
 
     auto frameObject = Protocol::Page::Frame::create()
         .setId(protocolFrameIdForFrameID(frameID))
-        .setLoaderId(String()) // FIXME: <https://webkit.org/b/308895> get loaderId from document identifier
+        .setLoaderId(loaderId)
         .setUrl(url.string())
         .setMimeType(mimeType)
         .setSecurityOrigin(securityOrigin.toString())
@@ -252,7 +255,7 @@ CommandResult<void> ProxyingPageAgent::disable()
 
 // MARK: - Stubbed command handlers
 
-Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const WebFrameProxy& frame, const String* parentProtocolId) const
+Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const WebFrameProxy& frame, const String* parentProtocolId, const HashMap<FrameIdentifier, String>& resourcesByFrame) const
 {
     auto protocolId = IdentifierRegistry::protocolFrameId(frame.frameID(), frame.process().coreProcessIdentifier());
 
@@ -270,17 +273,39 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
     URL url = frame.url();
     SecurityOriginData securityOrigin = frame.documentSecurityOriginData();
     String mimeType = frame.mimeType();
+    String loaderId;
     if (auto it = m_frameDocumentInfo.find(frame.frameID()); it != m_frameDocumentInfo.end()) {
         url = it->value.url;
         securityOrigin = it->value.securityOrigin;
         if (!it->value.mimeType.isEmpty())
             mimeType = it->value.mimeType;
+        loaderId = it->value.loaderId;
     }
     String name = frame.frameName();
 
+    // Parse the per-frame data gathered from this frame's hosting WebContent process: a JSON
+    // object { loaderId, resources }. Resources are the frame's cached subresources (a JSON array
+    // of Page.FrameResource objects). The gathered loaderId is a fallback for frames that committed
+    // before the inspector connected (e.g. the main frame), whose live frameNavigated wasn't cached.
+    auto resources = JSON::ArrayOf<Protocol::Page::FrameResource>::create();
+    if (auto it = resourcesByFrame.find(frame.frameID()); it != resourcesByFrame.end() && !it->value.isEmpty()) {
+        if (RefPtr parsed = JSON::Value::parseJSON(it->value)) {
+            if (RefPtr object = parsed->asObject()) {
+                if (loaderId.isEmpty())
+                    loaderId = object->getString("loaderId"_s);
+                if (RefPtr array = object->getArray("resources"_s)) {
+                    for (unsigned i = 0; i < array->length(); ++i) {
+                        if (RefPtr resource = array->get(i)->asObject())
+                            resources->addItem(resource.releaseNonNull());
+                    }
+                }
+            }
+        }
+    }
+
     auto frameObject = Protocol::Page::Frame::create()
         .setId(protocolId)
-        .setLoaderId(emptyString()) // FIXME: <https://webkit.org/b/308895> get loaderId from document identifier
+        .setLoaderId(loaderId)
         .setUrl(url.string())
         .setMimeType(mimeType.isEmpty() ? "text/html"_s : mimeType)
         .setSecurityOrigin(securityOrigin.toString())
@@ -293,30 +318,53 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
 
     auto result = Protocol::Page::FrameResourceTree::create()
         .setFrame(WTF::move(frameObject))
-        .setResources(JSON::ArrayOf<Protocol::Page::FrameResource>::create())
+        .setResources(WTF::move(resources))
         .release();
 
     if (!frame.childFrames().isEmpty()) {
         auto childrenArray = JSON::ArrayOf<Protocol::Page::FrameResourceTree>::create();
         for (auto& child : frame.childFrames())
-            childrenArray->addItem(buildFrameTree(child, &protocolId));
+            childrenArray->addItem(buildFrameTree(child, &protocolId, resourcesByFrame));
         result->setChildFrames(WTF::move(childrenArray));
     }
 
     return result;
 }
 
-CommandResult<Ref<Protocol::Page::FrameResourceTree>> ProxyingPageAgent::getResourceTree()
+void ProxyingPageAgent::getResourceTree(Ref<GetResourceTreeCallback>&& callback)
 {
-    if (!m_enabled)
-        return makeUnexpected("Not supported without Site Isolation"_s);
+    if (!m_enabled) {
+        callback->sendFailure("Not supported without Site Isolation"_s);
+        return;
+    }
 
     Ref inspectedPage = m_inspectedPage.get();
-    RefPtr mainFrame = inspectedPage->mainFrame();
-    if (!mainFrame)
-        return makeUnexpected("Missing main frame"_s);
+    if (!inspectedPage->mainFrame()) {
+        callback->sendFailure("Missing main frame"_s);
+        return;
+    }
 
-    return buildFrameTree(*mainFrame, nullptr);
+    // Gather each frame's cached subresources from its hosting WebContent process, then build
+    // the aggregated tree once every process has replied. Structure comes from the authoritative
+    // WebFrameProxy tree; url/origin/mimeType/loaderId from the per-frame cache (frameNavigated);
+    // resources from this gather. See webkit.org/b/308896.
+    auto resourcesByFrame = Box<HashMap<FrameIdentifier, String>>::create();
+    Ref aggregator = CallbackAggregator::create([protectedThis = Ref { *this }, callback, resourcesByFrame]() mutable {
+        Ref inspectedPage = protectedThis->m_inspectedPage.get();
+        RefPtr mainFrame = inspectedPage->mainFrame();
+        if (!mainFrame) {
+            callback->sendFailure("Missing main frame"_s);
+            return;
+        }
+        callback->sendSuccess(protectedThis->buildFrameTree(*mainFrame, nullptr, *resourcesByFrame));
+    });
+
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebInspectorBackend::GetFrameResourceData { }, [resourcesByFrame, aggregator](Vector<std::pair<FrameIdentifier, String>>&& items) {
+            for (auto& item : items)
+                resourcesByFrame->set(item.first, WTF::move(item.second));
+        }, pageID);
+    });
 }
 
 // FIXME: <https://webkit.org/b/308898> Forward emulation overrides to all WebContent processes.

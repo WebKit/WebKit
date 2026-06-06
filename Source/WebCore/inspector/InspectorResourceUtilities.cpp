@@ -171,6 +171,30 @@ void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* 
         errorString = "Missing resource for given url"_s;
 }
 
+Ref<JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>> buildResourceObjectsForFrame(LocalFrame& frame)
+{
+    auto resources = JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>::create();
+    for (auto* cachedResource : cachedResourcesForFrame(&frame)) {
+        auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
+            .setUrl(cachedResource->url().string())
+            .setType(cachedResourceTypeToProtocol(*cachedResource))
+            .setMimeType(cachedResource->response().mimeType())
+            .release();
+        if (cachedResource->wasCanceled())
+            resourceObject->setCanceled(true);
+        else if (cachedResource->status() == CachedResource::LoadError || cachedResource->status() == CachedResource::DecodeError)
+            resourceObject->setFailed(true);
+        String sourceMappingURL = sourceMapURLForResource(cachedResource);
+        if (!sourceMappingURL.isEmpty())
+            resourceObject->setSourceMapURL(sourceMappingURL);
+        String targetId = cachedResource->resourceRequest().initiatorIdentifier();
+        if (!targetId.isEmpty())
+            resourceObject->setTargetId(targetId);
+        resources->addItem(WTF::move(resourceObject));
+    }
+    return resources;
+}
+
 String sourceMapURLForResource(CachedResource* cachedResource)
 {
     if (!cachedResource)
