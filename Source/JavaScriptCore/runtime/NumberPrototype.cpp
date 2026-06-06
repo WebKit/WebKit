@@ -374,7 +374,7 @@ String toStringWithRadix(double doubleValue, int32_t radix)
 {
     ASSERT(2 <= radix && radix <= 36);
 
-    int32_t integerValue = static_cast<int32_t>(doubleValue);
+    int32_t integerValue = truncateDoubleToInt32(doubleValue);
     if (integerValue == doubleValue)
         return toStringWithRadixInternal(integerValue, radix);
 
@@ -559,7 +559,7 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
 {
     ASSERT(!(radix < 2 || radix > 36));
 
-    int32_t integerValue = static_cast<int32_t>(doubleValue);
+    int32_t integerValue = truncateDoubleToInt32(doubleValue);
     if (integerValue == doubleValue)
         return int32ToStringInternal(vm, integerValue, radix);
 

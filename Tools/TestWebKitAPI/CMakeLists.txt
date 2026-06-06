@@ -127,6 +127,7 @@ set(TestWTF_SOURCES
     Tests/WTF/ThreadMessages.cpp
     Tests/WTF/Threading.cpp
     Tests/WTF/Time.cpp
+    Tests/WTF/TruncateFloat.cpp
     Tests/WTF/URL.cpp
     Tests/WTF/URLParser.cpp
     Tests/WTF/UTF8Conversion.cpp

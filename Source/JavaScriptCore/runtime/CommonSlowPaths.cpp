@@ -415,7 +415,7 @@ static void updateArithProfileForUnaryArithOp(UnaryArithProfile& profile, JSValu
                 // Therefore, we will get a false positive if the result is that value. This is intentionally
                 // done to simplify the checking algorithm.
                 static const int64_t int52OverflowPoint = (1ll << 51);
-                int64_t int64Val = static_cast<int64_t>(std::abs(doubleVal));
+                int64_t int64Val = truncateDoubleToInt64(std::abs(doubleVal));
                 if (int64Val >= int52OverflowPoint)
                     profile.setObservedInt52Overflow();
             }
@@ -481,7 +481,7 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
                 // Therefore, we will get a false positive if the result is that value. This is intentionally
                 // done to simplify the checking algorithm.
                 static const int64_t int52OverflowPoint = (1ll << 51);
-                int64_t int64Val = static_cast<int64_t>(std::abs(doubleVal));
+                int64_t int64Val = truncateDoubleToInt64(std::abs(doubleVal));
                 if (int64Val >= int52OverflowPoint)
                     profile.setObservedInt52Overflow();
             }
@@ -1354,7 +1354,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_species)
     BEGIN();
     auto bytecode = pc->as<OpNewArrayWithSpecies>();
     JSObject* array = asObject(GET_C(bytecode.m_array).jsValue());
-    uint64_t length = static_cast<uint64_t>(GET_C(bytecode.m_length).jsValue().asNumber());
+    uint64_t length = truncateDoubleToUint64(GET_C(bytecode.m_length).jsValue().asNumber());
     auto& metadata = bytecode.metadata(codeBlock);
     auto& arrayAllocationProfile = metadata.m_arrayAllocationProfile;
     auto& arrayProfile = metadata.m_arrayProfile;

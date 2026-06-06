@@ -555,7 +555,7 @@ inline size_t sizeOfType(TypeKind kind)
 inline JSValue internalizeExternref(JSValue value)
 {
     if (value.isDouble()) {
-        if (auto int32Value = JSC::tryConvertToStrictInt32(value.asDouble())) {
+        if (auto int32Value = tryConvertToStrictInt32(value.asDouble())) {
             if (int32Value.value() <= Wasm::maxI31ref && int32Value.value() >= Wasm::minI31ref)
                 return jsNumber(int32Value.value());
         }
