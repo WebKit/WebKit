@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.id = "child-frame-element";
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function removeCrossOriginIFrame() {
+    document.getElementById("child-frame-element").remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.NetworkManager.DynamicCrossOriginFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.NetworkManager.DynamicCrossOriginFrame.AddThenRemove",
+        description: "A dynamically-added cross-origin frame should appear in the frame model (surviving the spurious process-swap frameDetached), and a genuine removal must then fire frameDidDetach and drop it from the model. This guards both the swap-suppression heuristic and that real detaches are still reported.",
+        async test() {
+            let frameTarget = (await (async () => {
+                let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+                return (await targetAddedPromise).data.target;
+            })());
+
+            // The cross-origin child commits in its own process (CommitTiming::WaitForLoad), then
+            // immediately swaps out of its original process -- which fires a spurious frameDetached
+            // that the proxy must suppress. Drive the child's execution context and poll until it
+            // settles into the frame model.
+            let child;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
+                if (child)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectThat(!!child, "Cross-origin child frame should appear in WI.networkManager.frames after being added.");
+            if (!child)
+                return;
+
+            let childId = child.id;
+            InspectorTest.expectThat(child.parentFrame === WI.networkManager.mainFrame, "Added cross-origin child's parent should be the main frame.");
+
+            // The swap-suppression heuristic ignores frameDetached while the frame is still in the
+            // WebFrameProxy tree. Give any lingering spurious swap-out detaches a chance to arrive
+            // and confirm the frame is NOT removed by them.
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            InspectorTest.expectThat(WI.networkManager.frameForIdentifier(childId) === child, "Cross-origin child should still be in the frame model (process-swap frameDetached must be suppressed).");
+
+            // Now remove the iframe element: this is a genuine removal and must be reported as a
+            // real detach that drops the frame from the model.
+            let removedFrame = null;
+            let removedPromise = new Promise((resolve) => {
+                WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, function listener(event) {
+                    if (event.data.frame.id === childId) {
+                        WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasRemoved, listener);
+                        resolve(event.data.frame);
+                    }
+                });
+            });
+            InspectorTest.evaluateInPage("removeCrossOriginIFrame()");
+            removedFrame = await Promise.race([
+                removedPromise,
+                new Promise((resolve) => setTimeout(() => resolve(null), 2000)),
+            ]);
+
+            InspectorTest.expectThat(!!removedFrame, "Removing the iframe should fire FrameWasRemoved for the cross-origin child (genuine detach is reported).");
+            InspectorTest.expectThat(!WI.networkManager.frames.includes(child), "Cross-origin child should no longer be in WI.networkManager.frames after removal.");
+            InspectorTest.expectEqual(WI.networkManager.frameForIdentifier(childId), null, "frameForIdentifier should return null for the removed cross-origin child.");
+            InspectorTest.expectThat(!!WI.networkManager.mainFrame, "Main frame should remain after the child is removed.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a dynamically added cross-origin frame appears in the frame model and a genuine removal is reported under site isolation.</p>
+</body>

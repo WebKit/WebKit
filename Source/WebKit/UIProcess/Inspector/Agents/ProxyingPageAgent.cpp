@@ -135,14 +135,23 @@ void ProxyingPageAgent::loadEventFired(double timestamp)
     m_frontendDispatcher->loadEventFired(timestamp);
 }
 
-void ProxyingPageAgent::frameDetached(FrameIdentifier frameID)
+void ProxyingPageAgent::frameDetached(FrameIdentifier)
 {
-    // A cross-origin process swap tears down the frame's LocalFrame in its old process,
-    // firing frameDetached there -- but the frame still exists, now hosted by another
-    // process (the authoritative WebFrameProxy tree still contains it). Forwarding that to
-    // the frontend would remove a live frame. Only report frames that are genuinely gone
-    // from the tree. See webkit.org/b/308896.
-    if (WebFrameProxy::webFrame(frameID))
+    // Intentionally ignored under Site Isolation. This IPC fires in a WebContent process whenever
+    // a frame's LocalFrame is torn down -- which also happens on a cross-origin process swap, where
+    // the frame persists (now hosted by another process). The two cases are indistinguishable here:
+    // the frame is still in the WebFrameProxy registry in both. The authoritative "frame is
+    // genuinely gone" signal is the destruction of its UIProcess WebFrameProxy, reported via
+    // frameDestroyed(). Reporting here would remove live frames on every swap. See webkit.org/b/308896.
+}
+
+void ProxyingPageAgent::frameDestroyed(FrameIdentifier frameID)
+{
+    // Called from WebFrameProxy's destruction path (via WebPageInspectorController::willDestroyFrame).
+    // A WebFrameProxy outlives process swaps and is destroyed only on genuine removal, so this is
+    // where cross-origin (and same-origin) frame removals are reported to the frontend. The protocol
+    // id is computed while the frame is still in the registry, matching the id used by frameNavigated.
+    if (!m_enabled)
         return;
 
     m_frameDocumentInfo.remove(frameID);

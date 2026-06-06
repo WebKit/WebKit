@@ -390,6 +390,11 @@ void WebPageInspectorController::willDestroyFrame(const WebFrameProxy& frame)
     if (pageAgent && pageAgent->isEnabled()) {
         if (auto pageID = frame.webPageIDInCurrentProcess())
             pageAgent->disableInstrumentationForProcess(process, *pageID);
+
+        // A WebFrameProxy is destroyed only when the frame is genuinely removed (never on a
+        // process swap, where it persists), so this is the authoritative point to report the
+        // frame's removal to the frontend. See webkit.org/b/308896.
+        pageAgent->frameDestroyed(frame.frameID());
     }
 
     removeTarget(getTargetID(frame));

@@ -67,6 +67,11 @@ public:
     void enableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
     void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
 
+    // Authoritative "frame is genuinely gone" signal, reported from the WebFrameProxy destruction
+    // path. Unlike the WebContent-process frameDetached IPC (which also fires on a process swap),
+    // a WebFrameProxy is destroyed only when the frame is truly removed. See webkit.org/b/308896.
+    void frameDestroyed(WebCore::FrameIdentifier);
+
     // PageBackendDispatcherHandler
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;
