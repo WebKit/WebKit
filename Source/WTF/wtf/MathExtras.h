@@ -876,7 +876,7 @@ ALWAYS_INLINE int32_t truncateDoubleToInt32(double number)
 #else
     if (WTF_PROVEN_TRUE(number > -2147483649.0 && number < 2147483648.0))
         return static_cast<int32_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     if (number > 0) {
         if (number >= static_cast<double>(INT32_MAX) + 1.0)
@@ -898,7 +898,7 @@ ALWAYS_INLINE int64_t truncateDoubleToInt64(double number)
 #else
     if (WTF_PROVEN_TRUE(number >= -9223372036854775808.0 && number < 9223372036854775808.0))
         return static_cast<int64_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     if (number > 0) {
         if (number >= static_cast<double>(INT64_MAX) + 1.0)
@@ -925,7 +925,7 @@ ALWAYS_INLINE uint32_t truncateDoubleToUint32(double number)
 #else
     if (WTF_PROVEN_TRUE(number >= 0.0 && number < 4294967296.0))
         return static_cast<uint32_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     // Mimic x86_64: cvttsd2si into int64, take low 32 bits.
     int64_t wide = truncateDoubleToInt64(number);
@@ -951,7 +951,7 @@ ALWAYS_INLINE uint64_t truncateDoubleToUint64(double number)
 #else
     if (WTF_PROVEN_TRUE(number >= 0.0 && number < 18446744073709551616.0))
         return static_cast<uint64_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     if (number < 0.0)
         return 0;
@@ -978,7 +978,7 @@ ALWAYS_INLINE int32_t truncateFloatToInt32(float number)
 #else
     if (WTF_PROVEN_TRUE(number > -2147483649.0f && number < 2147483648.0f))
         return static_cast<int32_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     if (number > 0) {
         if (number >= static_cast<float>(INT32_MAX) + 1.0f)
@@ -1005,7 +1005,7 @@ ALWAYS_INLINE int64_t truncateFloatToInt64(float number)
 #else
     if (WTF_PROVEN_TRUE(number >= -9223372036854775808.0f && number < 9223372036854775808.0f))
         return static_cast<int64_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     if (number > 0) {
         if (number >= static_cast<float>(INT64_MAX) + 1.0f)
@@ -1027,7 +1027,7 @@ ALWAYS_INLINE uint32_t truncateFloatToUint32(float number)
 #else
     if (WTF_PROVEN_TRUE(number >= 0.0f && number < 4294967296.0f))
         return static_cast<uint32_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     int64_t wide = truncateFloatToInt64(number);
     return static_cast<uint32_t>(wide);
@@ -1054,7 +1054,7 @@ ALWAYS_INLINE uint64_t truncateFloatToUint64(float number)
 #else
     if (WTF_PROVEN_TRUE(number >= 0.0f && number < 18446744073709551616.0f))
         return static_cast<uint64_t>(number);
-    if (std::isnan(number) || !std::isfinite(number))
+    if (!std::isfinite(number))
         return 0;
     if (number < 0.0f)
         return 0;
