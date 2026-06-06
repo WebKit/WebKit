@@ -30,6 +30,7 @@
 #include "LayoutRect.h"
 #include <algorithm>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -128,10 +129,10 @@ void IntRect::uniteIfNonZero(const IntRect& other)
 
 void IntRect::scale(float s)
 {
-    m_location.setX((int)(x() * s));
-    m_location.setY((int)(y() * s));
-    m_size.setWidth((int)(width() * s));
-    m_size.setHeight((int)(height() * s));
+    m_location.setX(truncateFloatToInt32(x() * s));
+    m_location.setY(truncateFloatToInt32(y() * s));
+    m_size.setWidth(truncateFloatToInt32(width() * s));
+    m_size.setHeight(truncateFloatToInt32(height() * s));
 }
 
 static inline int distanceToInterval(int pos, int start, int end)

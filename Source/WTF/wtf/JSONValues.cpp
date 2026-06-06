@@ -36,6 +36,7 @@
 #include <functional>
 #include <wtf/ASCIICType.h>
 #include <wtf/CommaPrinter.h>
+#include <wtf/MathExtras.h>
 #include <wtf/ZippedRange.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -574,7 +575,7 @@ std::optional<int> Value::asInteger() const
     if (auto* number = std::get_if<int>(&m_value))
         return *number;
     if (auto* number = std::get_if<double>(&m_value))
-        return static_cast<int>(*number);
+        return truncateDoubleToInt32(*number);
     return std::nullopt;
 }
 

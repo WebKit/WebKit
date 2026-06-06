@@ -55,6 +55,7 @@
 #include "RenderElement.h"
 #include "Settings.h"
 #include "UserScriptTypes.h"
+#include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -448,8 +449,8 @@ void ImageDocument::imageClicked(int x, int y)
         float scale = this->scale();
 
         auto viewportSize = view->visibleSize();
-        int scrollX = static_cast<int>(x / scale - viewportSize.width() / 2.0f);
-        int scrollY = static_cast<int>(y / scale - viewportSize.height() / 2.0f);
+        int scrollX = truncateFloatToInt32(x / scale - viewportSize.width() / 2.0f);
+        int scrollY = truncateFloatToInt32(y / scale - viewportSize.height() / 2.0f);
 
         view->setScrollPosition(IntPoint(scrollX, scrollY));
     }

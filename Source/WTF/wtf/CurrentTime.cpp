@@ -35,6 +35,7 @@
 #include <wtf/ApproximateTime.h>
 #include <wtf/ContinuousApproximateTime.h>
 #include <wtf/ContinuousTime.h>
+#include <wtf/MathExtras.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WallTime.h>
@@ -257,7 +258,7 @@ MonotonicTime MonotonicTime::fromMachAbsoluteTime(uint64_t machAbsoluteTime)
 uint64_t MonotonicTime::toMachAbsoluteTime() const
 {
     auto& info = machTimebaseInfo();
-    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+    return truncateDoubleToUint64((m_value * 1.0e9 * info.denom) / info.numer);
 }
 
 ApproximateTime ApproximateTime::fromMachApproximateTime(uint64_t machApproximateTime)
@@ -269,7 +270,7 @@ ApproximateTime ApproximateTime::fromMachApproximateTime(uint64_t machApproximat
 uint64_t ApproximateTime::toMachApproximateTime() const
 {
     auto& info = machTimebaseInfo();
-    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+    return truncateDoubleToUint64((m_value * 1.0e9 * info.denom) / info.numer);
 }
 
 ContinuousTime ContinuousTime::fromMachContinuousTime(uint64_t machContinuousTime)
@@ -281,7 +282,7 @@ ContinuousTime ContinuousTime::fromMachContinuousTime(uint64_t machContinuousTim
 uint64_t ContinuousTime::toMachContinuousTime() const
 {
     auto& info = machTimebaseInfo();
-    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+    return truncateDoubleToUint64((m_value * 1.0e9 * info.denom) / info.numer);
 }
 
 ContinuousApproximateTime ContinuousApproximateTime::fromMachContinuousApproximateTime(uint64_t machContinuousApproximateTime)
@@ -293,7 +294,7 @@ ContinuousApproximateTime ContinuousApproximateTime::fromMachContinuousApproxima
 uint64_t ContinuousApproximateTime::toMachContinuousApproximateTime() const
 {
     auto& info = machTimebaseInfo();
-    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+    return truncateDoubleToUint64((m_value * 1.0e9 * info.denom) / info.numer);
 }
 #endif
 

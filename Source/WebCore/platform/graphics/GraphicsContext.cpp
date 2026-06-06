@@ -39,6 +39,7 @@
 #include "SystemImage.h"
 #include "TextRunIterator.h"
 #include "VideoFrame.h"
+#include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -701,11 +702,11 @@ auto GraphicsContext::computeRectsAndStrokeColorForLinesForText(const FloatPoint
             auto left = lineSegment.begin;
             auto width = lineSegment.length();
             auto doubleWidth = 2 * dashWidth;
-            auto quotient = static_cast<int>(left / doubleWidth);
+            auto quotient = truncateDoubleToInt32(left / doubleWidth);
             auto startOffset = left - quotient * doubleWidth;
             auto effectiveLeft = left + startOffset;
-            auto startParticle = static_cast<int>(std::floor(effectiveLeft / doubleWidth));
-            auto endParticle = static_cast<int>(std::ceil((left + width) / doubleWidth));
+            auto startParticle = truncateDoubleToInt32(std::floor(effectiveLeft / doubleWidth));
+            auto endParticle = truncateDoubleToInt32(std::ceil((left + width) / doubleWidth));
 
             for (auto j = startParticle; j < endParticle; ++j) {
                 auto actualDashWidth = dashWidth;

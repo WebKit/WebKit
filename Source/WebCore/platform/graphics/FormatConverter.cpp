@@ -30,6 +30,7 @@
 #if ENABLE(WEBGL)
 
 #include "FormatConverter.h"
+#include <wtf/MathExtras.h>
 #include <wtf/text/ParsingUtilities.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)
@@ -1123,9 +1124,9 @@ void pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::AlphaOp::DoP
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         double scaleFactor = static_cast<double>(source[3]) / MaxUInt32Value;
-        destination[0] = static_cast<uint32_t>(static_cast<double>(source[0]) * scaleFactor);
-        destination[1] = static_cast<uint32_t>(static_cast<double>(source[1]) * scaleFactor);
-        destination[2] = static_cast<uint32_t>(static_cast<double>(source[2]) * scaleFactor);
+        destination[0] = truncateDoubleToUint32(static_cast<double>(source[0]) * scaleFactor);
+        destination[1] = truncateDoubleToUint32(static_cast<double>(source[1]) * scaleFactor);
+        destination[2] = truncateDoubleToUint32(static_cast<double>(source[2]) * scaleFactor);
         destination[3] = source[3];
         skip(source, 4);
         skip(destination, 4);
@@ -1138,9 +1139,9 @@ void pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::AlphaOp::D
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
         double scaleFactor = static_cast<double>(destination[3]) / MaxInt32Value;
-        destination[0] = static_cast<int32_t>(static_cast<double>(clampMin(source[0])) * scaleFactor);
-        destination[1] = static_cast<int32_t>(static_cast<double>(clampMin(source[1])) * scaleFactor);
-        destination[2] = static_cast<int32_t>(static_cast<double>(clampMin(source[2])) * scaleFactor);
+        destination[0] = truncateDoubleToInt32(static_cast<double>(clampMin(source[0])) * scaleFactor);
+        destination[1] = truncateDoubleToInt32(static_cast<double>(clampMin(source[1])) * scaleFactor);
+        destination[2] = truncateDoubleToInt32(static_cast<double>(clampMin(source[2])) * scaleFactor);
         skip(source, 4);
         skip(destination, 4);
     }
@@ -1150,10 +1151,10 @@ template<> ALWAYS_INLINE
 void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoNothing, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
-        uint32_t r = static_cast<uint32_t>(source[0] * 1023.0f);
-        uint32_t g = static_cast<uint32_t>(source[1] * 1023.0f);
-        uint32_t b = static_cast<uint32_t>(source[2] * 1023.0f);
-        uint32_t a = static_cast<uint32_t>(source[3] * 3.0f);
+        uint32_t r = truncateFloatToUint32(source[0] * 1023.0f);
+        uint32_t g = truncateFloatToUint32(source[1] * 1023.0f);
+        uint32_t b = truncateFloatToUint32(source[2] * 1023.0f);
+        uint32_t a = truncateFloatToUint32(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
         skip(source, 4);
         skip(destination, 1);
@@ -1164,10 +1165,10 @@ template<> ALWAYS_INLINE
 void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
-        uint32_t r = static_cast<uint32_t>(source[0] * source[3] * 1023.0f);
-        uint32_t g = static_cast<uint32_t>(source[1] * source[3] * 1023.0f);
-        uint32_t b = static_cast<uint32_t>(source[2] * source[3] * 1023.0f);
-        uint32_t a = static_cast<uint32_t>(source[3] * 3.0f);
+        uint32_t r = truncateFloatToUint32(source[0] * source[3] * 1023.0f);
+        uint32_t g = truncateFloatToUint32(source[1] * source[3] * 1023.0f);
+        uint32_t b = truncateFloatToUint32(source[2] * source[3] * 1023.0f);
+        uint32_t a = truncateFloatToUint32(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
         skip(source, 4);
         skip(destination, 1);
@@ -1179,10 +1180,10 @@ void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::Alph
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1023.0f / source[3] : 1023.0f;
-        uint32_t r = static_cast<uint32_t>(source[0] * scaleFactor);
-        uint32_t g = static_cast<uint32_t>(source[1] * scaleFactor);
-        uint32_t b = static_cast<uint32_t>(source[2] * scaleFactor);
-        uint32_t a = static_cast<uint32_t>(source[3] * 3.0f);
+        uint32_t r = truncateFloatToUint32(source[0] * scaleFactor);
+        uint32_t g = truncateFloatToUint32(source[1] * scaleFactor);
+        uint32_t b = truncateFloatToUint32(source[2] * scaleFactor);
+        uint32_t a = truncateFloatToUint32(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
         skip(source, 4);
         skip(destination, 1);

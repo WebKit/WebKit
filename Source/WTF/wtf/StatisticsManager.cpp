@@ -27,6 +27,7 @@
 #include "StatisticsManager.h"
 
 #include <wtf/DataLog.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
@@ -62,7 +63,7 @@ static void dumpHistogram(const AbstractLocker&, const Vector<double>& values, d
     double binSize = (max - min) / binCount;
 
     for (double value : values) {
-        size_t index = std::min(binCount - 1, static_cast<size_t>((value - min) / binSize));
+        size_t index = std::min(binCount - 1, static_cast<size_t>(truncateDoubleToUint64((value - min) / binSize)));
         ++bins[index];
     }
 

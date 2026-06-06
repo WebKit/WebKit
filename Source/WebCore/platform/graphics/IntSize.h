@@ -31,6 +31,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Forward.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Platform.h>
 
 #if USE(CG)
@@ -93,8 +94,8 @@ public:
 
     void scale(float widthScale, float heightScale)
     {
-        m_width = static_cast<int>(static_cast<float>(m_width) * widthScale);
-        m_height = static_cast<int>(static_cast<float>(m_height) * heightScale);
+        m_width = truncateFloatToInt32(static_cast<float>(m_width) * widthScale);
+        m_height = truncateFloatToInt32(static_cast<float>(m_height) * heightScale);
     }
 
     void scale(float scale)
