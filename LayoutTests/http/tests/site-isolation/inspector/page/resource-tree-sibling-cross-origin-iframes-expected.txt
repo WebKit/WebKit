@@ -1,0 +1,19 @@
+Test that Page.getResourceTree reports mixed cross-origin and same-origin siblings under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.GetResourceTreeSiblings
+-- Running test case: SiteIsolation.Page.GetResourceTreeSiblings.MixedOriginSiblings
+PASS: Main frame should have exactly three child frames.
+PASS: First cross-origin sibling should appear in the tree.
+PASS: Second cross-origin sibling should appear in the tree.
+PASS: Same-origin sibling should appear in the tree.
+PASS: Main frame and all three siblings should have distinct ids.
+PASS: First cross-origin sibling's parentId should match the main frame's id.
+PASS: Second cross-origin sibling's parentId should match the main frame's id.
+PASS: Same-origin sibling's parentId should match the main frame's id.
+PASS: First cross-origin sibling should be cross-origin to the main frame.
+PASS: Second cross-origin sibling should be cross-origin to the main frame.
+PASS: Same-origin sibling should share the main frame's security origin.
+PASS: Second cross-origin sibling's stylesheet subresource should be reported on that frame.
+PASS: First cross-origin sibling should not report the other sibling's stylesheet.
+

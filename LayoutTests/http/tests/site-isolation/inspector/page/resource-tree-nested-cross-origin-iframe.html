@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-grandchild.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.GetResourceTreeNestedGrandchild");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceTreeNestedGrandchild.MainChildGrandchild",
+        description: "getResourceTree should recurse main(A) -> child(B) -> grandchild(A), reporting distinct ids (the grandchild lands back on the main frame's host, the exact frame-id collision topology) and aggregating each frame's resources three processes deep.",
+        async test() {
+            // Track every frame target as it is added so we can drive each one's execution
+            // context (created right after commit). Nested cross-origin frames commit with
+            // CommitTiming::WaitForLoad in their own processes; their committed url/origin and
+            // resources only reach the proxy after commit, so poll getResourceTree until the
+            // grandchild's committed url appears.
+            let frameTargets = [];
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                frameTargets.push(event.data.target);
+            });
+
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+
+            let frameTree;
+            let child;
+            let grandchild;
+            for (let attempt = 0; attempt < 100; ++attempt) {
+                for (let frameTarget of frameTargets) {
+                    if (!frameTarget.executionContext) {
+                        await Promise.race([
+                            frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                            new Promise((resolve) => setTimeout(resolve, 50)),
+                        ]);
+                    }
+                }
+                ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+                child = frameTree.childFrames?.[0];
+                grandchild = child?.childFrames?.[0];
+                if (grandchild && grandchild.frame.url.endsWith("/resource-tree-frame-with-subresource.html"))
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!frameTree.frame.id, "Main frame should have a non-empty id.");
+            InspectorTest.expectEqual(frameTree.frame.parentId, undefined, "Main frame should have no parentId.");
+
+            InspectorTest.expectEqual(frameTree.childFrames?.length, 1, "Main frame should have exactly one child frame.");
+            InspectorTest.expectThat(!!child.frame.id, "Child frame should have a non-empty id.");
+            InspectorTest.expectEqual(child.frame.parentId, frameTree.frame.id, "Child frame's parentId should match the main frame's id.");
+            InspectorTest.expectEqual(child.frame.name, "child-frame", "Child frame's name attribute should be reported.");
+            InspectorTest.expectThat(child.frame.url.endsWith("/resource-tree-frame-with-grandchild.html"), "Child frame URL should point at the grandchild-hosting document.");
+            InspectorTest.expectThat(child.frame.securityOrigin !== frameTree.frame.securityOrigin, "Child frame should be cross-origin to the main frame.");
+
+            InspectorTest.expectEqual(child.childFrames?.length, 1, "Child frame should have exactly one grandchild frame.");
+            InspectorTest.expectThat(!!grandchild.frame.id, "Grandchild frame should have a non-empty id.");
+            InspectorTest.expectEqual(grandchild.frame.parentId, child.frame.id, "Grandchild frame's parentId should match the child frame's id.");
+            InspectorTest.expectEqual(grandchild.frame.name, "grandchild-frame", "Grandchild frame's name attribute should be reported.");
+            InspectorTest.expectThat(grandchild.frame.url.endsWith("/resource-tree-frame-with-subresource.html"), "Grandchild frame URL should point at the leaf document.");
+
+            // The grandchild flips back to the main frame's host, so it shares the main frame's
+            // security origin while living in a different (re-used) process. The frame ids must
+            // still be distinct -- this is the main(A)/grandchild(A) collision the id scheme fixes.
+            InspectorTest.expectEqual(grandchild.frame.securityOrigin, frameTree.frame.securityOrigin, "Grandchild frame should share the main frame's (flipped-back) security origin.");
+            InspectorTest.expectThat(grandchild.frame.id !== frameTree.frame.id, "Grandchild frame id should differ from the main frame id despite the shared origin.");
+            InspectorTest.expectThat(grandchild.frame.id !== child.frame.id, "Grandchild frame id should differ from the child frame id.");
+
+            // Resources should aggregate three processes deep: the child (host B) and the
+            // grandchild (host A) each load the stylesheet subresource.
+            let childStyle = (child.resources || []).find((resource) => resource.url.endsWith("/resource-tree-subframe-style.css"));
+            InspectorTest.expectThat(!!childStyle, "Child frame's cached stylesheet subresource should be reported.");
+            let grandchildStyle = (grandchild.resources || []).find((resource) => resource.url.endsWith("/resource-tree-subframe-style.css"));
+            InspectorTest.expectThat(!!grandchildStyle, "Grandchild frame's cached stylesheet subresource should be reported.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.getResourceTree recurses through a nested cross-origin grandchild under site isolation.</p>
+</body>

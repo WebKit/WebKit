@@ -1,0 +1,13 @@
+Test that a cross-origin (process-swapped) frame's protocol id is consistent across the Page and Network domains under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.FrameIdConsistency
+-- Running test case: SiteIsolation.Page.FrameIdConsistency.PageAndNetworkAgree
+PASS: Cross-origin child frame should appear in the resource tree.
+PASS: Child frame id should be hosting-process-qualified (frame-<processID>.<frameID>).
+PASS: Page-domain child frame id should resolve to a frame in WI.networkManager.
+PASS: Resolved frame's url should match the cross-origin child's url.
+PASS: There should be exactly one frame for the child's url (Page and Network must not disagree on its id).
+PASS: Cross-origin child's stylesheet subresource should be tracked by the Network domain on that frame.
+PASS: Network-tracked subresource's parent frame should be the same frame the Page domain identified (consistent frame id across domains).
+

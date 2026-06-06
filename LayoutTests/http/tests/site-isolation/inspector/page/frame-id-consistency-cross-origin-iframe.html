@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-subresource.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.FrameIdConsistency");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.FrameIdConsistency.PageAndNetworkAgree",
+        description: "A cross-origin frame loads provisionally in a new process and commits (a process swap). Its protocol frame id is hosting-process-qualified (frame-<processID>.<frameID>), and both the Page domain (getResourceTree / frameNavigated) and the Network domain (requestWillBeSent) must compute the same id for it, so a network-tracked subresource attaches to the same frame the resource tree reports. This is the bug-310164 invariant. See webkit.org/b/310164.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let frameTarget = (await targetAddedPromise).data.target;
+
+            // Drive/await the cross-origin child's commit, then poll getResourceTree (Page domain)
+            // until the child reports its committed url. Record the Page-domain frame id.
+            let frameTree;
+            let child;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+                child = frameTree.childFrames?.[0];
+                if (child && child.frame.url.endsWith("/resource-tree-frame-with-subresource.html"))
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!child, "Cross-origin child frame should appear in the resource tree.");
+            if (!child)
+                return;
+
+            let pageChildId = child.frame.id;
+            InspectorTest.expectThat(/^frame-\d+\.\d+$/.test(pageChildId), "Child frame id should be hosting-process-qualified (frame-<processID>.<frameID>).");
+
+            // The Page-domain id must resolve to a frame in the frontend model (which is fed by the
+            // live Page.frameNavigated and Network.requestWillBeSent events), and that frame must be
+            // the unique entry for the child's url -- a Page/Network id mismatch would split it into
+            // two entries or orphan the resource.
+            let childFrame = WI.networkManager.frameForIdentifier(pageChildId);
+            InspectorTest.expectThat(!!childFrame, "Page-domain child frame id should resolve to a frame in WI.networkManager.");
+            if (!childFrame)
+                return;
+
+            InspectorTest.expectThat(childFrame.url.endsWith("/resource-tree-frame-with-subresource.html"), "Resolved frame's url should match the cross-origin child's url.");
+            let framesWithChildURL = WI.networkManager.frames.filter((frame) => frame.url && frame.url.endsWith("/resource-tree-frame-with-subresource.html"));
+            InspectorTest.expectEqual(framesWithChildURL.length, 1, "There should be exactly one frame for the child's url (Page and Network must not disagree on its id).");
+
+            // The stylesheet subresource is tracked by the Network domain (requestWillBeSent carries
+            // a hosting-process-qualified frameId). Poll until it is attached, then confirm it landed
+            // on the same frame the Page domain identified -- i.e. both domains agree on the id.
+            let cssResource = null;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                for (let resource of childFrame.resourceCollection) {
+                    if (resource.url.endsWith("/resource-tree-subframe-style.css")) {
+                        cssResource = resource;
+                        break;
+                    }
+                }
+                if (cssResource)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!cssResource, "Cross-origin child's stylesheet subresource should be tracked by the Network domain on that frame.");
+            if (cssResource)
+                InspectorTest.expectThat(cssResource.parentFrame === childFrame, "Network-tracked subresource's parent frame should be the same frame the Page domain identified (consistent frame id across domains).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a cross-origin (process-swapped) frame's protocol id is consistent across the Page and Network domains under site isolation.</p>
+</body>

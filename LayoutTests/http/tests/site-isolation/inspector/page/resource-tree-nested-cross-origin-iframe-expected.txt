@@ -1,0 +1,24 @@
+Test that Page.getResourceTree recurses through a nested cross-origin grandchild under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.GetResourceTreeNestedGrandchild
+-- Running test case: SiteIsolation.Page.GetResourceTreeNestedGrandchild.MainChildGrandchild
+PASS: Main frame should have a non-empty id.
+PASS: Main frame should have no parentId.
+PASS: Main frame should have exactly one child frame.
+PASS: Child frame should have a non-empty id.
+PASS: Child frame's parentId should match the main frame's id.
+PASS: Child frame's name attribute should be reported.
+PASS: Child frame URL should point at the grandchild-hosting document.
+PASS: Child frame should be cross-origin to the main frame.
+PASS: Child frame should have exactly one grandchild frame.
+PASS: Grandchild frame should have a non-empty id.
+PASS: Grandchild frame's parentId should match the child frame's id.
+PASS: Grandchild frame's name attribute should be reported.
+PASS: Grandchild frame URL should point at the leaf document.
+PASS: Grandchild frame should share the main frame's (flipped-back) security origin.
+PASS: Grandchild frame id should differ from the main frame id despite the shared origin.
+PASS: Grandchild frame id should differ from the child frame id.
+PASS: Child frame's cached stylesheet subresource should be reported.
+PASS: Grandchild frame's cached stylesheet subresource should be reported.
+
