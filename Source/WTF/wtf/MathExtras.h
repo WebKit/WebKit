@@ -41,6 +41,9 @@
 #if CPU(ARM64)
 #include <arm_neon.h>
 #endif
+#if CPU(X86_64)
+#include <emmintrin.h>
+#endif
 
 #if OS(OPENBSD)
 #include <sys/types.h>
@@ -861,19 +864,18 @@ constexpr T roundDownToMultipleOf(T x)
 
 ALWAYS_INLINE int32_t truncateDoubleToInt32(double number)
 {
+#if CPU(X86_64)
+    return _mm_cvttsd_si32(_mm_set_sd(number));
+#elif CPU(ARM64)
     if (WTF_PROVEN_TRUE(number > -2147483649.0 && number < 2147483648.0))
         return static_cast<int32_t>(number);
-#if CPU(X86_64)
-    // cvttsd2si eax, xmm0
-    int32_t result;
-    __asm__("cvttsd2si %1, %0" : "=r"(result) : "x"(number));
-    return result;
-#elif CPU(ARM64)
     // fcvtzs w0, d0
     int32_t result;
     __asm__("fcvtzs %w0, %d1" : "=r"(result) : "w"(number));
     return result;
 #else
+    if (WTF_PROVEN_TRUE(number > -2147483649.0 && number < 2147483648.0))
+        return static_cast<int32_t>(number);
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     if (number > 0) {
@@ -889,19 +891,13 @@ ALWAYS_INLINE int32_t truncateDoubleToInt32(double number)
 
 ALWAYS_INLINE int64_t truncateDoubleToInt64(double number)
 {
-#if CPU(ARM64)
+#if CPU(X86_64)
+    return _mm_cvttsd_si64(_mm_set_sd(number));
+#elif CPU(ARM64)
     return vcvtd_s64_f64(number);
 #else
     if (WTF_PROVEN_TRUE(number >= -9223372036854775808.0 && number < 9223372036854775808.0))
         return static_cast<int64_t>(number);
-#if CPU(X86_64)
-    // cvttsd2si rax, xmm0
-    int64_t result;
-    __asm__("cvttsd2si %1, %0" : "=r"(result) : "x"(number));
-    return result;
-#elif CPU(ARM64)
-    return vcvtd_s64_f64(number);
-#else
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     if (number > 0) {
@@ -913,24 +909,22 @@ ALWAYS_INLINE int64_t truncateDoubleToInt64(double number)
         return INT64_MIN;
     return static_cast<int64_t>(number);
 #endif
-#endif
 }
 
 ALWAYS_INLINE uint32_t truncateDoubleToUint32(double number)
 {
+#if CPU(X86_64)
+    return static_cast<uint32_t>(_mm_cvttsd_si64(_mm_set_sd(number)));
+#elif CPU(ARM64)
     if (WTF_PROVEN_TRUE(number >= 0.0 && number < 4294967296.0))
         return static_cast<uint32_t>(number);
-#if CPU(X86_64)
-    // cvttsd2si rax, xmm0 (64-bit signed, return low 32 bits)
-    int64_t result;
-    __asm__("cvttsd2si %1, %0" : "=r"(result) : "x"(number));
-    return static_cast<uint32_t>(result);
-#elif CPU(ARM64)
     // fcvtzu w0, d0
     uint32_t result;
     __asm__("fcvtzu %w0, %d1" : "=r"(result) : "w"(number));
     return result;
 #else
+    if (WTF_PROVEN_TRUE(number >= 0.0 && number < 4294967296.0))
+        return static_cast<uint32_t>(number);
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     // Mimic x86_64: cvttsd2si into int64, take low 32 bits.
@@ -941,25 +935,22 @@ ALWAYS_INLINE uint32_t truncateDoubleToUint32(double number)
 
 ALWAYS_INLINE uint64_t truncateDoubleToUint64(double number)
 {
-#if CPU(ARM64)
-    return vcvtd_u64_f64(number);
-#else
-    if (WTF_PROVEN_TRUE(number >= 0.0 && number < 18446744073709551616.0))
-        return static_cast<uint64_t>(number);
 #if CPU(X86_64)
     // Branchless conversion matching compiler codegen for static_cast<uint64_t>(double).
     // cvttsd2si returns 0x8000000000000000 (negative) on overflow, including for
     // values >= 2^63. When that happens, subtract 2^63 and convert again; the
     // arithmetic-right-shift mask selects the adjusted result only on overflow.
     constexpr double twoTo63 = 9223372036854775808.0; // 0x43e0000000000000
-    int64_t direct;
-    __asm__("cvttsd2si %1, %0" : "=r"(direct) : "x"(number));
+    int64_t direct = _mm_cvttsd_si64(_mm_set_sd(number));
     double shifted = number - twoTo63;
-    int64_t fromShifted;
-    __asm__("cvttsd2si %1, %0" : "=r"(fromShifted) : "x"(shifted));
+    int64_t fromShifted = _mm_cvttsd_si64(_mm_set_sd(shifted));
     int64_t mask = direct >> 63;
     return static_cast<uint64_t>((fromShifted & mask) | direct);
+#elif CPU(ARM64)
+    return vcvtd_u64_f64(number);
 #else
+    if (WTF_PROVEN_TRUE(number >= 0.0 && number < 18446744073709551616.0))
+        return static_cast<uint64_t>(number);
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     if (number < 0.0)
@@ -974,24 +965,19 @@ ALWAYS_INLINE uint64_t truncateDoubleToUint64(double number)
     }
     return static_cast<uint64_t>(static_cast<int64_t>(number));
 #endif
-#endif
 }
 
 // Float-to-integer truncation helpers.
 
 ALWAYS_INLINE int32_t truncateFloatToInt32(float number)
 {
-#if CPU(ARM64)
+#if CPU(X86_64)
+    return _mm_cvttss_si32(_mm_set_ss(number));
+#elif CPU(ARM64)
     return vcvts_s32_f32(number);
 #else
     if (WTF_PROVEN_TRUE(number > -2147483649.0f && number < 2147483648.0f))
         return static_cast<int32_t>(number);
-#if CPU(X86_64)
-    // cvttss2si eax, xmm0
-    int32_t result;
-    __asm__("cvttss2si %1, %0" : "=r"(result) : "x"(number));
-    return result;
-#else
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     if (number > 0) {
@@ -1003,24 +989,22 @@ ALWAYS_INLINE int32_t truncateFloatToInt32(float number)
         return INT32_MIN;
     return static_cast<int32_t>(number);
 #endif
-#endif
 }
 
 ALWAYS_INLINE int64_t truncateFloatToInt64(float number)
 {
+#if CPU(X86_64)
+    return _mm_cvttss_si64(_mm_set_ss(number));
+#elif CPU(ARM64)
     if (WTF_PROVEN_TRUE(number >= -9223372036854775808.0f && number < 9223372036854775808.0f))
         return static_cast<int64_t>(number);
-#if CPU(X86_64)
-    // cvttss2si rax, xmm0
-    int64_t result;
-    __asm__("cvttss2si %1, %0" : "=r"(result) : "x"(number));
-    return result;
-#elif CPU(ARM64)
     // fcvtzs x0, s0
     int64_t result;
     __asm__("fcvtzs %x0, %s1" : "=r"(result) : "w"(number));
     return result;
 #else
+    if (WTF_PROVEN_TRUE(number >= -9223372036854775808.0f && number < 9223372036854775808.0f))
+        return static_cast<int64_t>(number);
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     if (number > 0) {
@@ -1036,16 +1020,13 @@ ALWAYS_INLINE int64_t truncateFloatToInt64(float number)
 
 ALWAYS_INLINE uint32_t truncateFloatToUint32(float number)
 {
-    if (WTF_PROVEN_TRUE(number >= 0.0f && number < 4294967296.0f))
-        return static_cast<uint32_t>(number);
 #if CPU(X86_64)
-    // cvttss2si rax, xmm0 (64-bit signed, return low 32 bits)
-    int64_t result;
-    __asm__("cvttss2si %1, %0" : "=r"(result) : "x"(number));
-    return static_cast<uint32_t>(result);
+    return static_cast<uint32_t>(_mm_cvttss_si64(_mm_set_ss(number)));
 #elif CPU(ARM64)
     return vcvts_u32_f32(number);
 #else
+    if (WTF_PROVEN_TRUE(number >= 0.0f && number < 4294967296.0f))
+        return static_cast<uint32_t>(number);
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     int64_t wide = truncateFloatToInt64(number);
@@ -1055,24 +1036,24 @@ ALWAYS_INLINE uint32_t truncateFloatToUint32(float number)
 
 ALWAYS_INLINE uint64_t truncateFloatToUint64(float number)
 {
-    if (WTF_PROVEN_TRUE(number >= 0.0f && number < 18446744073709551616.0f))
-        return static_cast<uint64_t>(number);
 #if CPU(X86_64)
     // Branchless conversion matching compiler codegen for static_cast<uint64_t>(float).
     constexpr float twoTo63 = 9223372036854775808.0f; // 0x5f000000
-    int64_t direct;
-    __asm__("cvttss2si %1, %0" : "=r"(direct) : "x"(number));
+    int64_t direct = _mm_cvttss_si64(_mm_set_ss(number));
     float shifted = number - twoTo63;
-    int64_t fromShifted;
-    __asm__("cvttss2si %1, %0" : "=r"(fromShifted) : "x"(shifted));
+    int64_t fromShifted = _mm_cvttss_si64(_mm_set_ss(shifted));
     int64_t mask = direct >> 63;
     return static_cast<uint64_t>((fromShifted & mask) | direct);
 #elif CPU(ARM64)
+    if (WTF_PROVEN_TRUE(number >= 0.0f && number < 18446744073709551616.0f))
+        return static_cast<uint64_t>(number);
     // fcvtzu x0, s0
     uint64_t result;
     __asm__("fcvtzu %x0, %s1" : "=r"(result) : "w"(number));
     return result;
 #else
+    if (WTF_PROVEN_TRUE(number >= 0.0f && number < 18446744073709551616.0f))
+        return static_cast<uint64_t>(number);
     if (std::isnan(number) || !std::isfinite(number))
         return 0;
     if (number < 0.0f)
