@@ -129,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCodePoint, (JSGlobalObject* globalObject, Cal
         double codePointAsDouble = callFrame->uncheckedArgument(i).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
+        uint32_t codePoint = truncateDoubleToUint32(codePointAsDouble);
 
         if (codePoint != codePointAsDouble || codePoint > UCHAR_MAX_VALUE)
             return throwVMError(globalObject, scope, createRangeError(globalObject, "Arguments contain a value that is out of range of code points"_s));

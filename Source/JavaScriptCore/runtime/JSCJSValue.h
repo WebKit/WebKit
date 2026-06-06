@@ -296,7 +296,7 @@ public:
     inline JSObject* getObject() const; // 0 if not an object. Defined in JSCJSValueCellInlines.h
 
     // Extracting integer values.
-    bool getUInt32(uint32_t&) const;
+    inline bool getUInt32(uint32_t&) const; // Defined below
         
     // Basic conversions.
     inline JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType = NoPreference) const; // Defined in JSCJSValueCellInlines.h
@@ -366,7 +366,7 @@ public:
     JSValue getPrototype(JSGlobalObject*) const;
     JSValue toThis(JSGlobalObject*, ECMAMode) const;
 
-    inline static bool equal(JSGlobalObject*, JSValue v1, JSValue v2); // Defined in JSCJSValueInlines.h
+    inline static bool equal(JSGlobalObject*, JSValue v1, JSValue v2); // Defined below
     static bool equalSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
     inline static bool equalSlowCaseInline(JSGlobalObject*, JSValue v1, JSValue v2); // Defined in JSCJSValueInlines.h
     inline static bool strictEqual(JSGlobalObject*, JSValue v1, JSValue v2); // Defined in JSCJSValueInlines.h
@@ -1409,5 +1409,29 @@ inline int32_t JSValue::bigInt32AsInt32() const
     return static_cast<int32_t>(u.asInt64 >> 16);
 }
 #endif // USE(BIGINT32)
+
+ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
+{
+    if (isInt32()) {
+        int32_t i = asInt32();
+        v = static_cast<uint32_t>(i);
+        return i >= 0;
+    }
+    if (isDouble()) {
+        double d = asDouble();
+        v = truncateDoubleToUint32(d);
+        return v == d;
+    }
+    return false;
+}
+
+// ECMA 11.9.3
+inline bool JSValue::equal(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
+{
+    if (v1.isInt32() && v2.isInt32())
+        return v1 == v2;
+
+    return equalSlowCase(globalObject, v1, v2);
+}
 
 } // namespace JSC

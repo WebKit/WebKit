@@ -98,7 +98,7 @@ bool LiteralParser<CharType, reviverMode>::tryJSONPParse(Vector<JSONPData>& resu
                 if (m_lexer.next() != TokNumber)
                     return false;
                 double doubleIndex = m_lexer.currentToken()->numberToken;
-                int index = (int)doubleIndex;
+                int index = truncateDoubleToInt32(doubleIndex);
                 if (index != doubleIndex || index < 0)
                     return false;
                 entry.m_pathIndex = index;

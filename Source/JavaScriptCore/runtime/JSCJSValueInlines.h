@@ -159,15 +159,6 @@ ALWAYS_INLINE JSBigInt* JSValue::asHeapBigInt() const
 }
 #endif // USE(JSVALUE64)
 
-// ECMA 11.9.3
-inline bool JSValue::equal(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
-{
-    if (v1.isInt32() && v2.isInt32())
-        return v1 == v2;
-
-    return equalSlowCase(globalObject, v1, v2);
-}
-
 inline bool JSValue::isZeroBigInt() const
 {
     ASSERT(isBigInt());
@@ -193,21 +184,6 @@ inline bool JSValue::isNegativeBigInt() const
 template <typename Base> String HandleConverter<Base, Unknown>::getString(JSGlobalObject* globalObject) const
 {
     return jsValue().getString(globalObject);
-}
-
-ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
-{
-    if (isInt32()) {
-        int32_t i = asInt32();
-        v = static_cast<uint32_t>(i);
-        return i >= 0;
-    }
-    if (isDouble()) {
-        double d = asDouble();
-        v = static_cast<uint32_t>(d);
-        return v == d;
-    }
-    return false;
 }
 
 ALWAYS_INLINE Identifier JSValue::toPropertyKey(JSGlobalObject* globalObject) const
