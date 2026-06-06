@@ -27,6 +27,7 @@ import sys
 
 from .blame import Blame
 from .branch import Branch
+from .build_svn_revision_map import BuildSVNRevisionMap
 from .canonicalize import Canonicalize
 from .cherry_pick import CherryPick
 from .clean import Clean, DeletePRBranches
@@ -96,7 +97,7 @@ def main(
     subparser.set_defaults(main=lambda *args, **kwargs: parser.print_help())
 
     programs = [
-        Blame, Branch, Canonicalize, Checkout,
+        Blame, Branch, BuildSVNRevisionMap, Canonicalize, Checkout,
         Clean, Clone, Conflict, CreateBug, Diff, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,

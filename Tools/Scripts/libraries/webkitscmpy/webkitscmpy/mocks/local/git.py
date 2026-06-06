@@ -160,6 +160,30 @@ class Git(mocks.Subprocess):
                         )
                     )
 
+            if git_svn:
+                # Cache.svn_revision_map looks for metadata/svn-revision-to-hash.bin
+                # alongside the working tree. Synthesize it from the mock commits so
+                # tests that rely on revision → identifier lookups work after the
+                # populate() slow path was removed.
+                rev_to_hash = {}
+                for branch_commits in self.commits.values():
+                    for commit in branch_commits:
+                        if commit.revision is None or not commit.hash:
+                            continue
+                        rev_to_hash.setdefault(commit.revision, set()).add(commit.hash)
+                if rev_to_hash:
+                    metadata_dir = os.path.join(self.path, 'metadata')
+                    if not os.path.isdir(metadata_dir):
+                        os.mkdir(metadata_dir)
+                    max_rev = max(rev_to_hash)
+                    with open(os.path.join(metadata_dir, 'svn-revision-to-hash.bin'), 'wb') as bin_file:
+                        for rev in range(1, max_rev + 1):
+                            hashes = rev_to_hash.get(rev)
+                            if hashes and len(hashes) == 1:
+                                bin_file.write(bytes.fromhex(next(iter(hashes))))
+                            else:
+                                bin_file.write(b'\x00' * 20)
+
         if git_svn:
             git_svn_routes = [
                 mocks.Subprocess.Route(
@@ -931,6 +955,52 @@ nothing to commit, working tree clean
     def log(self, ref, args, path, git_svn):
         """Helper for git log"""
         decorate = '--decorate' in args
+        if '--format=%H%n%B%x00' in args:
+            # Refs come after `log` and any `--`-prefixed flags. The build
+            # script passes one ref per branch/tag, so we union rev_list across
+            # all of them and dedupe by hash to mirror real git's "history
+            # reachable from any of these refs" semantics.
+            ref_args = [
+                arg for arg in args[args.index('log') + 1:]
+                if not arg.startswith('--') and arg != '--'
+            ]
+            seen = set()
+            unique_commits = []
+            for r in ref_args:
+                for commit in self.rev_list(r):
+                    if commit.hash in seen:
+                        continue
+                    seen.add(commit.hash)
+                    unique_commits.append(commit)
+            records = []
+            for commit in unique_commits:
+                # `%B` emits the raw body without git's default 4-space indent.
+                body_lines = list(commit.message.splitlines())
+                if git_svn:
+                    body_lines.extend([
+                        '',
+                        'git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                            self.remote.split('@')[-1].split(':')[0],
+                            os.path.basename(path),
+                            commit.revision,
+                        ),
+                    ])
+                body = '\n'.join(body_lines)
+                records.append('{}\n{}\0'.format(commit.hash, body))
+            return mocks.ProcessCompletion(returncode=0, stdout=''.join(records))
+        if '--format=%H' in args:
+            # `args[3]` is the conventional ref position, but `--format=...`
+            # arguments push the ref to the next slot. Find the first arg
+            # after `log` that doesn't start with `--` and isn't a separator.
+            for arg in args[args.index('log') + 1:]:
+                if arg.startswith('--') or arg == '--':
+                    continue
+                ref = arg
+                break
+            return mocks.ProcessCompletion(
+                returncode=0,
+                stdout='\n'.join(commit.hash for commit in self.rev_list(ref)) + '\n',
+            )
         return mocks.ProcessCompletion(
             returncode=0,
             stdout='\n'.join([
@@ -1681,13 +1751,17 @@ nothing to commit, working tree clean
                 f'refs/remotes/{branch}' for branch in sorted(self.remotes)
             ]
 
+        # Mirror git's for-each-ref pattern semantics: a pattern matches via
+        # fnmatch(3) or literally — "literally" meaning either an exact match
+        # OR a match from the beginning up to a slash. So `refs/remotes/origin`
+        # and `refs/remotes/origin/` both match `refs/remotes/origin/main`.
         patterns_re = re.compile(
             '|'.join(
                 itertools.chain.from_iterable(
                     (
                         fnmatch.translate(pattern),
-                        re.escape(pattern) + r'\Z',
-                        re.escape(pattern) + '/',
+                        re.escape(pattern.rstrip('/')) + r'\Z',
+                        re.escape(pattern.rstrip('/')) + '/',
                     )
                     for pattern in patterns
                 )

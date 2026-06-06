@@ -511,6 +511,93 @@ PRINTED
         actual = self.get_trailers('Title\n\nother-tag: stuff\n# this is a comment\n')
         self.assertEqual(actual, ['other-tag: stuff'])
 
+    def test_parse_trailers_classmethod_none(self):
+        self.assertEqual(Commit.parse_trailers(None), [])
+
+    def test_parse_trailers_classmethod_empty(self):
+        self.assertEqual(Commit.parse_trailers(''), [])
+
+    def test_parse_trailers_classmethod_basic(self):
+        self.assertEqual(
+            Commit.parse_trailers(
+                'Commit title\n\n'
+                'Reviewed by NOBODY (OOPS!)\n\n'
+                'trailer-tag: information\n'
+                'other-tag: stuff\n',
+            ),
+            ['trailer-tag: information', 'other-tag: stuff'],
+        )
+
+    def test_parse_trailers_classmethod_indented(self):
+        self.assertEqual(
+            Commit.parse_trailers(
+                'Commit title\n\n'
+                'Reviewed by NOBODY (OOPS!)\n\n'
+                '    trailer-tag: information\n'
+                'other-tag: stuff\n',
+            ),
+            ['other-tag: stuff'],
+        )
+
+    def test_parse_trailers_classmethod_canonical_link(self):
+        self.assertEqual(
+            Commit.parse_trailers(
+                'Commit title\n\n'
+                'Reviewed by NOBODY (OOPS!)\n\n'
+                'Canonical link: https://example.com\n',
+            ),
+            ['Canonical link: https://example.com'],
+        )
+
+    def test_parse_trailers_classmethod_canonical_link_lowercase(self):
+        self.assertEqual(
+            Commit.parse_trailers(
+                'Commit title\n\n'
+                'Reviewed by NOBODY (OOPS!)\n\n'
+                'canonical link: https://example.com\n',
+            ),
+            [],
+        )
+
+    def test_parse_trailers_classmethod_trailing_whitespace(self):
+        self.assertEqual(
+            Commit.parse_trailers(
+                'Commit title\n\n'
+                'other-tag: stuff\x20\n',
+            ),
+            ['other-tag: stuff'],
+        )
+
+    def test_parse_trailers_classmethod_CR_after_key(self):
+        self.assertEqual(Commit.parse_trailers('Title\n\na\r:'), [])
+
+    def test_parse_trailers_classmethod_CR_before_key(self):
+        self.assertEqual(Commit.parse_trailers('Title\n\n\ra:'), [])
+
+    def test_parse_trailers_classmethod_CR_in_value(self):
+        self.assertEqual(Commit.parse_trailers('Title\n\na::\r:'), ['a: :\r:'])
+
+    @unittest.expectedFailure
+    def test_parse_trailers_classmethod_multiline_subject(self):
+        self.assertEqual(
+            Commit.parse_trailers(
+                'Commit title\n'
+                'Canonical link: https://example.com\n',
+            ),
+            [],
+        )
+
+    @unittest.expectedFailure
+    def test_parse_trailers_classmethod_only_subject(self):
+        self.assertEqual(
+            Commit.parse_trailers('Canonical link: https://example.com\n'),
+            [],
+        )
+
+    @unittest.expectedFailure
+    def test_parse_trailers_classmethod_folded(self):
+        self.assertEqual(Commit.parse_trailers('Title\n\na: a\n a'), ['a: a\n a'])
+
     def test_parse_issue_in_trailers(self):
         contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')
         commit = Commit(

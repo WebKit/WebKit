@@ -26,6 +26,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import time
 
 from collections import defaultdict
@@ -33,6 +34,7 @@ from collections import defaultdict
 from webkitcorepy import run, decorators, NestedFuzzyDict, string_utils, Terminal
 from webkitscmpy.local import Scm
 from webkitscmpy import remote, Commit, Contributor, log
+from webkitscmpy.binary_revision_map import BinaryRevisionMap
 
 
 class Git(Scm):
@@ -42,11 +44,31 @@ class Git(Scm):
             self._ordered_commits = {}
             self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
             self._ordered_revisions = {}
-            self._revisions_to_identifiers = {}
             self._last_populated = {}
             self._guranteed_for = guranteed_for
+            self._svn_revision_map = None
 
             self.load()
+
+        def __del__(self):
+            try:
+                # NOTE: must not touch self.repo — Cache↔Git ref cycle, intra-cycle
+                # collection order is undefined.
+                if self._svn_revision_map is not None:
+                    self._svn_revision_map.close()
+            except Exception:
+                pass  # destructor is best-effort; OS reclaims mmap regardless
+
+        @property
+        def svn_revision_map(self):
+            if self._svn_revision_map is not None:
+                return self._svn_revision_map
+            if self.repo.metadata is None:
+                return None
+            self._svn_revision_map = BinaryRevisionMap(
+                os.path.join(self.repo.metadata, 'svn-revision-to-hash.bin'),
+            )
+            return self._svn_revision_map
 
         def load(self):
             if not os.path.exists(self.path):
@@ -97,11 +119,51 @@ class Git(Scm):
 
                 identifier = '{}@{}'.format('{}.{}'.format(branch_point, index) if branch_point else index, branch)
                 self._hash_to_identifiers[self._ordered_commits[branch][index]] = identifier
-                if self._ordered_revisions[branch][index]:
-                    self._revisions_to_identifiers[self._ordered_revisions[branch][index]] = identifier
                 index -= 1
 
+        def _iter_commits(self, branch, remote):
+            with tempfile.TemporaryFile(mode='w+b') as stderr_tmp:
+                proc = subprocess.Popen(
+                    [self.repo.executable(), '--no-replace-objects', 'log', '--format=%H',
+                     '{}/{}'.format(remote, branch) if remote else branch, '--'],
+                    cwd=self.repo.root_path,
+                    stdout=subprocess.PIPE,
+                    stderr=stderr_tmp,
+                    encoding='utf-8',
+                )
+                try:
+                    if proc.poll():
+                        raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
+                    for line in proc.stdout:
+                        hash = line.strip()
+                        if hash:
+                            yield hash
+                    proc.wait()
+                    stderr_tmp.seek(0)
+                    err = stderr_tmp.read().decode('utf-8', errors='replace')
+                    if proc.returncode:
+                        raise self.repo.Exception(
+                            "git log for '{}' exited with {}{}".format(
+                                branch, proc.returncode, ': ' + err if err.strip() else '',
+                            ),
+                        )
+                    elif err.strip():
+                        log.debug('git log stderr for {!r}: {}'.format(branch, err))
+                finally:
+                    if proc.poll() is None:
+                        proc.kill()
+                    proc.wait()
+
         def populate(self, branch=None, remote=None):
+            """Populate the identifier cache for ``branch``.
+
+            SVN-revision → identifier mapping is populated exclusively from the
+            binary map at ``metadata/svn-revision-to-hash.bin``. On clones
+            without that file, revision-based lookups (``to_hash(revision=...)``,
+            ``to_identifier(revision=...)``, ``to_revision(hash=...)``) return
+            None. Hash → identifier still works because populate walks hashes
+            via ``git log --format=%H`` without needing the binary map.
+            """
             branch = branch or self.repo.branch
             if not branch:
                 return
@@ -127,51 +189,26 @@ class Git(Scm):
                 identifier = self._hash_to_identifiers.get(hash, '')
                 return identifier.endswith(default_branch) or identifier.endswith(branch)
 
+            m = self.svn_revision_map
+            h2r = m.hash_to_revision() if m is not None else {}
+            gen = self._iter_commits(branch, remote)
+
             intersected = False
-            log = None
             try:
-                self._last_populated[branch] = time.time()
-                log = subprocess.Popen(
-                    [self.repo.executable(), '--no-replace-objects', 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
-                    cwd=self.repo.root_path,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    encoding='utf-8',
-                )
-                if log.poll():
-                    raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
-
-                hash = None
-                revision = None
-
-                line = log.stdout.readline()
-                while line:
-                    if line.startswith('    git-svn-id: '):
-                        match = self.repo.GIT_SVN_REVISION.match(line.lstrip())
-                        if match:
-                            revision = int(match.group('revision'))
-                    if not line.startswith('commit '):
-                        line = log.stdout.readline()
-                        continue
-
-                    if hash and _append(branch, hash, revision=revision):
-                        hash = None
-                        intersected = True
-                        break
-
-                    hash = line.split(' ')[1].rstrip()
-                    revision = None
-                    line = log.stdout.readline()
-
-                if hash:
-                    intersected = _append(branch, hash, revision=revision)
-
-                if log and log.poll():
+                try:
+                    for hash in gen:
+                        if hash and _append(branch, hash, revision=h2r.get(hash)):
+                            intersected = True
+                            break
+                except self.repo.Exception as e:
+                    # Matches the original populate()'s silent-return on git
+                    # failure: don't persist the partial-stream bookkeeping.
+                    log.warning('Cache populate aborted for {!r}: {}'.format(branch, e))
                     return
-
             finally:
-                if log and log.poll() is None:
-                    log.kill()
+                gen.close()  # signal generator to clean up its subprocess
+
+            self._last_populated[branch] = time.time()
 
             if not hashes or intersected and len(hashes) <= 1:
                 return
@@ -210,7 +247,6 @@ class Git(Scm):
                     del d[branch]
 
             self._hash_to_identifiers = NestedFuzzyDict(primary_size=6)
-            self._revisions_to_identifiers = {}
 
             if self.repo.default_branch not in self._ordered_commits:
                 return
@@ -230,8 +266,14 @@ class Git(Scm):
                 self.repo.log("Failed to write identifier cache to '{}'".format(self.path))
 
         def to_hash(self, revision=None, identifier=None, populate=True, branch=None):
-            if revision:
-                identifier = self.to_identifier(revision=revision, populate=populate, branch=branch)
+            if revision is not None:
+                parsed_rev = Commit._parse_revision(revision, do_assert=False)
+                m = self.svn_revision_map
+                if parsed_rev is not None and m is not None:
+                    h = m.get(parsed_rev)
+                    if h is not None:
+                        return h
+                return None
             parts = Commit._parse_identifier(identifier, do_assert=False)
             if not parts:
                 return None
@@ -272,18 +314,18 @@ class Git(Scm):
             return None
 
         def to_identifier(self, hash=None, revision=None, populate=True, branch=None):
-            revision = Commit._parse_revision(revision, do_assert=False)
-            if revision:
-                if revision in self._revisions_to_identifiers:
-                    return self._revisions_to_identifiers[revision]
-
-                self.load()
-                if revision in self._revisions_to_identifiers:
-                    return self._revisions_to_identifiers[revision]
-                if populate:
-                    self.populate(branch=branch)
-                    return self.to_identifier(revision=revision, populate=False)
-                return None
+            parsed_rev = Commit._parse_revision(revision, do_assert=False)
+            if parsed_rev:
+                m = self.svn_revision_map
+                if m is None:
+                    return None
+                h = m.get(parsed_rev)
+                if h is None:
+                    return None
+                # Identifiers returned via svn-revision-to-hash.bin match
+                # origin's history. In a fork with diverged local refs,
+                # this is the same divergence the cache always had.
+                return self.to_identifier(hash=h, populate=populate, branch=branch)
 
             hash = Commit._parse_hash(hash, do_assert=False)
             if hash:
