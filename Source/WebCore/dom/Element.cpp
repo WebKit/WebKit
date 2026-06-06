@@ -435,6 +435,11 @@ void Element::hideNonceSlow()
 
 bool Element::supportsFocus() const
 {
+    // Scroll containers with overflow are implicitly keyboard-focusable.
+    if (isScrollFocusableContainer(ScrollFocusLayoutBehavior::DoNotForceLayout)
+        && !hasKeyboardFocusableDescendants())
+        return true;
+
     return !!tabIndexSetExplicitly();
 }
 
@@ -450,6 +455,12 @@ void Element::setTabIndexForBindings(int value)
 
 bool Element::isKeyboardFocusable(const FocusEventData&) const
 {
+    // Check whether this element qualifies as implicitly keyboard-focusable because
+    // it is a scroll container with no keyboard-focusable descendants.
+    if (isScrollFocusableContainer(ScrollFocusLayoutBehavior::DoNotForceLayout)) {
+        if (!hasKeyboardFocusableDescendants())
+            return true;
+    }
     if (!isFocusable() || shouldBeIgnoredInSequentialFocusNavigation() || tabIndexSetExplicitly().value_or(0) < 0)
         return false;
     if (auto* root = shadowRoot()) {
@@ -1477,6 +1488,44 @@ static int adjustContentsScrollPositionOrSizeForZoom(int value, const LocalFrame
     if (zoomFactor > 1)
         value++;
     return static_cast<int>(value / zoomFactor);
+}
+
+bool Element::isScrollFocusableContainer(ScrollFocusLayoutBehavior layoutBehavior) const
+{
+    if (!document().settings().focusableScrollableOverflowContainersEnabled())
+        return false;
+
+    RefPtr page = document().page();
+    if (!page || !page->tabKeyCyclesThroughElements())
+        return false;
+
+    CheckedPtr renderer = renderBox();
+    if (!renderer)
+        return false;
+
+    if (layoutBehavior == ScrollFocusLayoutBehavior::AllowLayoutUpdate) {
+        if (RefPtr view = document().view())
+            view->updateLayoutAndStyleIfNeededRecursive();
+
+        renderer = renderBox();
+        if (!renderer)
+            return false;
+    }
+
+    return renderer->canBeScrolledAndHasScrollableArea();
+}
+
+bool Element::hasKeyboardFocusableDescendants() const
+{
+    // Walk all descendant elements and check if any would be a tab stop.
+    for (auto& descendant : descendantsOfType<Element>(*this)) {
+        auto explicitTabIndex = descendant.tabIndexSetExplicitly();
+        if (!descendant.renderer() || !descendant.isFocusable() || descendant.shouldBeIgnoredInSequentialFocusNavigation() || (explicitTabIndex && *explicitTabIndex < 0))
+            continue;
+
+        return true;
+    }
+    return false;
 }
 
 enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
