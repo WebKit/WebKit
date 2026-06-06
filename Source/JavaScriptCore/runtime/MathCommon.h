@@ -251,7 +251,7 @@ ALWAYS_INLINE std::optional<int32_t> tryConvertToStrictInt32(double value)
         : "w" (value)
         : "cc");
     if (isExact)
-        return value;
+        return result;
     return std::nullopt;
 #else
     if (std::isinf(value) || std::isnan(value))
