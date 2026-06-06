@@ -1,0 +1,102 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addFrames() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let sameOriginHost = location.hostname;
+
+    function add(name, host, doc) {
+        let iframe = document.createElement("iframe");
+        iframe.name = name;
+        iframe.src = `http://${host}:8000/site-isolation/inspector/page/resources/${doc}`;
+        document.body.appendChild(iframe);
+    }
+
+    // Two cross-origin siblings (one with a subresource) plus one same-origin sibling, all
+    // under the main frame, to exercise sibling linkage, distinct ids, and per-frame resource
+    // attribution in a mixed tree.
+    add("cross-sibling-1", crossOriginHost, "resource-tree-frame.html");
+    add("cross-sibling-2", crossOriginHost, "resource-tree-frame-with-subresource.html");
+    add("same-origin-sibling", sameOriginHost, "resource-tree-frame.html");
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.GetResourceTreeSiblings");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceTreeSiblings.MixedOriginSiblings",
+        description: "getResourceTree should report multiple cross-origin siblings plus a same-origin sibling under one main frame, each with correct parent linkage, distinct ids, and resources attributed to the right frame.",
+        async test() {
+            let frameTargets = [];
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                frameTargets.push(event.data.target);
+            });
+
+            InspectorTest.evaluateInPage("addFrames()");
+
+            // childFrames order is not guaranteed; index siblings by name. Poll until all three
+            // siblings are present and both cross-origin children have committed (their url and,
+            // for cross-sibling-2, its cached stylesheet have arrived via Page.frameNavigated).
+            let frameTree;
+            let byName;
+            for (let attempt = 0; attempt < 100; ++attempt) {
+                for (let frameTarget of frameTargets) {
+                    if (!frameTarget.executionContext) {
+                        await Promise.race([
+                            frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                            new Promise((resolve) => setTimeout(resolve, 50)),
+                        ]);
+                    }
+                }
+                ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+                byName = new Map((frameTree.childFrames || []).map((entry) => [entry.frame.name, entry]));
+                let crossSibling2 = byName.get("cross-sibling-2");
+                let ready = byName.size === 3
+                    && byName.get("cross-sibling-1")?.frame.url.endsWith("/resource-tree-frame.html")
+                    && crossSibling2?.frame.url.endsWith("/resource-tree-frame-with-subresource.html")
+                    && (crossSibling2?.resources || []).some((resource) => resource.url.endsWith("/resource-tree-subframe-style.css"));
+                if (ready)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectEqual(frameTree.childFrames?.length, 3, "Main frame should have exactly three child frames.");
+
+            let crossSibling1 = byName.get("cross-sibling-1");
+            let crossSibling2 = byName.get("cross-sibling-2");
+            let sameOriginSibling = byName.get("same-origin-sibling");
+
+            InspectorTest.expectThat(!!crossSibling1, "First cross-origin sibling should appear in the tree.");
+            InspectorTest.expectThat(!!crossSibling2, "Second cross-origin sibling should appear in the tree.");
+            InspectorTest.expectThat(!!sameOriginSibling, "Same-origin sibling should appear in the tree.");
+            if (!crossSibling1 || !crossSibling2 || !sameOriginSibling)
+                return;
+
+            // Each sibling links to the main frame and has an id distinct from the main frame and
+            // from every other sibling.
+            let ids = [frameTree.frame.id, crossSibling1.frame.id, crossSibling2.frame.id, sameOriginSibling.frame.id];
+            InspectorTest.expectEqual(new Set(ids).size, 4, "Main frame and all three siblings should have distinct ids.");
+
+            for (let [label, sibling] of [["First cross-origin", crossSibling1], ["Second cross-origin", crossSibling2], ["Same-origin", sameOriginSibling]])
+                InspectorTest.expectEqual(sibling.frame.parentId, frameTree.frame.id, `${label} sibling's parentId should match the main frame's id.`);
+
+            InspectorTest.expectThat(crossSibling1.frame.securityOrigin !== frameTree.frame.securityOrigin, "First cross-origin sibling should be cross-origin to the main frame.");
+            InspectorTest.expectThat(crossSibling2.frame.securityOrigin !== frameTree.frame.securityOrigin, "Second cross-origin sibling should be cross-origin to the main frame.");
+            InspectorTest.expectEqual(sameOriginSibling.frame.securityOrigin, frameTree.frame.securityOrigin, "Same-origin sibling should share the main frame's security origin.");
+
+            // Resources must be attributed to the correct frame: only cross-sibling-2 loads the
+            // stylesheet.
+            let sibling2HasStyle = (crossSibling2.resources || []).some((resource) => resource.url.endsWith("/resource-tree-subframe-style.css"));
+            InspectorTest.expectThat(sibling2HasStyle, "Second cross-origin sibling's stylesheet subresource should be reported on that frame.");
+            let sibling1HasStyle = (crossSibling1.resources || []).some((resource) => resource.url.endsWith("/resource-tree-subframe-style.css"));
+            InspectorTest.expectThat(!sibling1HasStyle, "First cross-origin sibling should not report the other sibling's stylesheet.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.getResourceTree reports mixed cross-origin and same-origin siblings under site isolation.</p>
+</body>
