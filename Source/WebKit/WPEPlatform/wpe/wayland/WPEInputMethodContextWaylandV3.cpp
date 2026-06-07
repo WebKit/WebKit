@@ -438,7 +438,19 @@ static const struct zwp_text_input_v3_listener textInputListenerV3 = {
 
         if (updateIm && global->serial == serial)
             textInputV3UpdateState(context, ZWP_TEXT_INPUT_V3_CHANGE_CAUSE_INPUT_METHOD);
-    }
+    },
+#ifdef ZWP_TEXT_INPUT_V3_ACTION_SINCE_VERSION
+    // action
+    nullptr,
+#endif
+#ifdef ZWP_TEXT_INPUT_V3_LANGUAGE_SINCE_VERSION
+    // language
+    nullptr,
+#endif
+#ifdef ZWP_TEXT_INPUT_V3_PREEDIT_HINT_SINCE_VERSION
+    // preedit_hint
+    nullptr
+#endif
 };
 
 static void wpeIMContextWaylandV3GlobalFree(gpointer data)
