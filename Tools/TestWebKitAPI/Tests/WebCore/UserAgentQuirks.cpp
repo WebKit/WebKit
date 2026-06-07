@@ -61,9 +61,24 @@ static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
     EXPECT_TRUE(uaString.contains("Macintosh"_s));
     EXPECT_TRUE(uaString.contains("Mac OS X"_s));
     EXPECT_FALSE(uaString.contains("Linux"_s));
+    EXPECT_FALSE(uaString.contains("Android"_s));
     EXPECT_FALSE(uaString.contains("Chrome"_s));
     EXPECT_FALSE(uaString.contains("FreeBSD"_s));
 }
+
+#if ENABLE(WEBXR) && PLATFORM(WPE)
+static void assertUserAgentForURLHasAndroidQuirk(const char* url)
+{
+    String uaString = standardUserAgentForURL(URL(String::fromLatin1(url)));
+
+    EXPECT_FALSE(uaString.contains("Macintosh"_s));
+    EXPECT_FALSE(uaString.contains("Mac OS X"_s));
+    EXPECT_TRUE(uaString.contains("Linux"_s));
+    EXPECT_TRUE(uaString.contains("Android"_s));
+    EXPECT_FALSE(uaString.contains("Chrome"_s));
+    EXPECT_FALSE(uaString.contains("FreeBSD"_s));
+}
+#endif
 
 // Some Google domains require an unbranded user agent, which is a little
 // awkward to test for. We want to check that standardUserAgentForURL is
@@ -104,6 +119,10 @@ TEST(UserAgentTest, Quirks)
 #if ENABLE(THUNDER)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.netflix.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.disneyplus.com/");
+#endif
+
+#if ENABLE(WEBXR) && PLATFORM(WPE)
+    assertUserAgentForURLHasAndroidQuirk("https://www.ikea.com/");
 #endif
 
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");

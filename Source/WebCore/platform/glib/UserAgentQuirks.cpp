@@ -157,6 +157,17 @@ static bool urlRequiresMacintoshPlatform(const String& domain, const String& bas
     return false;
 }
 
+static bool urlRequiresAndroidPlatform([[maybe_unused]] const String& baseDomain)
+{
+#if ENABLE(WEBXR) && PLATFORM(WPE)
+    // When WebXR is available the model viewer support provides a better UX.
+    if (baseDomain == "ikea.com"_s)
+        return true;
+#endif
+
+    return false;
+}
+
 static bool urlRequiresUnbrandedUserAgent(const String& domain)
 {
     // Google uses an ugly fallback login page if application branding is
@@ -192,6 +203,8 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     if (urlRequiresMacintoshPlatform(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
+    else if (urlRequiresAndroidPlatform(baseDomain))
+        quirks.add(UserAgentQuirks::NeedsAndroidPlatform);
 
     if (urlRequiresUnbrandedUserAgent(domain))
         quirks.add(UserAgentQuirks::NeedsUnbrandedUserAgent);
@@ -208,6 +221,8 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
         return "; rv:300.0) Gecko/20100101 Firefox/300.0"_s;
     case NeedsMacintoshPlatform:
         return "Macintosh; Intel Mac OS X 10_15"_s;
+    case NeedsAndroidPlatform:
+        return "Linux; Android 12.0.0"_s;
     case NeedsUnbrandedUserAgent:
     case NumUserAgentQuirks:
         ASSERT_NOT_REACHED();

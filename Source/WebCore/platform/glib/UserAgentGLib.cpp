@@ -83,6 +83,8 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
+    else if (quirks.contains(UserAgentQuirks::NeedsAndroidPlatform))
+        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsAndroidPlatform));
     else {
         uaString.append(platformForUAString(), "; "_s);
 #if defined(USER_AGENT_BRANDING)
