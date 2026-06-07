@@ -38,6 +38,7 @@
 #include "Styleable.h"
 #include "TreeResolutionState.h"
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -127,6 +128,7 @@ private:
         const Style::ComputedStyle& style;
         OptionSet<Change> changes;
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
+        uint32_t changedCustomPropertyFilter { 0 };
         bool didPushScope { false };
         bool resolvedFirstLineAndLetterChild { false };
         bool needsUpdateQueryContainerDependentStyle { false };
@@ -160,7 +162,7 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
-    DescendantsToResolve computeDescendantsToResolve(const ElementUpdate&, const Style::ComputedStyle* existingStyle, Validity) const;
+    DescendantsToResolve computeDescendantsToResolve(ElementUpdate&, const Style::ComputedStyle* existingStyle, Validity) const;
     static std::optional<ResolutionType> determineResolutionType(const Element&, const Style::ComputedStyle*, DescendantsToResolve, OptionSet<Change> parentChange);
     void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 

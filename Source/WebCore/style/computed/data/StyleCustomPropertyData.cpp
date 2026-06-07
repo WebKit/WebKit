@@ -27,6 +27,8 @@
 #include "config.h"
 #include "StyleCustomPropertyData.h"
 
+#include "StyleComputedStyleBase.h"
+
 namespace WebCore {
 namespace Style {
 
@@ -125,6 +127,23 @@ bool CustomPropertyData::operator==(const CustomPropertyData& other) const
     });
 
     return isEqual;
+}
+
+uint32_t CustomPropertyData::changedCustomPropertiesFilter(const CustomPropertyData& other) const
+{
+    uint32_t filter = 0;
+    forEachInternal([&](auto& entry) {
+        auto* otherValue = other.get(entry.key);
+        if (!otherValue || entry.value.get() != *otherValue)
+            filter |= ComputedStyleBase::maskForCustomPropertyName(entry.key);
+        return IterationStatus::Continue;
+    });
+    other.forEachInternal([&](auto& entry) {
+        if (!get(entry.key))
+            filter |= ComputedStyleBase::maskForCustomPropertyName(entry.key);
+        return IterationStatus::Continue;
+    });
+    return filter;
 }
 
 template<typename Callback>

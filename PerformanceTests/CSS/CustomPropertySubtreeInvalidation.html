@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style id="bulkStyles"></style>
+<style>
+    #root {
+        --sidebar-width: 200px;
+    }
+    .container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+    .item {
+        display: flex;
+        align-items: center;
+        padding: 4px 8px;
+        white-space: nowrap;
+    }
+    .item .label {
+        overflow: hidden;
+    }
+</style>
+<script>
+    window.addEventListener('load', event => {
+        const numberOfIterations = 5;
+        const numberOfChildren = 100;
+        const resizeSteps = 10;
+        const numberOfCSSRules = 10000;
+
+        let css = '';
+        for (let i = 0; i < numberOfCSSRules; ++i) {
+            css += `.container > .item:nth-child(${i + 1}n) { opacity: 1; }\n`;
+            css += `.container .item.type-${i % 10} .label { color: #${String(i % 256).padStart(2, '0')}0000; }\n`;
+        }
+        document.getElementById('bulkStyles').textContent = css;
+
+        PerfTestRunner.prepareToMeasureValuesAsync({
+            customIterationCount: numberOfIterations,
+            unit: 'ms',
+            done: function () {
+                PerfTestRunner.gc();
+            }
+        });
+
+        const root = document.createElement('div');
+        root.id = 'root';
+        const container = document.createElement('div');
+        container.className = 'container';
+        root.appendChild(container);
+        for (let i = 0; i < numberOfChildren; ++i) {
+            const item = document.createElement('div');
+            item.className = `item type-${i % 10}`;
+            const label = document.createElement('span');
+            label.className = 'label';
+            item.appendChild(label);
+            container.appendChild(item);
+        }
+        document.body.appendChild(root);
+
+        root.offsetHeight;
+
+        function startIteration() {
+            testGenerator = runIteration();
+            testGenerator.next();
+        }
+
+        function *runIteration() {
+            const startTime = PerfTestRunner.now();
+
+            // Simulate a drag/resize: change --sidebar-width on the ancestor each frame. The
+            // rows inherit it (as grandchildren), so the subtree is invalidated.
+            for (let step = 0; step < resizeSteps; ++step) {
+                const width = 200 + step * 5;
+                root.style.setProperty('--sidebar-width', `${width}px`);
+                getComputedStyle(root).color;
+            }
+
+            if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime)) {
+                return;
+            }
+
+            PerfTestRunner.gc();
+            setTimeout(startIteration, 0);
+        }
+
+        startIteration();
+    });
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -484,6 +484,13 @@ public:
     inline bool hasExplicitlyInheritedProperties() const;
     inline void setHasExplicitlyInheritedProperties();
 
+    uint32_t customPropertyFilter() const;
+    void setCustomPropertyFilter(uint32_t);
+    static uint32_t maskForCustomPropertyName(const AtomString& name) { return 1U << (name.existingHash() % 31); }
+
+    bool declaresInheritedCustomProperty() const;
+    void setDeclaresInheritedCustomProperty();
+
     inline bool disallowsFastPathInheritance() const;
     inline void setDisallowsFastPathInheritance();
 

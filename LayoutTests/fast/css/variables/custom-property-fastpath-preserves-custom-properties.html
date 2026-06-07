@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+#genBefore::before { content: "x"; display: block; height: 30px; }
+#genAfter::after { content: "x"; display: block; height: 40px; }
+</style>
+</head>
+<body>
+<div id="ancestor" style="--changed: 1px;">
+  <div id="mid" style="--mine: 99px;">
+    <div id="leaf" style="width: var(--mine); height: 10px;"></div>
+  </div>
+</div>
+
+<div id="d1" style="--p1: 1px;">
+  <div id="d2" style="--p2: 2px;">
+    <div id="d3" style="--p3: 3px;">
+      <div id="d4" style="--p4: 4px;">
+        <div id="d5" style="--own: 50px; width: var(--own); height: 5px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="r" style="--ref: 5px;">
+  <div>
+    <div>
+      <div id="refDirect" style="width: var(--ref); height: 1px;"></div>
+      <div id="refFallback" style="width: var(--missing, var(--ref)); height: 1px;"></div>
+      <div id="refChained" style="--local: var(--ref); width: var(--local); height: 1px;"></div>
+      <div id="refShorthand" style="margin: var(--ref);"></div>
+    </div>
+  </div>
+</div>
+
+<div id="genAncestor" style="--unrelated: 1px;">
+  <div id="genBefore"></div>
+  <div id="genAfter"></div>
+</div>
+<script>
+description("Custom property fast path must not drop or stale an element's own/inherited custom properties when an ancestor's custom property changes.");
+
+document.body.offsetHeight;
+
+shouldBeEqualToString("getComputedStyle(mid).getPropertyValue('--mine').trim()", "99px");
+shouldBeEqualToString("getComputedStyle(leaf).width", "99px");
+
+ancestor.style.setProperty('--changed', '2px');
+document.body.offsetHeight;
+
+shouldBeEqualToString("getComputedStyle(mid).getPropertyValue('--mine').trim()", "99px");
+shouldBeEqualToString("getComputedStyle(leaf).width", "99px");
+
+// Deep chain where every level declares its own inherited custom
+// property. Internally these get flattened into descendants' data, so this
+// guards against a fix that reinstates a stale value when an *intermediate*
+// ancestor's property changes.
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p1').trim()", "1px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p2').trim()", "2px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p3').trim()", "3px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p4').trim()", "4px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--own').trim()", "50px");
+shouldBeEqualToString("getComputedStyle(d5).width", "50px");
+
+d2.style.setProperty('--p2', '222px');
+document.body.offsetHeight;
+
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p1').trim()", "1px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p2').trim()", "222px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p3').trim()", "3px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--p4').trim()", "4px");
+shouldBeEqualToString("getComputedStyle(d5).getPropertyValue('--own').trim()", "50px");
+shouldBeEqualToString("getComputedStyle(d5).width", "50px");
+
+shouldBeEqualToString("getComputedStyle(refDirect).width", "5px");
+shouldBeEqualToString("getComputedStyle(refFallback).width", "5px");
+shouldBeEqualToString("getComputedStyle(refChained).width", "5px");
+shouldBeEqualToString("getComputedStyle(refShorthand).marginTop", "5px");
+
+r.style.setProperty('--ref', '77px');
+document.body.offsetHeight;
+
+shouldBeEqualToString("getComputedStyle(refDirect).width", "77px");
+shouldBeEqualToString("getComputedStyle(refFallback).width", "77px");
+shouldBeEqualToString("getComputedStyle(refChained).width", "77px");
+shouldBeEqualToString("getComputedStyle(refShorthand).marginTop", "77px");
+
+shouldBe("genBefore.offsetHeight", "30");
+shouldBe("genAfter.offsetHeight", "40");
+
+genAncestor.style.setProperty('--unrelated', '2px');
+document.body.offsetHeight;
+
+shouldBe("genBefore.offsetHeight", "30");
+shouldBe("genAfter.offsetHeight", "40");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

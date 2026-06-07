@@ -179,6 +179,30 @@ void ComputedStyleBase::addCustomPaintWatchProperty(const AtomString& name)
     data->customPaintWatchedProperties.add(name);
 }
 
+// MARK: - Variable reference tracking
+
+uint32_t ComputedStyleBase::customPropertyFilter() const
+{
+    return m_nonInheritedData->customPropertyFilter;
+}
+
+void ComputedStyleBase::setCustomPropertyFilter(uint32_t customPropertyFilter)
+{
+    m_nonInheritedData.access().customPropertyFilter = customPropertyFilter;
+}
+
+bool ComputedStyleBase::declaresInheritedCustomProperty() const
+{
+    return m_nonInheritedData->declaresInheritedCustomProperty;
+}
+
+void ComputedStyleBase::setDeclaresInheritedCustomProperty()
+{
+    if (m_nonInheritedData->declaresInheritedCustomProperty)
+        return;
+    m_nonInheritedData.access().declaresInheritedCustomProperty = true;
+}
+
 // MARK: - FontCascade support.
 
 FontCascade& ComputedStyleBase::mutableFontCascadeWithoutUpdate()

@@ -33,6 +33,7 @@
 #include "RenderBlock.h"
 #include "RenderTheme.h"
 #include "StyleComputedStyleBase+ConstructionInlines.h"
+#include "StyleCustomPropertyData.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleLineHeight.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -210,6 +211,13 @@ void ComputedStyle::inheritIgnoringCustomPropertiesFrom(const ComputedStyle& inh
         m_inheritedRareData.access().customProperties = oldCustomProperties;
 }
 
+void ComputedStyle::setInheritedCustomPropertiesFrom(const ComputedStyle& other)
+{
+    ASSERT(!declaresInheritedCustomProperty());
+    if (m_inheritedRareData->customProperties != other.m_inheritedRareData->customProperties)
+        m_inheritedRareData.access().customProperties = other.m_inheritedRareData->customProperties;
+}
+
 void ComputedStyle::inheritUnicodeBidiFrom(const ComputedStyle& inheritParent)
 {
     m_nonInheritedFlags.unicodeBidi = inheritParent.m_nonInheritedFlags.unicodeBidi;
@@ -294,6 +302,12 @@ bool ComputedStyle::fastPathInheritedEqual(const ComputedStyle& other) const
 
 bool ComputedStyle::nonFastPathInheritedEqual(const ComputedStyle& other) const
 {
+    return nonFastPathInheritedEqualIgnoringCustomProperties(other)
+        && inheritedCustomPropertiesEqual(other);
+}
+
+bool ComputedStyle::nonFastPathInheritedEqualIgnoringCustomProperties(const ComputedStyle& other) const
+{
     auto withoutFastPathFlags = [](auto flags) {
         flags.visibility = { };
         flags.hasExplicitlySetColor = { };
@@ -303,11 +317,17 @@ bool ComputedStyle::nonFastPathInheritedEqual(const ComputedStyle& other) const
         return false;
     if (m_inheritedData.ptr() != other.m_inheritedData.ptr() && !m_inheritedData->nonFastPathInheritedEqual(*other.m_inheritedData))
         return false;
-    if (m_inheritedRareData != other.m_inheritedRareData)
+    if (m_inheritedRareData.ptr() != other.m_inheritedRareData.ptr() && !m_inheritedRareData->equalIgnoringCustomProperties(other.m_inheritedRareData.get()))
         return false;
     if (m_svgData.ptr() != other.m_svgData.ptr() && !m_svgData->inheritedEqual(other.m_svgData))
         return false;
     return true;
+}
+
+bool ComputedStyle::inheritedCustomPropertiesEqual(const ComputedStyle& other) const
+{
+    return m_inheritedRareData.ptr() == other.m_inheritedRareData.ptr()
+        || m_inheritedRareData->customProperties == other.m_inheritedRareData->customProperties;
 }
 
 bool ComputedStyle::descendantAffectingNonInheritedPropertiesEqual(const ComputedStyle& other) const

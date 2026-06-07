@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/StyleComputedStyleProperties.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 namespace Style {
@@ -58,6 +59,7 @@ public:
 
     void inheritFrom(const ComputedStyle&);
     void inheritIgnoringCustomPropertiesFrom(const ComputedStyle&);
+    void setInheritedCustomPropertiesFrom(const ComputedStyle&);
     void NODELETE inheritUnicodeBidiFrom(const ComputedStyle&);
     inline void inheritColumnPropertiesFrom(const ComputedStyle&);
     void fastPathInheritFrom(const ComputedStyle&);
@@ -79,6 +81,8 @@ public:
     bool nonInheritedEqual(const ComputedStyle&) const;
     bool NODELETE fastPathInheritedEqual(const ComputedStyle&) const;
     bool nonFastPathInheritedEqual(const ComputedStyle&) const;
+    bool nonFastPathInheritedEqualIgnoringCustomProperties(const ComputedStyle&) const;
+    bool inheritedCustomPropertiesEqual(const ComputedStyle&) const;
     bool NODELETE descendantAffectingNonInheritedPropertiesEqual(const ComputedStyle&) const;
     bool borderAndBackgroundEqual(const ComputedStyle&) const;
     inline bool containerTypeAndNamesEqual(const ComputedStyle&) const;

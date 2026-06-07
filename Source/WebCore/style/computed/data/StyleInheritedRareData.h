@@ -99,6 +99,7 @@ public:
     ~InheritedRareData();
 
     bool operator==(const InheritedRareData&) const;
+    bool equalIgnoringCustomProperties(const InheritedRareData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const InheritedRareData&) const;

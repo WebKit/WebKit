@@ -419,6 +419,7 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     Builder builder(*state.style(), builderContext(state), collector.matchResult());
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();
+    builder.commitCustomPropertyState();
 
     if (state.style()->usesViewportUnits())
         element.document().setHasStyleWithViewportUnits();
@@ -616,6 +617,7 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForPage(int pageIndex)
 
     Builder builder(*state.style(), builderContext(state), result);
     builder.applyAllProperties();
+    builder.commitCustomPropertyState();
 
     // Now return the style.
     return state.takeStyle();
@@ -745,6 +747,8 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 
     builder.applyNonHighPriorityProperties();
     builder.adjustAfterApplying();
+
+    builder.commitCustomPropertyState();
 
     setGlobalStateAfterApplyingProperties(builder.state());
 

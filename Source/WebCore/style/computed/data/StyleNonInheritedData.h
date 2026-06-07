@@ -53,6 +53,9 @@ public:
     void dumpDifferences(TextStream&, const NonInheritedData&) const;
 #endif
 
+    unsigned customPropertyFilter : 31 { 0 };
+    unsigned declaresInheritedCustomProperty : 1 { 0 };
+
     DataRef<BoxData> boxData;
     DataRef<BackgroundData> backgroundData;
     DataRef<SurroundData> surroundData;

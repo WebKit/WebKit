@@ -39,8 +39,10 @@ OptionSet<Change> determineChanges(const Style::ComputedStyle& s1, const Style::
 
     if (!s1.nonInheritedEqual(s2))
         result.add(Change::NonInherited);
-    if (!s1.nonFastPathInheritedEqual(s2))
+    if (!s1.nonFastPathInheritedEqualIgnoringCustomProperties(s2))
         result.add(Change::Inherited);
+    if (!s1.inheritedCustomPropertiesEqual(s2))
+        result.add(Change::InheritedCustomProperty);
     if (!s1.fastPathInheritedEqual(s2))
         result.add(Change::FastPathInherited);
 
@@ -95,6 +97,7 @@ TextStream& operator<<(TextStream& ts, Change change)
     case Change::Inherited: ts << "Inherited"_s; break;
     case Change::Container: ts << "Container"_s; break;
     case Change::Renderer: ts << "Renderer"_s; break;
+    case Change::InheritedCustomProperty: ts << "InheritedCustomProperty"_s; break;
     }
     return ts;
 }

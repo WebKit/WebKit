@@ -142,6 +142,8 @@ bool SubstitutionResolver::substituteVariableFunction(CSSParserTokenRange range,
         return false;
     auto variableName = range.consumeIncludingWhitespace().value().toAtomString();
 
+    m_styleBuilder.addCustomPropertyFilterBit(variableName);
+
     // Fallback has to be resolved even when not used to detect cycles and invalid syntax.
     auto [fallbackResult, fallbackTokens] = substituteVariableFallback(variableName, range, functionId, context);
     if (fallbackResult == FallbackResult::Invalid)
@@ -715,6 +717,9 @@ RefPtr<CSSVariableData> SubstitutionResolver::trySimpleSubstitution(const CSSSub
         return value.m_cache.isBaseAppearance == isBaseAppearance() ? value.m_cache.dependencyData : nullptr;
 
     // Shortcut for the simple common case of property:var(--foo)
+
+    m_styleBuilder.addCustomPropertyFilterBit(value.m_simpleReference->name);
+
     RefPtr property = propertyValueForVariableName(value.m_simpleReference->name, value.m_simpleReference->functionId);
     if (!property || !std::holds_alternative<Ref<CSSVariableData>>(property->value()))
         return nullptr;
