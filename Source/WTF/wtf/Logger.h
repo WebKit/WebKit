@@ -378,7 +378,9 @@ private:
 #elif ENABLE(JOURNALD_LOG)
         sd_journal_send("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
 #else
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
         fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", channel.name, logMessage.utf8().data());
+        IGNORE_WARNINGS_END
 #endif
 
         sendMessageToObservers(channel, level, arguments...);
