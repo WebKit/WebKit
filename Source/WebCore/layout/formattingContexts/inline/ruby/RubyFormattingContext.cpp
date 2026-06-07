@@ -510,7 +510,7 @@ void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFor
         CheckedRef rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
         ASSERT(rubyBaseLayoutBox->isRubyBase());
         ASSERT(hasInterlinearAnnotation(rubyBaseLayoutBox));
-        if (rubyBaseLayoutBox->style().rubyOverhang() == RubyOverhang::None)
+        if (rubyBaseLayoutBox->style().rubyOverhang() == RubyOverhang::Spaces)
             continue;
 
         auto beforeOverhang = overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes, lineLogicalHeight, parentFormattingContext);

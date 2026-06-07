@@ -7895,13 +7895,18 @@
             "initial": "auto",
             "values": [
                 "auto",
-                "none"
+                "spaces",
+                {
+                    "value": "none",
+                    "status": "legacy"
+                }
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "RubyOverhang",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "auto | spaces | none@(aliased-to=spaces)",
+                "parser-grammar-comment": "'none' is a legacy alias for 'spaces', which replaced it in the specification."
             },
             "specification": {
                 "category": "css-ruby",

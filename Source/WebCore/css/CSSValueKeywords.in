@@ -1181,6 +1181,9 @@ before
 inter-character
 legacy-inter-character
 
+// ruby-overhang
+spaces
+
 // -webkit-text-combine
 // horizontal
 

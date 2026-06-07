@@ -976,7 +976,7 @@ TextStream& operator<<(TextStream& ts, RubyOverhang overhang)
 {
     switch (overhang) {
     case RubyOverhang::Auto: ts << "auto"_s; break;
-    case RubyOverhang::None: ts << "none"_s; break;
+    case RubyOverhang::Spaces: ts << "spaces"_s; break;
     }
     return ts;
 }
