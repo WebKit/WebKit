@@ -6558,7 +6558,8 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
             }
 
             // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-            oldFocusedElement->dispatchBlurEvent(newFocusedElement);
+            if (RefPtr page = this->page(); page && page->focusController().isFocused())
+                oldFocusedElement->dispatchBlurEvent(newFocusedElement);
 
             if (m_focusedElement) {
                 // handler shifted focus
@@ -6638,7 +6639,8 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
         }
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options);
+        if (RefPtr page = this->page(); page && page->focusController().isFocused())
+            focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options);
 
         if (m_focusedElement != focusedElement) {
             // handler shifted focus

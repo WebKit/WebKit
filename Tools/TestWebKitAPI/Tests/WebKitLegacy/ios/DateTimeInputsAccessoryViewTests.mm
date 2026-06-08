@@ -34,6 +34,7 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import "Helpers/PlatformUtilities.h"
 #import "UIKitSPIForTesting.h"
 #import "Helpers/ios/UserInterfaceSwizzler.h"
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface DateTimeInputsTestsLoadingDelegate : NSObject <UIWebViewDelegate>
@@ -74,6 +75,9 @@ static void runTestWithInputType(NSString *type)
     [uiWebView loadHTMLString:elementString baseURL:nil];
     TestWebKitAPI::Util::run(&didFinishLoad);
 
+    [uiWindow makeKeyWindow];
+    [uiWebView becomeFirstResponder];
+    [[uiWebView _browserView] becomeFirstResponder];
     [uiWebView stringByEvaluatingJavaScriptFromString:@"document.getElementsByTagName('input')[0].focus();"];
     EXPECT_TRUE([[[uiWebView _browserView] inputView] isKindOfClass:[UIDatePicker class]]);
 }

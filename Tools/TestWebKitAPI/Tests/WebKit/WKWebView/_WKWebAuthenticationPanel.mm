@@ -578,6 +578,9 @@ TEST(WebAuthenticationPanel, PanelTwice)
     auto webView = setUpTestWebViewForTestAuthenticationPanel();
     RetainPtr delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+#endif
     [webView focus];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
