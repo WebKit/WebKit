@@ -1392,6 +1392,10 @@ TEST(WKUserContentController, BeforeBlurEvent)
         "shadowRoot.querySelector('#text1').focus();"
         "</script>"];
 
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
+#endif
     [webView evaluateJavaScript:@"shadowRoot.querySelector('#text2').focus()" completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "blur-pass");
 }

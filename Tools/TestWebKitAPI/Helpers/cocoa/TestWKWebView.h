@@ -240,6 +240,7 @@ class Color;
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(WKFrameInfo *)frame;
 - (WKContentView *)wkContentView;
 - (void)setZoomScaleSimulatingUserTriggeredZoom:(CGFloat)zoomScale;
+- (void)focusInWindow;
 @end
 #endif
 

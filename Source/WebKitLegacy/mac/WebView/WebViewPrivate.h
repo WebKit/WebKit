@@ -288,6 +288,8 @@ typedef enum {
 - (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useInactiveAppearance:(BOOL)useInactiveAppearance;
 - (void)_setUseDarkAppearance:(BOOL)useDarkAppearance useElevatedUserInterfaceLevel:(BOOL)useElevatedUserInterfaceLevel;
 
+- (void)_setFocused:(BOOL)focused;
+
 - (WebInspector *)inspector;
 
 #if ENABLE_REMOTE_INSPECTOR

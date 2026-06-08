@@ -214,6 +214,9 @@ ClassMethodSwizzler availabilitySwizzler(PAL::getWTWritingToolsViewControllerCla
     return self;
 }
 
+#if PLATFORM(IOS_FAMILY)
+#endif
+
 - (void)focusDocumentBodyAndSelectAll
 {
     NSString *script = @"document.body.focus()";

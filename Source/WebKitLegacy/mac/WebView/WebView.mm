@@ -4277,6 +4277,12 @@ IGNORE_WARNINGS_END
 #endif
 }
 
+- (void)_setFocused:(BOOL)focused
+{
+    if (_private && _private->page)
+        _private->page->focusController().setFocused(focused);
+}
+
 + (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url includeMatchPatternStrings:(NSArray *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray *)excludeMatchPatternStrings injectionTime:(WebUserScriptInjectionTime)injectionTime injectedFrames:(WebUserContentInjectedFrames)injectedFrames
 {
     String group(groupName);

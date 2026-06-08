@@ -189,12 +189,17 @@ TEST(UIWKInteractionViewProtocol, SelectPositionAtPointInFocusedElementStartsInp
 
     // 1. Focus element
     [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; padding: 0'><div contenteditable='true' style='height: 200px; width: 200px'></div></body>"];
+    [webView focusInWindow];
     [webView stringByEvaluatingJavaScript:@"document.querySelector('div').focus()"];
     TestWebKitAPI::Util::run(&didCallDecidePolicyForFocusedElement);
 
     // 2. Focus the element again via selecting a position at a point inside it.
     didCallDecidePolicyForFocusedElement = false;
-    [webView becomeFirstResponder];
+
+    // BecomeFirstResponder is a no-op since we've already made the webview a first responder above.
+    // Resign first so that the next focusInWindow will re-fire the focus event that induces DecidePolicyForFocusedElement.
+    [webView resignFirstResponder];
+    [webView focusInWindow];
     [webView selectPositionAtPoint:CGPointMake(8, 8)];
     TestWebKitAPI::Util::run(&didCallDecidePolicyForFocusedElement);
 }
@@ -233,6 +238,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestInputDelegate>> setUpEd
     }];
 
     [webView synchronouslyLoadTestPageNamed:@"editable-responsive-body"];
+    [webView focusInWindow];
     TestWebKitAPI::Util::run(&didStartInputSession);
     return { WTF::move(webView), WTF::move(inputDelegate) };
 }

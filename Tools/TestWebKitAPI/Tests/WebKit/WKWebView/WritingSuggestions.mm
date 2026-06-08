@@ -70,6 +70,11 @@
 
 - (void)focusElementAndEnsureEditorStateUpdate:(NSString *)element
 {
+#if PLATFORM(IOS_FAMILY)
+    [[self window] makeKeyWindow];
+    [self waitForNextPresentationUpdate];
+#endif
+
     NSString *script = [NSString stringWithFormat:@"%@.focus()", element];
     [self evaluateJavaScriptAndWaitForInputSessionToChange:script];
     [self waitForNextPresentationUpdate];
