@@ -149,7 +149,7 @@ void GStreamerRtpSenderBackend::tearDown()
     m_rtcSender = nullptr;
 }
 
-bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender&, MediaStreamTrack* track)
+bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender& sender, MediaStreamTrack* track)
 {
     GST_DEBUG_OBJECT(m_rtcSender.get(), "Replacing sender track with track %p", track);
 
@@ -161,6 +161,7 @@ bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender&, MediaStreamTrack* tr
     // FIXME: We might want to set the reconfiguring flag back to false once the webrtcbin sink pad
     // has renegotiated its caps. Perhaps a pad probe can be used for this.
 
+    auto previousTrackId = sender.trackId();
     RefPtr newTrack = track;
     switchOn(m_source, [&](Ref<RealtimeOutgoingAudioSourceGStreamer>& source) {
         source->replaceTrack(newTrack);
@@ -170,6 +171,7 @@ bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender&, MediaStreamTrack* tr
         GST_DEBUG_OBJECT(m_rtcSender.get(), "No outgoing source yet");
     });
 
+    peerConnectionBackend->trackWasReplaced(previousTrackId, newTrack ? newTrack->id() : emptyString());
     return true;
 }
 

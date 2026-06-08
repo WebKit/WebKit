@@ -155,6 +155,8 @@ private:
     void stopUpdatingStats();
 
     RefPtr<GStreamerRTPPacketizer> getPacketizerForRid(const String&);
+
+    String m_pendingTrackId { emptyString() };
 };
 
 } // namespace WebCore
