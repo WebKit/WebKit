@@ -117,6 +117,35 @@ void RenderLayerModelObject::createLayer()
     m_layer->insertOnlyThisLayer();
 }
 
+bool RenderLayerModelObject::createLayerIfAllowed()
+{
+    if (m_layer || !layerCreationAllowedForSubtree())
+        return false;
+    createLayer();
+    if (parent() && !needsLayout())
+        m_layer->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
+    return true;
+}
+
+void RenderLayerModelObject::removeOnlyThisLayerWithRepaint()
+{
+    ASSERT(m_layer && m_layer->parent());
+    // Repaint the about-to-be-destroyed self-painting layer when a repaint is pending.
+    if (m_layer->isSelfPaintingLayer() && m_layer->repaintStatus() == RepaintStatus::NeedsFullRepaint && m_layer->cachedClippedOverflowRect())
+        repaintUsingContainer(containerForRepaint().renderer.get(), *m_layer->cachedClippedOverflowRect());
+    m_layer->removeOnlyThisLayer();
+}
+
+void RenderLayerModelObject::reconcileLayerCreation()
+{
+    if (requiresLayer()) {
+        createLayerIfAllowed();
+        return;
+    }
+    if (m_layer && m_layer->parent())
+        removeOnlyThisLayerWithRepaint();
+}
+
 bool RenderLayerModelObject::hasSelfPaintingLayer() const
 {
     return m_layer && m_layer->isSelfPaintingLayer();
@@ -158,13 +187,10 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
 
     bool gainedOrLostLayer = false;
     if (requiresLayer()) {
-        if (!layer() && layerCreationAllowedForSubtree()) {
+        if (createLayerIfAllowed()) {
             gainedOrLostLayer = true;
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout();
-            createLayer();
-            if (parent() && !needsLayout())
-                layer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
         }
     } else if (layer() && layer()->parent()) {
         gainedOrLostLayer = true;
@@ -174,11 +200,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
         setHasSVGTransform(false); // Same reason as for setHasTransformRelatedProperty().
         setHasReflection(false);
 
-        // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
-        if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == RepaintStatus::NeedsFullRepaint && layer()->cachedClippedOverflowRect())
-            repaintUsingContainer(containerForRepaint().renderer.get(), *(layer()->cachedClippedOverflowRect()));
-
-        layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
+        removeOnlyThisLayerWithRepaint();
         if (s_wasFloating && isFloating())
             setChildNeedsLayout();
         if (s_wasTransformed)

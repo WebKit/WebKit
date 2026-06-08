@@ -86,6 +86,8 @@ public:
 
     SVGRootInlineBox* legacyRootBox() const;
 
+    void setIsSandwichedBetweenLayeredSiblings(bool flag) { m_isSandwichedBetweenLayeredSiblings = flag; }
+
 private:
     void graphicsElement() const = delete;
 
@@ -102,6 +104,9 @@ private:
 
     bool requiresLayer() const override;
     void layout() override;
+
+    void insertedIntoTree() final;
+    void willBeRemovedFromTree() final;
 
     void computePerCharacterLayoutInformation();
     void layoutCharactersInTextBoxes(const InlineIterator::InlineBoxIterator&, SVGTextLayoutEngine&);
@@ -121,6 +126,9 @@ private:
 
     bool NODELETE shouldHandleSubtreeMutations() const;
 
+    // FIXME (webkit.org/b/308565): only read once layer creation becomes conditional and
+    // requiresLayer() returns it. Drop [[maybe_unused]] when that lands.
+    [[maybe_unused]] bool m_isSandwichedBetweenLayeredSiblings { false };
     bool m_needsReordering : 1 { false };
     bool m_needsPositioningValuesUpdate : 1 { false };
     bool m_needsTransformUpdate : 1 { true }; // FIXME: [LBSE] Only needed for legacy SVG engine.

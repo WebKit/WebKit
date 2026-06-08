@@ -2436,3 +2436,5 @@ webkit.org/b/316036 [ Debug ] inspector/timeline/timeline-event-TimerFire.html [
 webkit.org/b/315982 [ Sequoia Release x86_64 ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
 
 webkit.org/b/316089 [ Sequoia Release ] inspector/css/setLayoutContextTypeChangedMode.html [ Pass Failure ]
+
+webkit.org/b/313785 svg/compositing/de-promotion-after-derived-anchor-decomposited-layer-tree.html [ Failure ]

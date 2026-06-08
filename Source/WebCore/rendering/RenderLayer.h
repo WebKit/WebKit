@@ -144,7 +144,8 @@ enum class IndirectCompositingReason {
     BackgroundLayer,
     GraphicalEffect, // opacity, mask, filter, transform etc.
     Perspective,
-    Preserve3D
+    Preserve3D,
+    SVGSiblingOrderingForLBSE, // Trails a composited SVG sibling, must composite to preserve DOM order.
 };
 
 enum class ShouldAllowCrossOriginScrolling : bool { No, Yes };
@@ -467,6 +468,7 @@ public:
     }
 
     // SVG-specific methods -- defined in RenderLayerSVGAdditionsInlines.h / RenderLayerSVGAdditions.cpp.
+    bool isSVGLayer() const { return !!m_svgData; }
     inline bool isPaintingResourceLayerForSVG() const;
     inline RenderSVGHiddenContainer* enclosingHiddenOrResourceContainerForSVG() const;
     void paintResourceLayerForSVG(GraphicsContext&, const AffineTransform&);
@@ -475,6 +477,8 @@ public:
     bool hasFailedFilterForSVG() const;
     bool shouldSkipHitTestForSVG() const;
     void updateAncestorDependentStateForSVG();
+    static void reconcileSVGSandwichLayersForChildren(RenderElement& parent);
+    static bool requiresLayerForSVGIntrinsicReasons(const RenderLayerModelObject&);
 
     void repaintIncludingDescendants();
 

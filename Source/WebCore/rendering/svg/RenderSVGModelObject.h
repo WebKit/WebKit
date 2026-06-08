@@ -52,8 +52,13 @@ public:
     virtual ~RenderSVGModelObject();
 
     bool requiresLayer() const override { return true; }
+    bool requiresLayerForIntrinsicReasons() const;
+
+    void setIsSandwichedBetweenLayeredSiblings(bool flag) { m_isSandwichedBetweenLayeredSiblings = flag; }
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     static bool checkIntersection(RenderElement*, const FloatRect&);
     static bool checkEnclosure(RenderElement*, const FloatRect&);
@@ -130,6 +135,9 @@ private:
 
     LayoutRect m_layoutRect;
     std::optional<AffineTransform> m_localTransform;
+    // FIXME (webkit.org/b/308565): maintained here now, but only read once layer creation becomes
+    // conditional and requiresLayer() returns it. Drop [[maybe_unused]] when that lands.
+    [[maybe_unused]] bool m_isSandwichedBetweenLayeredSiblings { false };
 };
 
 } // namespace WebCore

@@ -1203,6 +1203,22 @@ SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
     return std::exchange(m_countersNeedingUpdate, { });
 }
 
+void RenderView::scheduleSVGSandwichLayerReconcile(RenderElement& parent)
+{
+    m_svgSandwichReconcileParents.add(parent);
+}
+
+void RenderView::flushSVGSandwichLayerReconciles()
+{
+    // Loop until empty: a parent re-registered mid-reconcile (unlikely, but cheap to handle)
+    // still gets processed before we return to layout.
+    while (!m_svgSandwichReconcileParents.isEmptyIgnoringNullReferences()) {
+        auto parents = std::exchange(m_svgSandwichReconcileParents, { });
+        for (CheckedRef parent : parents)
+            RenderLayer::reconcileSVGSandwichLayersForChildren(parent);
+    }
+}
+
 SingleThreadWeakPtr<RenderBlockFlow> RenderView::viewTransitionContainingBlock() const
 {
     return m_viewTransitionContainingBlock;

@@ -53,6 +53,11 @@ public:
 
     void destroyLayer();
 
+    // Create or destroy the layer per requiresLayer(), outside the styleDidChange path. Driven by
+    // RenderLayer::reconcileSVGSandwichLayersForChildren when a sibling layer flip changes whether
+    // this SVG renderer is sandwiched.
+    void reconcileLayerCreation();
+
     bool NODELETE hasSelfPaintingLayer() const;
     RenderLayer* layer() const LIFETIME_BOUND { return m_layer.get(); }
 
@@ -161,6 +166,9 @@ protected:
     virtual void updateFromStyle() { }
 
 private:
+    bool createLayerIfAllowed();
+    void removeOnlyThisLayerWithRepaint();
+
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
 
     UniquelyOwnedPtr<RenderLayer> m_layer;

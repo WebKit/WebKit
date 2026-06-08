@@ -172,6 +172,13 @@ public:
     void addCounterNeedingUpdate(RenderCounter&);
     SingleThreadWeakHashSet<RenderCounter> takeCountersNeedingUpdate();
 
+    // LBSE: coalesced reconcile of SVG sandwich layers among a container's direct children.
+    // Mutations register the parent, one O(n) prefix pass per parent is flushed at the end of the
+    // render-tree update (RenderLayer::reconcileSVGSandwichLayersForChildren), keeping bulk
+    // construction O(n) not O(n^2).
+    void scheduleSVGSandwichLayerReconcile(RenderElement& parent);
+    void flushSVGSandwichLayerReconciles();
+
     void incrementRendersWithOutline() { ++m_renderersWithOutlineCount; }
     void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
     bool hasRenderersWithOutline() const { return m_renderersWithOutlineCount; }
@@ -303,6 +310,7 @@ private:
     SingleThreadWeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_SVGSVGElementsWithPausedImageAnimation;
     SingleThreadWeakHashSet<RenderElement> m_visibleInViewportRenderers;
+    SingleThreadWeakHashSet<RenderElement> m_svgSandwichReconcileParents;
 
     SingleThreadWeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
     SingleThreadWeakHashSet<const RenderBox> m_containerQueryBoxes;

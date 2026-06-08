@@ -1,0 +1,46 @@
+ === Anchors composited ===
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+              (children 2
+                (GraphicsLayer
+                  (position 10.00 10.00)
+                  (anchor -0.08 -0.08)
+                  (bounds 120.00 120.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 70.00 70.00)
+                  (bounds 120.00 120.00)
+                  (drawsContent 1)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor -0.58 -0.58)
+                      (bounds 120.00 120.00)
+                      (drawsContent 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+=== Anchors de-composited: no composited SVG children must remain ===
+
+

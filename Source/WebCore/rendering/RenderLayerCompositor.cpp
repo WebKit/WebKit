@@ -1245,6 +1245,123 @@ bool RenderLayerCompositor::allowBackingStoreDetachingForFixedPosition(RenderLay
     return allowDetaching;
 }
 
+void RenderLayerCompositor::updateRepaintRectsAfterCompositingChange(RenderLayer& layer, bool wasComposited, BackingSharingState& backingSharingState)
+{
+    // Repaint rects (and the repaint container) are cached relative to the repaint container,
+    // so they must be recomputed when compositing status changes. Also called by the SVG sandwich
+    // after-recursion pass, which forces backing outside the normal post-traversal flow.
+
+    // Repaint in the old container before we recompute the repaint container.
+    if (!wasComposited && layer.repaintContainer() && layer.repaintContainer()->isComposited())
+        repaintOnCompositingChange(layer, layer.repaintContainer());
+
+    // Compute the new repaint container and repaint in it, unless newly compositing (a new
+    // compositing layer fully repaints anyway).
+    if (!layer.isComposited()) {
+        // Defer until backing sharing completes - repaint container computation needs all
+        // that state in place.
+        if (layerRepaintTargetsBackingSharingLayer(layer, backingSharingState))
+            backingSharingState.addLayerNeedingRepaint(layer);
+        else {
+            layer.compositingStatusChanged(LayoutUpToDate::Yes);
+            repaintOnCompositingChange(layer, layer.repaintContainer());
+        }
+    } else
+        layer.compositingStatusChanged(LayoutUpToDate::Yes);
+}
+
+void RenderLayerCompositor::promoteSandwichedSVGChildrenBeforeRecursion(RenderLayer& parent)
+{
+    ASSERT(parent.isSVGLayer());
+
+    auto& children = parent.childrenInDOMOrderForSVG();
+    if (children.size() < 2)
+        return;
+
+    // Prefix pass in DOM order. An "anchor" is a child that composites on its own (intrinsic,
+    // or a non-sandwich indirect reason from a prior cycle). Children carrying our own
+    // SVGSiblingOrderingForLBSE mark are excluded so a promoted child can't anchor itself.
+    // After an anchor, every later composable non-anchor child must be promoted so it doesn't
+    // paint below the anchor and lose DOM order. Stale marks before the first anchor (or on
+    // every child when there is no anchor) are cleared - this de-promotion is why we can't
+    // early-return on "no anchor".
+    bool sawAnchor = false;
+    for (auto& child : children) {
+        CheckedPtr layer = child.layer.get();
+        if (!layer)
+            continue;
+
+        bool canComposite = canBeComposited(*layer);
+        bool hasOurMark = layer->indirectCompositingReason() == IndirectCompositingReason::SVGSiblingOrderingForLBSE;
+
+        bool isAnchor = false;
+        if (canComposite) {
+            // The mark survives a self-recompute, so a marked child may also have gained an
+            // independent (direct/intrinsic) reason, making it a genuine anchor. Neutralize
+            // the mark while querying so the answer ignores the sandwich, then restore it so
+            // the marking logic below sees the original state.
+            if (hasOurMark)
+                layer->setIndirectCompositingReason(IndirectCompositingReason::None);
+            RequiresCompositingData queryData;
+            isAnchor = needsToBeComposited(*layer, queryData);
+            if (hasOurMark)
+                layer->setIndirectCompositingReason(IndirectCompositingReason::SVGSiblingOrderingForLBSE);
+        }
+
+        bool shouldBeMarked = sawAnchor && canComposite && !isAnchor;
+        if (shouldBeMarked != hasOurMark) {
+            layer->setIndirectCompositingReason(shouldBeMarked
+                ? IndirectCompositingReason::SVGSiblingOrderingForLBSE
+                : IndirectCompositingReason::None);
+            // Sets HasDescendantNeedingRequirementsTraversal up the ancestor chain, keeping the
+            // parent off the traverseUnchangedSubtree early-return next cycle so this is observed.
+            layer->setNeedsPostLayoutCompositingUpdate();
+        }
+
+        sawAnchor = sawAnchor || isAnchor;
+    }
+}
+
+void RenderLayerCompositor::promoteSandwichedSVGChildrenAfterRecursion(RenderLayer& parent, CompositingState& currentState, BackingSharingState& backingSharingState)
+{
+    ASSERT(parent.isSVGLayer());
+
+    auto& children = parent.childrenInDOMOrderForSVG();
+    if (children.size() < 2)
+        return;
+
+    size_t firstComposited = children.size();
+    for (size_t i = 0; i < children.size(); ++i) {
+        CheckedPtr layer = children[i].layer.get();
+        if (layer && layer->isComposited()) {
+            firstComposited = i;
+            break;
+        }
+    }
+    if (firstComposited == children.size())
+        return;
+
+    for (size_t i = firstComposited + 1; i < children.size(); ++i) {
+        CheckedPtr layer = children[i].layer.get();
+        if (!layer || layer->isComposited() || !canBeComposited(*layer))
+            continue;
+        // The preceding sibling only became composited during recursion (e.g. GraphicalEffect
+        // from a composited descendant), so pre-recursion missed it. We are now past this
+        // child's own requirements visit, so a deferred mark would not take effect until a
+        // future cycle - materialize backing now so pass-2 plumbs it into the GraphicsLayer
+        // hierarchy this update. The overlap map is not touched, SVG siblings composite by DOM
+        // order within the parent's stacking context, not via overlap-driven backing sharing.
+        layer->setIndirectCompositingReason(IndirectCompositingReason::SVGSiblingOrderingForLBSE);
+        RequiresCompositingData queryData;
+        // The loop guard guarantees this child was not composited, so it composites now.
+        // Recompute repaint rects here - computeCompositingRequirements' own post-traversal
+        // path already ran for this child during recursion.
+        if (updateBacking(*layer, queryData, &backingSharingState, BackingRequired::Yes))
+            updateRepaintRectsAfterCompositingChange(*layer, false /* wasComposited */, backingSharingState);
+        currentState.subtreeIsCompositing = true;
+    }
+}
+
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState)
 {
 #if !LOG_DISABLED
@@ -1278,7 +1395,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     IndirectCompositingReason compositingReason = compositingState.subtreeIsCompositing ? IndirectCompositingReason::Stacking : IndirectCompositingReason::None;
 
     if (layer.needsPostLayoutCompositingUpdate() || compositingState.fullPaintOrderTraversalRequired || compositingState.descendantsRequireCompositingUpdate) {
-        layer.setIndirectCompositingReason(IndirectCompositingReason::None);
+        // SVGSiblingOrderingForLBSE is set by the parent's sandwich-promotion pass, not derived
+        // from this layer's own state, so it must survive a self-recompute.
+        if (layer.indirectCompositingReason() != IndirectCompositingReason::SVGSiblingOrderingForLBSE)
+            layer.setIndirectCompositingReason(IndirectCompositingReason::None);
         willBeComposited = needsToBeComposited(layer, queryData);
     }
 
@@ -1406,6 +1526,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     bool descendantsAddedToOverlap = currentState.hasNonRootCompositedAncestor();
 
     if (!canSkipComputeCompositingRequirementsForSubtree(layer, willBeComposited)) {
+        if (layer.isSVGLayer())
+            promoteSandwichedSVGChildrenBeforeRecursion(layer);
+
         if (layer.hasNegativeZOrderLayers()) {
             // Speculatively push this layer onto the overlap map.
             bool didSpeculativelyPushOverlapContainer = false;
@@ -1442,6 +1565,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         for (CheckedPtr childLayer : layer.positiveZOrderLayers())
             computeCompositingRequirements(&layer, *childLayer, overlapMap, currentState, backingSharingState);
+
+        if (layer.isSVGLayer())
+            promoteSandwichedSVGChildrenAfterRecursion(layer, currentState, backingSharingState);
 
         // Set the flag to say that this layer has compositing children.
         layer.setHasCompositingDescendant(currentState.subtreeIsCompositing);
@@ -1527,26 +1653,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // Update the cached repaint rects now that we've finished updating backing
     // sharing state on descendants
-    if (needsCompositingStatusUpdate) {
-        // Repaint in the old container before we recompute the repaint container.
-        if (!wasComposited && layer.repaintContainer() && layer.repaintContainer()->isComposited())
-            repaintOnCompositingChange(layer, layer.repaintContainer());
-
-        // Compute the new repaint container, and repaint our bounds in it (unless
-        // this layer is newly compositing, in which case the layer will fully repaint already).
-        if (!layer.isComposited()) {
-            // If this layer is going to participate in backing sharing, defer until that's
-            // complete, since repaint container computation depends on all the state being
-            // in-place.
-            if (layerRepaintTargetsBackingSharingLayer(layer, backingSharingState))
-                backingSharingState.addLayerNeedingRepaint(layer);
-            else {
-                layer.compositingStatusChanged(LayoutUpToDate::Yes);
-                repaintOnCompositingChange(layer, layer.repaintContainer());
-            }
-        } else
-            layer.compositingStatusChanged(LayoutUpToDate::Yes);
-    }
+    if (needsCompositingStatusUpdate)
+        updateRepaintRectsAfterCompositingChange(layer, wasComposited, backingSharingState);
 
     layer.setBackingProviderLayerAtEndOfCompositingUpdate(providedBackingLayer.get());
 
@@ -3386,7 +3494,8 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
             || reason == IndirectCompositingReason::Stacking
             || reason == IndirectCompositingReason::BackgroundLayer
             || reason == IndirectCompositingReason::GraphicalEffect
-            || reason == IndirectCompositingReason::Preserve3D; // preserve-3d has to create backing store to ensure that 3d-transformed elements intersect.
+            || reason == IndirectCompositingReason::Preserve3D // preserve-3d has to create backing store to ensure that 3d-transformed elements intersect.
+            || reason == IndirectCompositingReason::SVGSiblingOrderingForLBSE;
     }
 
     return false;
@@ -3494,6 +3603,9 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         break;
     case IndirectCompositingReason::Preserve3D:
         reasons.add(CompositingReason::Preserve3D);
+        break;
+    case IndirectCompositingReason::SVGSiblingOrderingForLBSE:
+        reasons.add(CompositingReason::Stacking);
         break;
     }
 

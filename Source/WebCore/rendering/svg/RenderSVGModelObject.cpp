@@ -34,10 +34,13 @@
 
 #include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
 #include "RenderLayerModelObject.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGForeignObject.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
@@ -46,6 +49,7 @@
 #include "SVGNames.h"
 #include "SVGPathData.h"
 #include "SVGUseElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -74,6 +78,11 @@ void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
     updateHasSVGTransformFlags();
+}
+
+bool RenderSVGModelObject::requiresLayerForIntrinsicReasons() const
+{
+    return RenderLayer::requiresLayerForSVGIntrinsicReasons(*this);
 }
 
 void RenderSVGModelObject::updateLocalTransform()
@@ -151,9 +160,39 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixe
     quads.append(localToAbsoluteQuad(FloatRect { { }, m_layoutRect.size() }, MapCoordinatesMode::UseTransforms, wasFixed));
 }
 
+void RenderSVGModelObject::insertedIntoTree()
+{
+    RenderLayerModelObject::insertedIntoTree();
+
+    // Insertion can change our own or trailing siblings' sandwich state. Defer to the batched
+    // reconcile pass. Skip hidden containers (defs, clipPath, ...), they never paint.
+    if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+        CheckedRef view = this->view();
+        view->scheduleSVGSandwichLayerReconcile(*parent);
+    }
+}
+
+void RenderSVGModelObject::willBeRemovedFromTree()
+{
+    // Removing us can de-sandwich trailing siblings, reconcile after we detach.
+    if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+        CheckedRef view = this->view();
+        view->scheduleSVGSandwichLayerReconcile(*parent);
+    }
+
+    RenderLayerModelObject::willBeRemovedFromTree();
+}
+
 void RenderSVGModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderLayerModelObject::styleDidChange(diff, oldStyle);
+
+    // A style change can flip our boundary state (requiresLayerForSVGIntrinsicReasons) or our own
+    // layer, affecting trailing siblings. Defer to the batched reconcile pass.
+    if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+        CheckedRef view = this->view();
+        view->scheduleSVGSandwichLayerReconcile(*parent);
+    }
 
     // Invalidate cached visual overflow rect when relevant styles change.
     if (oldStyle && diff >= Style::DifferenceResult::Repaint) {

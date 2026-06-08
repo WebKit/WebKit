@@ -142,6 +142,10 @@ void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 
     m_builder.updateAfterDescendants(renderView());
 
+    // LBSE: flush coalesced SVG sandwich-layer reconciles before layout reads transforms and
+    // compositing reads layer pointers. Layer creation is legal in this phase, not in the layout walk.
+    renderView().flushSVGSandwichLayerReconciles();
+
     m_styleUpdate = nullptr;
 }
 

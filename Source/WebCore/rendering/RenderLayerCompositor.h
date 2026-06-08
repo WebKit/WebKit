@@ -556,6 +556,16 @@ private:
     bool NODELETE requiresCompositingForAnchorPositioning(const RenderLayer&) const;
     IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const;
 
+    // LBSE: a non-composited SVG layer child trailing a composited sibling in DOM order must
+    // itself composite to preserve DOM-order paint. The pre-recursion pass marks children
+    // behind an anchor that composites for an intrinsic or prior-cycle indirect reason, the
+    // post-recursion pass catches anchors that only became composited via derived reasons
+    // during recursion.
+    void promoteSandwichedSVGChildrenBeforeRecursion(RenderLayer& parent);
+    void promoteSandwichedSVGChildrenAfterRecursion(RenderLayer& parent, CompositingState&, BackingSharingState&);
+
+    void updateRepaintRectsAfterCompositingChange(RenderLayer&, bool wasComposited, BackingSharingState&);
+
     static ScrollPositioningBehavior layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer&, const RenderLayer& compositedAncestor);
 
     static bool styleChangeMayAffectIndirectCompositingReasons(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);

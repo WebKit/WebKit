@@ -46,12 +46,15 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderIterator.h"
+#include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGTextPath.h"
+#include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
@@ -229,6 +232,33 @@ void RenderSVGText::willBeDestroyed()
     m_layoutAttributesBuilder.clearTextPositioningElements();
 
     RenderSVGBlock::willBeDestroyed();
+}
+
+void RenderSVGText::insertedIntoTree()
+{
+    RenderSVGBlock::insertedIntoTree();
+
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return;
+
+    // Conditionally layered like RenderSVGModelObject, so defer to the batched reconcile pass.
+    if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+        CheckedRef view = this->view();
+        view->scheduleSVGSandwichLayerReconcile(*parent);
+    }
+}
+
+void RenderSVGText::willBeRemovedFromTree()
+{
+    // Removing us can de-sandwich trailing siblings, reconcile after we detach.
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+            CheckedRef view = this->view();
+            view->scheduleSVGSandwichLayerReconcile(*parent);
+        }
+    }
+
+    RenderSVGBlock::willBeRemovedFromTree();
 }
 
 void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes)
@@ -1028,6 +1058,14 @@ void RenderSVGText::styleDidChange(Style::Difference diff, const Style::Computed
         setNeedsTransformUpdate();
 
     RenderSVGBlock::styleDidChange(diff, oldStyle);
+
+    // A style change can flip our boundary state or our own layer, affecting trailing siblings.
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+            CheckedRef view = this->view();
+            view->scheduleSVGSandwichLayerReconcile(*parent);
+        }
+    }
 }
 
 SVGRootInlineBox* RenderSVGText::legacyRootBox() const

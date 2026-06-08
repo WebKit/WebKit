@@ -31,6 +31,7 @@
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderSVGBlockInlines.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGForeignObjectElement.h"
@@ -132,6 +133,28 @@ void RenderSVGForeignObject::updateFromStyle()
 void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protect(foreignObjectElement()), style, boundingBox, std::nullopt, std::nullopt, options);
+}
+
+void RenderSVGForeignObject::insertedIntoTree()
+{
+    RenderSVGBlock::insertedIntoTree();
+
+    // Always a sandwich boundary (UA overflow:hidden forces a layer). Defer to the batched reconcile pass.
+    if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+        CheckedRef view = this->view();
+        view->scheduleSVGSandwichLayerReconcile(*parent);
+    }
+}
+
+void RenderSVGForeignObject::willBeRemovedFromTree()
+{
+    // Removing us can de-sandwich trailing siblings, reconcile after we detach.
+    if (CheckedPtr parent = this->parent(); parent && !is<RenderSVGHiddenContainer>(*parent)) {
+        CheckedRef view = this->view();
+        view->scheduleSVGSandwichLayerReconcile(*parent);
+    }
+
+    RenderSVGBlock::willBeRemovedFromTree();
 }
 
 }

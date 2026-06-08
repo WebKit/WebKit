@@ -6726,6 +6726,7 @@ TextStream& operator<<(TextStream& ts, IndirectCompositingReason reason)
     case IndirectCompositingReason::GraphicalEffect: ts << "graphical effect"_s; break;
     case IndirectCompositingReason::Perspective: ts << "perspective"_s; break;
     case IndirectCompositingReason::Preserve3D: ts << "preserve-3d"_s; break;
+    case IndirectCompositingReason::SVGSiblingOrderingForLBSE: ts << "SVG sibling ordering"_s; break;
     }
 
     return ts;

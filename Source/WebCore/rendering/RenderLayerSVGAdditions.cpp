@@ -27,6 +27,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerFilters.h"
 #include "RenderLayerInlines.h"
@@ -184,6 +185,60 @@ bool RenderLayer::shouldSkipRepaintAfterLayoutForSVG() const
 
     // The SVG containers themselves never trigger repaints, only their contents are allowed to.
     return is<RenderSVGContainer>(renderer()) && !shouldPaintWithFilters();
+}
+
+bool RenderLayer::requiresLayerForSVGIntrinsicReasons(const RenderLayerModelObject& renderer)
+{
+    // Plain 2D transforms need no layer, paintRendererByApplyingTransformForSVG() handles them.
+    // 3D transforms require compositing, hence a layer, as do grouping effects, z-index, etc.
+    return renderer.createsGroup()
+        || renderer.style().transform().has3DOperation()
+        || renderer.style().translate().is3DOperation()
+        || renderer.style().scale().is3DOperation()
+        || renderer.style().rotate().is3DOperation()
+        || renderer.style().transformStyle3D() == TransformStyle3D::Preserve3D
+        || !renderer.style().perspective().isNone()
+        || renderer.hasHiddenBackface()
+        || renderer.hasReflection()
+        || !renderer.style().specifiedZIndex().isAuto()
+        || renderer.style().isolation() != Isolation::Auto;
+}
+
+void RenderLayer::reconcileSVGSandwichLayersForChildren(RenderElement& parent)
+{
+    // A child trailing a layered sibling must take a layer too, else it paints below composited
+    // siblings and loses DOM order. Boundaries are RenderSVGForeignObject and intrinsically-layered
+    // RenderSVGModelObject / RenderSVGText, queried via requiresLayerForSVGIntrinsicReasons (not
+    // requiresLayer, to avoid recursion).
+    bool sawBoundary = false;
+    auto reconcileChild = [&](auto& renderer) {
+        bool intrinsic = requiresLayerForSVGIntrinsicReasons(renderer);
+        bool wasLayered = renderer.hasLayer();
+        // An intrinsically-layered child already paints in DOM order. Marking it sandwiched
+        // would add a redundant SVGSiblingOrderingForLBSE reason.
+        renderer.setIsSandwichedBetweenLayeredSiblings(sawBoundary && !intrinsic);
+        renderer.reconcileLayerCreation();
+        // Mid-life layer creation skips styleDidChange, so init transform and visible content.
+        if (!wasLayered && renderer.hasLayer()) {
+            if (CheckedPtr ownLayer = renderer.layer()) {
+                ownLayer->updateTransform();
+                ownLayer->setHasVisibleContent();
+            }
+        }
+        if (intrinsic)
+            sawBoundary = true;
+    };
+
+    for (CheckedRef child : childrenOfType<RenderElement>(parent)) {
+        if (is<RenderSVGForeignObject>(child.get())) {
+            sawBoundary = true;
+            continue;
+        }
+        if (CheckedPtr model = dynamicDowncast<RenderSVGModelObject>(child.get()))
+            reconcileChild(*model);
+        else if (CheckedPtr text = dynamicDowncast<RenderSVGText>(child.get()))
+            reconcileChild(*text);
+    }
 }
 
 bool RenderLayer::shouldSkipHitTestForSVG() const
