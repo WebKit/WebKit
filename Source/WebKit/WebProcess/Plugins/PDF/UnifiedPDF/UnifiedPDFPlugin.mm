@@ -1826,13 +1826,6 @@ bool UnifiedPDFPlugin::isShowingTwoPages() const
     return m_documentLayout.displayMode() == PDFPluginDisplayMode::TwoUpContinuous || m_documentLayout.displayMode() == PDFPluginDisplayMode::TwoUpDiscrete;
 }
 
-FloatRect UnifiedPDFPlugin::pageBoundsInContentsSpace(PDFDocumentLayout::PageIndex index) const
-{
-    auto bounds = m_documentLayout.layoutBoundsForPageAtIndex(index);
-    bounds.inflate(PDFDocumentLayout::pageMargin);
-    bounds.scale(contentScaleFactor());
-    return bounds;
-}
 
 #pragma mark -
 
@@ -1851,12 +1844,6 @@ static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTyp
     return WebCore::Cursor::Type::Pointer;
 }
 
-PDFDocumentLayout::PageIndex UnifiedPDFPlugin::indexForCurrentPageInView() const
-{
-    // FIXME: <https://webkit.org/b/276981> This is not correct for discrete presentation mode.
-    auto centerInDocumentSpace = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { flooredIntPoint(size() / 2) });
-    return protect(m_presentationController)->nearestPageIndexForDocumentPoint(centerInDocumentSpace);
-}
 
 RetainPtr<PDFAnnotation> UnifiedPDFPlugin::annotationForRootViewPoint(const IntPoint& point) const
 {

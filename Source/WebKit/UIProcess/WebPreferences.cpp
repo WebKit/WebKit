@@ -230,11 +230,6 @@ void WebPreferences::updateDoubleValueForKey(const String& key, double value, bo
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::updateFloatValueForKey(const String& key, float value, bool ephemeral)
-{
-    platformUpdateFloatValueForKey(key, value);
-    update(); // FIXME: Only send over the changed key and value.
-}
 
 void WebPreferences::deleteKey(const String& key)
 {
@@ -243,13 +238,6 @@ void WebPreferences::deleteKey(const String& key)
     update(); // FIXME: Only send over the changed key and value.
 }
 
-void WebPreferences::registerDefaultBoolValueForKey(const String& key, bool value)
-{
-    m_store.setOverrideDefaultsBoolValueForKey(key, value);
-    bool userValue;
-    if (platformGetBoolUserValueForKey(key, userValue))
-        m_store.setBoolValueForKey(key, userValue);
-}
 
 void WebPreferences::registerDefaultUInt32ValueForKey(const String& key, uint32_t value)
 {

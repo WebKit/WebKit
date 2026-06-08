@@ -55,7 +55,6 @@ public:
 
     FloatPoint mappedPoint() const;
     FloatQuad mappedQuad() const;
-    FloatQuad mappedArea() const;
     LayoutRect boundsOfMappedArea() const;
     LayoutRect boundsOfMappedQuad() const;
 

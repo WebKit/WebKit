@@ -212,7 +212,6 @@ public:
 private:
     void updateRubberBandAnimatingState();
 
-    void setIsAnimatingRubberBand(bool);
     void setIsAnimatingScrollSnap(bool);
     void setIsAnimatingKeyboardScrolling(bool);
 

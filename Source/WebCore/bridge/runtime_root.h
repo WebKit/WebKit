@@ -70,7 +70,6 @@ public:
     void updateGlobalObject(JSGlobalObject*);
 
     void addRuntimeObject(VM&, RuntimeObject*);
-    void removeRuntimeObject(RuntimeObject*);
 
     struct InvalidationCallback {
         virtual void operator()(RootObject*) = 0;

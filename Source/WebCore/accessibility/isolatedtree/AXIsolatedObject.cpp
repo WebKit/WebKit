@@ -914,17 +914,6 @@ TextEmissionBehavior AXIsolatedObject::textEmissionBehavior() const
     return TextEmissionBehavior::None;
 }
 
-IntPoint AXIsolatedObject::intPointAttributeValue(AXProperty property) const
-{
-    size_t index = indexOfProperty(property);
-    if (index == notFound)
-        return IntPoint();
-
-    return WTF::switchOn(m_properties[index].second,
-        [] (const IntPoint& typedValue) -> IntPoint { return typedValue; },
-        [] (auto&) { return IntPoint(); }
-    );
-}
 
 AXIsolatedObject* AXIsolatedObject::objectAttributeValue(AXProperty property) const
 {
@@ -1004,17 +993,6 @@ std::optional<T> AXIsolatedObject::optionalAttributeValue(AXProperty property) c
     );
 }
 
-uint64_t AXIsolatedObject::uint64AttributeValue(AXProperty property) const
-{
-    size_t index = indexOfProperty(property);
-    if (index == notFound)
-        return 0;
-
-    return WTF::switchOn(m_properties[index].second,
-        [] (const uint64_t& typedValue) -> uint64_t { return typedValue; },
-        [] (auto&) -> uint64_t { return 0; }
-    );
-}
 
 URL AXIsolatedObject::urlAttributeValue(AXProperty property) const
 {
@@ -1344,17 +1322,6 @@ float AXIsolatedObject::floatAttributeValue(AXProperty property) const
     );
 }
 
-double AXIsolatedObject::doubleAttributeValue(AXProperty property) const
-{
-    size_t index = indexOfProperty(property);
-    if (index == notFound)
-        return 0.0;
-
-    return WTF::switchOn(m_properties[index].second,
-        [] (const double& typedValue) -> double { return typedValue; },
-        [] (auto&) { return 0.0; }
-    );
-}
 
 unsigned AXIsolatedObject::unsignedAttributeValue(AXProperty property) const
 {

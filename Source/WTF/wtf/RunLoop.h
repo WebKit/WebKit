@@ -97,7 +97,6 @@ public:
     WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
     WTF_EXPORT_PRIVATE static RunLoop& NODELETE mainSingleton();
 #if USE(WEB_THREAD)
-    WTF_EXPORT_PRIVATE static RunLoop& webSingleton();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
 #endif
     WTF_EXPORT_PRIVATE static Ref<RunLoop> create(ASCIILiteral threadName, ThreadType = ThreadType::Unknown, ThreadQOS = ThreadQOS::UserInitiated);

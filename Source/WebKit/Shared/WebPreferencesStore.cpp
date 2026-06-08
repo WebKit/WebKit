@@ -41,10 +41,6 @@ static BoolOverridesMap& NODELETE boolTestRunnerOverridesMap()
     return map;
 }
 
-void WebPreferencesStore::overrideBoolValueForKey(const String& key, bool value)
-{
-    boolTestRunnerOverridesMap().set(key, value);
-}
 
 void WebPreferencesStore::removeTestRunnerOverrides()
 {
@@ -128,10 +124,6 @@ double WebPreferencesStore::getDoubleValueForKey(const String& key) const
 
 // Overridden Defaults
 
-void WebPreferencesStore::setOverrideDefaultsStringValueForKey(const String& key, String value)
-{
-    m_overriddenDefaults.set(key, Value(value));
-}
 
 void WebPreferencesStore::setOverrideDefaultsBoolValueForKey(const String& key, bool value)
 {
@@ -143,10 +135,6 @@ void WebPreferencesStore::setOverrideDefaultsUInt32ValueForKey(const String& key
     m_overriddenDefaults.set(key, Value(value));
 }
 
-void WebPreferencesStore::setOverrideDefaultsDoubleValueForKey(const String& key, double value)
-{
-    m_overriddenDefaults.set(key, Value(value));
-}
 
 void WebPreferencesStore::deleteKey(const String& key)
 {

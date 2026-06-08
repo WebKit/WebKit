@@ -259,7 +259,6 @@ private:
     void _addTableCellForElement(Element* tableCellElement);
     void _addMarkersToList(NSTextList *list, NSRange range);
     void _processText(Text&);
-    void _adjustTrailingNewline();
 };
 
 HTMLConverter::HTMLConverter(const SimpleRange& range, IgnoreUserSelectNone treatment)
@@ -2273,14 +2272,6 @@ void HTMLConverter::_traverseFooterNode(Element& element, unsigned depth)
         _flags.reachedEnd = YES;
 }
 
-void HTMLConverter::_adjustTrailingNewline()
-{
-    NSUInteger textLength = [_attrStr length];
-    unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : 0;
-    BOOL alreadyHasTrailingNewline = (lastChar == '\n' || lastChar == '\r' || lastChar == NSParagraphSeparatorCharacter || lastChar == NSLineSeparatorCharacter || lastChar == WebNextLineCharacter);
-    if (_flags.hasTrailingNewline && !alreadyHasTrailingNewline)
-        [_attrStr replaceCharactersInRange:NSMakeRange(textLength, 0) withString:@"\n"];
-}
 
 Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& start, const Position& end)
 {

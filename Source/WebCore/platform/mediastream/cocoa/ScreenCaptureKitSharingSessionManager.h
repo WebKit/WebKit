@@ -68,7 +68,6 @@ public:
     ScreenCaptureSessionSourceObserver* observer() const { return m_observer.get(); }
 
     void updateContentFilter(SCContentFilter*);
-    void streamDidEnd();
 
     bool operator==(const ScreenCaptureSessionSource&) const;
 

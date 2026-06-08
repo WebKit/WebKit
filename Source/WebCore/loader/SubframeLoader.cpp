@@ -133,15 +133,6 @@ bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerEleme
     return loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
 }
     
-bool FrameLoader::SubframeLoader::resourceWillUsePlugin(const String& url, const String& mimeType)
-{
-    URL completedURL;
-    if (!url.isEmpty())
-        completedURL = completeURL(url);
-
-    bool useFallback;
-    return shouldUsePlugin(completedURL, mimeType, false, useFallback);
-}
 
 bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const HTMLPlugInElement& ownerElement, const String& mimeType) const
 {

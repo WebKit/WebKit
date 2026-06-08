@@ -897,29 +897,6 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
     return lastVisible;
 }
 
-unsigned Position::positionCountBetweenPositions(const Position& a, const Position& b)
-{
-    if (a.isNull() || b.isNull())
-        return UINT_MAX;
-    
-    Position endPos;
-    Position pos;
-    if (a > b) {
-        endPos = a;
-        pos = b;
-    } else if (a < b) {
-        endPos = b;
-        pos = a;
-    } else
-        return 0;
-    
-    unsigned posCount = 0;
-    while (!pos.atEndOfTree() && pos != endPos) {
-        pos = pos.next();
-        ++posCount;
-    }
-    return posCount;
-}
 
 bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement& renderer)
 {

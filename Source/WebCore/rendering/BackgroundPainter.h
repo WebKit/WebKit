@@ -90,7 +90,6 @@ public:
     static bool paintsOwnBackground(const RenderBoxModelObject&);
     static BackgroundImageGeometry calculateFillLayerImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Style::BackgroundLayer&, Style::ZoomFactor, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin = std::nullopt);
     static BackgroundImageGeometry calculateFillLayerImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Style::MaskLayer&, Style::ZoomFactor, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin = std::nullopt);
-    static void clipRoundedInnerRect(GraphicsContext&, const FloatRoundedRect& clipRect);
     static bool boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject&, const LayoutPoint& paintOffset, BleedAvoidance, const InlineIterator::InlineBoxIterator&);
 
 private:

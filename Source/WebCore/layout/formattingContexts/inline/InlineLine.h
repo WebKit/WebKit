@@ -64,7 +64,6 @@ public:
 
     enum class IncludeInsideListMarker : bool { No, Yes };
     bool hasContent(IncludeInsideListMarker = IncludeInsideListMarker::No) const;
-    bool hasContentOrDecoration(IncludeInsideListMarker = IncludeInsideListMarker::No) const;
     bool hasRubyContent() const { return m_hasRubyContent; }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }

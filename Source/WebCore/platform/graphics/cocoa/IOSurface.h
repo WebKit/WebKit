@@ -238,7 +238,6 @@ public:
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&);
     WEBCORE_EXPORT static void setOwnershipIdentity(IOSurfaceRef, const ProcessIdentity&);
 
-    RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
 private:
     IOSurface(IntSize, const DestinationColorSpace&, Name, Format, UseLosslessCompression, bool& success);

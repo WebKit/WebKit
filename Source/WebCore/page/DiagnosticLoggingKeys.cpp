@@ -38,15 +38,7 @@ String DiagnosticLoggingKeys::mediaLoadingFailedKey()
     return "mediaFailedLoading"_s;
 }
 
-String DiagnosticLoggingKeys::memoryCacheEntryDecisionKey()
-{
-    return "memoryCacheEntryDecision"_s;
-}
 
-String DiagnosticLoggingKeys::memoryCacheUsageKey()
-{
-    return "memoryCacheUsage"_s;
-}
 
 String DiagnosticLoggingKeys::missingValidatorFieldsKey()
 {
@@ -158,10 +150,6 @@ String DiagnosticLoggingKeys::neverSeenBeforeKey()
     return "neverSeenBefore"_s;
 }
 
-String DiagnosticLoggingKeys::noKey()
-{
-    return "no"_s;
-}
 
 String DiagnosticLoggingKeys::nonVisibleStateKey()
 {
@@ -323,10 +311,6 @@ String DiagnosticLoggingKeys::domainVisitedKey()
     return "DomainVisited"_s;
 }
 
-String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
-{
-    return "cannotSuspendActiveDOMObjects"_s;
-}
 
 String DiagnosticLoggingKeys::cpuUsageKey()
 {
@@ -370,10 +354,6 @@ String DiagnosticLoggingKeys::cachedResourceRevalidationKey()
     return "cachedResourceRevalidation"_s;
 }
 
-String DiagnosticLoggingKeys::cachedResourceRevalidationReasonKey()
-{
-    return "cachedResourceRevalidationReason"_s;
-}
 
 String DiagnosticLoggingKeys::deniedByClientKey()
 {
@@ -600,10 +580,6 @@ String DiagnosticLoggingKeys::unsupportedHTTPMethodKey()
     return "unsupportedHTTPMethod"_s;
 }
 
-String DiagnosticLoggingKeys::unsuspendableDOMObjectKey()
-{
-    return "unsuspendableDOMObject"_s;
-}
 
 String DiagnosticLoggingKeys::unusedKey()
 {
@@ -655,10 +631,6 @@ String DiagnosticLoggingKeys::webViewKey()
     return "webView"_s;
 }
 
-String DiagnosticLoggingKeys::yesKey()
-{
-    return "yes"_s;
-}
 
 String DiagnosticLoggingKeys::expiredKey()
 {

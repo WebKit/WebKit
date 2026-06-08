@@ -87,16 +87,6 @@ std::optional<FloatPoint> RenderCombineText::computeTextOrigin(const FloatRect& 
     return result;
 }
 
-String RenderCombineText::combinedStringForRendering() const
-{
-    if (m_isCombined) {
-        auto originalText = this->originalText();
-        ASSERT(!originalText.isNull());
-        return originalText;
-    }
- 
-    return { };
-}
 
 void RenderCombineText::combineTextIfNeeded()
 {

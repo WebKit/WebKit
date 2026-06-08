@@ -187,12 +187,6 @@ void RootObject::addRuntimeObject(VM&, RuntimeObject* object)
     weakAdd(m_runtimeObjects, object, JSC::Weak<RuntimeObject>(object, this));
 }
 
-void RootObject::removeRuntimeObject(RuntimeObject* object)
-{
-    if (!m_isValid)
-        return;
-    weakRemove(m_runtimeObjects, object, object);
-}
 
 void RootObject::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {

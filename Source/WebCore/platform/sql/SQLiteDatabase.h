@@ -95,9 +95,7 @@ public:
     WEBCORE_EXPORT int lastChanges();
 
     void setBusyTimeout(int ms);
-    void setBusyHandler(int(*)(void*, int));
     
-    void setFullsync(bool);
     
     // This enables automatic WAL truncation via a commit hook that uses SQLITE_CHECKPOINT_TRUNCATE.
     // However, it shouldn't be used if you use a custom busy handler or timeout. This is because

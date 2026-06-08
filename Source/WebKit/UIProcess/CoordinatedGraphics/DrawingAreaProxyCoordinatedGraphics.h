@@ -91,7 +91,6 @@ private:
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 
-    bool alwaysUseCompositing() const;
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);

@@ -53,7 +53,6 @@ public:
 
     static const AtomString& descriptionKeyword();
     static const AtomString& mainDescKeyword();
-    static const AtomString& translationKeyword();
 
     bool enabled() const final { return m_enabled; }
     void setEnabled(const bool);

@@ -771,19 +771,7 @@ void Resolver::setGlobalStateAfterApplyingProperties(const BuilderState& builder
         document().setHasStyleWithViewportUnits();
 }
 
-bool Resolver::hasSelectorForAttribute(const Element& element, const AtomString& attributeName) const
-{
-    ASSERT(!attributeName.isEmpty());
-    if (element.isHTMLElement() && element.document().isHTMLDocument())
-        return m_ruleSets.features().attributeLowercaseLocalNamesInRules.contains(attributeName);
-    return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
-}
 
-bool Resolver::hasSelectorForId(const AtomString& idValue) const
-{
-    ASSERT(!idValue.isEmpty());
-    return m_ruleSets.features().idsInRules.contains(idValue);
-}
 
 bool Resolver::hasViewportDependentMediaQueries() const
 {

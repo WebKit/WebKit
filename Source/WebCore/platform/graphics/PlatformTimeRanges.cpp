@@ -323,22 +323,6 @@ size_t PlatformTimeRanges::findWithEpsilon(const MediaTime& time, const MediaTim
     return notFound;
 }
 
-PlatformTimeRanges PlatformTimeRanges::copyWithEpsilon(const MediaTime& epsilon) const
-{
-    if (length() <= 1)
-        return *this;
-    Vector<Range> ranges;
-    unsigned n1 = 0;
-    for (unsigned n2 = 1; n2 < length(); n2++) {
-        auto& previousRangeEnd = m_ranges[n2 - 1].end;
-        if (previousRangeEnd + epsilon < m_ranges[n2].start) {
-            ranges.append({ m_ranges[n1].start, previousRangeEnd });
-            n1 = n2;
-        }
-    }
-    ranges.append({ m_ranges[n1].start, m_ranges[length() - 1].end });
-    return ranges;
-}
 
 MediaTime PlatformTimeRanges::nearest(const MediaTime& time) const
 {

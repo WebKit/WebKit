@@ -302,37 +302,6 @@ FloatRect LargestContentfulPaintData::computeViewportIntersectionRect(Element& e
     return intersectionRect;
 }
 
-FloatRect LargestContentfulPaintData::computeViewportIntersectionRectForTextContainer(Element& element, const WeakHashSet<Text, WeakPtrImplWithEventTargetData>& textNodes)
-{
-    RefPtr frameView = element.document().view();
-    if (!frameView)
-        return { };
-
-    CheckedPtr rootRenderer = frameView->renderView();
-    auto layoutViewport = frameView->layoutViewportRect();
-
-    IntRect absoluteTextBounds;
-    for (RefPtr node : textNodes) {
-        if (!node)
-            continue;
-
-        CheckedPtr renderer = node->renderer();
-        if (!renderer)
-            continue;
-
-        if (renderer->isSkippedContent())
-            continue;
-
-        static constexpr bool useTransforms = true;
-        auto absoluteBounds = renderer->absoluteBoundingBoxRect(useTransforms);
-        absoluteTextBounds.unite(absoluteBounds);
-    }
-
-    auto intersectionRect = layoutViewport;
-    intersectionRect.edgeInclusiveIntersect(absoluteTextBounds);
-
-    return intersectionRect;
-}
 
 void LargestContentfulPaintData::didLoadImage(Element& element, CachedImage* image)
 {

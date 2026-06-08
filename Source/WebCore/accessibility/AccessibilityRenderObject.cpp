@@ -1933,20 +1933,6 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     return AccessibilityNodeObject::indexForVisiblePosition(position);
 }
 
-RefPtr<Element> AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
-{
-    // Find the root editable or pseudo-editable (i.e. having an editable ARIA role) element.
-    RefPtr<Element> result;
-    RefPtr rootEditableElement = position.rootEditableElement();
-
-    for (RefPtr ancestor = position.anchorElementAncestor(); ancestor && ancestor != rootEditableElement; ancestor = ancestor->parentElement()) {
-        if (elementIsTextControl(*ancestor))
-            result = ancestor;
-        if (ancestor->elementName() == ElementName::HTML_body)
-            break;
-    }
-    return result ? result : rootEditableElement;
-}
 
 bool AccessibilityRenderObject::elementIsTextControl(const Element& element) const
 {

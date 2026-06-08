@@ -40,7 +40,6 @@ public:
     float horizontalOriginX() const;
     float horizontalOriginY() const;
     float horizontalAdvanceX() const;
-    float verticalOriginX() const;
     float verticalOriginY() const;
     float verticalAdvanceY() const;
     int ascent() const;

@@ -54,14 +54,12 @@ public:
 
     void appendLineBox(std::unique_ptr<LegacyInlineFlowBox>);
 
-    void deleteLineBoxTree();
     void deleteLineBoxes();
 
     void NODELETE removeLineBox(LegacyInlineFlowBox*);
     
     void dirtyLineBoxes();
     void dirtyLineFromChangedChild(RenderBoxModelObject& parent);
-    void shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
 private:
     // For block flows, each box represents the root inline box for a line in the paragraph.

@@ -47,7 +47,6 @@ public:
 
 #if OS(DARWIN)
     WTF_EXPORT_PRIVATE static ContinuousApproximateTime fromMachContinuousApproximateTime(uint64_t);
-    WTF_EXPORT_PRIVATE uint64_t toMachContinuousApproximateTime() const;
 #endif
 
     WTF_EXPORT_PRIVATE static ContinuousApproximateTime now();

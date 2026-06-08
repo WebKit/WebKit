@@ -56,9 +56,7 @@ public:
 
     static void requestPictureInPicture(HTMLVideoElement&, Ref<DeferredPromise>&&);
     static bool autoPictureInPicture(HTMLVideoElement&);
-    static void setAutoPictureInPicture(HTMLVideoElement&, bool);
     static bool disablePictureInPicture(HTMLVideoElement&);
-    static void setDisablePictureInPicture(HTMLVideoElement&, bool);
 
     void exitPictureInPicture(Ref<DeferredPromise>&&);
 

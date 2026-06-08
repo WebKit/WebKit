@@ -820,11 +820,6 @@ void NavigationScheduler::scheduleHistoryNavigationByKey(const String& key, Comp
     schedule(makeUnique<ScheduledHistoryNavigationByKey>(key, WTF::move(completionHandler)));
 }
 
-void NavigationScheduler::schedulePageBlock(Document& originDocument)
-{
-    if (shouldScheduleNavigation())
-        schedule(makeUnique<ScheduledPageBlock>(originDocument));
-}
 
 
 void NavigationScheduler::ref() const

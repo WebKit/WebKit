@@ -51,7 +51,6 @@ public:
     PlatformTimeRanges();
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
 
-    PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
 
     static const PlatformTimeRanges& emptyRanges();
     static MediaTime NODELETE timeFudgeFactor();

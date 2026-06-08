@@ -100,17 +100,6 @@ size_t HRTFKernel::fftSize() const
     return m_fftFrame->fftSize();
 }
 
-std::unique_ptr<AudioChannel> HRTFKernel::createImpulseResponse()
-{
-    auto channel = makeUnique<AudioChannel>(fftSize());
-    FFTFrame fftFrame(*m_fftFrame);
-
-    // Add leading delay back in.
-    fftFrame.addConstantGroupDelay(m_frameDelay);
-    fftFrame.doInverseFFT(channel->mutableSpan());
-
-    return channel;
-}
 
 // Interpolates two kernels with x: 0 -> 1 and returns the result.
 RefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1, HRTFKernel* kernel2, float x)

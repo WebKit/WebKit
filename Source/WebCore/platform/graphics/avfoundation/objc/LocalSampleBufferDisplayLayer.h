@@ -90,7 +90,6 @@ public:
 private:
     void enqueueBufferInternal(CVPixelBufferRef, MediaTime);
     void removeOldVideoFramesFromPendingQueue();
-    void addVideoFrameToPendingQueue(Ref<VideoFrame>&&);
     void requestNotificationWhenReadyForVideoData();
 
 #if !RELEASE_LOG_DISABLED

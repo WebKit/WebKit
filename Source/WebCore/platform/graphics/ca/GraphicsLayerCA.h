@@ -600,7 +600,6 @@ private:
 
     void setAnimationOnLayer(LayerPropertyAnimation&);
     bool removeCAAnimationFromLayer(LayerPropertyAnimation&);
-    void pauseCAAnimationOnLayer(LayerPropertyAnimation&);
 
     static void dumpAnimations(WTF::TextStream&, ASCIILiteral category, const Vector<LayerPropertyAnimation>&);
 

@@ -250,9 +250,6 @@ void LayerTreeHost::contentsSizeChanged(const WebCore::IntSize&)
 {
 }
 
-void LayerTreeHost::setIsDiscardable(bool)
-{
-}
 
 void LayerTreeHost::backgroundColorDidChange()
 {

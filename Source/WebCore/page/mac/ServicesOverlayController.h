@@ -81,7 +81,6 @@ private:
     void buildSelectionHighlight();
 
     void determineActiveHighlight(bool& mouseIsOverButton);
-    void clearActiveHighlight();
 
 #if ENABLE(DATA_DETECTION)
     // DataDetectorHighlightClient

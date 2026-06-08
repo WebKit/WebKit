@@ -150,21 +150,6 @@ float SVGFontFaceElement::horizontalAdvanceX() const
     return fontElement->attributeWithoutSynchronization(horiz_adv_xAttr).toFloat();
 }
 
-float SVGFontFaceElement::verticalOriginX() const
-{
-    RefPtr fontElement = m_fontElement.get();
-    if (!fontElement)
-        return 0.0f;
-
-    // Spec: The default X-coordinate in the font coordinate system of the origin of a glyph to be used when
-    // drawing vertically oriented text. If the attribute is not specified, the effect is as if the attribute
-    // were set to half of the effective value of attribute horiz-adv-x.
-    const AtomString& value = fontElement->attributeWithoutSynchronization(vert_origin_xAttr);
-    if (value.isEmpty())
-        return horizontalAdvanceX() / 2.0f;
-
-    return value.toFloat();
-}
 
 float SVGFontFaceElement::verticalOriginY() const
 {

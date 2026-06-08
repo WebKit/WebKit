@@ -74,7 +74,6 @@ private:
     void drawBoxSideFromPath(const BorderShape&, const Path& borderPath, const BorderEdges&, float thickness, float drawThickness, BoxSide, Color, BorderStyle, BleedAvoidance) const;
     void clipBorderSidePolygon(const BorderShape&, BoxSide, bool firstEdgeMatches, bool secondEdgeMatches) const;
 
-    LayoutRect borderRectAdjustedForBleedAvoidance(const LayoutRect&, BleedAvoidance) const;
 
     static Color calculateBorderStyleColor(const BorderStyle&, const BoxSide&, const Color&);
 

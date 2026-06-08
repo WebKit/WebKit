@@ -231,18 +231,6 @@ OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlags() const
     return computedFlags;
 }
 
-OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlagsWithTraversal() const
-{
-    // If this object's flags are initialized, this traversal is unnecessary. Use AccessibilityObject::ancestorFlags() instead.
-    AX_ASSERT(!ancestorFlagsAreInitialized());
-
-    OptionSet<AXAncestorFlag> computedFlags;
-    computedFlags.set(AXAncestorFlag::FlagsInitialized, true);
-    Accessibility::enumerateAncestors<AccessibilityObject>(*this, false, [&] (const AccessibilityObject& ancestor) {
-        computedFlags.add(ancestor.computeAncestorFlags());
-    });
-    return computedFlags;
-}
 
 bool AccessibilityObject::matchesAncestorFlag(AXAncestorFlag flag) const
 {
@@ -2463,33 +2451,7 @@ void AccessibilityObject::clearChildren()
     m_childrenInitialized = false;
 }
 
-AccessibilityObject* AccessibilityObject::anchorElementForNode(Node& node)
-{
-    CheckedPtr renderer = node.renderer();
-    if (!renderer)
-        return nullptr;
 
-    WeakPtr cache = renderer->document().axObjectCache();
-    RefPtr axObject = cache ? cache->getOrCreate(node) : nullptr;
-    RefPtr anchor = axObject ? axObject->anchorElement() : nullptr;
-    return anchor ? cache->getOrCreate(*anchor) : nullptr;
-}
-
-AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
-{
-    if (!node)
-        return nullptr;
-
-    CheckedPtr renderObject = node->renderer();
-    if (!renderObject)
-        return nullptr;
-
-    RefPtr axObject = renderObject->document().axObjectCache()->getOrCreate(*node);
-
-    return Accessibility::findAncestor<AccessibilityObject>(*axObject, true, [] (const AccessibilityObject& object) {
-        return object.role() == AccessibilityRole::Heading;
-    });
-}
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
 {

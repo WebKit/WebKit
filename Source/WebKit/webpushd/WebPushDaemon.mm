@@ -1000,11 +1000,6 @@ void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, c
     });
 }
 
-PushClientConnection* WebPushDaemon::toPushClientConnection(xpc_connection_t connection)
-{
-    RELEASE_ASSERT(m_connectionMap.contains(connection));
-    return m_connectionMap.get(connection);
-}
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 

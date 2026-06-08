@@ -128,17 +128,6 @@ void AsyncPDFRenderer::startTrackingLayer(GraphicsLayer& layer)
     m_layerIDtoLayerMap.set(*layer.primaryLayerID(), layer);
 }
 
-void AsyncPDFRenderer::stopTrackingLayer(GraphicsLayer& layer)
-{
-    CheckedPtr tiledBacking = layer.tiledBacking();
-    if (!tiledBacking)
-        return;
-    auto gridIdentifier = tiledBacking->primaryGridIdentifier();
-    m_tileGridToLayerIDMap.remove(gridIdentifier);
-    m_gridRevalidationState.remove(gridIdentifier);
-    tiledBacking->setClient(nullptr);
-    m_layerIDtoLayerMap.remove(*layer.primaryLayerID());
-}
 
 RefPtr<GraphicsLayer> AsyncPDFRenderer::layerForTileGrid(TileGridIdentifier identifier) const
 {

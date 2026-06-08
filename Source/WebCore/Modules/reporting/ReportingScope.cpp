@@ -76,11 +76,6 @@ void ReportingScope::removeAllObservers()
     m_reportingObservers.clear();
 }
 
-void ReportingScope::clearReports()
-{
-    m_queuedReports.clear();
-    m_queuedReportTypeCounts.clear();
-}
 
 bool ReportingScope::containsObserver(const ReportingObserver& observer) const
 {

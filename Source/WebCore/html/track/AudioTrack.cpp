@@ -59,11 +59,6 @@ const AtomString& AudioTrack::mainDescKeyword()
     return mainDesc;
 }
 
-const AtomString& AudioTrack::translationKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> translation("translation"_s);
-    return translation;
-}
 
 AudioTrack::AudioTrack(ScriptExecutionContext* context, AudioTrackPrivate& trackPrivate)
     : MediaTrackBase(context, MediaTrackBase::AudioTrack, trackPrivate.trackUID(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language())

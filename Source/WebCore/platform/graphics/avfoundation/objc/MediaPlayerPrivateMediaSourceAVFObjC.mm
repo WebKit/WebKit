@@ -889,16 +889,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
     return !!m_lastImage;
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::maybePurgeLastImage()
-{
-    assertIsMainThread();
-    // If we are in the middle of a rVFC operation, do not purge anything:
-    if (m_isGatheringVideoFrameMetadata)
-        return;
-
-    m_lastImage = nullptr;
-    m_lastVideoFrame = nullptr;
-}
 
 Ref<MediaPlayer::BitmapImagePromise> MediaPlayerPrivateMediaSourceAVFObjC::bitmapImageForCurrentTime()
 {

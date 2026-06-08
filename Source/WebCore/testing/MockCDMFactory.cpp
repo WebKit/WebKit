@@ -85,13 +85,6 @@ bool MockCDMFactory::supportsKeySystem(const String& keySystem)
     return equalLettersIgnoringASCIICase(keySystem, "org.webkit.mock"_s);
 }
 
-bool MockCDMFactory::hasSessionWithID(const String& id)
-{
-    if (id.isEmpty())
-        return false;
-
-    return m_sessions.contains(id);
-}
 
 void MockCDMFactory::removeSessionWithID(const String& id)
 {

@@ -2838,39 +2838,7 @@ void RenderBlock::setTrimmedMarginForChild(RenderBox& child, Style::MarginTrimSi
     child.markMarginAsTrimmed(side);
 }
 
-LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox& child) const
-{
-    // If the child has the same directionality as we do, then we can just return its
-    // collapsed margin.
-    if (!child.isWritingModeRoot())
-        return child.collapsedMarginBefore();
-    
-    // The child has a different directionality.  If the child is parallel, then it's just
-    // flipped relative to us.  We can use the collapsed margin for the opposite edge.
-    if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return child.collapsedMarginAfter();
-    
-    // The child is perpendicular to us, which means its margins don't collapse but are on the
-    // "logical left/right" sides of the child box.  We can just return the raw margin in this case.  
-    return marginBeforeForChild(child);
-}
 
-LayoutUnit RenderBlock::collapsedMarginAfterForChild(const RenderBox& child) const
-{
-    // If the child has the same directionality as we do, then we can just return its
-    // collapsed margin.
-    if (!child.isWritingModeRoot())
-        return child.collapsedMarginAfter();
-    
-    // The child has a different directionality.  If the child is parallel, then it's just
-    // flipped relative to us.  We can use the collapsed margin for the opposite edge.
-    if (child.isHorizontalWritingMode() == isHorizontalWritingMode())
-        return child.collapsedMarginBefore();
-    
-    // The child is perpendicular to us, which means its margins don't collapse but are on the
-    // "logical left/right" side of the child box.  We can just return the raw margin in this case.  
-    return marginAfterForChild(child);
-}
 
 bool RenderBlock::hasMarginBeforeQuirk(const RenderBox& child) const
 {
@@ -3505,18 +3473,6 @@ String RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& sty
 #endif
 }
 
-LayoutUnit RenderBlock::layoutOverflowLogicalBottom(const RenderBlock& renderer)
-{
-    ASSERT(is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer));
-    auto maxChildLogicalBottom = LayoutUnit { };
-    for (auto& child : childrenOfType<RenderBox>(renderer)) {
-        if (child.isOutOfFlowPositioned())
-            continue;
-        auto childLogicalBottom = renderer.logicalTopForChild(child) + renderer.logicalHeightForChild(child) + renderer.marginAfterForChild(child);
-        maxChildLogicalBottom = std::max(maxChildLogicalBottom, childLogicalBottom);
-    }
-    return std::max(renderer.clientLogicalBottom(), maxChildLogicalBottom + renderer.paddingAfter());
-}
 
 void RenderBlock::updateInFlowDescendantTransformsAfterLayout()
 {

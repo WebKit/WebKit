@@ -381,7 +381,6 @@ private:
     void setBackgroundLayerPaintsFixedRootBackground(bool);
 
     LayoutSize NODELETE contentOffsetInCompositingLayer() const;
-    LayoutSize offsetRelativeToRendererOriginForDescendantLayers() const;
     
     void ensureClippingStackLayers(LayerAncestorClippingStack&);
     void removeClippingStackLayers(LayerAncestorClippingStack&);

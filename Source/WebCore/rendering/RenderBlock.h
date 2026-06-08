@@ -197,8 +197,6 @@ public:
     void setMarginBeforeForChild(RenderBox& child, LayoutUnit value) const { child.setMarginBefore(value, writingMode()); }
     void setMarginAfterForChild(RenderBox& child, LayoutUnit value) const { child.setMarginAfter(value, writingMode()); }
     void setTrimmedMarginForChild(RenderBox& child, Style::MarginTrimSide);
-    LayoutUnit collapsedMarginBeforeForChild(const RenderBox& child) const;
-    LayoutUnit collapsedMarginAfterForChild(const RenderBox& child) const;
 
     std::pair<RenderObject*, RenderElement*> firstLetterAndContainer(RenderObject* skipThisAsFirstLetter = nullptr);
 
@@ -308,7 +306,6 @@ protected:
 
     bool childBoxIsUnsplittableForFragmentation(const RenderBox& child) const;
 
-    static LayoutUnit layoutOverflowLogicalBottom(const RenderBlock&);
 
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 

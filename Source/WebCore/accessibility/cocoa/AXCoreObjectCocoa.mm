@@ -486,20 +486,6 @@ bool AXCoreObject::isEmptyGroup()
         && ![renderWidgetChildren(*this) count];
 }
 
-AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameSortedDescendants(size_t limit, PreSortedObjectType type) const
-{
-    AX_ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
-    auto sortedObjects = type == PreSortedObjectType::LiveRegion ? allSortedLiveRegions() : allSortedNonRootWebAreas();
-    AXCoreObject::AccessibilityChildrenVector results;
-    for (const Ref<AXCoreObject>& object : sortedObjects) {
-        if (crossFrameIsAncestorOfObject(object)) {
-            results.append(object);
-            if (results.size() >= limit)
-                break;
-        }
-    }
-    return results;
-}
 
 // Walk from the AX tree root to `marker`, counting characters. Works on
 // either the main thread (via SimpleRange) or the secondary AX thread (via

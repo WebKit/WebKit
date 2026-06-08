@@ -339,11 +339,6 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& ran
     return { };
 }
 
-std::optional<String> AXIsolatedObject::platformStringValue() const
-{
-    AX_ASSERT(!isMainThread());
-    return textMarkerRange().toString();
-}
 
 unsigned AXIsolatedObject::textLength() const
 {

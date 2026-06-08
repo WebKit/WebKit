@@ -88,7 +88,6 @@ public:
     const Texture& apiParentTexture() const { return m_parentTexture; }
     Texture& apiParentTexture() { return m_parentTexture; }
     uint32_t parentRelativeSlice() const;
-    uint32_t parentRelativeMipLevel() const;
     bool is2DTexture() const { return dimension() == WGPUTextureViewDimension_2D; }
     bool is2DArrayTexture() const { return dimension() == WGPUTextureViewDimension_2DArray; }
     bool is3DTexture() const { return dimension() == WGPUTextureViewDimension_3D; }

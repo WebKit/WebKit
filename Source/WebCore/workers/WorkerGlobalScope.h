@@ -105,7 +105,6 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     WorkerStorageConnection& storageConnection();
-    static void postFileSystemStorageTask(Function<void()>&&);
     WorkerFileSystemStorageConnection& getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&&);
     WEBCORE_EXPORT WorkerFileSystemStorageConnection* fileSystemStorageConnection();
     CacheStorageConnection& cacheStorageConnection();

@@ -62,7 +62,6 @@ public:
     void addStateChangeObserver(const StateChangeObserver&);
 
     using FallbackURLObserver = WTF::Observer<void(const GroupActivitiesSession&, URL)>;
-    void addFallbackURLObserver(const FallbackURLObserver&);
 
 private:
     friend class GroupActivitiesSessionNotifier;

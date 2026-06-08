@@ -104,7 +104,6 @@ public:
     FloatPoint layoutViewportToAbsolutePoint(FloatPoint) const;
 
     WEBCORE_EXPORT FloatRect absoluteToLayoutViewportRect(FloatRect) const;
-    FloatRect layoutViewportToAbsoluteRect(FloatRect) const;
 
     // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
     IntPoint convertToContainingView(IntPoint) const final;

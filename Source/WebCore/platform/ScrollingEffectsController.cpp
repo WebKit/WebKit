@@ -199,14 +199,6 @@ bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const Fl
     return started;
 }
 
-void ScrollingEffectsController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
-{
-    if (isAnimatingRubberBand == m_isAnimatingRubberBand)
-        return;
-
-    m_isAnimatingRubberBand = isAnimatingRubberBand;
-    startOrStopAnimationCallbacks();
-}
 
 void ScrollingEffectsController::setIsAnimatingScrollSnap(bool isAnimatingScrollSnap)
 {

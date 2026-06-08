@@ -38,7 +38,6 @@ public:
     WTF_EXPORT_PRIVATE static StatisticsManager& singleton();
     ~StatisticsManager();
 
-    WTF_EXPORT_PRIVATE void addDataPoint(ASCIILiteral id, double value);
     WTF_EXPORT_PRIVATE void dumpStatistics();
     WTF_EXPORT_PRIVATE void clear();
 

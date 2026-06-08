@@ -153,7 +153,6 @@ public:
 
     void updateStyleIfNeeded();
 
-    bool hasSVGFontFaceSource() const;
     void setErrorState();
 
 private:

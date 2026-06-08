@@ -609,13 +609,6 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
     }
 }
 
-FloatRect RemoteScrollingCoordinatorProxyIOS::currentLayoutViewport() const
-{
-    // FIXME: does this give a different value to the last value pushed onto us?
-    Ref page = webPageProxy();
-    return page->computeLayoutViewportRect(page->unobscuredContentRect(), page->unobscuredContentRectRespectingInputViewBounds(), protect(webPageProxy())->layoutViewportRect(),
-        page->displayedContentScale(), LayoutViewportConstraint::Unconstrained);
-}
 
 void RemoteScrollingCoordinatorProxyIOS::scrollingTreeNodeWillStartPanGesture(ScrollingNodeID nodeID)
 {

@@ -80,7 +80,6 @@ public:
 
     GraphicsLayer* NODELETE firstLayer() const;
     GraphicsLayer* NODELETE lastLayer() const;
-    std::optional<ScrollingNodeID> lastOverflowScrollProxyNodeID() const;
 
     struct ClippingStackEntry {
         CompositedClipData clipData;

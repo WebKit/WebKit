@@ -185,17 +185,6 @@ bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(RefPtr<Web
     return buffer->setVolatile();
 }
 
-SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::setBufferNonVolatile(Buffer& buffer)
-{
-    RefPtr imageBuffer = buffer.imageBuffer;
-    if (!imageBuffer)
-        return SetNonVolatileResult::Valid; // Not really valid but the caller only checked the Empty state.
-
-    if (imageBuffer->volatilityState() == VolatilityState::NonVolatile)
-        return SetNonVolatileResult::Valid;
-
-    return imageBuffer->setNonVolatile();
-}
 
 bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(BufferType bufferType, bool forcePurge)
 {

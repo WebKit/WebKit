@@ -264,11 +264,6 @@ ApproximateTime ApproximateTime::fromMachApproximateTime(uint64_t machApproximat
     return fromRawSeconds((machApproximateTime * info.numer) / (1.0e9 * info.denom));
 }
 
-uint64_t ApproximateTime::toMachApproximateTime() const
-{
-    auto& info = machTimebaseInfo();
-    return truncateDoubleToUint64((m_value * 1.0e9 * info.denom) / info.numer);
-}
 
 ContinuousTime ContinuousTime::fromMachContinuousTime(uint64_t machContinuousTime)
 {
@@ -288,11 +283,6 @@ ContinuousApproximateTime ContinuousApproximateTime::fromMachContinuousApproxima
     return fromRawSeconds((machContinuousApproximateTime * info.numer) / (1.0e9 * info.denom));
 }
 
-uint64_t ContinuousApproximateTime::toMachContinuousApproximateTime() const
-{
-    auto& info = machTimebaseInfo();
-    return truncateDoubleToUint64((m_value * 1.0e9 * info.denom) / info.numer);
-}
 #endif
 
 MonotonicTime MonotonicTime::now()

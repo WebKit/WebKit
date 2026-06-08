@@ -101,7 +101,6 @@ public:
     virtual MediaSourceReadyState readyState() const { return m_readyState; }
     virtual void setReadyState(MediaSourceReadyState readyState) { m_readyState = readyState; }
     void setLiveSeekableRange(const PlatformTimeRanges&);
-    const PlatformTimeRanges& liveSeekableRange() const;
     void clearLiveSeekableRange();
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);

@@ -137,14 +137,6 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
     return true;
 }
 
-static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* directive, const String& type, const String& typeAttribute)
-{
-    if (!directive)
-        return true;
-    if (typeAttribute.isEmpty() || StringView(typeAttribute).trim(deprecatedIsSpaceOrNewline) != type)
-        return false;
-    return directive->allows(type);
-}
 
 ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList(ContentSecurityPolicy& policy, ContentSecurityPolicyHeaderType type)
     : m_policy(policy)
@@ -312,13 +304,6 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_baseURI.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForChildContext(const URL& url, bool didReceiveRedirectResponse) const
-{
-    auto* operativeDirective = this->operativeDirective(m_childSrc.get(), ContentSecurityPolicyDirectiveNames::childSrc);
-    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
-        return nullptr;
-    return operativeDirective;
-}
 
 const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource(const URL& url, bool didReceiveRedirectResponse) const
 {
@@ -415,12 +400,6 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
 }
 
 // FIXME: typeAttribute should be a StringView throughout
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const
-{
-    if (checkMediaType(m_pluginTypes.get(), type, typeAttribute))
-        return nullptr;
-    return m_pluginTypes.get();
-}
 
 const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForWorker(const URL& url, bool didReceiveRedirectResponse)
 {

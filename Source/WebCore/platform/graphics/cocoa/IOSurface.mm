@@ -600,15 +600,6 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
     return { bitmapInfo, bitsPerComponent };
 }
 
-RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsigned height)
-{
-    auto configuration = bitmapConfiguration();
-    auto bitsPerPixel = configuration.bitsPerComponent * 4;
-    auto bytesPerRow = roundUpToMultipleOfNonPowerOfTwo(bytesPerRowAlignment(), width * (bitsPerPixel / 8));
-
-    ensureColorSpace();
-    return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, protect(m_colorSpace->platformColorSpace()).get(), configuration.bitmapInfo));
-}
 
 RetainPtr<CGContextRef> IOSurface::createPlatformContext(PlatformDisplayID displayID, std::optional<CGImageAlphaInfo> overrideAlphaInfo)
 {

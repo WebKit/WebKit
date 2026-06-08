@@ -298,11 +298,6 @@ void AXGeometryManager::invalidateHitTestCacheForID(AXID axID)
     });
 }
 
-void AXGeometryManager::clearHitTestCache()
-{
-    Locker locker { m_hitTestCacheLock };
-    m_hitTestCache.clear();
-}
 
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 

@@ -93,7 +93,6 @@ public:
     // Computes the flags that this object matches (no traversal is done).
     OptionSet<AXAncestorFlag> NODELETE computeAncestorFlags() const;
     // Computes the flags that this object and all ancestors match, traversing all the way to the root.
-    OptionSet<AXAncestorFlag> computeAncestorFlagsWithTraversal() const;
     void initializeAncestorFlags(const OptionSet<AXAncestorFlag>&);
     bool hasAncestorMatchingFlag(AXAncestorFlag) const;
     bool NODELETE matchesAncestorFlag(AXAncestorFlag) const;
@@ -492,8 +491,6 @@ public:
     // the time of writing, 86% of all page loads don't use aria-owns a single time), we can fast-path exit ownerParentObject().
     inline bool anyObjectHasAriaOwns() const;
 
-    static AccessibilityObject* anchorElementForNode(Node&);
-    static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return nullptr; }
     virtual RefPtr<Element> popoverTargetElement() const { return nullptr; }
     virtual RefPtr<Element> commandForElement() const { return nullptr; }

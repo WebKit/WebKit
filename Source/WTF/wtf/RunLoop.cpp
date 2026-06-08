@@ -90,11 +90,6 @@ void RunLoop::initializeWeb()
     s_webRunLoop = &RunLoop::currentSingleton();
 }
 
-RunLoop& RunLoop::webSingleton()
-{
-    ASSERT(s_webRunLoop);
-    return *s_webRunLoop;
-}
 
 RunLoop* RunLoop::webIfExists()
 {

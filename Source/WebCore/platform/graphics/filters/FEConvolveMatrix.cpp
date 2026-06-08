@@ -76,10 +76,6 @@ void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
     m_kernelSize = kernelSize;
 }
 
-void FEConvolveMatrix::setKernel(const Vector<float>& kernel)
-{
-    m_kernelMatrix = kernel; 
-}
 
 bool FEConvolveMatrix::setDivisor(float divisor)
 {

@@ -59,12 +59,6 @@ FloatQuad HitTestingTransformState::mappedQuad() const
     return m_lastPlanarQuad;
 }
 
-FloatQuad HitTestingTransformState::mappedArea() const
-{
-    if (auto inverse = m_accumulatedTransform.inverse())
-        return inverse.value().projectQuad(m_lastPlanarArea);
-    return m_lastPlanarArea;
-}
 
 LayoutRect HitTestingTransformState::boundsOfMappedArea() const
 {

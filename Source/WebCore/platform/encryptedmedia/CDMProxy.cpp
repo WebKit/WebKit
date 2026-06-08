@@ -260,12 +260,6 @@ std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& k
     return std::make_optional(handle.releaseNonNull());
 }
 
-std::optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
-{
-    if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTF::move(client)))
-        return std::make_optional((*keyHandle)->value());
-    return std::nullopt;
-}
 
 void CDMInstanceProxy::startedWaitingForKey()
 {

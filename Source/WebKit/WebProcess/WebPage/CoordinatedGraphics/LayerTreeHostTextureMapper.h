@@ -74,7 +74,6 @@ public:
     void resumeRendering();
     WebCore::GraphicsLayerFactory* graphicsLayerFactory();
     void contentsSizeChanged(const WebCore::IntSize&);
-    void setIsDiscardable(bool);
     void backgroundColorDidChange();
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }

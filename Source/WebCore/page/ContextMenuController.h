@@ -74,10 +74,6 @@ public:
     void showContextMenuAt(LocalFrame&, const IntPoint& clickPoint);
 #endif
 
-#if ENABLE(SERVICE_CONTROLS)
-    void showImageControlsMenu(Event&);
-#endif
-
 private:
     std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type);
     void showContextMenu(Event&);

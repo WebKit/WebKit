@@ -47,9 +47,6 @@ struct EOTHeader {
     const uint8_t* data() const LIFETIME_BOUND { return m_buffer.span().data(); }
 
     EOTPrefix* prefix() { return reinterpret_cast<EOTPrefix*>(m_buffer.mutableSpan().data()); }
-    void updateEOTSize(size_t);
-    void appendBigEndianString(const BigEndianUShort*, unsigned short length);
-    void appendPaddingShort();
 
 private:
     Vector<uint8_t, 512> m_buffer;

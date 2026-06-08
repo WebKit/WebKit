@@ -127,10 +127,6 @@ void GroupActivitiesSessionNotifier::webPageURLChanged(WebPageProxy& webPage)
     webPage.createMediaSessionCoordinator(WTF::move(coordinator), [] (bool) { });
 }
 
-bool GroupActivitiesSessionNotifier::hasSessionForURL(const URL& url)
-{
-    return m_sessions.contains(url);
-}
 
 RefPtr<GroupActivitiesSession> GroupActivitiesSessionNotifier::takeSessionForURL(const URL& url)
 {

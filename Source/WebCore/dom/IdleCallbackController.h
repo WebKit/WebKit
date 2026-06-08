@@ -51,7 +51,6 @@ public:
     bool isEmpty() const { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }
 
 private:
-    void queueTaskToInvokeIdleCallbacks();
     bool invokeIdleCallbacks();
     void invokeIdleCallbackTimeout(unsigned identifier);
 

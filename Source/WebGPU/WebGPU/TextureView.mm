@@ -72,11 +72,6 @@ void TextureView::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
     m_parentTexture->setPreviouslyCleared(m_texture.parentRelativeLevel + mipLevel, m_texture.parentRelativeSlice + slice);
 }
 
-uint32_t TextureView::parentRelativeMipLevel() const
-{
-    RELEASE_ASSERT(baseMipLevel() == m_texture.parentRelativeLevel);
-    return m_texture.parentRelativeLevel;
-}
 
 uint32_t TextureView::parentRelativeSlice() const
 {

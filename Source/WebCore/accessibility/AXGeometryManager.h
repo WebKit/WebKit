@@ -79,7 +79,6 @@ public:
     void cacheHitTestResult(AXID resultID, const IntPoint& hitPoint);
     void expandHitTestCacheAroundPoint(const IntPoint& center, AXTreeID);
     void invalidateHitTestCacheForID(AXID);
-    void clearHitTestCache();
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #if PLATFORM(MAC)

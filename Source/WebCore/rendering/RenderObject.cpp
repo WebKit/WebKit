@@ -2361,24 +2361,6 @@ Vector<FloatRect> RenderObject::clientBorderAndTextRects(const SimpleRange& rang
     return borderAndTextRects(range, CoordinateSpace::Client, { });
 }
 
-ScrollAnchoringController* RenderObject::searchParentChainForScrollAnchoringController(const RenderObject& renderer)
-{
-    if (renderer.hasLayer()) {
-        if (auto* scrollableArea = downcast<RenderLayerModelObject>(renderer).layer()->scrollableArea()) {
-            auto* controller = scrollableArea->scrollAnchoringController();
-            if (controller && controller->hasAnchorElement())
-                return controller;
-        }
-    }
-    for (CheckedPtr enclosingLayer = renderer.enclosingLayer(); enclosingLayer; enclosingLayer = enclosingLayer->parent()) {
-        if (RenderLayerScrollableArea* scrollableArea = enclosingLayer->scrollableArea()) {
-            auto* controller = scrollableArea->scrollAnchoringController();
-            if (controller && controller->hasAnchorElement())
-                return controller;
-        }
-    }
-    return protect(renderer.view().frameView())->scrollAnchoringController();
-}
 
 void RenderObject::RepaintRects::transform(const TransformationMatrix& matrix)
 {

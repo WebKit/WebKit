@@ -49,7 +49,6 @@ struct Content {
     void setEllipsisOnTrailingLine(Line::Ellipsis&&);
 
     void moveLineInBlockDirection(size_t, float offset);
-    void shrinkLineInBlockDirection(size_t, float delta);
 
     Lines lines;
     Boxes boxes;

@@ -3386,12 +3386,6 @@ void AccessibilityNodeObject::labelText(Vector<AccessibilityText>& textOrder) co
     }
 }
 
-bool AccessibilityNodeObject::hasTextAlternative() const
-{
-    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
-    // override the "label" element association.
-    return ariaAccessibilityDescription().length();
-}
 
 void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrder) const
 {

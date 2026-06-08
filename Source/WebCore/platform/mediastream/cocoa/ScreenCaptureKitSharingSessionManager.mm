@@ -491,11 +491,6 @@ void ScreenCaptureSessionSource::updateContentFilter(SCContentFilter* contentFil
     CheckedRef { *m_observer }->sessionFilterDidChange(contentFilter);
 }
 
-void ScreenCaptureSessionSource::streamDidEnd()
-{
-    ASSERT(m_observer);
-    CheckedRef { *m_observer }->sessionStreamDidEnd(m_stream.get());
-}
 
 } // namespace WebCore
 

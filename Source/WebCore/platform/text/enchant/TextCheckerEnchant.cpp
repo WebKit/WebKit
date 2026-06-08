@@ -183,15 +183,6 @@ Vector<String> TextCheckerEnchant::loadedSpellCheckingLanguages() const
     return languages;
 }
 
-Vector<String> TextCheckerEnchant::availableSpellCheckingLanguages() const
-{
-    Vector<String> languages;
-    enchant_broker_list_dicts(m_broker, [](const char* const languageTag, const char* const, const char* const, const char* const, void* data) {
-        auto* languages = static_cast<Vector<String>*>(data);
-        languages->append(String::fromUTF8(languageTag));
-    }, &languages);
-    return languages;
-}
 
 } // namespace WebCore
 

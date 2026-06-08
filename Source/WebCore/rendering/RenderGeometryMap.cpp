@@ -253,11 +253,6 @@ void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrol
     stepInserted(step);
 }
 
-void RenderGeometryMap::pushRenderFragmentedFlow(const RenderFragmentedFlow* fragmentedFlow)
-{
-    m_mapping.append(RenderGeometryMapStep(fragmentedFlow, false, false, false, false));
-    stepInserted(m_mapping.last());
-}
 
 void RenderGeometryMap::popMappingsToAncestor(const RenderLayerModelObject* ancestorRenderer)
 {

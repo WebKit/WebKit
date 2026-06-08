@@ -101,17 +101,6 @@ void IdleCallbackController::startIdlePeriod()
     while (invokeIdleCallbacks()) { }
 }
 
-void IdleCallbackController::queueTaskToInvokeIdleCallbacks()
-{
-    Ref document = *m_document;
-    document->eventLoop().queueTask(TaskSource::IdleTask, [weakThis = WeakPtr { *this }, document] {
-        CheckedPtr checkedThis = weakThis.get();
-        if (!checkedThis)
-            return;
-        RELEASE_ASSERT(document->idleCallbackController() == checkedThis.get());
-        while (checkedThis->invokeIdleCallbacks()) { }
-    });
-}
 
 // https://w3c.github.io/requestidlecallback/#invoke-idle-callbacks-algorithm
 bool IdleCallbackController::invokeIdleCallbacks()

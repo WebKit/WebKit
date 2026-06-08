@@ -54,13 +54,6 @@ ApduResponse::ApduResponse(Vector<uint8_t>&& data, Status responseStatus)
 {
 }
 
-Vector<uint8_t> ApduResponse::getEncodedResponse() const
-{
-    Vector<uint8_t> encodedResponse = m_data;
-    encodedResponse.append(static_cast<uint16_t>(m_responseStatus) >> 8 & 0xff);
-    encodedResponse.append(static_cast<uint16_t>(m_responseStatus) & 0xff);
-    return encodedResponse;
-}
 
 } // namespace apdu
 

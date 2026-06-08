@@ -172,7 +172,6 @@ public:
     virtual void displayDidRefresh(WebCore::PlatformDisplayID);
     void NODELETE reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<WebCore::SynchronousScrollingReason>);
-    void reportFilledVisibleFreshTile(MonotonicTime, unsigned);
     bool NODELETE scrollingPerformanceTestingEnabled() const;
     
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);

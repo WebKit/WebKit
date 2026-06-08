@@ -1471,7 +1471,6 @@ public:
     void defaultSpatialTrackingLabelChanged(const String&);
 
     using DefaultSpatialTrackingLabelChangedObserver = WTF::Observer<void(const String&)>;
-    void addDefaultSpatialTrackingLabelChangedObserver(const DefaultSpatialTrackingLabelChangedObserver&);
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -2135,7 +2134,6 @@ private:
     WEBCORE_EXPORT DocumentImmersive& NODELETE ensureImmersive();
 #endif
     inline DocumentFontLoader& fontLoader();
-    DocumentFontLoader& ensureFontLoader();
     CSSFontSelector& ensureFontSelector();
     UndoManager& ensureUndoManager();
     Editor& ensureEditor();

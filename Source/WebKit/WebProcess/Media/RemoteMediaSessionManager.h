@@ -72,13 +72,11 @@ protected:
     void clientMayResumePlayback(WebCore::MediaSessionIdentifier, bool);
     void clientShouldSuspendPlayback(WebCore::MediaSessionIdentifier);
     void clientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier, bool);
-    void clientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier, WebCore::PlatformMediaSessionRemoteControlCommandType, WebCore::PlatformMediaSessionRemoteCommandArgument);
     void setCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier>);
 
 #if USE(AUDIO_SESSION)
     void setAudioSessionCategory(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
     void setAudioSessionPreferredBufferSize(uint64_t);
-    void tryToSetAudioSessionActive(bool);
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

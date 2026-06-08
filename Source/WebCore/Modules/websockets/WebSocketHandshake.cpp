@@ -147,10 +147,6 @@ const String& WebSocketHandshake::clientProtocol() const
     return m_clientProtocol;
 }
 
-void WebSocketHandshake::setClientProtocol(const String& protocol)
-{
-    m_clientProtocol = protocol;
-}
 
 bool WebSocketHandshake::secure() const
 {

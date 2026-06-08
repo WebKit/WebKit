@@ -250,12 +250,6 @@ void StyleSheetContents::clearRules()
     clearCharsetRule();
 }
 
-void StyleSheetContents::parserSetEncodingFromCharsetRule(const String& encoding)
-{
-    // Parser enforces that there is ever only one @charset.
-    ASSERT(m_encodingFromCharsetRule.isNull());
-    m_encodingFromCharsetRule = encoding; 
-}
 
 bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned index)
 {

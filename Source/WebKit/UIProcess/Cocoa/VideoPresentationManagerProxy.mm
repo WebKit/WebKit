@@ -801,10 +801,6 @@ RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::findIn
     return nullptr;
 }
 
-void VideoPresentationManagerProxy::ensureClientForContext(PlaybackSessionContextIdentifier contextId)
-{
-    m_clientCounts.add(contextId, 1);
-}
 
 void VideoPresentationManagerProxy::addClientForContext(PlaybackSessionContextIdentifier contextId)
 {

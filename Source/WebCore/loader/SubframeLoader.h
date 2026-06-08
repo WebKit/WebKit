@@ -58,7 +58,6 @@ public:
 
     bool containsPlugins() const { return m_containsPlugins; }
     
-    bool resourceWillUsePlugin(const String& url, const String& mimeType);
 
 private:
     bool requestPlugin(HTMLPlugInElement&, const URL&, const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);

@@ -45,7 +45,6 @@ public:
     static GroupActivitiesSessionNotifier& singleton();
     static Ref<GroupActivitiesSessionNotifier> create();
 
-    bool hasSessionForURL(const URL&);
     RefPtr<GroupActivitiesSession> takeSessionForURL(const URL&);
     void removeSession(const GroupActivitiesSession&);
 

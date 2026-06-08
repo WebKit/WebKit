@@ -81,7 +81,6 @@ private:
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
     bool setBufferVolatile(RefPtr<WebCore::ImageBuffer>&, bool forcePurge = false);
-    WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
 
     ImageBufferSet m_bufferSet;
 

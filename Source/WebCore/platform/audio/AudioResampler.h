@@ -51,7 +51,6 @@ public:
     // Resets the processing state.
     void NODELETE reset();
 
-    void configureChannels(unsigned numberOfChannels);
 
     // 0 < rate <= MaxRate
     void setRate(double rate);

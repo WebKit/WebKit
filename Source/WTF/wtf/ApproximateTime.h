@@ -44,7 +44,6 @@ public:
 
 #if OS(DARWIN)
     WTF_EXPORT_PRIVATE static ApproximateTime fromMachApproximateTime(uint64_t);
-    WTF_EXPORT_PRIVATE uint64_t toMachApproximateTime() const;
 #endif
 
     WTF_EXPORT_PRIVATE static ApproximateTime now();

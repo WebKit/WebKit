@@ -97,11 +97,6 @@ void ISOBMFFPreParser::reset()
     m_remainingBytesInCurrentBox = 0;
 }
 
-void ISOBMFFPreParser::setPendingInitializationSegmentForChangeType()
-{
-    m_pendingInitializationSegmentForChangeType = true;
-    reset();
-}
 
 Expected<void, PlatformMediaError> ISOBMFFPreParser::appendData(
     Ref<const SharedBuffer>&& segment, AppendFlags callerFlags)

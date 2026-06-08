@@ -73,7 +73,6 @@ public:
     void deref() const;
 
     static void hasStorageAccess(Document&, Ref<DeferredPromise>&&);
-    static bool hasStorageAccessForDocumentQuirk(Document&);
 
     static void requestStorageAccess(Document&, Ref<DeferredPromise>&&);
     static void requestStorageAccessForDocumentQuirk(Document&, CompletionHandler<void(StorageAccessWasGranted)>&&);

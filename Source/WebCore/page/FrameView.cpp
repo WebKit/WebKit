@@ -304,15 +304,6 @@ FloatPoint FrameView::layoutViewportToAbsolutePoint(FloatPoint p) const
     return p.scaled(frame->frameScaleFactor());
 }
 
-FloatRect FrameView::layoutViewportToAbsoluteRect(FloatRect rect) const
-{
-    Ref frame = this->frame();
-
-    ASSERT(frame->settings().visualViewportEnabled());
-    rect.moveBy(layoutViewportRect().location());
-    rect.scale(frame->frameScaleFactor());
-    return rect;
-}
 
 FloatRect FrameView::absoluteToLayoutViewportRect(FloatRect rect) const
 {

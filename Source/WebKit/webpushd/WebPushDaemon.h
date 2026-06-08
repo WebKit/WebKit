@@ -148,7 +148,6 @@ private:
     void updateSubscriptionSetState();
 #endif
 
-    PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashSet<OSObjectPtr<xpc_connection_t>> m_pendingConnectionSet;
     HashMap<OSObjectPtr<xpc_connection_t>, Ref<PushClientConnection>> m_connectionMap;
 

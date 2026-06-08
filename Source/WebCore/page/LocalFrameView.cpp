@@ -4882,15 +4882,6 @@ void LocalFrameView::queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&
     m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate.add(scrollableArea);
 }
 
-void LocalFrameView::clearScrollAnchorsInScrollableAreas()
-{
-    clearScrollAnchor();
-    if (!m_anchoringScrollableAreas)
-        return;
-
-    for (CheckedRef scrollableArea : *m_anchoringScrollableAreas)
-        scrollableArea->clearScrollAnchor();
-}
 
 void LocalFrameView::updateScrollAnchoringBeforeLayoutForScrollableAreas()
 {
@@ -5183,32 +5174,6 @@ void LocalFrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
     setNeedsLayoutAfterViewConfigurationChange();
 }
 
-RenderElement* LocalFrameView::viewportRenderer() const
-{
-    if (m_viewportRendererType == ViewportRendererType::None)
-        return nullptr;
-
-    auto* document = m_frame->document();
-    if (!document)
-        return nullptr;
-
-    if (m_viewportRendererType == ViewportRendererType::Document) {
-        auto* documentElement = document->documentElement();
-        if (!documentElement)
-            return nullptr;
-        return documentElement->renderer();
-    }
-
-    if (m_viewportRendererType == ViewportRendererType::Body) {
-        auto* body = document->body();
-        if (!body)
-            return nullptr;
-        return body->renderer();
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
 
 const Pagination& LocalFrameView::pagination() const
 {

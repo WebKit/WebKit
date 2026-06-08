@@ -550,10 +550,6 @@ bool ScrollableArea::hasLayerForVerticalScrollbar() const
     return layerForVerticalScrollbar();
 }
 
-bool ScrollableArea::hasLayerForScrollCorner() const
-{
-    return layerForScrollCorner();
-}
 
 bool ScrollableArea::allowsHorizontalScrolling() const
 {

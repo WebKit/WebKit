@@ -169,7 +169,6 @@ public:
     const Box* NODELETE previousInFlowOrFloatingSibling() const;
     const Box* NODELETE previousOutOfFlowSibling() const;
     bool NODELETE isDescendantOf(const Box&) const;
-    bool isDescendantOfWithinFormattingContext(const Box&) const;
     bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
 
     // FIXME: This is currently needed for style updates.

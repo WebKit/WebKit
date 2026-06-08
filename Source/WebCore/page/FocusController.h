@@ -81,8 +81,6 @@ public:
     WEBCORE_EXPORT FocusableElementSearchResult nextFocusableElement(Node&);
     WEBCORE_EXPORT FocusableElementSearchResult previousFocusableElement(Node&);
 
-    void setFocusedElementNeedsRepaint();
-    Seconds timeSinceFocusWasSet() const;
 
     WEBCORE_EXPORT bool relinquishFocusToChrome(FocusDirection);
 
@@ -122,7 +120,6 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Element* findFocusableElementOrScopeOwner(FocusDirection, const FocusNavigationScope&, Node* start, const FocusEventData&);
 
     Element* findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, const FocusEventData&, FocusDirection);
     

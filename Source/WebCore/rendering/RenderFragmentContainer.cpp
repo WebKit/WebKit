@@ -139,20 +139,6 @@ LayoutRect RenderFragmentContainer::fragmentedFlowPortionOverflowRect() const
     return overflowRectForFragmentedFlowPortion(fragmentedFlowPortionRect(), isFirstFragment(), isLastFragment());
 }
 
-LayoutPoint RenderFragmentContainer::fragmentedFlowPortionLocation() const
-{
-    LayoutPoint portionLocation;
-    LayoutRect portionRect = fragmentedFlowPortionRect();
-
-    if (fragmentedFlow()->writingMode().isBlockFlipped()) {
-        LayoutRect flippedFragmentedFlowPortionRect(portionRect);
-        fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
-        portionLocation = flippedFragmentedFlowPortionRect.location();
-    } else
-        portionLocation = portionRect.location();
-
-    return portionLocation;
-}
 
 LayoutRect RenderFragmentContainer::overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion) const
 {

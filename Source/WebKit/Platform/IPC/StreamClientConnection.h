@@ -73,7 +73,6 @@ public:
 
     void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
     bool NODELETE hasSemaphores() const;
-    void setMaxBatchSize(unsigned);
 
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::currentSingleton());
     // Ensures that all sent messages are receiveable by the receiver.

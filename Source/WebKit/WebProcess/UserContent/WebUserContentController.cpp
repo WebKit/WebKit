@@ -546,20 +546,6 @@ void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, U
     addUserScriptInternal(world, std::nullopt, WTF::move(userScript), InjectUserScriptImmediately::No);
 }
 
-void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
-{
-    auto it = m_userScripts.find(world);
-    if (it == m_userScripts.end())
-        return;
-
-    auto& scripts = it->value;
-    scripts.removeAllMatching([&](auto& pair) {
-        return pair.second.url() == url;
-    });
-
-    if (scripts.isEmpty())
-        m_userScripts.remove(it);
-}
 
 void WebUserContentController::removeUserScriptInternal(InjectedBundleScriptWorld& world, UserScriptIdentifier userScriptIdentifier)
 {
@@ -605,25 +591,6 @@ void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& worl
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
-void WebUserContentController::removeUserStyleSheetWithURL(InjectedBundleScriptWorld& world, const URL& url)
-{
-    auto it = m_userStyleSheets.find(world);
-    if (it == m_userStyleSheets.end())
-        return;
-
-    auto& stylesheets = it->value;
-    bool sheetsChanged = stylesheets.removeAllMatching([&](auto& pair) {
-        return pair.second.url() == url;
-    });
-
-    if (!sheetsChanged)
-        return;
-
-    if (stylesheets.isEmpty())
-        m_userStyleSheets.remove(it);
-
-    invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
-}
 
 void WebUserContentController::removeUserStyleSheetInternal(InjectedBundleScriptWorld& world, UserStyleSheetIdentifier userStyleSheetIdentifier)
 {

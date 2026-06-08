@@ -264,7 +264,6 @@ private:
 
     void createImageGenerator();
     void destroyImageGenerator();
-    RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
 
     using UpdateCompletion = CompletionHandler<void()>;
     void updateLastImage(NOESCAPE UpdateCompletion&&);
@@ -398,7 +397,6 @@ private:
 
 
     void forEachResourceLoader(Function<void(WebCoreAVFResourceLoader&)>&&) const;
-    void addResourceLoader(AVAssetResourceLoadingRequest *, Ref<WebCoreAVFResourceLoader>&&);
     RefPtr<WebCoreAVFResourceLoader> getResourceLoader(AVAssetResourceLoadingRequest *) const;
     RefPtr<WebCoreAVFResourceLoader> takeResourceLoader(AVAssetResourceLoadingRequest *);
 

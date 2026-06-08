@@ -885,11 +885,6 @@ void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remai
     firstLetterRemainingTextMap().set(*this, remainingText);
 }
 
-void RenderBoxModelObject::clearFirstLetterRemainingText()
-{
-    ASSERT(isFirstLetter());
-    firstLetterRemainingTextMap().remove(*this);
-}
 
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {

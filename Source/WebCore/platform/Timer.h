@@ -113,7 +113,6 @@ private:
 
     void heapDecreaseKey();
     void heapDelete();
-    void heapDeleteMin();
     void heapIncreaseKey();
     void heapInsert();
     void heapPop();

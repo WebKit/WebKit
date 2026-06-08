@@ -85,7 +85,6 @@ public:
     WEBCORE_EXPORT Frame& NODELETE top() const;
     unsigned NODELETE depth() const;
 
-    bool hasRemoteFrameDescendant() const;
 
     WEBCORE_EXPORT RefPtr<Frame> scopedChild(unsigned index) const;
     WEBCORE_EXPORT RefPtr<Frame> scopedChildByUniqueName(const AtomString&) const;

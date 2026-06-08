@@ -92,7 +92,6 @@ public:
     static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, IntSize);
     ~WebXROpaqueFramebuffer();
 
-    bool supportsDynamicViewportScaling() const;
 
     PlatformXR::LayerHandle handle() const { return m_handle; }
     const WebGLFramebuffer& framebuffer() const { return m_drawFramebuffer.get(); }

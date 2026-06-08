@@ -48,10 +48,6 @@ Ref<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGAltGlyphElement(tagName, document));
 }
 
-ExceptionOr<void> SVGAltGlyphElement::setGlyphRef(const AtomString&)
-{
-    return Exception { ExceptionCode::NoModificationAllowedError };
-}
 
 const AtomString& SVGAltGlyphElement::glyphRef() const
 {

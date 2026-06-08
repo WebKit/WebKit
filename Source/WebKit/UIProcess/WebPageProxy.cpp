@@ -861,15 +861,6 @@ WebPageProxy* WebPageProxy::fromIdentifier(std::optional<WebPageProxyIdentifier>
     return identifier ? webPageProxyMap().get(*identifier) : nullptr;
 }
 
-static bool windowFeature(auto getter, const API::PageConfiguration& configuration)
-{
-    if (!configuration.windowFeatures())
-        return true;
-    auto optional = getter(*configuration.windowFeatures());
-    if (!optional)
-        return true;
-    return *optional;
-}
 
 static Ref<BrowsingContextGroup> getOrCreateBrowsingContextGroup(const API::PageConfiguration& configuration)
 {
@@ -5913,10 +5904,6 @@ bool WebPageProxy::shouldClosePreviousPage(const ProvisionalPageProxy& provision
     return !provisionalBrowsingContextGroup->remotePageInProcess(*this, protect(legacyMainFrameProcess()).get());
 }
 
-void WebPageProxy::destroyProvisionalPage()
-{
-    m_provisionalPage = nullptr;
-}
 
 void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, WebFrameProxy& frame, RefPtr<SuspendedPageProxy>&& suspendedPage, BrowsingContextGroup& browsingContextGroup, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive loadedWebArchive, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition processSwapDisposition, WebsiteDataStore* replacedDataStoreForWebArchiveLoad)
 {
@@ -9606,21 +9593,6 @@ void WebPageProxy::adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies
     policies.setAdvancedPrivacyProtections(policies.advancedPrivacyProtections() | AdvancedPrivacyProtections::ScriptTrackingPrivacy);
 }
 
-RefPtr<WebPageProxy> WebPageProxy::nonEphemeralWebPageProxy()
-{
-    auto processPools = WebProcessPool::allProcessPools();
-    if (processPools.isEmpty())
-        return nullptr;
-
-    for (Ref webProcess : processPools[0]->processes()) {
-        for (Ref page : webProcess->pages()) {
-            if (page->sessionID().isEphemeral())
-                continue;
-            return page;
-        }
-    }
-    return nullptr;
-}
 
 void WebPageProxy::logFrameNavigation(const WebFrameProxy& frame, const URL& pageURL, const WebCore::ResourceRequest& request, const URL& redirectURL, bool wasPotentiallyInitiatedByUser)
 {
@@ -17667,16 +17639,6 @@ void WebPageProxy::requestSpeechRecognitionPermission(WebCore::SpeechRecognition
     protect(speechRecognitionPermissionManager())->request(request, WTF::move(frameInfo), WTF::move(completionHandler));
 }
 
-void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
-{
-    RefPtr speechRecognitionPermissionManager = m_speechRecognitionPermissionManager.get();
-    if (!speechRecognitionPermissionManager) {
-        completionHandler(false);
-        return;
-    }
-
-    speechRecognitionPermissionManager->decideByDefaultAction(origin, WTF::move(completionHandler));
-}
 
 void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifier mainFrameIdentifier, FrameInfoData&& frameInfo, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
@@ -18817,11 +18779,6 @@ bool WebPageProxy::canStartNavigationSwipeAtLastInteractionLocation() const
     return !client || client->canStartNavigationSwipeAtLastInteractionLocation();
 }
 
-bool WebPageProxy::isRemoteFrameNavigation(Ref<WebProcessProxy> process)
-{
-    auto* provisionalPage = m_provisionalPage.get();
-    return m_legacyMainFrameProcess != process && (!provisionalPage || provisionalPage->process() != process);
-}
 
 void WebPageProxy::networkRequestsInProgressDidChange()
 {

@@ -138,20 +138,12 @@ bool HTMLVideoElementPictureInPicture::autoPictureInPicture(HTMLVideoElement& vi
     return HTMLVideoElementPictureInPicture::from(videoElement).m_autoPictureInPicture;
 }
 
-void HTMLVideoElementPictureInPicture::setAutoPictureInPicture(HTMLVideoElement& videoElement, bool autoPictureInPicture)
-{
-    HTMLVideoElementPictureInPicture::from(videoElement).m_autoPictureInPicture = autoPictureInPicture;
-}
 
 bool HTMLVideoElementPictureInPicture::disablePictureInPicture(HTMLVideoElement& videoElement)
 {
     return HTMLVideoElementPictureInPicture::from(videoElement).m_disablePictureInPicture;
 }
 
-void HTMLVideoElementPictureInPicture::setDisablePictureInPicture(HTMLVideoElement& videoElement, bool disablePictureInPicture)
-{
-    HTMLVideoElementPictureInPicture::from(videoElement).m_disablePictureInPicture = disablePictureInPicture;
-}
 
 void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>&& promise)
 {

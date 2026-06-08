@@ -42,9 +42,6 @@ public:
     class TokenPtr;
     TokenPtr nextToken(SegmentedString&);
 
-    // Returns a copy of any characters buffered internally by the tokenizer.
-    // The tokenizer buffers characters when searching for the </script> token that terminates a script element.
-    String bufferedCharacters() const;
     size_t numberOfBufferedCharacters() const;
 
     // Updates the tokenizer's state according to the given tag name. This is an approximation of how the tree

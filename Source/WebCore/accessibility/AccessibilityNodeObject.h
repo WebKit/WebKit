@@ -242,7 +242,6 @@ public:
 #endif
 
     bool usesAltForTextComputation() const;
-    bool hasTextAlternative() const;
     String ariaAccessibilityDescription() const;
 
 protected:

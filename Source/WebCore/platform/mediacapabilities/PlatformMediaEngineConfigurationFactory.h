@@ -43,8 +43,6 @@ public:
     using DecodingConfigurationCallback = Function<void(PlatformMediaCapabilitiesDecodingInfo&&)>;
     using EncodingConfigurationCallback = Function<void(PlatformMediaCapabilitiesEncodingInfo&&)>;
 
-    static bool hasDecodingConfigurationFactory();
-    static bool hasEncodingConfigurationFactory();
 
     WEBCORE_EXPORT static void createDecodingConfiguration(PlatformMediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
     WEBCORE_EXPORT static void createEncodingConfiguration(PlatformMediaEncodingConfiguration&&, EncodingConfigurationCallback&&);

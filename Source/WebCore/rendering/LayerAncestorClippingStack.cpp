@@ -99,15 +99,6 @@ GraphicsLayer* LayerAncestorClippingStack::lastLayer() const
     return m_stack.last().parentForSublayers();
 }
 
-std::optional<ScrollingNodeID> LayerAncestorClippingStack::lastOverflowScrollProxyNodeID() const
-{
-    for (auto& entry : m_stack | std::views::reverse) {
-        if (entry.overflowScrollProxyNodeID)
-            return entry.overflowScrollProxyNodeID;
-    }
-    
-    return std::nullopt;
-}
 
 void LayerAncestorClippingStack::updateScrollingNodeLayers(ScrollingCoordinator& scrollingCoordinator)
 {

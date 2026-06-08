@@ -234,12 +234,6 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint6
     updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
-{
-    if (!page())
-        return false;
-    return page()->preferences().acceleratedCompositingEnabled() && page()->preferences().forceCompositingMode();
-}
 
 void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {

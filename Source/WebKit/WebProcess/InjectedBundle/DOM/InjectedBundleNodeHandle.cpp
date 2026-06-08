@@ -373,18 +373,6 @@ void InjectedBundleNodeHandle::setAutoFillAvailable(bool autoFillAvailable)
     input->setAutofillAvailable(autoFillAvailable);
 }
 
-IntRect InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds()
-{
-    RefPtr input = dynamicDowncast<HTMLInputElement>(m_node);
-    if (!input)
-        return IntRect();
-
-    RefPtr autoFillButton = input->autoFillButtonElement();
-    if (!autoFillButton)
-        return IntRect();
-
-    return autoFillButton->boundsInRootViewSpace();
-}
 
 bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 {

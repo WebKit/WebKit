@@ -51,22 +51,6 @@ AudioResampler::AudioResampler(unsigned numberOfChannels)
 {
 }
 
-void AudioResampler::configureChannels(unsigned numberOfChannels)
-{
-    unsigned currentSize = m_kernels.size();
-    if (numberOfChannels == currentSize)
-        return; // already setup
-
-    // First deal with adding or removing kernels.
-    if (numberOfChannels > currentSize) {
-        for (unsigned i = currentSize; i < numberOfChannels; ++i)
-            m_kernels.append(makeUnique<AudioResamplerKernel>(this));
-    } else
-        m_kernels.shrink(numberOfChannels);
-
-    // Reconfigure our source bus to the new channel size.
-    m_sourceBus = AudioBus::create(numberOfChannels, 0, false);
-}
 
 void AudioResampler::process(AudioSourceProvider* provider, AudioBus& destinationBus, size_t framesToProcess)
 {

@@ -74,10 +74,6 @@ bool WebInspectorClient::inspectorAttachDisabled()
     return loadSetting(inspectorAttachDisabledSetting) == "true"_s;
 }
 
-void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
-{
-    storeSetting(inspectorAttachDisabledSetting, disabled ? "true"_s : "false"_s);
-}
 
 void WebInspectorClient::deleteInspectorStartsAttached()
 {

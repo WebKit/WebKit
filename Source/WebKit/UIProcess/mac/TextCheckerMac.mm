@@ -328,10 +328,6 @@ void TextChecker::didChangeAutomaticDashSubstitutionEnabled()
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
 
-void TextChecker::didChangeSmartListsEnabled()
-{
-    mutableState().set(TextCheckerState::SmartListsEnabled, shouldSmartListsBeEnabled());
-}
 
 bool TextChecker::substitutionsPanelIsShowing()
 {

@@ -138,10 +138,6 @@ void ScrollingTreeFrameScrollingNode::updateViewportForCurrentScrollPosition(std
         setLayoutViewport(layoutViewportForScrollPosition(currentScrollPosition(), frameScaleFactor()));
 }
 
-FloatRect ScrollingTreeFrameScrollingNode::layoutViewportRespectingRubberBanding() const
-{
-    return layoutViewportForScrollPosition(currentScrollPosition(), frameScaleFactor(), ScrollBehaviorForFixedElements::StickToViewportBounds);
-}
 
 FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollPosition) const
 {

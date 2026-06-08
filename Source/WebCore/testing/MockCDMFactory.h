@@ -83,7 +83,6 @@ public:
 
     void unregister();
 
-    bool hasSessionWithID(const String& id);
     void removeSessionWithID(const String& id);
     void addKeysToSessionWithID(const String& id, Vector<Ref<SharedBuffer>>&&);
     const Vector<Ref<SharedBuffer>>* keysForSessionWithID(const String& id) const;

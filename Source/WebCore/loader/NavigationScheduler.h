@@ -69,7 +69,6 @@ public:
     void scheduleRefresh(Document& initiatingDocument);
     void scheduleHistoryNavigation(int steps);
     void scheduleHistoryNavigationByKey(const String&key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&&);
-    void schedulePageBlock(Document& originDocument);
 
     void startTimer();
 

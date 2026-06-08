@@ -211,13 +211,6 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     return fragment;
 }
 
-bool RenderBox::hasFragmentRangeInFragmentedFlow() const
-{
-    if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow(); fragmentedFlow && fragmentedFlow->hasValidFragmentInfo())
-        return fragmentedFlow->hasCachedFragmentRangeForBox(*this);
-
-    return false;
-}
 
 static RenderBlockFlow* NODELETE outermostBlockContainingFloatingObject(RenderBox& box)
 {
@@ -1012,10 +1005,6 @@ LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const
     return result;
 }
 
-bool RenderBox::fixedElementLaysOutRelativeToFrame(const LocalFrameView& frameView) const
-{
-    return isFixedPositioned() && container()->isRenderView() && frameView.fixedElementsLayoutRelativeToFrame();
-}
 
 bool RenderBox::includeVerticalScrollbarSize() const
 {
@@ -5044,13 +5033,6 @@ LayoutRect RenderBox::visualOverflowRectForPropagation(const WritingMode parentW
     return convertRectToParentWritingMode(rect, parentWritingMode);
 }
 
-LayoutRect RenderBox::logicalLayoutOverflowRectForPropagation(const WritingMode parentWritingMode) const
-{
-    LayoutRect rect = layoutOverflowRectForPropagation(parentWritingMode);
-    if (!parentWritingMode.isHorizontal())
-        return rect.transposedRect();
-    return rect;
-}
 
 LayoutRect RenderBox::layoutOverflowRectForPropagation(const WritingMode parentWritingMode) const
 {

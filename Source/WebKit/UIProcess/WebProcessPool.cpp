@@ -1813,17 +1813,6 @@ void WebProcessPool::terminateAllWebContentProcesses(ProcessTerminationReason re
         process->requestTermination(reason);
 }
 
-void WebProcessPool::terminateServiceWorkersForSession(PAL::SessionID sessionID)
-{
-    Ref protectedThis { *this };
-    Vector<Ref<WebProcessProxy>> serviceWorkerProcesses;
-    remoteWorkerProcesses().forEach([&](auto& process) {
-        if (process.isRunningServiceWorkers() && process.sessionID() == sessionID)
-            serviceWorkerProcesses.append(process);
-    });
-    for (Ref serviceWorkerProcess : serviceWorkerProcesses)
-        serviceWorkerProcess->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
-}
 
 void WebProcessPool::terminateServiceWorkers()
 {
@@ -2108,14 +2097,6 @@ void WebProcessPool::updateProcessAssertions()
     });
 }
 
-bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
-{
-    // FIXME: This is inefficient.
-    return std::ranges::any_of(remoteWorkerProcesses(), [pageID](auto& process) {
-        return process.hasServiceWorkerPageProxy(pageID);
-    });
-    return false;
-}
 
 void WebProcessPool::addProcessToOriginCacheSet(WebProcessProxy& process, const URL& url)
 {

@@ -169,29 +169,8 @@ EOTHeader::EOTHeader()
 {
 }
 
-void EOTHeader::updateEOTSize(size_t fontDataSize)
-{
-    prefix()->eotSize = m_buffer.size() + fontDataSize;
-}
 
-void EOTHeader::appendBigEndianString(const BigEndianUShort* string, unsigned short length)
-{
-    size_t oldSize = m_buffer.size();
-    m_buffer.grow(oldSize + length + 2 * sizeof(unsigned short));
-    char16_t* dst = reinterpret_cast<char16_t*>(m_buffer.mutableSpan().subspan(oldSize).data());
-    unsigned i = 0;
-    dst[i++] = length;
-    unsigned numCharacters = length / 2;
-    for (unsigned j = 0; j < numCharacters; j++)
-        dst[i++] = string[j];
-    dst[i] = 0;
-}
 
-void EOTHeader::appendPaddingShort()
-{
-    std::array<uint8_t, sizeof(unsigned short)> padding = { };
-    m_buffer.append(std::span { padding });
-}
 
 // adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable
 // returns the size of the name table (which is used by renameAndActivateFont), or 0 on early abort

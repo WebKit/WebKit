@@ -53,7 +53,6 @@ public:
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
     LayoutRect fragmentedFlowPortionOverflowRect() const;
 
-    LayoutPoint fragmentedFlowPortionLocation() const;
 
     virtual void attachFragment();
     virtual void detachFragment();

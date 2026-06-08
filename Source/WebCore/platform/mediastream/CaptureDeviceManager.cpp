@@ -50,15 +50,6 @@ std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceWithPersistentID
     return std::nullopt;
 }
 
-CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID)
-{
-    for (auto& device : captureDevices()) {
-        if (device.persistentId() == captureDeviceID)
-            return device;
-    }
-
-    return { };
-}
 
 void CaptureDeviceManager::deviceChanged()
 {

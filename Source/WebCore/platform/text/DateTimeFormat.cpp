@@ -240,34 +240,4 @@ bool DateTimeFormat::parse(const String& source, TokenHandler& tokenHandler)
     return false;
 }
 
-static bool NODELETE isASCIIAlphabetOrQuote(char16_t ch)
-{
-    return isASCIIAlpha(ch) || ch == '\'';
-}
-
-void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder& buffer)
-{
-    if (literal.length() <= 0)
-        return;
-
-    if (literal.find(isASCIIAlphabetOrQuote) == notFound) {
-        buffer.append(literal);
-        return;
-    }
-
-    if (literal.find('\'') == notFound) {
-        buffer.append('\'', literal, '\'');
-        return;
-    }
-
-    for (unsigned i = 0; i < literal.length(); ++i) {
-        if (literal[i] == '\'')
-            buffer.append("''"_s);
-        else {
-            buffer.append('\'', makeStringByReplacingAll(literal.substring(i), '\'', "''"_s), '\'');
-            return;
-        }
-    }
-}
-
 } // namespace WebCore

@@ -60,7 +60,6 @@ public:
     const String host() const;
 
     const String& NODELETE clientProtocol() const;
-    void setClientProtocol(const String&);
 
     bool NODELETE secure() const;
 

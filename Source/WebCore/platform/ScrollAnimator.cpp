@@ -143,10 +143,6 @@ FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position) const
     return ScrollableArea::scrollOffsetFromPosition(position, toFloatSize(m_scrollableArea->scrollOrigin()));
 }
 
-FloatPoint ScrollAnimator::positionFromOffset(const FloatPoint& offset) const
-{
-    return ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea->scrollOrigin()));
-}
 
 bool ScrollAnimator::activeScrollSnapIndexDidChange() const
 {

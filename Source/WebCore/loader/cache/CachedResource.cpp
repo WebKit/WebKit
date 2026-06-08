@@ -634,10 +634,6 @@ void CachedResource::destroyDecodedDataIfNeeded()
     restartDecodedDataDeletionTimer();
 }
 
-void CachedResource::decodedDataDeletionTimerFired()
-{
-    destroyDecodedData();
-}
 
 void CachedResource::setDecodedSize(unsigned size)
 {

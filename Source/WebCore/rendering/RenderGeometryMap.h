@@ -105,7 +105,6 @@ public:
 
     // RenderView gets special treatment, because it applies the scroll offset only for elements inside in fixed position.
     void pushView(const RenderView*, const LayoutSize& scrollOffset, const TransformationMatrix* = nullptr);
-    void pushRenderFragmentedFlow(const RenderFragmentedFlow*);
 
 private:
     void mapToContainer(TransformState&, const RenderLayerModelObject* container = nullptr) const;

@@ -48,7 +48,6 @@ public:
     void NODELETE setKernelSize(const IntSize&);
 
     const Vector<float>& kernel() const LIFETIME_BOUND { return m_kernelMatrix; }
-    void setKernel(const Vector<float>&);
 
     float divisor() const { return m_divisor; }
     bool NODELETE setDivisor(float);

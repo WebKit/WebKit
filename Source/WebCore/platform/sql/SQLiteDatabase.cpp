@@ -332,13 +332,6 @@ void SQLiteDatabase::overrideUnauthorizedFunctions()
         sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, const_cast<char*>(functionParameter.first.characters()), unauthorizedSQLFunction, 0, 0);
 }
 
-void SQLiteDatabase::setFullsync(bool fsync)
-{
-    if (fsync) 
-        executeCommand("PRAGMA fullfsync = 1;"_s);
-    else
-        executeCommand("PRAGMA fullfsync = 0;"_s);
-}
 
 int64_t SQLiteDatabase::maximumSize()
 {
@@ -447,13 +440,6 @@ void SQLiteDatabase::setBusyTimeout(int ms)
         LOG(SQLDatabase, "BusyTimeout set on non-open database");
 }
 
-void SQLiteDatabase::setBusyHandler(int(*handler)(void*, int))
-{
-    if (m_db)
-        sqlite3_busy_handler(m_db, handler, NULL);
-    else
-        LOG(SQLDatabase, "Busy handler set on non-open database");
-}
 
 int SQLiteDatabase::executeSlow(StringView query)
 {

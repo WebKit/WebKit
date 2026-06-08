@@ -58,7 +58,6 @@ public:
     ApduResponse(ApduResponse&& that) = default;
     ApduResponse& operator=(ApduResponse&& that) = default;
 
-    Vector<uint8_t> getEncodedResponse() const;
 
     const Vector<uint8_t>& data() const LIFETIME_BOUND { return m_data; }
     Vector<uint8_t>& data() LIFETIME_BOUND { return m_data; }

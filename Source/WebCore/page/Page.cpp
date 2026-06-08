@@ -1142,13 +1142,6 @@ void Page::clearPluginData()
     m_pluginData = nullptr;
 }
 
-bool Page::showAllPlugins() const
-{
-    if (m_showAllPlugins)
-        return true;
-
-    return mainFrameOrigin().isLocal();
-}
 
 inline std::optional<std::pair<WeakRef<MediaCanStartListener>, WeakRef<Document, WeakPtrImplWithEventTargetData>>>  Page::takeAnyMediaCanStartListener()
 {
@@ -3850,10 +3843,6 @@ bool NODELETE Page::hasSeenAnyPlugin() const
     return !m_seenPlugins.isEmpty();
 }
 
-bool Page::hasSeenPlugin(const String& serviceType) const
-{
-    return m_seenPlugins.contains(serviceType);
-}
 
 void Page::sawPlugin(const String& serviceType)
 {

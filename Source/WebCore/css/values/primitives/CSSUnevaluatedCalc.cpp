@@ -108,40 +108,6 @@ bool UnevaluatedCalcBase::requiresConversionData() const
     return calcValue().requiresConversionData();
 }
 
-bool UnevaluatedCalcBase::canBeCastedTo(Category targetCategory) const
-{
-    switch (runtimeCategory()) {
-    case CSS::Category::Integer:
-    case CSS::Category::Number:
-        return targetCategory == CSS::Category::Integer
-            || targetCategory == CSS::Category::Number;
-    case CSS::Category::Percentage:
-        return targetCategory == CSS::Category::Percentage
-            || targetCategory == CSS::Category::AnglePercentage
-            || targetCategory == CSS::Category::LengthPercentage;
-    case CSS::Category::Length:
-        return targetCategory == CSS::Category::Length
-            || targetCategory == CSS::Category::LengthPercentage;
-    case CSS::Category::Angle:
-        return targetCategory == CSS::Category::Angle
-            || targetCategory == CSS::Category::AnglePercentage;
-    case CSS::Category::Time:
-        return targetCategory == CSS::Category::Time;
-    case CSS::Category::Frequency:
-        return targetCategory == CSS::Category::Frequency;
-    case CSS::Category::Resolution:
-        return targetCategory == CSS::Category::Resolution;
-    case CSS::Category::Flex:
-        return targetCategory == CSS::Category::Flex;
-    case CSS::Category::LengthPercentage:
-        return targetCategory == CSS::Category::LengthPercentage;
-    case CSS::Category::AnglePercentage:
-        return targetCategory == CSS::Category::AnglePercentage;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 void UnevaluatedCalcBase::serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context) const
 {

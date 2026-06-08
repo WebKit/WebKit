@@ -232,7 +232,6 @@ private:
     RefPtr<NativeImage> nativeImageForCurrentTime() override;
     bool updateLastVideoFrame();
     bool updateLastImage();
-    void maybePurgeLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;

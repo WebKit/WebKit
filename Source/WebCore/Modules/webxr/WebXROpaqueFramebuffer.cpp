@@ -380,14 +380,6 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
     }
 }
 
-bool WebXROpaqueFramebuffer::supportsDynamicViewportScaling() const
-{
-#if PLATFORM(VISION)
-    return false;
-#else
-    return true;
-#endif
-}
 
 IntSize WebXROpaqueFramebuffer::drawFramebufferSize() const
 {

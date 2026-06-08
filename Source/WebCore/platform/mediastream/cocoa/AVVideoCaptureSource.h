@@ -93,7 +93,6 @@ private:
 
     bool setupSession();
     bool setupCaptureSession();
-    void shutdownCaptureSession();
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;

@@ -1217,45 +1217,6 @@ TiledBacking* PlatformCALayerCocoa::tiledBacking()
     return [tiledBackingLayer.get() tiledBacking];
 }
 
-#if PLATFORM(IOS_FAMILY)
-bool PlatformCALayer::isWebLayer()
-{
-    BOOL result = NO;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    result = [m_layer isKindOfClass:[WebLayer class]];
-    END_BLOCK_OBJC_EXCEPTIONS
-    return result;
-}
-
-void PlatformCALayer::setBoundsOnMainThread(CGRect bounds)
-{
-    RunLoop::mainSingleton().dispatch([layer = m_layer, bounds] {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [layer setBounds:bounds];
-        END_BLOCK_OBJC_EXCEPTIONS
-    });
-}
-
-void PlatformCALayer::setPositionOnMainThread(CGPoint position)
-{
-    RunLoop::mainSingleton().dispatch([layer = m_layer, position] {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [layer setPosition:position];
-        END_BLOCK_OBJC_EXCEPTIONS
-    });
-}
-
-void PlatformCALayer::setAnchorPointOnMainThread(FloatPoint3D value)
-{
-    RunLoop::mainSingleton().dispatch([layer = m_layer, value] {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [layer setAnchorPoint:CGPointMake(value.x(), value.y())];
-        [layer setAnchorPointZ:value.z()];
-        END_BLOCK_OBJC_EXCEPTIONS
-    });
-}
-#endif // PLATFORM(IOS_FAMILY)
-
 PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(GraphicsContext& context, PlatformCALayer* platformCALayer)
 {
     __block double totalRectArea = 0;

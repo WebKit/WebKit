@@ -262,7 +262,6 @@ public:
 
     enum ViewportOffsetChangeType { IncrementalScrollOffset, CompletedScrollOffset };
     WEBCORE_EXPORT void viewportOffsetChanged(ViewportOffsetChangeType);
-    bool containsTiledBackingLayers() const;
 
     WEBCORE_EXPORT void overflowScrollPositionChangedForNode(const IntPoint&, Node*, bool isUserScroll);
 

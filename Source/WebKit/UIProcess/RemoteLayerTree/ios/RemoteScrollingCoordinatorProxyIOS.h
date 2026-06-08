@@ -108,7 +108,6 @@ private:
 #endif
 #endif
 
-    WebCore::FloatRect currentLayoutViewport() const;
 
     std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, CGFloat zoomScale, CGFloat currentScrollOffset, WebCore::FloatPoint scrollDestination, float velocity) const;
 

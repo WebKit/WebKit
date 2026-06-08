@@ -58,7 +58,6 @@ public:
 
     void failedWithException(const Exception&);
     void resolvedWithRegistration(ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
-    void resolvedWithUnregistrationResult(bool);
     void startScriptFetch(FetchOptions::Cache);
 
     using Identifier = ServiceWorkerJobIdentifier;

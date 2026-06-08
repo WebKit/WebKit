@@ -60,7 +60,6 @@ class SystemPreviewController : public RefCountedAndCanMakeWeakPtr<SystemPreview
 public:
     static Ref<SystemPreviewController> create(WebPageProxy&);
 
-    bool canPreview(const String& mimeType) const;
 
     void begin(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void updateProgress(float);

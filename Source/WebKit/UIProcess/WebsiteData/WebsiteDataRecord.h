@@ -51,7 +51,6 @@ struct WebsiteDataRecord {
     void add(WebsiteDataType, const WebCore::SecurityOriginData&);
     void addCookieHostName(const String& hostName);
     void addHSTSCacheHostname(const String& hostName);
-    void addAlternativeServicesHostname(const String& hostName);
     void addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain&);
 
     bool matches(const WebCore::RegistrableDomain&) const;

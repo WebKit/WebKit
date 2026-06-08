@@ -48,13 +48,6 @@ XRSubImage::XRSubImage(Device& device)
 
 XRSubImage::~XRSubImage() = default;
 
-Ref<XRSubImage> Device::createXRSubImage()
-{
-    if (!isValid())
-        return XRSubImage::createInvalid(*this);
-
-    return XRSubImage::create(*this);
-}
 
 void XRSubImage::setLabel(String&&)
 {

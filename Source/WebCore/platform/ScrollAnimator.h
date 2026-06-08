@@ -136,7 +136,6 @@ private:
     void updateActiveScrollSnapIndexForOffset();
 
     FloatPoint offsetFromPosition(const FloatPoint& position) const;
-    FloatPoint positionFromOffset(const FloatPoint& offset) const;
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 

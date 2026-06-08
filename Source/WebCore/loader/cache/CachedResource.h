@@ -333,7 +333,6 @@ private:
 
     bool addClientToSet(CachedResourceClient&);
 
-    void decodedDataDeletionTimerFired();
 
     virtual void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     virtual bool mayTryReplaceEncodedData() const { return false; }

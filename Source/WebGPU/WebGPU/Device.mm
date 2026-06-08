@@ -539,26 +539,6 @@ void Device::generateAnOutOfMemoryError(String&& message)
     }
 }
 
-void Device::generateAnInternalError(String&& message)
-{
-    if (m_supressAllErrors)
-        return;
-
-    // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-internal-error
-
-    auto* scope = currentErrorScope(WGPUErrorFilter_Internal);
-
-    if (scope) {
-        if (!scope->error)
-            scope->error = Error { WGPUErrorType_Internal, WTF::move(message) };
-        return;
-    }
-
-    if (m_uncapturedErrorCallback) {
-        m_uncapturedErrorCallback(WGPUErrorType_Internal, WTF::move(message));
-        m_uncapturedErrorCallback = nullptr;
-    }
-}
 
 id<MTLBuffer> Device::newBufferWithBytes(const void* pointer, size_t length, MTLResourceOptions options, bool skipAttribution) const
 {

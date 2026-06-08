@@ -157,10 +157,6 @@ const FrameState& WebBackForwardListItem::mainFrameState() const
     return m_mainFrameItem->frameState();
 }
 
-Ref<FrameState> WebBackForwardListItem::copyMainFrameState() const
-{
-    return m_mainFrameItem->copyFrameState();
-}
 
 Ref<FrameState> WebBackForwardListItem::copyMainFrameStateWithChildren() const
 {

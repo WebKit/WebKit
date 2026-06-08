@@ -138,21 +138,6 @@ void Content::moveLineInBlockDirection(size_t lineIndex, float offset)
     }
 }
 
-void Content::shrinkLineInBlockDirection(size_t lineIndex, float delta)
-{
-    if (!delta)
-        return;
-
-    auto& line = lines[lineIndex];
-    line.shrinkInBlockDirection(delta);
-
-    if (line.hasEllipsis()) {
-        auto ellipsis = *lineEllipsis(lineIndex);
-        auto physicalDelta = line.isHorizontal() ? FloatSize { { }, delta } : FloatSize { delta, { } };
-        ellipsis.visualRect.contract(physicalDelta);
-        setLineEllipsis(lineIndex, WTF::move(ellipsis));
-    }
-}
 
 
 }

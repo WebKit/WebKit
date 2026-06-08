@@ -87,7 +87,6 @@ public:
     void updateContents(AccessScope&, const void* srcData, const IntRect& targetRect, unsigned bytesPerLine);
 
     // You need to obtain an AccessScope, fencing the read operation.
-    std::span<uint32_t> mappedDataSpan(AccessScope&) const;
 
     class AccessScope {
         WTF_MAKE_NONCOPYABLE(AccessScope);

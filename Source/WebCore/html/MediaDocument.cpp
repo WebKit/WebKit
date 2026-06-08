@@ -163,31 +163,6 @@ static inline HTMLVideoElement* NODELETE descendantVideoElement(ContainerNode& n
     return descendantsOfType<HTMLVideoElement>(node).first();
 }
 
-void MediaDocument::replaceMediaElementTimerFired()
-{
-    RefPtr htmlBody = bodyOrFrameset();
-    if (!htmlBody)
-        return;
-
-    // Set body margin width and height to 0 as that is what a PluginDocument uses.
-    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, "0"_s);
-    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, "0"_s);
-
-    if (RefPtr videoElement = descendantVideoElement(*htmlBody)) {
-        Ref embedElement = HTMLEmbedElement::create(*this);
-
-        embedElement->setAttributeWithoutSynchronization(widthAttr, "100%"_s);
-        embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_s);
-        embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_s);
-        embedElement->setAttributeWithoutSynchronization(srcAttr, AtomString { url().string() });
-
-        ASSERT(loader());
-        if (RefPtr loader = this->loader())
-            embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
-
-        protect(videoElement->parentNode())->replaceChild(embedElement, *videoElement);
-    }
-}
 
 void MediaDocument::mediaElementNaturalSizeChanged(const IntSize& newSize)
 {

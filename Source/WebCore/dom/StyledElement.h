@@ -102,7 +102,6 @@ private:
     void synchronizeStyleAttributeForSelectorInvalidation();
 
     void inlineStyleChanged();
-    CSSStyleProperties* inlineStyleCSSOMWrapper();
     void setInlineStyleFromString(const AtomString&);
     Ref<MutableStyleProperties> ensureMutableInlineStyle();
 

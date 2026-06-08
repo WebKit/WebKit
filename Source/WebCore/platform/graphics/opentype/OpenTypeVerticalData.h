@@ -44,7 +44,6 @@ public:
 
     bool hasVerticalMetrics() const { return !m_advanceHeights.isEmpty(); }
     float advanceHeight(const Font*, Glyph) const;
-    void getVerticalTranslationsForGlyphs(const Font*, const Glyph*, size_t, float* outXYArray) const;
     void substituteWithVerticalGlyphs(const Font*, GlyphPage*) const;
 
 private:

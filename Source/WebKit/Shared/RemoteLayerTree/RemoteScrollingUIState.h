@@ -73,7 +73,6 @@ public:
     const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveRubberband() const LIFETIME_BOUND { return m_nodesWithActiveRubberband; }
     void addNodeWithActiveRubberband(WebCore::ScrollingNodeID);
     void removeNodeWithActiveRubberband(WebCore::ScrollingNodeID);
-    void clearNodesWithActiveRubberband();
 
 private:
     OptionSet<RemoteScrollingUIStateChanges> m_changes;

@@ -291,7 +291,6 @@ public:
    
     void removeFormattingAndStyle();
 
-    void clearLastEditCommand();
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
 #endif
@@ -378,7 +377,6 @@ public:
     String misspelledWordAtCaretOrRange(Node* clickedNode) const;
     Vector<String> guessesForMisspelledWord(const String&) const;
     TextCheckingGuesses guessesForMisspelledOrUngrammatical();
-    bool isSpellCheckingEnabledInFocusedNode() const;
     bool isSpellCheckingEnabledFor(Node*) const;
     WEBCORE_EXPORT void markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart, const VisibleSelection& selectionAfterTyping, AllowTextReplacement);
     std::optional<SimpleRange> markMisspellings(const VisibleSelection&); // Returns first misspelling range.

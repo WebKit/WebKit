@@ -114,11 +114,6 @@ bool StreamClientConnection::hasSemaphores() const
     return m_buffer.hasSemaphores();
 }
 
-void StreamClientConnection::setMaxBatchSize(unsigned size)
-{
-    m_maxBatchSize = size;
-    m_buffer.wakeUpServer();
-}
 
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
 {

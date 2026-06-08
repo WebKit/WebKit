@@ -139,11 +139,6 @@ void determineTZoneMallocFallback()
     tzoneMallocFallback = TZoneMallocFallback::DoNotFallBack;
 }
 
-void TZoneHeapManager::requirePerBootSeed()
-{
-    RELEASE_BASSERT(s_state < State::Seeded);
-    requirePerBootPrimordialSeed = true;
-}
 
 void TZoneHeapManager::setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount, unsigned smallSizeLimit)
 {

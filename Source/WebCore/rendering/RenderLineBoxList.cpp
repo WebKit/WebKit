@@ -69,17 +69,6 @@ void RenderLineBoxList::appendLineBox(std::unique_ptr<LegacyInlineFlowBox> box)
     checkConsistency();
 }
 
-void RenderLineBoxList::deleteLineBoxTree()
-{
-    LegacyInlineFlowBox* line = m_firstLineBox;
-    LegacyInlineFlowBox* nextLine;
-    while (line) {
-        nextLine = line->nextLineBox();
-        line->deleteLine();
-        line = nextLine;
-    }
-    m_firstLineBox = m_lastLineBox = nullptr;
-}
 
 void RenderLineBoxList::removeLineBox(LegacyInlineFlowBox* box)
 {
@@ -116,11 +105,6 @@ void RenderLineBoxList::dirtyLineBoxes()
         curr->dirtyLineBoxes();
 }
 
-void RenderLineBoxList::shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY)
-{
-    for (auto* box = firstLegacyLineBox(); box; box = box->nextLineBox())
-        box->adjustPosition(shiftX, shiftY);
-}
 
 void RenderLineBoxList::dirtyLineFromChangedChild(RenderBoxModelObject& container)
 {

@@ -971,12 +971,6 @@ FocusableElementSearchResult FocusController::previousFocusableElementWithinScop
     }
 }
 
-Element* FocusController::findFocusableElementOrScopeOwner(FocusDirection direction, const FocusNavigationScope& scope, Node* node, const FocusEventData& focusEventData)
-{
-    return (direction == FocusDirection::Forward)
-        ? nextFocusableElementOrScopeOwner(scope, node, focusEventData)
-        : previousFocusableElementOrScopeOwner(scope, node, focusEventData);
-}
 
 Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScope& scope, Node* start, int tabIndex, const FocusEventData& focusEventData, FocusDirection direction)
 {
@@ -1511,10 +1505,6 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, const 
     return consumed;
 }
 
-void FocusController::setFocusedElementNeedsRepaint()
-{
-    m_focusRepaintTimer.startOneShot(33_ms);
-}
 
 void FocusController::focusRepaintTimerFired()
 {
@@ -1534,10 +1524,6 @@ void FocusController::focusRepaintTimerFired()
         focusedElement->renderer()->repaint();
 }
 
-Seconds FocusController::timeSinceFocusWasSet() const
-{
-    return MonotonicTime::now() - m_focusSetTime;
-}
 
 TextStream& operator<<(TextStream& ts, const FocusableElementSearchResult& result)
 {

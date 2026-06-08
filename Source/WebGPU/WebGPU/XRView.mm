@@ -45,13 +45,6 @@ XRView::XRView(Device& device)
 
 XRView::~XRView() = default;
 
-Ref<XRView> Device::createXRView()
-{
-    if (!isValid())
-        return XRView::createInvalid(*this);
-
-    return XRView::create(*this);
-}
 
 void XRView::setLabel(String&&)
 {

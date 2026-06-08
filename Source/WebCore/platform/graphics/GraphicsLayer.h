@@ -353,7 +353,6 @@ public:
     MediaPlayerVideoGravity NODELETE videoGravity() const;
     WEBCORE_EXPORT virtual void setVideoGravity(MediaPlayerVideoGravity);
 
-    Path shapeLayerPath() const;
     WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&);
 
     WindRule NODELETE shapeLayerWindRule() const;
@@ -363,7 +362,6 @@ public:
     WEBCORE_EXPORT virtual void setEventRegion(EventRegion&&);
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
-    static String animationNameForTransition(AnimatedProperty);
 
     // Return true if the animation is handled by the compositing system.
     virtual bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }

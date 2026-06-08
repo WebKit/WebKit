@@ -321,7 +321,6 @@ public:
     static Statistics& statistics();    
 
     void terminateAllWebContentProcesses(ProcessTerminationReason);
-    void terminateServiceWorkersForSession(PAL::SessionID);
     void terminateServiceWorkers();
 
     void setShouldMakeNextWebProcessLaunchFailForTesting(bool value) { m_shouldMakeNextWebProcessLaunchFailForTesting = value; }
@@ -398,7 +397,6 @@ public:
     // Network Process Management
     void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
 
-    bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 
     size_t serviceWorkerProxiesCount() const;
     void isJITDisabledInAllRemoteWorkerProcesses(CompletionHandler<void(bool)>&&) const;

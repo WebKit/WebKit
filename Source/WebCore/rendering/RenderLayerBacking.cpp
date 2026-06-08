@@ -3924,16 +3924,6 @@ GraphicsLayer* RenderLayerBacking::childForSuperlayersExcludingViewTransitions()
     return m_graphicsLayer.get();
 }
 
-LayoutSize RenderLayerBacking::offsetRelativeToRendererOriginForDescendantLayers() const
-{
-    if (m_scrolledContentsLayer)
-        return toLayoutSize(scrollContainerLayerBox(downcast<RenderBox>(renderer())).location());
-
-    if (hasClippingLayer())
-        return toLayoutSize(clippingLayerBox(renderer()).location());
-
-    return { };
-}
 
 bool RenderLayerBacking::paintsIntoWindow() const
 {

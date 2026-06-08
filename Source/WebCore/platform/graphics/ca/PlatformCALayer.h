@@ -350,16 +350,7 @@ public:
 
     void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, std::span<const char8_t> text, CGFloat strokeWidthAsPercentageOfFontSize = 0, Color strokeColor = Color()) const;
 
-    static void flipContext(CGContextRef, CGFloat height);
-    
     virtual unsigned backingStoreBytesPerPixel() const { return 4; }
-
-#if PLATFORM(IOS_FAMILY)
-    bool isWebLayer();
-    void setBoundsOnMainThread(CGRect);
-    void setPositionOnMainThread(CGPoint);
-    void setAnchorPointOnMainThread(FloatPoint3D);
-#endif
 
     virtual Ref<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
     Ref<PlatformCALayer> createCompatibleLayerOrTakeFromPool(LayerType, PlatformCALayerClient*, IntSize);

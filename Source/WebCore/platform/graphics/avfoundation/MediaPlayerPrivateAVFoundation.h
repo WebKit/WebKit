@@ -305,7 +305,6 @@ protected:
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
     virtual bool haveBeenAskedToPaint() const { return false; }
-    bool hasSetUpVideoRendering() const;
 
     void mainThreadCallback();
     

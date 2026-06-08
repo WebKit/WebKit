@@ -67,7 +67,6 @@ public:
     // FIXME: Eventually WebViewImpl should become the PageClient.
     void NODELETE setImpl(WebViewImpl&);
 
-    void viewWillMoveToAnotherWindow();
 
 private:
     // PageClient

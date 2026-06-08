@@ -390,17 +390,6 @@ void WebResourceLoadStatisticsStore::hasStorageAccessEphemeral(const Registrable
     completionHandler(false);
 }
 
-bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, FrameIdentifier frameID, PageIdentifier pageID)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (CheckedPtr networkSession = m_networkSession.get()) {
-        if (CheckedPtr storageSession = networkSession->networkStorageSession())
-            return storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID);
-    }
-
-    return false;
-}
 
 void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool hasAccess)>&& callback)
 {

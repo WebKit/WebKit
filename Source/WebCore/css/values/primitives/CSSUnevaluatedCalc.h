@@ -91,7 +91,6 @@ public:
     bool NODELETE rootNodeIsPercentage() const;
     bool NODELETE requiresConversionData() const;
 
-    bool canBeCastedTo(Category) const;
 
     void serializationForCSS(StringBuilder&, const SerializationContext&) const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;

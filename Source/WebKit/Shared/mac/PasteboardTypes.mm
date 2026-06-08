@@ -73,33 +73,7 @@ NSArray* PasteboardTypes::forURLSingleton()
     return types.get().get();
 }
 
-NSArray* PasteboardTypes::forImagesSingleton()
-{
-    static NeverDestroyed<RetainPtr<NSArray>> types = @[
-        WebCore::legacyTIFFPasteboardTypeSingleton(),
-        WebURLsWithTitlesPboardType,
-        WebCore::legacyURLPasteboardTypeSingleton(),
-        WebURLPboardType,
-        WebURLNamePboardType,
-        WebCore::legacyStringPasteboardTypeSingleton()
-    ];
-    return types.get().get();
-}
 
-NSArray* PasteboardTypes::forImagesWithArchiveSingleton()
-{
-    static NeverDestroyed<RetainPtr<NSArray>> types = @[
-        WebCore::legacyTIFFPasteboardTypeSingleton(),
-        WebURLsWithTitlesPboardType,
-        WebCore::legacyURLPasteboardTypeSingleton(),
-        WebURLPboardType,
-        WebURLNamePboardType,
-        WebCore::legacyStringPasteboardTypeSingleton(),
-        WebCore::legacyRTFDPasteboardTypeSingleton(),
-        WebArchivePboardType
-    ];
-    return types.get().get();
-}
 
 NSArray* PasteboardTypes::forSelectionSingleton()
 {

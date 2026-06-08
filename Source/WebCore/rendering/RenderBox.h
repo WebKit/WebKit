@@ -362,7 +362,6 @@ public:
     void computeAndSetBlockDirectionMargins(const RenderBlock& containingBlock);
 
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
-    bool hasFragmentRangeInFragmentedFlow() const;
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
@@ -548,7 +547,6 @@ public:
 
     LayoutRect logicalVisualOverflowRectForPropagation(const WritingMode) const;
     LayoutRect visualOverflowRectForPropagation(const WritingMode) const;
-    LayoutRect logicalLayoutOverflowRectForPropagation(const WritingMode) const;
     LayoutRect layoutOverflowRectForPropagation(const WritingMode) const;
     LayoutRect applyPaintGeometryTransformToRect(LayoutRect) const;
     LayoutRect NODELETE convertRectToParentWritingMode(LayoutRect, const WritingMode parentWritingMode) const;
@@ -733,7 +731,6 @@ private:
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, unsigned stepCount, Element** stopElement);
 
-    bool fixedElementLaysOutRelativeToFrame(const LocalFrameView&) const;
 
     template<typename Function> LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, Style::MarginTrimSide marginSide, NOESCAPE const Function& computeInlineMargin) const;
 

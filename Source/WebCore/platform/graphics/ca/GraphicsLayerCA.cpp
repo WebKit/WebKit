@@ -3737,34 +3737,6 @@ bool GraphicsLayerCA::removeCAAnimationFromLayer(LayerPropertyAnimation& animati
     return true;
 }
 
-void GraphicsLayerCA::pauseCAAnimationOnLayer(LayerPropertyAnimation& animation)
-{
-    RefPtr layer = animatedLayer(animation.m_property);
-
-    String animationID = animation.animationIdentifier();
-
-    RefPtr<PlatformCAAnimation> curAnim = layer->animationForKey(animationID);
-    if (!curAnim)
-        return;
-
-    // Animations on the layer are immutable, so we have to clone and modify.
-    RefPtr<PlatformCAAnimation> newAnim = curAnim->copy();
-
-    newAnim->setSpeed(0);
-    newAnim->setTimeOffset(animation.m_timeOffset.seconds());
-
-    layer->addAnimationForKey(animationID, *newAnim); // This will replace the running animation.
-
-    // Pause the animations on the clones too.
-    if (LayerMap* layerCloneMap = animatedLayerClones(animation.m_property)) {
-        for (auto& clone : *layerCloneMap) {
-            // Skip immediate replicas, since they move with the original.
-            if (m_replicaLayer && isReplicatedRootClone(clone.key))
-                continue;
-            Ref { clone.value }->addAnimationForKey(animationID, *newAnim);
-        }
-    }
-}
 
 void GraphicsLayerCA::repaintLayerDirtyRects()
 {

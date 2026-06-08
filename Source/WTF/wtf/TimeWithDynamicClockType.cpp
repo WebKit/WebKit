@@ -113,25 +113,6 @@ WallTime TimeWithDynamicClockType::approximateWallTime() const
     return WallTime();
 }
 
-MonotonicTime TimeWithDynamicClockType::approximateMonotonicTime() const
-{
-    switch (m_type) {
-    case ClockType::Wall:
-        return wallTime().approximate<MonotonicTime>();
-    case ClockType::Monotonic:
-        return monotonicTime();
-    case ClockType::Approximate:
-        return approximateTime().approximate<MonotonicTime>();
-    case ClockType::Continuous:
-        return continuousTime().approximate<MonotonicTime>();
-    case ClockType::ContinuousApproximate:
-        return ContinuousApproximateTime().approximate<MonotonicTime>();
-    case ClockType::UnbarrieredMonotonic:
-        return unbarrieredMonotonicTime().approximate<MonotonicTime>();
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return MonotonicTime();
-}
 
 Seconds TimeWithDynamicClockType::operator-(const TimeWithDynamicClockType& other) const
 {

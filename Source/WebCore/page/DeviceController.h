@@ -49,7 +49,6 @@ public:
     bool hasListeners() { return !m_listeners.isEmpty(); }
     void addDeviceEventListener(LocalDOMWindow&);
     void removeDeviceEventListener(LocalDOMWindow&);
-    void removeAllDeviceEventListeners(LocalDOMWindow&);
     bool NODELETE hasDeviceEventListener(LocalDOMWindow&) const;
 
     void dispatchDeviceEvent(Event&);

@@ -56,10 +56,6 @@ Ref<CSSValuePair> CSSValuePair::createNoncoalescing(Ref<CSSValue> first, Ref<CSS
     return adoptRef(*new CSSValuePair(SpaceSeparator, WTF::move(first), WTF::move(second), IdenticalValueSerialization::DoNotCoalesce));
 }
 
-bool CSSValuePair::canBeCoalesced() const
-{
-    return m_coalesceIdenticalValues && m_first->equals(m_second);
-}
 
 String CSSValuePair::customCSSText(const CSS::SerializationContext& context) const
 {

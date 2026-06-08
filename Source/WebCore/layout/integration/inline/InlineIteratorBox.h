@@ -123,7 +123,6 @@ public:
     size_t lineIndex() const;
 
     const BoxModernPath& modernPath() const LIFETIME_BOUND;
-    const BoxLegacyPath& legacyPath() const LIFETIME_BOUND;
 
 protected:
     friend class BoxIterator;

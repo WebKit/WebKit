@@ -112,8 +112,6 @@ public:
     Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
     Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&, bool isGeneratedLayout = false);
     Ref<XRBinding> createXRBinding();
-    Ref<XRSubImage> createXRSubImage();
-    Ref<XRView> createXRView();
     Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     std::pair<Ref<ComputePipeline>, NSString*> createComputePipeline(const WGPUComputePipelineDescriptor&, bool isAsync = false);
@@ -154,7 +152,6 @@ public:
     void generateAValidationError(NSString * message);
     void generateAValidationError(String&& message);
     void generateAnOutOfMemoryError(String&& message);
-    void generateAnInternalError(String&& message);
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
 #if CPU(X86_64)

@@ -1138,10 +1138,6 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
         equalLettersIgnoringASCIICase(source, "'none'"_s) ? " Note that 'none' has no effect unless it is the only expression in the source list."_s : ""_s));
 }
 
-void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
-{
-    logToConsole(makeString("The Content Security Policy '"_s, policy, "' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header."_s));
-}
 
 void ContentSecurityPolicy::reportMissingReportToTokens(const String& policy) const
 {

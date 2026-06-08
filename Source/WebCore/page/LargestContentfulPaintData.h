@@ -77,7 +77,6 @@ private:
     static std::optional<float> effectiveVisualArea(const Element&, CachedImage*, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize);
 
     static FloatRect computeViewportIntersectionRect(Element&, FloatRect localRect);
-    static FloatRect computeViewportIntersectionRectForTextContainer(Element&, const WeakHashSet<Text, WeakPtrImplWithEventTargetData>&);
 
     static bool NODELETE isEligibleForLargestContentfulPaint(const Element&, float effectiveVisualArea);
     static bool NODELETE canCompareWithLargestPaintArea(const Element&);

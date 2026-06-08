@@ -107,7 +107,6 @@ public:
     WTF_EXPORT_PRIVATE UnbarrieredMonotonicTime NODELETE unbarrieredMonotonicTime() const;
 
     WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
-    WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
     
     bool isNaN() const { return std::isnan(m_value); }
     bool isInfinity() const { return std::isinf(m_value); }

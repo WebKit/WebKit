@@ -146,7 +146,6 @@ private:
     Ref<Inspector::Protocol::CSS::CSSStyle> styleWithProperties();
     RefPtr<CSSRuleSourceData> extractSourceData() const;
     String shorthandValue(const String& shorthandProperty) const;
-    String shorthandPriority(const String& shorthandProperty) const;
     Vector<String> longhandProperties(const String& shorthandProperty) const;
 
     InspectorCSSId m_styleId;

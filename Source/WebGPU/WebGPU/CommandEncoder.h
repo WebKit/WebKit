@@ -144,10 +144,6 @@ public:
     bool NODELETE validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     void clearTracking();
     bool trackEncoderForBuffer(const Buffer&, TrackedResourceContainer&);
-    void trackEncoderForTexture(const Texture&, TrackedResourceContainer&);
-    void trackEncoderForTextureView(const TextureView&, TrackedResourceContainer&);
-    void trackEncoderForExternalTexture(const ExternalTexture&, TrackedResourceContainer&);
-    void trackEncoderForQuerySet(const QuerySet&, TrackedResourceContainer&);
     static void trackEncoder(CommandEncoder&, HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>&);
     static size_t computeSize(TrackedResourceContainer&, const Device&);
     uint64_t uniqueId() const { return m_uniqueId; }

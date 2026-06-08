@@ -38,11 +38,6 @@ PluginInfoProvider::~PluginInfoProvider()
     ASSERT(m_pages.isEmptyIgnoringNullReferences());
 }
 
-void PluginInfoProvider::clearPagesPluginData()
-{
-    for (Ref page : m_pages)
-        page->clearPluginData();
-}
 
 void PluginInfoProvider::refresh(bool reloadPages)
 {

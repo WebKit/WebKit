@@ -51,11 +51,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrack);
 
-const AtomString& VideoTrack::signKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> sign("sign"_s);
-    return sign;
-}
 
 VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& trackPrivate)
     : MediaTrackBase(context, MediaTrackBase::VideoTrack, trackPrivate.trackUID(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language())

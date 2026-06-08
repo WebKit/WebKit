@@ -333,15 +333,6 @@ void ServicesOverlayController::drawRect(PageOverlay&, GraphicsContext&, const I
 {
 }
 
-void ServicesOverlayController::clearActiveHighlight()
-{
-    if (!m_activeHighlight)
-        return;
-
-    if (m_currentMouseDownOnButtonHighlight == m_activeHighlight)
-        m_currentMouseDownOnButtonHighlight = nullptr;
-    m_activeHighlight = nullptr;
-}
 
 void ServicesOverlayController::removeAllPotentialHighlightsOfType(DataDetectorHighlight::Type type)
 {

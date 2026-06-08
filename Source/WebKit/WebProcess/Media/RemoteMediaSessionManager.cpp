@@ -175,11 +175,6 @@ void RemoteMediaSessionManager::clientSetShouldPlayToPlaybackTarget(WebCore::Med
         protect(session->client())->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
-void RemoteMediaSessionManager::clientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier identifier, WebCore::PlatformMediaSessionRemoteControlCommandType command, WebCore::PlatformMediaSessionRemoteCommandArgument argument)
-{
-    if (RefPtr session = sessionWithIdentifier(identifier))
-        protect(session->client())->didReceiveRemoteControlCommand(command, argument);
-}
 
 void RemoteMediaSessionManager::setCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier> identifier)
 {
@@ -234,10 +229,6 @@ void RemoteMediaSessionManager::setAudioSessionPreferredBufferSize(uint64_t pref
     WebCore::AudioSession::singleton().setPreferredBufferSize(preferredBufferSize);
 }
 
-void RemoteMediaSessionManager::tryToSetAudioSessionActive(bool active)
-{
-    WebCore::AudioSession::singleton().tryToSetActive(active);
-}
 #endif
 
 void RemoteMediaSessionManager::updateCachedSessionState(const WebCore::PlatformMediaSessionInterface& session, RemoteMediaSessionState& state)

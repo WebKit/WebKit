@@ -90,15 +90,6 @@ void WebsiteDataRecord::addHSTSCacheHostname(const String& hostName)
     HSTSCacheHostNames.add(hostName);
 }
 
-void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
-{
-#if HAVE(ALTERNATIVE_SERVICE)
-    types.add(WebsiteDataType::AlternativeServices);
-    alternativeServicesHostNames.add(hostName);
-#else
-    UNUSED_PARAM(hostName);
-#endif
-}
 
 void WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain& domain)
 {

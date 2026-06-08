@@ -87,15 +87,6 @@ void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& 
         client->jobResolvedWithRegistration(*this, WTF::move(data), shouldNotifyWhenResolved);
 }
 
-void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResult)
-{
-    ASSERT(m_creationThreadID == currentThreadID());
-    ASSERT(!m_completed);
-
-    m_completed = true;
-    if (RefPtr client = m_client.get())
-        client->jobResolvedWithUnregistrationResult(*this, unregistrationResult);
-}
 
 void ServiceWorkerJob::startScriptFetch(FetchOptions::Cache cachePolicy)
 {

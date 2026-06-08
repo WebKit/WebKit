@@ -96,7 +96,6 @@ public:
     void repaintRectangleInFragments(const LayoutRect&) const;
 
     LayoutUnit pageLogicalTopForOffset(LayoutUnit) const;
-    LayoutUnit pageLogicalWidthForOffset(LayoutUnit) const;
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit) const;
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary) const;
 
@@ -116,7 +115,6 @@ public:
 
     LayoutUnit contentLogicalWidthOfFirstFragment() const;
     LayoutUnit contentLogicalHeightOfFirstFragment() const;
-    LayoutUnit contentLogicalLeftOfFirstFragment() const;
     
     RenderFragmentContainer* firstFragment() const;
     RenderFragmentContainer* lastFragment() const;
@@ -127,7 +125,6 @@ public:
     bool NODELETE hasCachedFragmentRangeForBox(const RenderBox&) const;
 
     // Check if the object is in fragment and the fragment is part of this flow thread.
-    bool objectInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
     
     // Check if the object should be painted in this fragment and if the fragment is part of this flow thread.
     bool objectShouldFragmentInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
@@ -147,7 +144,6 @@ public:
     void addFragmentsVisualEffectOverflow(const RenderBox&);
     void addFragmentsVisualOverflowFromTheme(const RenderBlock&);
     void addFragmentsOverflowFromChild(const RenderBox&, const RenderBox&, const LayoutSize&);
-    void addFragmentsLayoutOverflow(const RenderBox&, const LayoutRect&);
     void addFragmentsVisualOverflow(const RenderBox&, const LayoutRect&);
     void clearFragmentsOverflow(const RenderBox&);
 

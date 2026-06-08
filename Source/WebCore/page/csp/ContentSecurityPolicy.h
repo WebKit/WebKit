@@ -215,7 +215,6 @@ public:
     void reportInvalidDirectiveInReportOnlyMode(const String&) const;
     void reportInvalidDirectiveInHTTPEquivMeta(const String&) const;
     void reportMissingReportToTokens(const String&) const;
-    void reportMissingReportURI(const String&) const;
     void reportUnsupportedDirective(const String&) const;
     void reportDeprecatedDirective(const String&) const;
     void reportDeprecatedDirectiveToConsole(const String&) const;

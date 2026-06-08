@@ -2108,10 +2108,6 @@ void WebsiteDataStore::propagateSettingUpdates()
 #endif
 }
 
-void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
-{
-    m_queue->dispatch(WTF::move(function));
-}
 
 void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
 {

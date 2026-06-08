@@ -1341,11 +1341,6 @@ bool AVVideoCaptureSource::setupCaptureSession()
     return true;
 }
 
-void AVVideoCaptureSource::shutdownCaptureSession()
-{
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    m_buffer = nullptr;
-}
 
 void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
 {

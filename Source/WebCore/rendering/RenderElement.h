@@ -181,7 +181,6 @@ public:
     bool repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, RequiresFullRepaint, const RepaintRects& oldRects, const RepaintRects& newRects);
 
     void repaintClientsOfReferencedSVGResources() const;
-    void repaintRendererOrClientsOfReferencedSVGResources() const;
     void repaintOldAndNewPositionsForSVGRenderer() const;
 
     bool borderImageIsLoadedAndCanBeRendered() const;

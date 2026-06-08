@@ -94,10 +94,6 @@ void WebUserContentControllerProxy::addNetworkProcess(NetworkProcessProxy& proxy
     m_networkProcesses.add(proxy);
 }
 
-void WebUserContentControllerProxy::removeNetworkProcess(NetworkProcessProxy& proxy)
-{
-    m_networkProcesses.remove(proxy);
-}
 #endif
 
 IPC::TransferString WebUserContentControllerProxy::cachedTransferString(const String& string) const

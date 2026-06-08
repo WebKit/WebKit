@@ -486,13 +486,6 @@ void LocalSampleBufferDisplayLayer::removeOldVideoFramesFromPendingQueue()
     }
 }
 
-void LocalSampleBufferDisplayLayer::addVideoFrameToPendingQueue(Ref<VideoFrame>&& videoFrame)
-{
-    assertIsCurrent(workQueue());
-
-    removeOldVideoFramesFromPendingQueue();
-    m_pendingVideoFrameQueue.append(WTF::move(videoFrame));
-}
 
 void LocalSampleBufferDisplayLayer::clearVideoFrames()
 {

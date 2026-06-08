@@ -98,10 +98,6 @@ void GroupActivitiesSession::addStateChangeObserver(const StateChangeObserver& o
     m_stateChangeObservers.add(observer);
 }
 
-void GroupActivitiesSession::addFallbackURLObserver(const FallbackURLObserver& observer)
-{
-    m_fallbackURLObservers.add(observer);
-}
 
 }
 

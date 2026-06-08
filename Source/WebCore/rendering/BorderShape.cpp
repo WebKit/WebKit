@@ -254,21 +254,7 @@ Path BorderShape::pathForOuterShape(float deviceScaleFactor) const
     return path;
 }
 
-Path BorderShape::pathForInnerShape(float deviceScaleFactor) const
-{
-    auto pixelSnappedRect = m_innerEdgeRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-    ASSERT(pixelSnappedRect.isRenderable());
 
-    Path path;
-    addRoundedRectToPath(pixelSnappedRect, path);
-    return path;
-}
-
-void BorderShape::addOuterShapeToPath(Path& path, float deviceScaleFactor) const
-{
-    auto pixelSnappedRect = m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-    addRoundedRectToPath(pixelSnappedRect, path);
-}
 
 void BorderShape::addInnerShapeToPath(Path& path, float deviceScaleFactor) const
 {

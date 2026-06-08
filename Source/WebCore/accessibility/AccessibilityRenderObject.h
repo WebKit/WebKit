@@ -191,7 +191,6 @@ private:
     bool isInsideIgnoredImageOverlay() const;
     AccessibilityObject* containingTree() const;
     CharacterRange documentBasedSelectedTextRange() const;
-    RefPtr<Element> rootEditableElementForPosition(const Position&) const;
     bool elementIsTextControl(const Element&) const;
     Path elementPath() const final;
 

@@ -48,7 +48,6 @@ protected:
     XRLayerEvent(const AtomString&, Init&&, IsTrusted);
 
     // Event.
-    EventInterfaceType eventInterfaceType() const;
 
 private:
     const Ref<WebXRLayer> m_layer;

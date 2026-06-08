@@ -598,7 +598,6 @@ private:
     WebCore::FloatRect convertFromContentsToPainting(const WebCore::FloatRect&, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
     WebCore::FloatRect convertFromPaintingToContents(const WebCore::FloatRect&, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
 
-    PDFDocumentLayout::PageIndex indexForCurrentPageInView() const;
 
     RetainPtr<PDFAnnotation> annotationForRootViewPoint(const WebCore::IntPoint&) const;
 
@@ -621,7 +620,6 @@ private:
 
     void setPresentationController(RefPtr<PDFPresentationController>&&);
 
-    WebCore::FloatRect pageBoundsInContentsSpace(PDFDocumentLayout::PageIndex) const;
 
     using PageAndPoint = std::pair<RetainPtr<PDFPage>, WebCore::FloatPoint>;
     PageAndPoint rootViewToPage(WebCore::FloatPoint) const;

@@ -2057,24 +2057,6 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext& context, const F
     paintCurrentFrameInContext(context, rect);
 }
 
-RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const FloatRect& rect)
-{
-    if (!m_imageGenerator)
-        createImageGenerator();
-    ASSERT(m_imageGenerator);
-
-    MonotonicTime start = MonotonicTime::now();
-
-    [m_imageGenerator setMaximumSize:CGSize(rect.size())];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr rawImage = adoptCF([m_imageGenerator copyCGImageAtTime:PAL::CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
-    RetainPtr image = adoptCF(CGImageCreateCopyWithColorSpace(rawImage.get(), sRGBColorSpaceSingleton()));
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-    INFO_LOG(LOGIDENTIFIER, "creating image took ", (MonotonicTime::now() - start).seconds());
-
-    return image;
-}
 
 void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
@@ -4281,11 +4263,6 @@ void MediaPlayerPrivateAVFoundationObjC::forEachResourceLoader(Function<void(Web
         callable(loader);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::addResourceLoader(AVAssetResourceLoadingRequest *key, Ref<WebCoreAVFResourceLoader>&& loader)
-{
-    Locker locker { m_resourceLoaderMapLock };
-    m_resourceLoaderMap.add(key, WTF::move(loader));
-}
 
 RefPtr<WebCoreAVFResourceLoader> MediaPlayerPrivateAVFoundationObjC::getResourceLoader(AVAssetResourceLoadingRequest *key) const
 {

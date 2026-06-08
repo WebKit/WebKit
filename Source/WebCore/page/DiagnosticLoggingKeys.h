@@ -40,13 +40,11 @@ public:
     WEBCORE_EXPORT static String backNavigationDeltaKey();
     WEBCORE_EXPORT static String cacheControlNoStoreKey();
     static String cachedResourceRevalidationKey();
-    static String cachedResourceRevalidationReasonKey();
     static String canCacheKey();
     WEBCORE_EXPORT static String canceledLessThan2SecondsKey();
     WEBCORE_EXPORT static String canceledLessThan5SecondsKey();
     WEBCORE_EXPORT static String canceledLessThan20SecondsKey();
     WEBCORE_EXPORT static String canceledMoreThan20SecondsKey();
-    static String cannotSuspendActiveDOMObjectsKey();
     WEBCORE_EXPORT static String cpuUsageKey();
     WEBCORE_EXPORT static String createSharedBufferFailedKey();
     static String deniedByClientKey();
@@ -88,8 +86,6 @@ public:
     static String mainResourceKey();
     static String mediaLoadedKey();
     static String mediaLoadingFailedKey();
-    static String memoryCacheEntryDecisionKey();
-    static String memoryCacheUsageKey();
     WEBCORE_EXPORT static String missingValidatorFieldsKey();
     static String navigationKey();
     WEBCORE_EXPORT static String needsRevalidationKey();
@@ -100,7 +96,6 @@ public:
     static String networkKey();
     WEBCORE_EXPORT static String networkProcessCrashedKey();
     WEBCORE_EXPORT static String neverSeenBeforeKey();
-    static String noKey();
     static String noCurrentHistoryItemKey();
     static String noDocumentLoaderKey();
     WEBCORE_EXPORT static String noLongerInCacheKey();
@@ -155,7 +150,6 @@ public:
     WEBCORE_EXPORT static String unknownEntryRequestKey();
     WEBCORE_EXPORT static String unlikelyToReuseKey();
     WEBCORE_EXPORT static String unsupportedHTTPMethodKey();
-    static String unsuspendableDOMObjectKey();
     WEBCORE_EXPORT static String unusedKey();
     static String usedKey();
     WEBCORE_EXPORT static String userZoomActionKey();
@@ -166,7 +160,6 @@ public:
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
     WEBCORE_EXPORT static String webViewKey();
-    static String yesKey();
 
     static String mediaSourceTypeWatchTimeKey();
     static String mediaVideoCodecWatchTimeKey();

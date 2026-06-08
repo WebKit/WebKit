@@ -506,48 +506,6 @@ float OpenTypeVerticalData::advanceHeight(const Font* font, Glyph glyph) const
     return font->fontMetrics().intHeight();
 }
 
-void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, const Glyph* glyphs, size_t count, float* outXYArray) const
-{
-    size_t countWidths = m_advanceWidths.size();
-    ASSERT(countWidths > 0);
-    const FontMetrics& metrics = font->fontMetrics();
-    float sizePerUnit = font->sizePerUnit();
-    float ascent = metrics.intAscent();
-    bool useVORG = hasVORG();
-    size_t countTopSideBearings = m_topSideBearings.size();
-    float defaultVertOriginY = std::numeric_limits<float>::quiet_NaN();
-    for (float* end = &(outXYArray[count * 2]); outXYArray != end; ++glyphs, outXYArray += 2) {
-        Glyph glyph = *glyphs;
-        uint16_t widthFUnit = m_advanceWidths[glyph < countWidths ? glyph : countWidths - 1];
-        float width = widthFUnit * sizePerUnit;
-        outXYArray[0] = -width / 2;
-
-        // For Y, try VORG first.
-        if (useVORG) {
-            int16_t vertOriginYFUnit = m_vertOriginY.get(glyph);
-            if (vertOriginYFUnit) {
-                outXYArray[1] = -vertOriginYFUnit * sizePerUnit;
-                continue;
-            }
-            if (std::isnan(defaultVertOriginY))
-                defaultVertOriginY = -m_defaultVertOriginY * sizePerUnit;
-            outXYArray[1] = defaultVertOriginY;
-            continue;
-        }
-
-        // If no VORG, try vmtx next.
-        if (countTopSideBearings) {
-            int16_t topSideBearingFUnit = m_topSideBearings[glyph < countTopSideBearings ? glyph : countTopSideBearings - 1];
-            float topSideBearing = topSideBearingFUnit * sizePerUnit;
-            FloatRect bounds = font->boundsForGlyph(glyph);
-            outXYArray[1] = bounds.y() - topSideBearing;
-            continue;
-        }
-
-        // No vertical info in the font file; use ascent as vertical origin.
-        outXYArray[1] = -ascent;
-    }
-}
 
 void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphPage* glyphPage) const
 {

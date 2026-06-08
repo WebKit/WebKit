@@ -96,7 +96,6 @@ struct Device : Handle<VkDevice> {
     }
 
     static void setSharedDevice(Device&&);
-    [[nodiscard]] static Device* sharedDeviceIfExists();
     [[nodiscard]] static Device& sharedDevice();
 
 private:

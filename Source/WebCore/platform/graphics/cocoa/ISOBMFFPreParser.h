@@ -65,7 +65,6 @@ public:
     // (abort() resets the parser but remembers that init was received).
     void reset();
 
-    void setPendingInitializationSegmentForChangeType();
 
 private:
     enum class State : uint8_t {

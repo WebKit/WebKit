@@ -59,7 +59,6 @@ public:
     static void didChangeAutomaticSpellingCorrectionEnabled();
     static void didChangeAutomaticQuoteSubstitutionEnabled();
     static void didChangeAutomaticDashSubstitutionEnabled();
-    static void didChangeSmartListsEnabled();
 
     static bool isSmartInsertDeleteEnabled();
     static void setSmartInsertDeleteEnabled(bool);

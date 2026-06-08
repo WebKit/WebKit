@@ -102,10 +102,6 @@ void RenderSlider::computeIntrinsicLogicalWidthContributions()
     clearContentLogicalWidthsInvalidation();
 }
 
-bool RenderSlider::inDragMode() const
-{
-    return protect(protect(element())->sliderThumbElement())->active();
-}
 
 double RenderSlider::valueRatio() const
 {

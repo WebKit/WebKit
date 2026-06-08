@@ -61,10 +61,6 @@ void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(Ref<Work
     m_peer = WTF::move(peer);
 }
 
-void ThreadableWebSocketChannelClientWrapper::clearPeer()
-{
-    m_peer = nullptr;
-}
 
 bool ThreadableWebSocketChannelClientWrapper::failedWebSocketChannelCreation() const
 {

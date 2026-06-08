@@ -573,17 +573,6 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     }
 }
 
-void BackgroundPainter::clipRoundedInnerRect(GraphicsContext& context, const FloatRoundedRect& clipRect)
-{
-    if (!clipRect.isRenderable()) [[unlikely]] {
-        auto adjustedClipRect = clipRect;
-        adjustedClipRect.adjustRadii();
-        context.clipRoundedRect(adjustedClipRect);
-        return;
-    }
-
-    context.clipRoundedRect(clipRect);
-}
 
 static inline std::optional<LayoutUnit> NODELETE getSpace(LayoutUnit areaSize, LayoutUnit tileSize)
 {

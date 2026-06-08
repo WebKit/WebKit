@@ -185,7 +185,6 @@ private:
     void updateReadyState();
 
     void updateTracks();
-    void updateRenderingMode();
     void scheduleRenderingModeChanged();
     void checkSelectedVideoTrack();
     void updateDisplayLayer();

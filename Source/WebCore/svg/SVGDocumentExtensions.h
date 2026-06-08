@@ -65,7 +65,6 @@ public:
     void addElementToRebuild(SVGElement&);
     void removeElementToRebuild(SVGElement&);
     void rebuildElements();
-    void clearTargetDependencies(SVGElement&);
     void rebuildAllElementReferencesForTarget(SVGElement&);
 
     const WeakHashSet<SVGFontFaceElement, WeakPtrImplWithEventTargetData>& svgFontFaceElements() const LIFETIME_BOUND { return m_svgFontFaceElements; }

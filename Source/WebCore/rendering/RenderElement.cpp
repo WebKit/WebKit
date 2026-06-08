@@ -2531,17 +2531,6 @@ bool RenderElement::addReferencedSVGResourceIfNeeded(SVGElement& targetElement, 
     return ensureReferencedSVGResources().addReferencedSVGResourceIfNeeded(targetElement, targetID);
 }
 
-void RenderElement::repaintRendererOrClientsOfReferencedSVGResources() const
-{
-    auto* enclosingResourceContainer = lineageOfType<RenderSVGResourceContainer>(*this).first();
-    if (!enclosingResourceContainer) {
-        repaintOldAndNewPositionsForSVGRenderer();
-        return;
-    }
-
-    // This implicitly checks if LBSE is activated. If not, no 'RenderSVGResourceContainer' objects are present in the render tree.
-    enclosingResourceContainer->repaintAllClients();
-}
 
 void RenderElement::repaintClientsOfReferencedSVGResources() const
 {

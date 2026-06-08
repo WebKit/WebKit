@@ -339,24 +339,6 @@ StringPairVector HTMLFormElement::textFieldValues() const
     });
 }
 
-RefPtr<HTMLFormControlElement> HTMLFormElement::findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation)
-{
-    if (submitter)
-        return submitter;
-    if (!needButtonActivation)
-        return nullptr;
-    RefPtr<HTMLFormControlElement> firstSuccessfulSubmitButton;
-    for (auto& listedElement : m_listedElements) {
-        RefPtr control = dynamicDowncast<HTMLFormControlElement>(*listedElement);
-        if (!control)
-            continue;
-        if (control->isActivatedSubmit())
-            return nullptr;
-        if (!firstSuccessfulSubmitButton && control->isSuccessfulSubmitButton())
-            firstSuccessfulSubmitButton = WTF::move(control);
-    }
-    return firstSuccessfulSubmitButton;
-}
 
 void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmissionTrigger trigger, HTMLFormControlElement* submitter)
 {

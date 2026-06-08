@@ -1931,17 +1931,6 @@ void ContextMenuController::showContextMenuAt(LocalFrame& frame, const IntPoint&
 
 #endif
 
-#if ENABLE(SERVICE_CONTROLS)
-
-void ContextMenuController::showImageControlsMenu(Event& event)
-{
-    clearContextMenu();
-    handleContextMenuEvent(event);
-    m_client->showContextMenu();
-}
-
-#endif
-
 #if ENABLE(PDFJS)
 
 void ContextMenuController::performPDFJSAction(LocalFrame& frame, const String& action)

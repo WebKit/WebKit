@@ -171,14 +171,5 @@ void DatabaseThread::unscheduleDatabaseTasks(Database& database)
     });
 }
 
-bool DatabaseThread::hasPendingDatabaseActivity() const
-{
-    Locker locker { m_openDatabaseSetLock };
-    for (auto& database : m_openDatabaseSet) {
-        if (database->hasPendingCreationEvent() || database->hasPendingTransaction())
-            return true;
-    }
-    return false;
-}
 
 } // namespace WebCore

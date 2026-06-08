@@ -102,11 +102,6 @@ static HashSet<ScriptExecutionContextIdentifier>& NODELETE allWorkerGlobalScopeI
     return identifiers;
 }
 
-static WorkQueue& sharedFileSystemStorageQueueSingleton()
-{
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared File System Storage Queue"_s,  WorkQueue::QOS::Default));
-    return queue.get();
-}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScope);
 
@@ -294,10 +289,6 @@ WorkerStorageConnection& WorkerGlobalScope::storageConnection()
     return *m_storageConnection;
 }
 
-void WorkerGlobalScope::postFileSystemStorageTask(Function<void()>&& task)
-{
-    sharedFileSystemStorageQueueSingleton().dispatch(WTF::move(task));
-}
 
 WorkerFileSystemStorageConnection& WorkerGlobalScope::getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&& mainThreadConnection)
 {

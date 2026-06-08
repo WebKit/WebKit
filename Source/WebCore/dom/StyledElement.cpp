@@ -118,14 +118,6 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
     }
 }
 
-CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
-{
-    if (auto* style = inlineStyle(); !style || !style->hasCSSOMWrapper())
-        return nullptr;
-    SUPPRESS_UNCOUNTED_LOCAL auto* cssomWrapper = ensureMutableInlineStyle()->cssStyleProperties();
-    ASSERT(cssomWrapper && cssomWrapper->parentElement() == this);
-    return cssomWrapper;
-}
 
 static bool usesStyleBasedEditability(const StyleProperties& properties)
 {

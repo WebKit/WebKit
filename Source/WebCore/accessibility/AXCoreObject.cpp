@@ -754,24 +754,6 @@ RefPtr<AXCoreObject> AXCoreObject::previousSiblingIncludingIgnored(bool updateCh
     return siblings[indexOfThis - 1].copyRef();
 }
 
-AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent) const
-{
-    // In some contexts, we may have already computed the `unignoredParent`, which is what this parameter is.
-    // Ensure this is actually our parent.
-    AX_ASSERT(unignoredParent == parentObjectUnignored());
-
-    RefPtr parent = unignoredParent ? unignoredParent : parentObjectUnignored();
-    if (!parent)
-        return nullptr;
-    const auto& siblings = parent->unignoredChildren(updateChildrenIfNeeded);
-    size_t indexOfThis = siblings.findIf([this] (const Ref<AXCoreObject>& object) {
-        return object.ptr() == this;
-    });
-    if (indexOfThis == notFound)
-        return nullptr;
-
-    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].unsafePtr() : nullptr;
-}
 
 AXCoreObject* AXCoreObject::nextSiblingIncludingIgnoredOrParent() const
 {
@@ -1392,16 +1374,6 @@ bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject& otherTableCell)
     return ancestorID && *ancestorID == otherTableCell.rowGroupAncestorID();
 }
 
-bool AXCoreObject::isTableCellInSameColGroup(AXCoreObject* tableCell)
-{
-    if (!tableCell)
-        return false;
-
-    auto columnRange = columnIndexRange();
-    auto otherColumnRange = tableCell->columnIndexRange();
-
-    return columnRange.first <= otherColumnRange.first + otherColumnRange.second;
-}
 
 bool AXCoreObject::isReplacedElement() const
 {

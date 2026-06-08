@@ -742,7 +742,6 @@ public:
 
     void dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
     void queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
-    void clearScrollAnchorsInScrollableAreas();
 
     void updateScrollAnchoringBeforeLayoutForScrollableAreas();
     void adjustScrollAnchoringPositionForScrollableAreas();
@@ -956,7 +955,6 @@ private:
     void removeFromAXObjectCache();
     void notifyWidgets(WidgetNotification);
 
-    RenderElement* viewportRenderer() const;
     
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
     void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool canDeferUpdateLayerPositions);

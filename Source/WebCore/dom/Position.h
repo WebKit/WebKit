@@ -183,9 +183,6 @@ public:
 
     TextDirection NODELETE primaryDirection() const;
 
-    // Returns the number of positions that exist between two positions.
-    static unsigned positionCountBetweenPositions(const Position&, const Position&);
-
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
     static bool NODELETE nodeIsUserSelectNone(const Node*);
     static bool NODELETE nodeIsUserSelectAll(const Node*);

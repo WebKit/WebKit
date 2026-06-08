@@ -153,10 +153,6 @@ void Device::setSharedDevice(Device&& device)
     s_sharedDevice = WTF::move(device);
 }
 
-Device* Device::sharedDeviceIfExists()
-{
-    return s_sharedDevice ? &s_sharedDevice : nullptr;
-}
 
 Device& Device::sharedDevice()
 {

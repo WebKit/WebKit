@@ -398,15 +398,6 @@ inline void TimerBase::heapDelete()
     item->setNotInHeap();
 }
 
-void TimerBase::heapDeleteMin()
-{
-    ASSERT(!static_cast<bool>(nextFireTime()));
-    heapPopMin();
-    RefPtr item = m_heapItemWithBitfields.pointer();
-    ASSERT(item);
-    item->timerHeap().removeLast();
-    item->setNotInHeap();
-}
 
 inline void TimerBase::heapIncreaseKey()
 {

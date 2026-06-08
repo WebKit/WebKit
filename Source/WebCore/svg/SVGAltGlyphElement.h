@@ -36,7 +36,6 @@ public:
     static Ref<SVGAltGlyphElement> create(const QualifiedName&, Document&);
 
     const AtomString& NODELETE glyphRef() const;
-    ExceptionOr<void> setGlyphRef(const AtomString&);
     const AtomString& NODELETE format() const;
     ExceptionOr<void> setFormat(const AtomString&);
 

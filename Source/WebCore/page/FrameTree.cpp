@@ -571,14 +571,6 @@ unsigned FrameTree::depth() const
     return depth;
 }
 
-bool FrameTree::hasRemoteFrameDescendant() const
-{
-    for (RefPtr frame = firstChild(); frame; frame = frame->tree().traverseNext(m_thisFrame.ptr())) {
-        if (is<RemoteFrame>(*frame))
-            return true;
-    }
-    return false;
-}
 
 AtomString FrameTree::uniqueName() const
 {

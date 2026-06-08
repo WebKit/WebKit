@@ -124,12 +124,6 @@ void Navigation::appendRedirectionURL(const WTF::URL& url)
         m_redirectChain.append(url);
 }
 
-bool Navigation::currentRequestIsCrossSiteRedirect() const
-{
-    return currentRequestIsRedirect()
-        && m_lastNavigationAction
-        && RegistrableDomain(m_lastNavigationAction->redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
-}
 
 WebKit::WebBackForwardListItem* Navigation::targetItem() const
 {

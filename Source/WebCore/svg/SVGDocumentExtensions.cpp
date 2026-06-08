@@ -145,13 +145,6 @@ void SVGDocumentExtensions::rebuildElements()
         element->svgAttributeChanged(SVGNames::hrefAttr);
 }
 
-void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
-{
-    for (Ref element : referencedElement.referencingElements()) {
-        m_rebuildElements.append(element.get());
-        element->callClearTarget();
-    }
-}
 
 void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement& referencedElement)
 {

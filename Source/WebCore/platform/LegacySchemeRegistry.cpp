@@ -214,13 +214,6 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes() WTF_REQUIRES_LOCK(sche
     return canDisplayOnlyIfCanRequestSchemes;
 }
 
-static URLSchemesMap& NODELETE notAllowingJavascriptURLsSchemes()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<URLSchemesMap> notAllowingJavascriptURLsSchemes;
-    return notAllowingJavascriptURLsSchemes;
-}
-
 void LegacySchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isNull())
@@ -426,17 +419,7 @@ void LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& sc
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
 }
 
-void LegacySchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
-{
-    if (scheme.isNull())
-        return;
-    notAllowingJavascriptURLsSchemes().add(scheme);
-}
 
-bool LegacySchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
-{
-    return !scheme.isNull() && notAllowingJavascriptURLsSchemes().contains(scheme);
-}
 
 void LegacySchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme)
 {

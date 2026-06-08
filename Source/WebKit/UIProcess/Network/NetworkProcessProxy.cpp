@@ -2036,15 +2036,6 @@ void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webPro
         completionHandler();
 }
 
-void NetworkProcessProxy::addAllowedFilePaths(WebProcessProxy& webProcessProxy, const Vector<String>& paths)
-{
-    auto& pathSet = m_allowedFilePathsByProcess.ensure(webProcessProxy, [] {
-        return HashSet<String> { };
-    }).iterator->value;
-
-    for (auto& path : paths)
-        pathSet.add(path);
-}
 
 void NetworkProcessProxy::didPerformEvictionForDomains(PAL::SessionID sessionID, const Vector<RegistrableDomain>& domains)
 {

@@ -233,7 +233,6 @@ private:
     Ref<VideoPresentationModelContext> ensureModel(PlaybackSessionContextIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(PlaybackSessionContextIdentifier);
     RefPtr<WebCore::PlatformVideoPresentationInterface> NODELETE findInterface(PlaybackSessionContextIdentifier) const;
-    void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
     void invalidateInterface(WebCore::PlatformVideoPresentationInterface&);

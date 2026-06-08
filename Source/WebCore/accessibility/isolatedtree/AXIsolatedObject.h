@@ -177,14 +177,11 @@ private:
     String stringAttributeValueNullIfMissing(AXProperty) const;
     int intAttributeValue(AXProperty) const;
     unsigned unsignedAttributeValue(AXProperty) const;
-    double doubleAttributeValue(AXProperty) const;
     float floatAttributeValue(AXProperty) const;
     AXIsolatedObject* objectAttributeValue(AXProperty) const;
-    IntPoint intPointAttributeValue(AXProperty) const;
     Color colorAttributeValue(AXProperty) const;
     RetainPtr<CTFontRef> fontAttributeValue(AXProperty) const;
     URL urlAttributeValue(AXProperty) const;
-    uint64_t uint64AttributeValue(AXProperty) const;
     Style::SpeakAs speakAsAttributeValue(AXProperty) const;
     std::pair<unsigned, unsigned> indexRangePairAttributeValue(AXProperty) const;
     template<typename T> T rectAttributeValue(AXProperty) const;
@@ -432,7 +429,6 @@ private:
     bool supportsCheckedState() const final { return boolAttributeValue(AXProperty::SupportsCheckedState); }
 
     String stringValue() const final;
-    std::optional<String> platformStringValue() const;
 
     // Parameterized attribute retrieval.
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const final;

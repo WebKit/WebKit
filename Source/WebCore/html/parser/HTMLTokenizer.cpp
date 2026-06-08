@@ -1471,11 +1471,6 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     return false;
 }
 
-String HTMLTokenizer::bufferedCharacters() const
-{
-    // FIXME: Add an assert about m_state.
-    return makeString("</"_s, m_temporaryBuffer);
-}
 
 void HTMLTokenizer::updateStateFor(const AtomString& tagName)
 {

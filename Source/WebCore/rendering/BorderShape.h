@@ -107,9 +107,7 @@ public:
     void inflate(LayoutUnit);
 
     Path pathForOuterShape(float deviceScaleFactor) const;
-    Path pathForInnerShape(float deviceScaleFactor) const;
 
-    void addOuterShapeToPath(Path&, float deviceScaleFactor) const;
     void addInnerShapeToPath(Path&, float deviceScaleFactor) const;
 
     Path pathForBorderArea(float deviceScaleFactor) const;

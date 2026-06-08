@@ -887,14 +887,6 @@ void WebsiteDataStore::ensureManagedDomains(CompletionHandler<void(const HashSet
     });
 }
 
-void WebsiteDataStore::getManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
-{
-    ASSERT(RunLoop::isMain());
-
-    ensureManagedDomains([completionHandler = WTF::move(completionHandler)] (auto& domains) mutable {
-        completionHandler(domains);
-    });
-}
 
 const HashSet<WebCore::RegistrableDomain>* WebsiteDataStore::managedDomainsIfInitialized()
 {
@@ -914,11 +906,6 @@ void WebsiteDataStore::setManagedDomainsForTesting(HashSet<WebCore::RegistrableD
     forwardManagedDomainsToITPIfInitialized(WTF::move(completionHandler));
 }
 
-void WebsiteDataStore::reinitializeManagedDomains()
-{
-    hasInitializedManagedDomains = false;
-    initializeManagedDomains(ForceReinitialization::Yes);
-}
 #endif
 
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)

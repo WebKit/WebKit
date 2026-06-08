@@ -59,7 +59,6 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForStyleNonce(const String&) const LIFETIME_BOUND;
 
     const ContentSecurityPolicyDirective* violatedDirectiveForBaseURI(const URL&) const LIFETIME_BOUND;
-    const ContentSecurityPolicyDirective* violatedDirectiveForChildContext(const URL&, bool didReceiveRedirectResponse) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForConnectSource(const URL&, bool didReceiveRedirectResponse) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForFont(const URL&, bool didReceiveRedirectResponse) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForFormAction(const URL&, bool didReceiveRedirectResponse) const LIFETIME_BOUND;
@@ -73,7 +72,6 @@ public:
 #endif
     const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&, bool didReceiveRedirectResponse) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&, bool didReceiveRedirectResponse) const LIFETIME_BOUND;
-    const ContentSecurityPolicyDirective* violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const LIFETIME_BOUND;
     bool hasPluginTypesDirective() const { return !!m_pluginTypes; }
     const ContentSecurityPolicyDirective* violatedDirectiveForScript(const URL&, bool didReceiveRedirectResponse, const Vector<ResourceCryptographicDigest>&, const String&) const LIFETIME_BOUND;
     const ContentSecurityPolicyDirective* violatedDirectiveForStyle(const URL&, bool didReceiveRedirectResponse, const String&) const LIFETIME_BOUND;

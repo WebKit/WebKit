@@ -124,7 +124,6 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void addNetworkProcess(NetworkProcessProxy&);
-    void removeNetworkProcess(NetworkProcessProxy&);
 
     void addContentRuleList(API::ContentRuleList&, const WTF::URL& extensionBaseURL = { });
     void removeContentRuleList(const String&);

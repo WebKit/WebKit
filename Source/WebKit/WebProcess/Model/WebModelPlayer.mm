@@ -430,9 +430,6 @@ void WebModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(boo
 {
 }
 
-void WebModelPlayer::updateScene()
-{
-}
 
 WebCore::ModelPlayerAccessibilityChildren WebModelPlayer::accessibilityChildren()
 {

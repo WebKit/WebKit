@@ -182,10 +182,6 @@ void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
         destroyVideoLayer();
 }
 
-bool MediaPlayerPrivateAVFoundation::hasSetUpVideoRendering() const
-{
-    return hasLayerRenderer() || hasContextRenderer();
-}
 
 void MediaPlayerPrivateAVFoundation::load(const String& url)
 {

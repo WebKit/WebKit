@@ -320,7 +320,6 @@ public:
 
     void flushCookies(CompletionHandler<void()>&&);
 
-    void dispatchOnQueue(Function<void()>&&);
 
 #if PLATFORM(COCOA)
     static std::optional<bool> useNetworkLoader();
@@ -444,8 +443,6 @@ public:
 #endif
 #if ENABLE(MANAGED_DOMAINS)
     void ensureManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
-    void getManagedDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
-    void reinitializeManagedDomains();
     static void setManagedDomainsForTesting(HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
 #endif
 

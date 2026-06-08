@@ -79,12 +79,6 @@ WebCore::IntRect WCTileGrid::tileRectFromPixelRect(const WebCore::IntRect& pixel
     return { x, y, maxX - x, maxY - y };
 }
 
-WebCore::IntSize WCTileGrid::tileSizeFromPixelSize(const WebCore::IntSize& size)
-{
-    int width = (size.width() + tilePixelSize().width() - 1) / tilePixelSize().width();
-    int height = (size.height() + tilePixelSize().height() - 1) / tilePixelSize().height();
-    return { width, height };
-}
 
 WebCore::IntSize WCTileGrid::tilePixelSize() const
 {

@@ -111,17 +111,6 @@ void PlacedFloats::add(Item newFloatItem)
     m_list.insert(0, newFloatItem);
 }
 
-bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingContextRoot) const
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    ASSERT(!is<InitialContainingBlock>(m_layoutBox));
-    for (CheckedRef containingBlock : containingBlockChain(*m_layoutBox)) {
-        if (containingBlock.ptr() == &formattingContextRoot)
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 void PlacedFloats::clear()
 {

@@ -489,7 +489,6 @@ protected:
     virtual GraphicsLayer* layerForOverhangAreas() const { return nullptr; }
 #endif
 
-    bool hasLayerForScrollCorner() const;
 
     WEBCORE_EXPORT LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleBounds, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY, const std::optional<LayoutRect> = std::nullopt) const;
     bool isAwaitingScrollend() const { return m_isAwaitingScrollend; }

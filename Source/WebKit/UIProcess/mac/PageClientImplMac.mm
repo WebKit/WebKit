@@ -258,10 +258,6 @@ bool PageClientImpl::isVisuallyIdle()
     return WindowServerConnection::singleton().applicationWindowModificationsHaveStopped() || !isActiveViewVisible();
 }
 
-void PageClientImpl::viewWillMoveToAnotherWindow()
-{
-    clearAllEditCommands();
-}
 
 WebCore::DestinationColorSpace PageClientImpl::colorSpace()
 {

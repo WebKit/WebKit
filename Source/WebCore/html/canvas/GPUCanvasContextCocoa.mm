@@ -249,10 +249,6 @@ void GPUCanvasContextCocoa::updateContentsHeadroom()
     m_compositorIntegration->updateContentsHeadroom(computeContentsHeadroom());
 }
 
-void GPUCanvasContextCocoa::updateHeadroomFromScreenProperties()
-{
-    updateScreenHeadroom(m_screenEDRHeadroom, m_screenSuppressEDR);
-}
 
 void GPUCanvasContextCocoa::updateScreenHeadroom(float currentEDRHeadroom, bool suppressEDR)
 {

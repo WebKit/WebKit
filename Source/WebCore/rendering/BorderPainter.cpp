@@ -1226,14 +1226,6 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
     }
 }
 
-LayoutRect BorderPainter::borderRectAdjustedForBleedAvoidance(const LayoutRect& rect, BleedAvoidance bleedAvoidance) const
-{
-    if (bleedAvoidance != BleedAvoidance::BackgroundOverBorder)
-        return rect;
-
-    // We shrink the rectangle by one device pixel on each side to make it fully overlap the anti-aliased background border
-    return shrinkRectByOneDevicePixel(m_paintInfo.context(), rect, document().deviceScaleFactor());
-}
 
 bool BorderPainter::shouldAntialiasLines(GraphicsContext& context)
 {

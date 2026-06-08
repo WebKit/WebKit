@@ -511,7 +511,6 @@ public:
     bool everHadLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadLayout); }
     std::optional<bool> wasSkippedDuringLastLayoutDueToContentVisibility() const { return everHadLayout() ? std::make_optional(m_stateBitfields.hasFlag(StateFlag::WasSkippedDuringLastLayoutDueToContentVisibility)) : std::nullopt; }
 
-    static ScrollAnchoringController* searchParentChainForScrollAnchoringController(const RenderObject&);
 
     bool childrenInline() const { return m_stateBitfields.hasFlag(StateFlag::ChildrenInline); }
     virtual void setChildrenInline(bool b) { m_stateBitfields.setFlag(StateFlag::ChildrenInline, b); }

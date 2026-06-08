@@ -97,13 +97,5 @@ void RemoteScrollingUIState::removeNodeWithActiveRubberband(WebCore::ScrollingNo
         m_changes.add(Changes::RubberbandingNodes);
 }
 
-void RemoteScrollingUIState::clearNodesWithActiveRubberband()
-{
-    if (m_nodesWithActiveRubberband.isEmpty())
-        return;
-
-    m_nodesWithActiveRubberband.clear();
-    m_changes.add(Changes::RubberbandingNodes);
-}
 
 } // namespace WebKit

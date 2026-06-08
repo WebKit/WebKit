@@ -45,7 +45,6 @@ public:
     void requestMediaKeySystem(MediaKeySystemRequest&);
     void cancelMediaKeySystemRequest(MediaKeySystemRequest&);
 
-    void logRequestMediaKeySystemDenial(Document&);
 
     static ASCIILiteral supplementName() { return "MediaKeySystemController"_s; }
     static MediaKeySystemController* from(Page*);

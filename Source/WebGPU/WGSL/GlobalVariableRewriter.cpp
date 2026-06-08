@@ -113,7 +113,6 @@ private:
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
     const Global* readVariable(AST::IdentifierExpression&);
-    void insertBeforeCurrentStatement(AST::Statement&);
     AST::Expression& bufferLengthType();
     AST::Expression& bufferLengthReferenceType();
 
@@ -2755,10 +2754,6 @@ auto RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier)
     return &global;
 }
 
-void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)
-{
-    m_pendingInsertions.append({ &statement, m_currentStatementIndex });
-}
 
 AST::Identifier RewriteGlobalVariables::argumentBufferParameterName(unsigned group)
 {

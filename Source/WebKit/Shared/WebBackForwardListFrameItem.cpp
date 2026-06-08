@@ -165,18 +165,6 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildren()
     return frameState;
 }
 
-bool WebBackForwardListFrameItem::sharesAncestor(WebBackForwardListFrameItem& frameItem) const
-{
-    HashSet<WebCore::BackForwardFrameItemIdentifier> currentAncestors;
-    for (RefPtr currentAncestor = m_parent.get(); currentAncestor; currentAncestor = currentAncestor->m_parent.get())
-        currentAncestors.add(currentAncestor->m_identifier);
-
-    for (auto* frameItemAncestor = frameItem.m_parent.get(); frameItemAncestor; frameItemAncestor = frameItemAncestor->m_parent.get()) {
-        if (currentAncestors.contains(frameItemAncestor->m_identifier))
-            return true;
-    }
-    return false;
-}
 
 String WebBackForwardListFrameItem::loggingString()
 {

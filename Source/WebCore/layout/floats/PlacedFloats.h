@@ -60,7 +60,6 @@ public:
 
         bool isStartPositioned() const { return m_position == Position::Start; }
         bool isEndPositioned() const { return m_position == Position::End; }
-        bool isInFormattingContextOf(const ElementBox& formattingContextRoot) const;
 
         BoxGeometry boxGeometry() const;
 

@@ -995,20 +995,6 @@ String InspectorStyle::shorthandValue(const String& shorthandProperty) const
     return builder.toString();
 }
 
-String InspectorStyle::shorthandPriority(const String& shorthandProperty) const
-{
-    String priority = m_style->getPropertyPriority(shorthandProperty);
-    if (priority.isEmpty()) {
-        for (unsigned i = 0; i < m_style->length(); ++i) {
-            String individualProperty = m_style->item(i);
-            if (m_style->getPropertyShorthand(individualProperty) != shorthandProperty)
-                continue;
-            priority = m_style->getPropertyPriority(individualProperty);
-            break;
-        }
-    }
-    return priority;
-}
 
 Vector<String> InspectorStyle::longhandProperties(const String& shorthandProperty) const
 {

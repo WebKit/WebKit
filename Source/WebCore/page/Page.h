@@ -959,7 +959,6 @@ public:
 
     AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient.get(); }
 
-    bool hasSeenPlugin(const String& serviceType) const;
     WEBCORE_EXPORT bool NODELETE hasSeenAnyPlugin() const;
     void sawPlugin(const String& serviceType);
     void resetSeenPlugins();
@@ -1084,7 +1083,6 @@ public:
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer* NODELETE optionalIDBConnection();
 
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
-    bool showAllPlugins() const;
 
     WEBCORE_EXPORT void setDOMTimerAlignmentIntervalIncreaseLimit(Seconds);
 

@@ -557,14 +557,6 @@ Ref<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
     return rootObject;
 }
 
-void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObject*, RefPtr<SecurityOrigin>>>& result)
-{
-    for (auto& jsWindowProxy : protect(windowProxy())->jsWindowProxiesAsVector()) {
-        auto* lexicalGlobalObject = jsWindowProxy->window();
-        RefPtr origin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
-        result.append(std::make_pair(lexicalGlobalObject, WTF::move(origin)));
-    }
-}
 
 #if !PLATFORM(COCOA)
 RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget*)

@@ -62,7 +62,6 @@ public:
     BrowsingContextGroup* browsingContextGroup() const { return m_browsingContextGroup.get(); }
 
     const FrameState& NODELETE mainFrameState() const;
-    Ref<FrameState> copyMainFrameState() const;
     Ref<FrameState> copyMainFrameStateWithChildren() const;
 
     const String& NODELETE originalURL() const LIFETIME_BOUND;

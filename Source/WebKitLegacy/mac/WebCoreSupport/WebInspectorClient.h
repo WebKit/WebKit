@@ -90,7 +90,6 @@ public:
     void deleteInspectorStartsAttached();
 
     bool inspectorAttachDisabled();
-    void setInspectorAttachDisabled(bool);
     void deleteInspectorAttachDisabled();
 
     void windowFullScreenDidChange();

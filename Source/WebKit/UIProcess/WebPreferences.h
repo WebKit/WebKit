@@ -125,7 +125,6 @@ private:
     void updateBoolValueForKey(const String& key, bool value, bool ephemeral);
     void updateUInt32ValueForKey(const String& key, uint32_t value, bool ephemeral);
     void updateDoubleValueForKey(const String& key, double value, bool ephemeral);
-    void updateFloatValueForKey(const String& key, float value, bool ephemeral);
     void platformUpdateStringValueForKey(const String& key, const String& value);
     void platformUpdateBoolValueForKey(const String& key, bool value);
     void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
@@ -135,7 +134,6 @@ private:
     void deleteKey(const String& key);
     void platformDeleteKey(const String& key);
 
-    void registerDefaultBoolValueForKey(const String&, bool);
     void registerDefaultUInt32ValueForKey(const String&, uint32_t);
 
     bool platformGetStringUserValueForKey(const String& key, String& userValue);

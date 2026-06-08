@@ -40,7 +40,6 @@ public:
 
 protected:
     virtual ~CaptureDeviceManager();
-    CaptureDevice captureDeviceFromPersistentID(const String& captureDeviceID);
     void deviceChanged();
 };
 

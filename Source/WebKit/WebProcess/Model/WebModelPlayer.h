@@ -74,7 +74,6 @@ public:
 private:
     WebModelPlayer(WebCore::Page&, WebCore::ModelPlayerClient&);
 
-    void updateScene();
 
     // ModelPlayer finals.
     void load(WebCore::Model&, WebCore::LayoutSize) final;

@@ -51,7 +51,6 @@ public:
     FloatRect layoutViewport() const { return m_layoutViewport; };
     void setLayoutViewport(const FloatRect& r) { m_layoutViewport = r; };
 
-    FloatRect layoutViewportRespectingRubberBanding() const;
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
     int headerHeight() const { return m_headerHeight; }

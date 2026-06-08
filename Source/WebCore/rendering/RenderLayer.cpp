@@ -2791,11 +2791,6 @@ RenderLayer* RenderLayer::commonAncestorWithLayer(const RenderLayer& layer) cons
     return findCommonAncestor(*this, layer);
 }
 
-void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntPoint& roundedLocation, ColumnOffsetAdjustment adjustForColumns) const
-{
-    LayoutPoint location = convertToLayerCoords(ancestorLayer, roundedLocation, adjustForColumns);
-    roundedLocation = roundedIntPoint(location);
-}
 
 // Returns the layer reached on the walk up towards the ancestor.
 static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, LayoutPoint& location, RenderLayer::ColumnOffsetAdjustment adjustForColumns)

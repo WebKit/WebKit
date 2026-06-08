@@ -799,11 +799,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
     });
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode()
-{
-    if (updateDisplayMode())
-        scheduleRenderingModeChanged();
-}
 
 void MediaPlayerPrivateMediaStreamAVFObjC::scheduleRenderingModeChanged()
 {

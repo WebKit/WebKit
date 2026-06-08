@@ -55,7 +55,6 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void removeAllObservers();
-    void clearReports();
 
     void registerReportingObserver(ReportingObserver&);
     void unregisterReportingObserver(ReportingObserver&);

@@ -65,7 +65,6 @@ public:
 private:
     bool ensureTile(TileIndex);
     WebCore::IntRect tileRectFromPixelRect(const WebCore::IntRect&);
-    WebCore::IntSize tileSizeFromPixelSize(const WebCore::IntSize&);
     
     WebCore::IntSize m_size;
     HashMap<TileIndex, std::unique_ptr<Tile>> m_tiles;

@@ -434,12 +434,6 @@ void HTMLTreeBuilder::processFakeEndTag(const HTMLStackItem& item)
     processEndTag(WTF::move(fakeToken));
 }
 
-void HTMLTreeBuilder::processFakeCharacters(const String& characters)
-{
-    ASSERT(!characters.isEmpty());
-    ExternalCharacterTokenBuffer buffer(characters);
-    processCharacterBuffer(buffer);
-}
 
 void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
 {

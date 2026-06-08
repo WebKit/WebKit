@@ -71,7 +71,6 @@ public:
     double nyquist() const { return 0.5 * sampleRate(); }
 
     // Converts back into impulse-response form.
-    std::unique_ptr<AudioChannel> createImpulseResponse();
 
 private:
     // Note: this is destructive on the passed in AudioChannel.

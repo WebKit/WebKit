@@ -760,12 +760,6 @@ void CSSFontFace::updateStyleIfNeeded()
     });
 }
 
-bool CSSFontFace::hasSVGFontFaceSource() const
-{
-    return m_sources.containsIf([](auto& source) {
-        return Ref { *source }->isSVGFontFaceSource();
-    });
-}
 
 void CSSFontFace::setErrorState()
 {

@@ -465,13 +465,6 @@ void MemoryMappedGPUBuffer::updateContentsInVivanteSuperTiledFormat(const void* 
         texture.writeLine(dstX, dstY + y, width, srcPixelSpan.subspan(y * srcPitch, srcPitch));
 }
 
-std::span<uint32_t> MemoryMappedGPUBuffer::mappedDataSpan(AccessScope& scope) const
-{
-    ASSERT_UNUSED(scope, &scope.buffer() == this);
-    ASSERT(isMapped());
-    ASSERT(isLinear() || isVivanteSuperTiled());
-    return unsafeMakeSpan<uint32_t>(static_cast<uint32_t*>(m_mappedData), m_mappedLength / sizeof(uint32_t));
-}
 
 MemoryMappedGPUBuffer::AccessScope::AccessScope(MemoryMappedGPUBuffer& buffer, AccessScope::Mode mode)
     : m_buffer(buffer)

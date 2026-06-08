@@ -158,17 +158,6 @@ void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
     });
 }
 
-bool DocumentStorageAccess::hasStorageAccessForDocumentQuirk(Document& document)
-{
-    RefPtr storageAccess = DocumentStorageAccess::from(document);
-    if (!storageAccess)
-        return false;
-
-    auto quickCheckResult = storageAccess->hasStorageAccessQuickCheck();
-    if (quickCheckResult)
-        return *quickCheckResult;
-    return false;
-}
 
 void DocumentStorageAccess::requestStorageAccess(Document& document, Ref<DeferredPromise>&& promise)
 {

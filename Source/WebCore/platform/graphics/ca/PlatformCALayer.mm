@@ -135,11 +135,6 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     graphicsContext.endTransparencyLayer();
 }
 
-void PlatformCALayer::flipContext(CGContextRef context, CGFloat height)
-{
-    CGContextScaleCTM(context, 1, -1);
-    CGContextTranslateCTM(context, 0, -height);
-}
 
 void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, std::span<const char8_t> text, CGFloat strokeWidthAsPercentageOfFontSize, Color strokeColor) const
 {

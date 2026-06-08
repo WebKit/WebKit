@@ -47,11 +47,6 @@ NO_RETURN_DUE_TO_CRASH StatisticsManager::~StatisticsManager()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void StatisticsManager::addDataPoint(ASCIILiteral id, double value)
-{
-    Locker locker { m_lock };
-    m_data.add(id, Vector<double>()).iterator->value.append(value);
-}
 
 static void dumpHistogram(const AbstractLocker&, const Vector<double>& values, double min, double max, size_t binCount = 10)
 {

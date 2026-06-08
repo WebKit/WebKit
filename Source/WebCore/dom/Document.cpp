@@ -1137,12 +1137,6 @@ inline DocumentFontLoader& Document::fontLoader()
     return *m_fontLoader;
 }
 
-DocumentFontLoader& Document::ensureFontLoader()
-{
-    ASSERT(m_constructionDidFinish);
-    lazyInitialize(m_fontLoader, makeUniqueWithoutRefCountedCheck<DocumentFontLoader>(*this));
-    return *m_fontLoader;
-}
 
 CSSFontSelector* Document::cssFontSelector()
 {
@@ -9019,11 +9013,6 @@ void Document::defaultSpatialTrackingLabelChanged(const String& defaultSpatialTr
     }
 }
 
-void Document::addDefaultSpatialTrackingLabelChangedObserver(const DefaultSpatialTrackingLabelChangedObserver& observer)
-{
-    ASSERT(!m_defaultSpatialTrackingLabelChangedObservers.contains(observer));
-    m_defaultSpatialTrackingLabelChangedObservers.add(observer);
-}
 #endif
 
 #if ENABLE(FULLSCREEN_API)

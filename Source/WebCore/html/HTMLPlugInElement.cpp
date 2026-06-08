@@ -144,10 +144,6 @@ void HTMLPlugInElement::willDetachRenderers()
     }
 }
 
-void HTMLPlugInElement::resetInstance()
-{
-    m_instance = nullptr;
-}
 
 JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
 {

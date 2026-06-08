@@ -241,10 +241,6 @@ static FloatSize clampingScaleForImageBufferSize(const FloatSize& size)
     return clampingScale;
 }
 
-IntSize GraphicsContext::compatibleImageBufferSize(const FloatSize& size) const
-{
-    return scaledImageBufferSize(size, scaleFactor());
-}
 
 RenderingMode GraphicsContext::renderingModeForCompatibleBuffer() const
 {

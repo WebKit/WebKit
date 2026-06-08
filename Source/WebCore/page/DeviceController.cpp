@@ -66,13 +66,6 @@ void DeviceController::removeDeviceEventListener(LocalDOMWindow& window)
         protect(client())->stopUpdating();
 }
 
-void DeviceController::removeAllDeviceEventListeners(LocalDOMWindow& window)
-{
-    m_listeners.removeAll(&window);
-    m_lastEventListeners.removeAll(&window);
-    if (m_listeners.isEmpty())
-        protect(client())->stopUpdating();
-}
 
 bool DeviceController::hasDeviceEventListener(LocalDOMWindow& window) const
 {

@@ -566,13 +566,6 @@ void LocalFrame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
     }
 }
 
-bool LocalFrame::containsTiledBackingLayers() const
-{
-    if (RenderView* root = contentRenderer())
-        return root->compositor().hasNonMainLayersWithTiledBacking();
-
-    return false;
-}
 
 void LocalFrame::overflowScrollPositionChangedForNode(const IntPoint& position, Node* node, bool isUserScroll)
 {

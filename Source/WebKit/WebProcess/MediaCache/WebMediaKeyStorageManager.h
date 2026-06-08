@@ -51,10 +51,6 @@ public:
     const String& mediaKeyStorageDirectory() const LIFETIME_BOUND { return m_mediaKeyStorageDirectory; }
     String mediaKeyStorageDirectoryForOrigin(const WebCore::SecurityOriginData&);
 
-    Vector<WebCore::SecurityOriginData> getMediaKeyOrigins();
-    void deleteMediaKeyEntriesForOrigin(const WebCore::SecurityOriginData&);
-    void deleteMediaKeyEntriesModifiedBetweenDates(WallTime startDate, WallTime endDate);
-    void deleteAllMediaKeyEntries();
 
 private:
     void setWebsiteDataStore(const WebProcessDataStoreParameters&) override;

@@ -47,10 +47,6 @@ XRLayerEvent::XRLayerEvent(const AtomString& type, Init&& initializer, IsTrusted
 
 XRLayerEvent::~XRLayerEvent() = default;
 
-EventInterfaceType XRLayerEvent::eventInterfaceType() const
-{
-    return EventInterfaceType::XRLayerEvent;
-}
 
 const WebXRLayer& XRLayerEvent::layer() const
 {

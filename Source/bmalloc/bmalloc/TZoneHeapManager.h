@@ -164,7 +164,6 @@ public:
     TZoneHeapManager(TZoneHeapManager &other) = delete;
     void operator=(const TZoneHeapManager &) = delete;
 
-    BEXPORT static void requirePerBootSeed();
     BEXPORT static void setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount = 0, unsigned smallSizeLimit = 0);
 
     BEXPORT static bool isReady();

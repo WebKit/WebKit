@@ -188,7 +188,6 @@ private:
     void viewGeometryDidChange();
     void viewVisibilityDidChange();
 
-    WebCore::IntRect clipRectInWindowCoordinates() const;
     
     void pendingResourceRequestTimerFired();
 

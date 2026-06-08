@@ -71,7 +71,6 @@ public:
 
     void setOrientToAuto();
     void setOrientToAngle(const SVGAngle&);
-    void setOrientToAutoStartReverse();
 
 private:
     SVGMarkerElement(const QualifiedName&, Document&);

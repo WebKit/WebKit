@@ -50,7 +50,6 @@ class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     virtual ~HTMLPlugInElement();
 
-    void resetInstance();
 
     JSC::Bindings::Instance* bindingsInstance();
 

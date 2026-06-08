@@ -244,7 +244,6 @@ public:
 
     // Images, Patterns, ControlParts, and Media
 
-    IntSize compatibleImageBufferSize(const FloatSize&) const;
 
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, float resolutionScale = 1, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt, ImageBufferFormat = { PixelFormat::BGRA8 }) const;
 

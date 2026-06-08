@@ -88,15 +88,7 @@ void PlatformMediaEngineConfigurationFactory::installFactory(MediaEngineFactory&
     factories().append(WTF::move(factory));
 }
 
-bool PlatformMediaEngineConfigurationFactory::hasDecodingConfigurationFactory()
-{
-    return mockEnabled() || std::ranges::any_of(factories(), [](auto& factory) { return (bool)factory.createDecodingConfiguration; });
-}
 
-bool PlatformMediaEngineConfigurationFactory::hasEncodingConfigurationFactory()
-{
-    return mockEnabled() || std::ranges::any_of(factories(), [](auto& factory) { return (bool)factory.createEncodingConfiguration; });
-}
 
 void PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(PlatformMediaDecodingConfiguration&& config, DecodingConfigurationCallback&& callback)
 {

@@ -70,8 +70,6 @@ public:
 
     // Schemes against which javascript: URLs should not be allowed to run (stop
     // bookmarklets from running on sensitive pages). 
-    static void registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme);
-    static bool shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme);
 
     // Let some schemes opt-out of Private Browsing's default behavior of prohibiting read/write
     // access to Local Storage and Databases.

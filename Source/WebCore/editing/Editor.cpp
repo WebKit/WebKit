@@ -988,10 +988,6 @@ void Editor::removeFormattingAndStyle()
     RemoveFormatCommand::create(protect(document()))->apply();
 }
 
-void Editor::clearLastEditCommand() 
-{
-    m_lastEditCommand = nullptr;
-}
 
 RefPtr<Element> Editor::findEventTargetFrom(const VisibleSelection& selection) const
 {
@@ -3206,10 +3202,6 @@ bool Editor::isSpellCheckingEnabledFor(Node* node) const
     return element->isSpellCheckingEnabled();
 }
 
-bool Editor::isSpellCheckingEnabledInFocusedNode() const
-{
-    return isSpellCheckingEnabledFor(document().selection().selection().start().deprecatedNode());
-}
 
 std::optional<SimpleRange> Editor::markMisspellings(const VisibleSelection& selection)
 {

@@ -215,10 +215,6 @@ const BoxModernPath& Box::modernPath() const
     return std::get<BoxModernPath>(m_pathVariant);
 }
 
-const BoxLegacyPath& Box::legacyPath() const
-{
-    return std::get<BoxLegacyPath>(m_pathVariant);
-}
 
 }
 }

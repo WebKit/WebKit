@@ -51,7 +51,6 @@ public:
 
     WorkerThreadableWebSocketChannel::Peer* NODELETE peer() const;
     void didCreateWebSocketChannel(Ref<WorkerThreadableWebSocketChannel::Peer>&&);
-    void clearPeer();
 
     bool NODELETE failedWebSocketChannelCreation() const;
     void NODELETE setFailedWebSocketChannelCreation();

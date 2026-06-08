@@ -530,14 +530,6 @@ void GraphicsLayer::setVideoGravity(MediaPlayerVideoGravity gravity)
 #endif
 }
 
-Path GraphicsLayer::shapeLayerPath() const
-{
-#if USE(CA) || USE(COORDINATED_GRAPHICS)
-    return m_shapeLayerPath;
-#else
-    return Path();
-#endif
-}
 
 void GraphicsLayer::setShapeLayerPath(const Path& path)
 {
@@ -726,11 +718,6 @@ FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverage
     return unionRect(coverageRect, expandedRect);
 }
 
-String GraphicsLayer::animationNameForTransition(AnimatedProperty property)
-{
-    // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
-    return makeString("-|transition"_s, static_cast<int>(property), '-');
-}
 
 void GraphicsLayer::suspendAnimations(MonotonicTime)
 {
