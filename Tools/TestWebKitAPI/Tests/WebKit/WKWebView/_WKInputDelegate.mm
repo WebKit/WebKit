@@ -187,6 +187,8 @@ TEST(WebKit, FocusedElementInfo)
     RetainPtr delegate = adoptNS([[InputDelegate alloc] init]);
     [webView _setInputDelegate:delegate.get()];
 
+    [webView focusInWindow];
+
     __block RetainPtr<id <_WKFocusedElementInfo>> currentElement;
     [delegate setShouldStartInputSessionHandler:^BOOL(id<_WKFocusedElementInfo> element) {
         currentElement = element;

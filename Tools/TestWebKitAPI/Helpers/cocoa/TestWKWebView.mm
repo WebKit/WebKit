@@ -1490,6 +1490,12 @@ static UIWindowScene *windowScene()
 
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(WKFrameInfo *)frame
 {
+#if PLATFORM(IOS)
+    [[self window] makeKeyWindow];
+    [[self textInputContentView] becomeFirstResponder];
+    [self waitForNextPresentationUpdate];
+#endif
+
     auto initialChangeCount = _inputSessionChangeCount;
     BOOL hasEmittedWarning = NO;
     NSTimeInterval secondsToWaitUntilWarning = 2;
@@ -1605,6 +1611,12 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     RetainPtr scrollView = [self scrollView];
     [self scrollViewWillBeginZooming:scrollView.get() withView:[self viewForZoomingInScrollView:scrollView.get()]];
     [scrollView setZoomScale:zoomScale];
+}
+
+- (void)focusInWindow
+{
+    [[self window] makeKeyWindow];
+    [self becomeFirstResponder];
 }
 
 @end

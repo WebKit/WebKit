@@ -59,6 +59,7 @@ TEST(ModalDialogDuringOverlappingFocus, AlertNotDeferredAfterFIFOAsyncFocusCompl
     }];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView focusInWindow];
     [webView _setInputDelegate:inputDelegate.get()];
 
     __block bool alertDelivered = false;

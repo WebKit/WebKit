@@ -73,6 +73,7 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
 
     [webView _setInputDelegate:inputDelegate.get()];
     [webView _setEditable:YES];
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'>"
         "<body style='font-size: 16px; font-family: UICTFontTextStyleBody; font-weight: bold;'>"
         "<em>Wulk</em>"
@@ -139,6 +140,9 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
 
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
+
     auto contextBeforeTyping = [webView autocorrectionContext];
     EXPECT_TRUE(contextBeforeTyping.contextBeforeSelection.isEmpty());
     EXPECT_TRUE(contextBeforeTyping.selectedText.isEmpty());
@@ -163,6 +167,7 @@ TEST(AutocorrectionTests, MultiWordAutocorrectionFromStartOfText)
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<input id='input' value='Helol wordl'></input>"];
     [webView objectByEvaluatingJavaScript:@"input.focus(); input.setSelectionRange(0, 0)"];
     TestWebKitAPI::Util::run(&startedInputSession);
@@ -187,6 +192,7 @@ TEST(AutocorrectionTests, DoNotLearnCorrectionsAfterChangingInputTypeFromPasswor
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<input id='first' type='password'></input><input id='second'></input>"];
     [webView stringByEvaluatingJavaScript:@"let first = document.querySelector('#first'); first.type = 'text'; first.focus();"];
     TestWebKitAPI::Util::run(&startedInputSession);
@@ -302,6 +308,9 @@ TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
 
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
 
     auto *contentView = [webView textInputContentView];
     auto contextBeforeInsertingText = [webView autocorrectionContext];

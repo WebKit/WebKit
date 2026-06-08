@@ -77,6 +77,12 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+#if PLATFORM(MAC)
+@interface NSApplication ()
+- (void)_setKeyWindow:(NSWindow *)newKeyWindow;
+@end
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS)
 #import "Helpers/cocoa/ImageAnalysisTestingUtilities.h"
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
@@ -7442,8 +7448,12 @@ TEST(SiteIsolation, AdvanceFocusAcrossFrames)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
+    [[webView window] makeKeyWindow];
+    [NSApp _setKeyWindow:[webView window]];
+    [[webView window] makeFirstResponder:webView.get()];
+    [webView waitForNextPresentationUpdate];
+
     NSArray *expectedMessages = @[
-        @"main - focus div1",
         @"main - focus div1",
         @"main - focus div2",
         @"iframe - focus div1",
@@ -7456,10 +7466,7 @@ TEST(SiteIsolation, AdvanceFocusAcrossFrames)
     Util::run(&messageReceived);
     EXPECT_TRUE([mostRecentMessage isEqualToString:expectedMessages[currentExpected++]]);
     messageReceived = false;
-    Util::run(&messageReceived);
-    EXPECT_TRUE([mostRecentMessage isEqualToString:expectedMessages[currentExpected++]]);
 
-    messageReceived = false;
     [webView typeCharacter:'\t'];
     Util::run(&messageReceived);
     EXPECT_TRUE([mostRecentMessage isEqualToString:expectedMessages[currentExpected++]]);
@@ -8199,6 +8206,7 @@ TEST(SiteIsolation, SelectMultiplePickerLocationInCrossOriginIframe)
     [navigationDelegate waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
 
+    [webView focusInWindow];
     [webView evaluateJavaScript:@"document.querySelector('select').focus()" inFrame:[webView firstChildFrame] completionHandler:nil];
 
     Util::run(&pickerPresented);
@@ -9197,6 +9205,7 @@ TEST(SiteIsolation, NoRedundantFocusPolicyCallbackAfterBlurAndRefocusInCrossOrig
 
     // Focus the input in the cross-origin iframe. Use WithUserGesture because Element::focus()
     // is a no-op for cross-origin non-main-frame iframes without a user gesture.
+    [webView focusInWindow];
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.getElementById('input').focus()" inFrame:[webView firstChildFrame]];
     Util::run(&didFocusPolicy);
     EXPECT_EQ(1, focusPolicyCallCount);
