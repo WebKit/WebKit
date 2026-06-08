@@ -839,6 +839,10 @@ TEST(WebKit, ScrollToFoundRangeDoesNotFocusElement)
     }];
     [webView _setInputDelegate:inputDelegate.get()];
 
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+    [webView waitForNextPresentationUpdate];
+#endif
     [webView evaluateJavaScript:@"document.getElementById('input').focus()" completionHandler:nil];
     TestWebKitAPI::Util::run(&inputFocused);
 

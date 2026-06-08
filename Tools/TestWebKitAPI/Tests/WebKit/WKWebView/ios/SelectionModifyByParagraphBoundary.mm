@@ -45,6 +45,7 @@ TEST(SelectionTests, ModifyByParagraphBoundary)
 
     [webView _setInputDelegate:inputDelegate.get()];
     [webView _setEditable:YES];
+    [webView focusInWindow];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body contenteditable>hello<div id='blankLine'><br></div><div id='lastLine'>world</div></body>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
 
