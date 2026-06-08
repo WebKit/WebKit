@@ -251,6 +251,8 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<Test
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
 
+    [webView focusInWindow];
+
     __block bool doneWaiting = false;
     [inputDelegate setFocusStartsInputSessionPolicyHandler:^_WKFocusStartsInputSessionPolicy(WKWebView *, id <_WKFocusedElementInfo>) {
         doneWaiting = true;
@@ -808,6 +810,7 @@ TEST(KeyboardInputTests, TestWebViewAdditionalContextForNonAutofillCredentialTyp
 TEST(KeyboardInputTests, AsyncFocusRequiresStrongPasswordAssistanceAfterBlurNoStartSession)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView focusInWindow];
     RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
 
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
@@ -951,6 +954,7 @@ TEST(KeyboardInputTests, DoNotRegisterActionsInOverriddenUndoManager)
 TEST(KeyboardInputTests, NewUndoGroupClosesPreviousTypingCommand)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView focusInWindow];
     RetainPtr inputDelegate = adoptNS([TestInputDelegate new]);
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) {
         return _WKFocusStartsInputSessionPolicyAllow;
@@ -1022,6 +1026,7 @@ TEST(KeyboardInputTests, EditableWebViewRequiresKeyboardWhenFirstResponder)
     ClassMethodSwizzler hardwareKeyboardModeSwizzler { UIKeyboard.class, @selector(isInHardwareKeyboardMode), returnNo };
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView focusInWindow];
     RetainPtr delegate = adoptNS([TestInputDelegate new]);
     [webView _setInputDelegate:delegate.get()];
     [delegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id <_WKFocusedElementInfo>) {
@@ -1159,6 +1164,7 @@ TEST(KeyboardInputTests, NoCrashWithEmptyAttributedMarkedText)
 TEST(KeyboardInputTests, CharactersAroundCaretSelection)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView focusInWindow];
     RetainPtr delegate = adoptNS([TestInputDelegate new]);
     [webView _setInputDelegate:delegate.get()];
 
@@ -1257,6 +1263,7 @@ TEST(KeyboardInputTests, MarkedTextSegmentsWithUnderlines)
 TEST(KeyboardInputTests, HasTextAfterFocusingTextField)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 600)]);
+    [webView focusInWindow];
 
     enum class HasText : bool { No, Yes };
     __block Vector<std::pair<WKInputType, HasText>, 3> results;
@@ -1389,6 +1396,7 @@ TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedA
 TEST(KeyboardInputTests, SetConversationContext)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [webView focusInWindow];
     RetainPtr conversationContext = adoptNS([UIMailConversationContext new]);
     [webView setConversationContext:conversationContext.get()];
 
@@ -1438,6 +1446,7 @@ TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
     [WKWebView _setApplicationBundleIdentifier:@"org.webkit.SomeTelephonyApp"];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView focusInWindow];
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     RetainPtr inputDelegate = adoptNS([TestInputDelegate new]);
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) {

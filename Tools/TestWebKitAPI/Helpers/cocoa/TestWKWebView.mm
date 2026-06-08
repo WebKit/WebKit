@@ -300,6 +300,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self.textInputContentView insertTextSuggestion:textSuggestion];
 }
 
+- (void)focusInWindow
+{
+    [[self window] makeKeyWindow];
+    [self becomeFirstResponder];
+}
+
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 - (UIWKDocumentContext *)synchronouslyRequestDocumentContext:(UIWKDocumentRequest *)request
@@ -1490,6 +1496,12 @@ static UIWindowScene *windowScene()
 
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(WKFrameInfo *)frame
 {
+#if PLATFORM(IOS_FAMILY)
+    [[self window] makeKeyWindow];
+    [[self textInputContentView] becomeFirstResponder];
+    [self waitForNextPresentationUpdate];
+#endif
+
     auto initialChangeCount = _inputSessionChangeCount;
     BOOL hasEmittedWarning = NO;
     NSTimeInterval secondsToWaitUntilWarning = 2;

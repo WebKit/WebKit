@@ -110,6 +110,7 @@ class Color;
 - (void)moveSelectionToEndOfParagraph;
 - (void)extendSelectionToEndOfParagraph;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
+- (void)focusInWindow;
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 - (UIWKDocumentContext *)synchronouslyRequestDocumentContext:(UIWKDocumentRequest *)request;
 #endif

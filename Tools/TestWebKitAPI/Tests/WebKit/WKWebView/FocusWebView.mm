@@ -370,6 +370,50 @@ TEST(FocusWebView, DoNotFocusWebViewWhenUnparented)
     EXPECT_FALSE(calledFocusWebView);
 }
 
+TEST(FocusWebView, NoFocusEventsForBackgroundWindow)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+
+    NSString *html = @"<!DOCTYPE html>"
+        "<html>"
+        "<body>"
+        "<input id='input' type='text'>"
+        "<script>"
+        "let focusEventCount = 0;"
+        "input.addEventListener('focus', () => {"
+        "    focusEventCount++;"
+        "});"
+        "function getFocusEventCount() { return focusEventCount; }"
+        "</script>"
+        "</body>"
+        "</html>";
+    [webView synchronouslyLoadHTMLString:html];
+
+    [[webView window] resignKeyWindow];
+    [webView objectByEvaluatingJavaScript:@"input.focus()"];
+    [[webView window] makeKeyWindow];
+#if PLATFORM(IOS_FAMILY)
+    // iOS requires that the window manually be made first responder to be focused.
+    [webView becomeFirstResponder];
+#endif
+    [webView waitForNextPresentationUpdate];
+
+#if PLATFORM(MAC)
+    // FIXME: rdar://168467484 (Blur and Focus events should only be dispatched if the window is both active and focused.)
+    // Expected count is 1, not 2. On Mac, input.focus() flips IsFocused before the window is active (via
+    // Widget::setFocus → MakeFirstResponder), causing an extra dispatch. iOS's Widget::setFocus is a no-op.
+    // This extra focus event on Mac will be correctly suppressed with rdar://168467484.
+    int expectedFocusEventCount = 2;
+#else
+    int expectedFocusEventCount = 1;
+#endif
+
+    NSNumber *focusEventCount = [webView objectByEvaluatingJavaScript:@"getFocusEventCount()"];
+    EXPECT_EQ([focusEventCount intValue], expectedFocusEventCount);
+}
+
+
 class CrossOriginIframeRelinquishToChromeTests : public ::testing::TestWithParam<bool> {
 public:
     bool siteIsolationEnabled() const { return GetParam(); }
