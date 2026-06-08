@@ -241,7 +241,7 @@ class CDMProxyDecryptionClient;
 // from background threads (i.e. decryptors).
 class CDMProxy : public ThreadSafeRefCounted<CDMProxy> {
 public:
-    static constexpr Seconds MaxKeyWaitTimeSeconds = 7_s;
+    static constexpr Seconds MaxKeyWaitTimeSeconds = 10_s;
 
     virtual ~CDMProxy() = default;
 
