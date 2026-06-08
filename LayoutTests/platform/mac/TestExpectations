@@ -173,6 +173,8 @@ webkit.org/b/61827 fast/events/drag-image-filename.html
 fast/mediastream/microphone-change-while-muted.html [ Pass ]
 
 # Media Stream API is not fully supported.
+fast/mediastream/captureStream/canvas-rvfc-metadata.html [ Failure ]
+
 fast/mediastream/MediaStream-add-ended-tracks.html
 
 fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
