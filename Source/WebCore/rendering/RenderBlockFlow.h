@@ -124,8 +124,8 @@ class RenderBlockFlow : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderBlockFlow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBlockFlow);
 public:
-    RenderBlockFlow(Type, Element&, Style::ComputedStyle&&, OptionSet<BlockFlowFlag> = { });
-    RenderBlockFlow(Type, Document&, Style::ComputedStyle&&, OptionSet<BlockFlowFlag> = { });
+    RenderBlockFlow(Type, Element&, RenderStyle&&, OptionSet<BlockFlowFlag> = { });
+    RenderBlockFlow(Type, Document&, RenderStyle&&, OptionSet<BlockFlowFlag> = { });
     virtual ~RenderBlockFlow();
         
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
@@ -366,8 +366,8 @@ public:
     LayoutUnit NODELETE logicalHeightForChildForFragmentation(const RenderBox& child) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
-    void updateColumnProgressionFromStyle(const Style::ComputedStyle&);
-    void updateStylesForColumnChildren(const Style::ComputedStyle* oldStyle);
+    void updateColumnProgressionFromStyle(const RenderStyle&);
+    void updateStylesForColumnChildren(const RenderStyle* oldStyle);
 
     bool needsLayoutAfterFragmentRangeChange() const override;
     WEBCORE_EXPORT RenderText* findClosestTextAtAbsolutePoint(const FloatPoint&);
@@ -423,8 +423,8 @@ protected:
     void setMaxMarginBeforeValues(LayoutUnit pos, LayoutUnit neg);
     void setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg);
 
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void createFloatingObjects();
 

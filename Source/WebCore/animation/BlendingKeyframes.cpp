@@ -33,7 +33,7 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleInterpolation.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -152,7 +152,7 @@ static const StyleRuleKeyframe& hundredPercentKeyframe()
     return rule.get().get();
 }
 
-void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, const Style::ComputedStyle& underlyingStyle)
+void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, const RenderStyle& underlyingStyle)
 {
     if (isEmpty())
         return;
@@ -212,7 +212,7 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
         // If we're provided an existing implicit keyframe, we need to add all the styles for the implicit properties.
         if (existingImplicitBlendingKeyframe) {
             ASSERT(existingImplicitBlendingKeyframe->style());
-            auto keyframeStyle = Style::ComputedStyle::clonePtr(*existingImplicitBlendingKeyframe->style());
+            auto keyframeStyle = RenderStyle::clonePtr(*existingImplicitBlendingKeyframe->style());
             for (auto property : implicitProperties) {
                 Style::Interpolation::interpolate(property, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace, effect);
                 existingImplicitBlendingKeyframe->addProperty(property);
@@ -452,7 +452,7 @@ uint64_t BlendingKeyframes::nextAnonymousIdentifier()
     return ++numericIdentifier;
 }
 
-BlendingKeyframe::BlendingKeyframe(Offset&& offset, std::unique_ptr<Style::ComputedStyle>&& style)
+BlendingKeyframe::BlendingKeyframe(Offset&& offset, std::unique_ptr<RenderStyle>&& style)
     : m_specifiedOffset(WTF::move(offset))
     , m_style(WTF::move(style))
 {
@@ -464,7 +464,7 @@ BlendingKeyframe::BlendingKeyframe(const BlendingKeyframe& source)
     : m_specifiedOffset(source.m_specifiedOffset)
     , m_computedOffset(source.m_computedOffset)
     , m_properties(source.m_properties)
-    , m_style(Style::ComputedStyle::clonePtr(*source.style()))
+    , m_style(RenderStyle::clonePtr(*source.style()))
     , m_timingFunction(source.m_timingFunction)
     , m_compositeOperation(source.m_compositeOperation)
     , m_containsDirectionAwareProperty(source.m_containsDirectionAwareProperty)

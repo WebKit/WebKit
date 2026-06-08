@@ -78,6 +78,7 @@ class PlatformMouseEvent;
 class PlatformWheelEvent;
 class PopoverData;
 class PseudoElement;
+class RenderStyle;
 class RenderTreePosition;
 class Settings;
 class ShadowRoot;
@@ -172,7 +173,6 @@ struct SerializationContext;
 }
 
 namespace Style {
-class ComputedStyle;
 class Resolver;
 enum class Change : uint8_t;
 struct PseudoElementIdentifier;
@@ -447,9 +447,9 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    virtual RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&);
-    virtual bool rendererIsNeeded(const Style::ComputedStyle&);
-    virtual bool isReplaced(const Style::ComputedStyle* = nullptr) const { return false; }
+    virtual RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&);
+    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool isReplaced(const RenderStyle* = nullptr) const { return false; }
 
     inline ShadowRoot* shadowRoot() const;
     RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
@@ -529,8 +529,8 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
 
     using Node::computedStyle;
-    const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
-    const Style::ComputedStyle* computedStyleForEditability();
+    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
+    const RenderStyle* computedStyleForEditability();
 
     bool needsStyleInvalidation() const;
 
@@ -709,8 +709,8 @@ public:
     CSSAnimationCollection& animationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>&) LIFETIME_BOUND;
     void setAnimationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>&, CSSAnimationCollection&&);
 
-    const Style::ComputedStyle* NODELETE lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
-    void setLastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&, std::unique_ptr<const Style::ComputedStyle>&&);
+    const RenderStyle* NODELETE lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    void setLastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&, std::unique_ptr<const RenderStyle>&&);
     bool NODELETE hasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&) const;
     void setHasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&, bool);
 
@@ -797,13 +797,13 @@ public:
     virtual void didAttachRenderers();
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
-    virtual std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle);
+    virtual std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle);
 
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
 
-    const Style::ComputedStyle* NODELETE existingComputedStyle() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const Style::ComputedStyle* NODELETE renderOrDisplayContentsStyle() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const Style::ComputedStyle* NODELETE renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    const RenderStyle* NODELETE existingComputedStyle() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const RenderStyle* NODELETE renderOrDisplayContentsStyle() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const RenderStyle* NODELETE renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
 
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
@@ -857,7 +857,7 @@ public:
 
     bool NODELETE hasDisplayContents() const;
     bool NODELETE hasDisplayNone() const;
-    void storeDisplayContentsOrNoneStyle(std::unique_ptr<Style::ComputedStyle>);
+    void storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle>);
     void clearDisplayContentsOrNoneStyle();
 
     using ContainerNode::setAttributeEventListener;
@@ -1025,8 +1025,8 @@ private:
     void removeShadowRootSlow(ShadowRoot&);
 
     enum class ResolveComputedStyleMode : uint8_t { Normal, RenderedOnly, Editability };
-    const Style::ComputedStyle* resolveComputedStyle(ResolveComputedStyleMode = ResolveComputedStyleMode::Normal);
-    const Style::ComputedStyle& resolvePseudoElementStyle(const Style::PseudoElementIdentifier&);
+    const RenderStyle* resolveComputedStyle(ResolveComputedStyleMode = ResolveComputedStyleMode::Normal);
+    const RenderStyle& resolvePseudoElementStyle(const Style::PseudoElementIdentifier&);
 
     unsigned NODELETE rareDataChildIndex() const;
 
@@ -1116,7 +1116,7 @@ inline void Element::disconnectFromResizeObservers()
     disconnectFromResizeObserversSlow(*observerData);
 }
 
-inline bool isInTopLayerOrBackdrop(const Style::ComputedStyle&, const Element*);
+inline bool isInTopLayerOrBackdrop(const RenderStyle&, const Element*);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ContentRelevancy);
 

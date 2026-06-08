@@ -29,14 +29,14 @@
 #include "ColorBlending.h"
 #include "ElementRuleCollector.h"
 #include "RenderElement.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderedDocumentMarker.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
-static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, const Style::ComputedStyle* pseudoElementStyle, const PaintInfo& paintInfo)
+static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, const RenderStyle* pseudoElementStyle, const PaintInfo& paintInfo)
 {
     if (!pseudoElementStyle)
         return;
@@ -68,7 +68,7 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     }
 }
 
-static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
+static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     static constexpr OptionSet systemAppearanceOptions { StyleColorOptions::UseSystemAppearance };
 
@@ -157,7 +157,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     return styledMarkedText;
 }
 
-StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(const RenderText& renderer, const WebCore::Style::ComputedStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
+StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
 {
     StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationLineInEffect(), isFirstLine, paintInfo.paintBehavior);

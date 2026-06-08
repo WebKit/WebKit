@@ -22,7 +22,7 @@
 #pragma once
 
 #include <WebCore/RenderBoxModelObject.h>
-#include <WebCore/StyleComputedStyle+GettersInlines.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 
 namespace WebCore {
 

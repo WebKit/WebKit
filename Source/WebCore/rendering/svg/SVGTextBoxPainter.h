@@ -33,12 +33,9 @@ namespace WebCore {
 
 class RenderBoxModelObject;
 class RenderSVGInlineText;
+class RenderStyle;
 class SVGPaintServerHandling;
 struct SVGTextFragment;
-
-namespace Style {
-class ComputedStyle;
-}
 
 template<typename TextBoxPath>
 class SVGTextBoxPainter {
@@ -58,13 +55,13 @@ private:
 
     void paintDecoration(Style::TextDecorationLine, const SVGTextFragment&);
     void paintDecorationWithStyle(Style::TextDecorationLine, const SVGTextFragment&, const RenderBoxModelObject&);
-    void paintTextWithShadows(const Style::ComputedStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
-    void paintText(const Style::ComputedStyle&, const Style::ComputedStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
+    void paintTextWithShadows(const RenderStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
+    void paintText(const RenderStyle&, const RenderStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
-    bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, const RenderBoxModelObject&, const Style::ComputedStyle&);
+    bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, const RenderBoxModelObject&, const RenderStyle&);
     void releasePaintingResource(SVGPaintServerHandling&);
 
-    bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const Style::ComputedStyle&);
+    bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
     void releaseLegacyPaintingResource(GraphicsContext*&, const Path*);
 
     std::pair<unsigned, unsigned> selectionStartEnd() const;
@@ -93,8 +90,8 @@ public:
     ModernSVGTextBoxPainter(const LayoutIntegration::InlineContent&, size_t boxIndex, PaintInfo&, const LayoutPoint& paintOffset);
 };
 
-TextRun constructTextRun(StringView, TextDirection, const Style::ComputedStyle&, const SVGTextFragment&);
-FloatRect selectionRectForTextFragment(const RenderSVGInlineText&, TextDirection, const SVGTextFragment&, unsigned startPosition, unsigned endPosition, const Style::ComputedStyle&);
+TextRun constructTextRun(StringView, TextDirection, const RenderStyle&, const SVGTextFragment&);
+FloatRect selectionRectForTextFragment(const RenderSVGInlineText&, TextDirection, const SVGTextFragment&, unsigned startPosition, unsigned endPosition, const RenderStyle&);
 bool mapStartEndPositionsIntoFragmentCoordinates(unsigned textBoxStart, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition);
 
 }

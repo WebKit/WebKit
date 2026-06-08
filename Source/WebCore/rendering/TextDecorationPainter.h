@@ -34,12 +34,9 @@ namespace WebCore {
 
 class FontCascade;
 class RenderObject;
+class RenderStyle;
 class TextRun;
-
-namespace Style {
-class ComputedStyle;
-}
-
+    
 class TextDecorationPainter {
 public:
     TextDecorationPainter(GraphicsContext&, const FontCascade&, const Style::TextShadows&, const Style::AppleColorFilter&, bool isPrinting, WritingMode);
@@ -71,7 +68,7 @@ public:
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
     };
-    void paintBackgroundDecorations(const Style::ComputedStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor);
+    void paintBackgroundDecorations(const RenderStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor);
 
     struct ForegroundDecorationGeometry {
         FloatPoint boxOrigin;
@@ -82,7 +79,7 @@ public:
     };
     void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 
-    static Color decorationColor(const Style::ComputedStyle&, OptionSet<PaintBehavior> paintBehavior = { });
+    static Color decorationColor(const RenderStyle&, OptionSet<PaintBehavior> paintBehavior = { });
     static Styles stylesForRenderer(const RenderObject&, Style::TextDecorationLine requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, std::optional<PseudoElementType> = { });
     static Style::TextDecorationLine NODELETE textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 

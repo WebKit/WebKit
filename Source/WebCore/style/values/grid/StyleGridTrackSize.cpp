@@ -46,13 +46,13 @@ using namespace CSS::Literals;
 
 // MARK: - Conversion
 
-template<> struct ToCSS<GridMinMaxFunctionParameters> { auto operator()(const GridMinMaxFunctionParameters&, const Style::ComputedStyle&) -> CSS::GridMinMaxFunctionParameters; };
+template<> struct ToCSS<GridMinMaxFunctionParameters> { auto operator()(const GridMinMaxFunctionParameters&, const RenderStyle&) -> CSS::GridMinMaxFunctionParameters; };
 template<> struct ToStyle<CSS::GridMinMaxFunctionParameters> { auto operator()(const CSS::GridMinMaxFunctionParameters&, const BuilderState&) -> GridMinMaxFunctionParameters; };
 
-template<> struct ToCSS<GridFitContentFunctionParameters> { auto operator()(const GridFitContentFunctionParameters&, const Style::ComputedStyle&) -> CSS::GridFitContentFunctionParameters; };
+template<> struct ToCSS<GridFitContentFunctionParameters> { auto operator()(const GridFitContentFunctionParameters&, const RenderStyle&) -> CSS::GridFitContentFunctionParameters; };
 template<> struct ToStyle<CSS::GridFitContentFunctionParameters> { auto operator()(const CSS::GridFitContentFunctionParameters&, const BuilderState&) -> GridFitContentFunctionParameters; };
 
-auto ToCSS<GridMinMaxFunctionParameters>::operator()(const GridMinMaxFunctionParameters& value, const Style::ComputedStyle& style) -> CSS::GridMinMaxFunctionParameters
+auto ToCSS<GridMinMaxFunctionParameters>::operator()(const GridMinMaxFunctionParameters& value, const RenderStyle& style) -> CSS::GridMinMaxFunctionParameters
 {
     return {
         .min = toCSS(value.min, style),
@@ -68,7 +68,7 @@ auto ToStyle<CSS::GridMinMaxFunctionParameters>::operator()(const CSS::GridMinMa
     };
 }
 
-auto ToCSS<GridFitContentFunctionParameters>::operator()(const GridFitContentFunctionParameters& value, const Style::ComputedStyle& style) -> CSS::GridFitContentFunctionParameters
+auto ToCSS<GridFitContentFunctionParameters>::operator()(const GridFitContentFunctionParameters& value, const RenderStyle& style) -> CSS::GridFitContentFunctionParameters
 {
     return value.value.switchOnUsingSpecified(
         [&](const LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> CSS::GridFitContentFunctionParameters {
@@ -86,7 +86,7 @@ auto ToStyle<CSS::GridFitContentFunctionParameters>::operator()(const CSS::GridF
     };
 }
 
-auto ToCSS<GridTrackSize>::operator()(const GridTrackSize& value, const Style::ComputedStyle& style) -> CSS::GridTrackSize
+auto ToCSS<GridTrackSize>::operator()(const GridTrackSize& value, const RenderStyle& style) -> CSS::GridTrackSize
 {
     return WTF::switchOn(value,
         [&](const GridTrackBreadth& breadth) -> CSS::GridTrackSize {

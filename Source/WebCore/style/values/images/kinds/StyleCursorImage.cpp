@@ -88,7 +88,7 @@ bool CursorImage::equalInputImages(const CursorImage& other) const
     return arePointingToEqualData(m_image, other.m_image);
 }
 
-Ref<CSSValue> CursorImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> CursorImage::computedStyleValue(const RenderStyle& style) const
 {
     return CSSCursorImageValue::create(
         m_image->computedStyleValue(style),
@@ -97,7 +97,7 @@ Ref<CSSValue> CursorImage::computedStyleValue(const Style::ComputedStyle& style)
     );
 }
 
-Ref<DeprecatedCSSOMValue> CursorImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CursorImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }

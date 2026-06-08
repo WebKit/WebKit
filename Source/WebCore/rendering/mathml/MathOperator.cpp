@@ -31,7 +31,7 @@
 
 #include "FontCascadeInlines.h"
 #include "FontInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/StdLibExtras.h>
 
 static const unsigned kRadicalOperator = 0x221A;
@@ -92,14 +92,14 @@ MathOperator::MathOperator()
     m_variantGlyph = 0;
 }
 
-void MathOperator::setOperator(const Style::ComputedStyle& style, char32_t baseCharacter, Type operatorType)
+void MathOperator::setOperator(const RenderStyle& style, char32_t baseCharacter, Type operatorType)
 {
     m_baseCharacter = baseCharacter;
     m_operatorType = operatorType;
     reset(style);
 }
 
-void MathOperator::reset(const Style::ComputedStyle& style)
+void MathOperator::reset(const RenderStyle& style)
 {
     m_stretchType = StretchType::Unstretched;
     m_maxPreferredWidth = 0;
@@ -135,13 +135,13 @@ LayoutUnit MathOperator::stretchSize() const
     return m_operatorType == Type::VerticalOperator ? m_ascent + m_descent : m_width;
 }
 
-bool MathOperator::getGlyph(const Style::ComputedStyle& style, char32_t character, GlyphData& glyph) const
+bool MathOperator::getGlyph(const RenderStyle& style, char32_t character, GlyphData& glyph) const
 {
     glyph = style.fontCascade().glyphDataForCharacter(character, style.writingMode().isBidiRTL());
     return glyph.font && glyph.font == &style.fontCascade().primaryFont();
 }
 
-bool MathOperator::getBaseGlyph(const Style::ComputedStyle& style, GlyphData& glyph)
+bool MathOperator::getBaseGlyph(const RenderStyle& style, GlyphData& glyph)
 {
     bool isPrimary = getGlyph(style, m_baseCharacter, glyph);
     if (isPrimary && style.writingMode().isBidiRTL() && glyph.font->mathData()) {
@@ -164,7 +164,7 @@ void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
     getAscentAndDescentForGlyph(sizeVariant, m_ascent, m_descent);
 }
 
-static GlyphData glyphDataForCodePointOrFallbackGlyph(const Style::ComputedStyle& style, char32_t codePoint, Glyph fallbackGlyph)
+static GlyphData glyphDataForCodePointOrFallbackGlyph(const RenderStyle& style, char32_t codePoint, Glyph fallbackGlyph)
 {
     if (codePoint)
         return style.fontCascade().glyphDataForCharacter(codePoint, false);
@@ -179,7 +179,7 @@ static GlyphData glyphDataForCodePointOrFallbackGlyph(const Style::ComputedStyle
     return fallback;
 }
 
-void MathOperator::setGlyphAssembly(const Style::ComputedStyle& style, const GlyphAssemblyData& assemblyData)
+void MathOperator::setGlyphAssembly(const RenderStyle& style, const GlyphAssemblyData& assemblyData)
 {
     ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
     m_stretchType = StretchType::GlyphAssembly;
@@ -227,7 +227,7 @@ static constexpr std::array characterFallback {
     std::array<char32_t, 3> { 0x02C7, 0x030C, 0 } // CARON
 };
 
-void MathOperator::getMathVariantsWithFallback(const Style::ComputedStyle& style, bool isVertical, Vector<Glyph>& sizeVariants, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts)
+void MathOperator::getMathVariantsWithFallback(const RenderStyle& style, bool isVertical, Vector<Glyph>& sizeVariants, Vector<OpenTypeMathData::AssemblyPart>& assemblyParts)
 {
     // In general, we first try and find contruction for the base glyph.
     GlyphData baseGlyph;
@@ -254,7 +254,7 @@ void MathOperator::getMathVariantsWithFallback(const Style::ComputedStyle& style
     }
 }
 
-void MathOperator::calculateDisplayStyleLargeOperator(const Style::ComputedStyle& style)
+void MathOperator::calculateDisplayStyleLargeOperator(const RenderStyle& style)
 {
     ASSERT(m_operatorType == Type::DisplayOperator);
 
@@ -380,7 +380,7 @@ bool MathOperator::calculateGlyphAssemblyFallback(const Vector<OpenTypeMathData:
     return true;
 }
 
-void MathOperator::calculateStretchyData(const Style::ComputedStyle& style, bool calculateMaxPreferredWidth, LayoutUnit targetSize)
+void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculateMaxPreferredWidth, LayoutUnit targetSize)
 {
     ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
     ASSERT(!calculateMaxPreferredWidth || m_operatorType == Type::VerticalOperator);
@@ -479,7 +479,7 @@ void MathOperator::calculateStretchyData(const Style::ComputedStyle& style, bool
     setGlyphAssembly(style, assemblyData);
 }
 
-void MathOperator::stretchTo(const Style::ComputedStyle& style, LayoutUnit targetSize)
+void MathOperator::stretchTo(const RenderStyle& style, LayoutUnit targetSize)
 {
     ASSERT(m_operatorType == Type::VerticalOperator || m_operatorType == Type::HorizontalOperator);
     calculateStretchyData(style, false, targetSize);
@@ -492,7 +492,7 @@ void MathOperator::stretchTo(const Style::ComputedStyle& style, LayoutUnit targe
     }
 }
 
-LayoutRect MathOperator::paintGlyph(const Style::ComputedStyle& style, PaintInfo& info, const GlyphData& data, const LayoutPoint& origin, GlyphPaintTrimming trim)
+LayoutRect MathOperator::paintGlyph(const RenderStyle& style, PaintInfo& info, const GlyphData& data, const LayoutPoint& origin, GlyphPaintTrimming trim)
 {
     FloatRect glyphBounds = boundsForGlyph(data);
 
@@ -544,7 +544,7 @@ LayoutRect MathOperator::paintGlyph(const Style::ComputedStyle& style, PaintInfo
     return glyphPaintRect;
 }
 
-void MathOperator::fillWithVerticalExtensionGlyph(const Style::ComputedStyle& style, PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
+void MathOperator::fillWithVerticalExtensionGlyph(const RenderStyle& style, PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
 {
     ASSERT(m_operatorType == Type::VerticalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
@@ -586,7 +586,7 @@ void MathOperator::fillWithVerticalExtensionGlyph(const Style::ComputedStyle& st
     }
 }
 
-void MathOperator::fillWithHorizontalExtensionGlyph(const Style::ComputedStyle& style, PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
+void MathOperator::fillWithHorizontalExtensionGlyph(const RenderStyle& style, PaintInfo& info, const LayoutPoint& from, const LayoutPoint& to)
 {
     ASSERT(m_operatorType == Type::HorizontalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
@@ -627,7 +627,7 @@ void MathOperator::fillWithHorizontalExtensionGlyph(const Style::ComputedStyle& 
     }
 }
 
-void MathOperator::paintVerticalGlyphAssembly(const Style::ComputedStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
+void MathOperator::paintVerticalGlyphAssembly(const RenderStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
 {
     ASSERT(m_operatorType == Type::VerticalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
@@ -668,7 +668,7 @@ void MathOperator::paintVerticalGlyphAssembly(const Style::ComputedStyle& style,
         fillWithVerticalExtensionGlyph(style, info, topGlyphPaintRect.minXMaxYCorner(), bottomGlyphPaintRect.minXMinYCorner());
 }
 
-void MathOperator::paintHorizontalGlyphAssembly(const Style::ComputedStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
+void MathOperator::paintHorizontalGlyphAssembly(const RenderStyle& style, PaintInfo& info, const LayoutPoint& paintOffset)
 {
     ASSERT(m_operatorType == Type::HorizontalOperator);
     ASSERT(m_stretchType == StretchType::GlyphAssembly);
@@ -706,7 +706,7 @@ void MathOperator::paintHorizontalGlyphAssembly(const Style::ComputedStyle& styl
         fillWithHorizontalExtensionGlyph(style, info, LayoutPoint(leftGlyphPaintRect.maxX(), baselineY), LayoutPoint(rightGlyphPaintRect.x(), baselineY));
 }
 
-void MathOperator::paint(const Style::ComputedStyle& style, PaintInfo& info, const LayoutPoint& paintOffset, float deviceScaleFactor)
+void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const LayoutPoint& paintOffset, float deviceScaleFactor)
 {
     if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style.usedVisibility() != Visibility::Visible)
         return;

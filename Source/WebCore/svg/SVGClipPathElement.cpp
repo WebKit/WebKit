@@ -31,13 +31,13 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGTransformComputation.h"
 #include "SVGUseElement.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -108,7 +108,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceClipper>(*this, WTF::move(style));

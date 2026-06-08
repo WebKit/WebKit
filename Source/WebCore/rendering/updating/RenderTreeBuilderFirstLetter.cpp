@@ -31,11 +31,11 @@
 #include "RenderInline.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleChange.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
@@ -45,14 +45,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::FirstLetter);
 
-static std::optional<Style::ComputedStyle> styleForFirstLetter(const RenderElement& firstLetterContainer)
+static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& firstLetterContainer)
 {
     auto& styleContainer = firstLetterContainer.isAnonymous() ? *firstLetterContainer.firstNonAnonymousAncestor() : firstLetterContainer;
     auto style = styleContainer.style().pseudoElementStyle({ PseudoElementType::FirstLetter });
     if (!style)
         return { };
 
-    auto firstLetterStyle = Style::ComputedStyle::clone(*style);
+    auto firstLetterStyle = RenderStyle::clone(*style);
 
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
     if (firstLetterStyle.initialLetter().drop() >= 1 && firstLetterStyle.floating() == Float::None)

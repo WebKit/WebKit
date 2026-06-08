@@ -37,7 +37,7 @@
 #include "LayoutRect.h"
 #include "LayoutRoundedRect.h"
 #include "Path.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -71,7 +71,7 @@ static RectEdges<LayoutUnit> applyClosedEdges(const RectEdges<LayoutUnit>& width
     };
 }
 
-BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
+BorderShape BorderShape::shapeForBorderRect(const RenderStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
 {
     auto borderWidths = RectEdges<LayoutUnit>::map(style.usedBorderWidths(), [&](auto width) {
         return Style::evaluate<LayoutUnit>(width, Style::ZoomNeeded { });
@@ -79,7 +79,7 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
     return shapeForBorderRect(style, borderRect, borderWidths, closedEdges);
 }
 
-BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges)
+BorderShape BorderShape::shapeForBorderRect(const RenderStyle& style, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges)
 {
     auto usedBorderWidths = applyClosedEdges(overrideBorderWidths, closedEdges);
 
@@ -97,7 +97,7 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
     return BorderShape { borderRect, usedBorderWidths };
 }
 
-BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
+BorderShape BorderShape::shapeForOffsetRect(const RenderStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
 {
     auto usedEdgeWidths = applyClosedEdges(edgeWidths, closedEdges);
 

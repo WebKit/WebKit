@@ -845,7 +845,7 @@ void Node::inspect()
         page->inspectorController().inspect(this);
 }
 
-static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Style::ComputedStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
+static Node::Editability NODELETE computeEditabilityFromComputedStyle(const RenderStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
@@ -871,7 +871,7 @@ static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Styl
     return Node::Editability::ReadOnly;
 }
 
-Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
+Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
     if (!document().hasLivingRenderTree() || isPseudoElement())
         return Editability::ReadOnly;
@@ -888,7 +888,7 @@ Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* 
         document->updateStyleIfNeeded();
     }
 
-    CheckedPtr style = [&]() -> const Style::ComputedStyle* {
+    CheckedPtr style = [&]() -> const RenderStyle* {
         if (incomingStyle)
             return incomingStyle;
         if (isDocumentNode())
@@ -1239,12 +1239,12 @@ Node* Node::pseudoAwareLastChild() const
     return lastChild();
 }
 
-const Style::ComputedStyle* Node::computedStyle()
+const RenderStyle* Node::computedStyle()
 {
     return computedStyle(std::nullopt);
 }
 
-const Style::ComputedStyle* Node::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+const RenderStyle* Node::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     RefPtr composedParent = parentElementInComposedTree();
     return composedParent ? composedParent->computedStyle(pseudoElementIdentifier) : nullptr;
@@ -2832,7 +2832,7 @@ bool Node::willRespondToTouchEvents() const
     });
 }
 
-Node::Editability Node::computeEditabilityForMouseClickEvents(const Style::ComputedStyle* style) const
+Node::Editability Node::computeEditabilityForMouseClickEvents(const RenderStyle* style) const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if PLATFORM(IOS_FAMILY)    
@@ -2844,7 +2844,7 @@ Node::Editability Node::computeEditabilityForMouseClickEvents(const Style::Compu
     return computeEditabilityWithStyle(style, userSelectAllTreatment, style ? ShouldUpdateStyle::DoNotUpdate : ShouldUpdateStyle::Update);
 }
 
-bool Node::willRespondToMouseClickEvents(const Style::ComputedStyle* styleToUse) const
+bool Node::willRespondToMouseClickEvents(const RenderStyle* styleToUse) const
 {
     return willRespondToMouseClickEventsWithEditability(computeEditabilityForMouseClickEvents(styleToUse));
 }

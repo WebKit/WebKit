@@ -35,11 +35,11 @@
 #include "PaintInfo.h"
 #include "PlatformRenderTheme.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -75,7 +75,7 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
     return lightened;
 }
 
-TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
+TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     Ref frame = renderer.frame();
     RefPtr frameView = frame->view();
@@ -153,7 +153,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
     return paintStyle;
 }
 
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo, Style::TextShadows& selectionShadow)
+TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, Style::TextShadows& selectionShadow)
 {
     TextPaintStyle selectionPaintStyle = textPaintStyle;
 

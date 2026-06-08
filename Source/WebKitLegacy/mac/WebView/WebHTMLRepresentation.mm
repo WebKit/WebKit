@@ -61,10 +61,10 @@
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/ScriptDisallowedScope.h>
 #import <WebCore/Settings.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>

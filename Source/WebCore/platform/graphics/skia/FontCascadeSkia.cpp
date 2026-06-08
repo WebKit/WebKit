@@ -44,7 +44,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         font.enableAntialiasing(smoothingMode), font.platformData().orientation() == FontOrientation::Vertical);
 }
 
-bool FontCascade::canUseGlyphDisplayList(const Style::ComputedStyle&)
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle&)
 {
     return true;
 }

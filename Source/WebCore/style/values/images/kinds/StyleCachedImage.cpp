@@ -197,12 +197,12 @@ WebCore::CachedImage* CachedImage::cachedImage() const
     return m_cachedImage.get();
 }
 
-Ref<CSSValue> CachedImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> CachedImage::computedStyleValue(const RenderStyle& style) const
 {
     return m_cssValue->copyForComputedStyle(toCSS(m_url, style));
 }
 
-Ref<DeprecatedCSSOMValue> CachedImage::computedStyleDeprecatedCSSOMValue(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CachedImage::computedStyleDeprecatedCSSOMValue(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner) const
 {
     // We expose CachedImage as just the URI primitive values in the DeprecatedCSSOM to maintain existing behavior.
     return createDeprecatedCSSOMValue(pool, style, owner, m_url);

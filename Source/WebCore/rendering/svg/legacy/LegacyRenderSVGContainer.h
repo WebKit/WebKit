@@ -49,7 +49,7 @@ public:
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox.value_or(FloatRect()); }
 
 protected:
-    LegacyRenderSVGContainer(Type, SVGElement&, Style::ComputedStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    LegacyRenderSVGContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
     ASCIILiteral renderName() const override { return "RenderSVGContainer"_s; }
 

@@ -60,7 +60,7 @@ struct TextDecorationThickness {
     bool isFromFont() const { return WTF::holdsAlternative<CSS::Keyword::FromFont>(m_value); }
     bool isLength() const { return WTF::holdsAlternative<TextDecorationThicknessLength>(m_value); }
 
-    float resolve(const Style::ComputedStyle&) const;
+    float resolve(const RenderStyle&) const;
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
@@ -80,8 +80,8 @@ template<> struct CSSValueConversion<TextDecorationThickness> { auto operator()(
 // MARK: - Blending
 
 template<> struct Blending<TextDecorationThickness> {
-    auto canBlend(const TextDecorationThickness&, const TextDecorationThickness&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
-    auto blend(const TextDecorationThickness&, const TextDecorationThickness&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextDecorationThickness;
+    auto canBlend(const TextDecorationThickness&, const TextDecorationThickness&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto blend(const TextDecorationThickness&, const TextDecorationThickness&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextDecorationThickness;
 };
 
 } // namespace Style

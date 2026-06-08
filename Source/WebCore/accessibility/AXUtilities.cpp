@@ -75,7 +75,7 @@ NodeName elementName(Node& node)
     return element ? element->elementName() : ElementName::Unknown;
 }
 
-const Style::ComputedStyle* safeStyleFrom(Element& element)
+const RenderStyle* safeStyleFrom(Element& element)
 {
     // We cannot resolve style (as computedStyle() does) if we are downstream of an existing render tree
     // update. Otherwise, a RELEASE_ASSERT preventing re-entrancy will be hit inside RenderTreeBuilder.

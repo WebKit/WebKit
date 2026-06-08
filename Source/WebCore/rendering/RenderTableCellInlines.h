@@ -20,9 +20,9 @@
 
 #pragma once
 
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleContentAlignmentData.h"
 
 namespace WebCore {

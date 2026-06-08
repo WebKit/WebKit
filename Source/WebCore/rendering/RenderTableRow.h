@@ -37,8 +37,8 @@ class RenderTableRow final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableRow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableRow);
 public:
-    RenderTableRow(Element&, Style::ComputedStyle&&);
-    RenderTableRow(Document&, Style::ComputedStyle&&);
+    RenderTableRow(Element&, RenderStyle&&);
+    RenderTableRow(Document&, RenderStyle&&);
     virtual ~RenderTableRow();
 
     RenderTableRow* nextRow() const;
@@ -73,7 +73,7 @@ public:
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const override { return false; }
 
 private:
-    static RenderPtr<RenderTableRow> createTableRowWithStyle(Document&, const Style::ComputedStyle&);
+    static RenderPtr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);
 
     ASCIILiteral renderName() const override;
     bool canHaveChildren() const override { return true; }
@@ -87,7 +87,7 @@ private:
     bool requiresLayer() const final;
     void paint(PaintInfo&, const LayoutPoint&) override;
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void firstChild() const = delete;
     void lastChild() const = delete;

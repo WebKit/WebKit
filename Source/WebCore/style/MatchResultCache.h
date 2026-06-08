@@ -39,7 +39,7 @@ namespace Style {
 struct CachedMatchResult {
     UnadjustedStyle unadjustedStyle;
     PropertyCascade::IncludedProperties changedProperties;
-    CheckedRef<Style::ComputedStyle> styleToUpdate;
+    CheckedRef<RenderStyle> styleToUpdate;
 };
 
 class MatchResultCache {
@@ -49,8 +49,8 @@ public:
     ~MatchResultCache();
 
     const std::optional<CachedMatchResult> resultWithCurrentInlineStyle(const Element&);
-    static void update(CachedMatchResult&, const Style::ComputedStyle&);
-    void updateForFastPathInherit(const Element&, const Style::ComputedStyle& parentStyle);
+    static void update(CachedMatchResult&, const RenderStyle&);
+    void updateForFastPathInherit(const Element&, const RenderStyle& parentStyle);
     void set(const Element&, const UnadjustedStyle&);
 
 private:

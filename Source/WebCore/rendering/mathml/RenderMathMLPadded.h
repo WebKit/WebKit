@@ -36,7 +36,7 @@ class RenderMathMLPadded final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLPadded);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLPadded);
 public:
-    RenderMathMLPadded(MathMLPaddedElement&, Style::ComputedStyle&&);
+    RenderMathMLPadded(MathMLPaddedElement&, RenderStyle&&);
     virtual ~RenderMathMLPadded();
 
 private:

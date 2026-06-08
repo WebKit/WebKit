@@ -38,8 +38,8 @@
 #include "HTMLUListElement.h"
 #include "PositionInlines.h"
 #include "Range.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "VisibleUnits.h"
 
 namespace WebCore {

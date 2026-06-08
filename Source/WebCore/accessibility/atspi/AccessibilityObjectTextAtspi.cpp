@@ -34,7 +34,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"

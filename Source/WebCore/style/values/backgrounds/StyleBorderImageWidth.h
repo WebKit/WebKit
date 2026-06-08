@@ -172,11 +172,11 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageWidth, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageWidth> { auto operator()(const BorderImageWidth&, const Style::ComputedStyle&) -> CSS::BorderImageWidth; };
+template<> struct ToCSS<BorderImageWidth> { auto operator()(const BorderImageWidth&, const RenderStyle&) -> CSS::BorderImageWidth; };
 template<> struct ToStyle<CSS::BorderImageWidth> { auto operator()(const CSS::BorderImageWidth&, const BuilderState&) -> BorderImageWidth; };
 
 template<> struct CSSValueConversion<BorderImageWidth> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageWidth; };
-template<> struct CSSValueCreation<BorderImageWidth> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageWidth&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<BorderImageWidth> { auto operator()(CSSValuePool&, const RenderStyle&, const BorderImageWidth&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

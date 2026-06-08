@@ -173,7 +173,7 @@ void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomSt
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     RefPtr frame = document().frame();
     if (frame && protect(frame->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
@@ -181,7 +181,7 @@ RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(Style::Compute
     return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
 }
 
-bool HTMLCanvasElement::isReplaced(const Style::ComputedStyle*) const
+bool HTMLCanvasElement::isReplaced(const RenderStyle*) const
 {
     RefPtr frame = document().frame();
     return frame && protect(frame->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript);

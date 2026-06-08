@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTableRow);
 
-RenderTableRow::RenderTableRow(Element& element, Style::ComputedStyle&& style)
+RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
     : RenderBlock(Type::TableRow, element, WTF::move(style), { })
     , m_rowIndex(unsetRowIndex)
 {
@@ -59,7 +59,7 @@ RenderTableRow::RenderTableRow(Element& element, Style::ComputedStyle&& style)
     ASSERT(isRenderTableRow());
 }
 
-RenderTableRow::RenderTableRow(Document& document, Style::ComputedStyle&& style)
+RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
     : RenderBlock(Type::TableRow, document, WTF::move(style), { })
     , m_rowIndex(unsetRowIndex)
 {
@@ -81,7 +81,7 @@ void RenderTableRow::willBeRemovedFromTree()
     section()->setNeedsCellRecalc();
 }
 
-static bool borderWidthChanged(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
+static bool borderWidthChanged(const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
     return oldStyle->usedBorderLeftWidth() != newStyle->usedBorderLeftWidth()
         || oldStyle->usedBorderTopWidth() != newStyle->usedBorderTopWidth()
@@ -89,7 +89,7 @@ static bool borderWidthChanged(const Style::ComputedStyle* oldStyle, const Style
         || oldStyle->usedBorderBottomWidth() != newStyle->usedBorderBottomWidth();
 }
 
-void RenderTableRow::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderTableRow::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     ASSERT(style().display() == Style::DisplayType::TableRow);
 

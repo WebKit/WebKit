@@ -43,10 +43,10 @@ namespace Style {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<MaskBorderWidth::Value> { auto operator()(const MaskBorderWidth::Value&, const Style::ComputedStyle&) -> CSS::MaskBorderWidth::Value; };
+template<> struct ToCSS<MaskBorderWidth::Value> { auto operator()(const MaskBorderWidth::Value&, const RenderStyle&) -> CSS::MaskBorderWidth::Value; };
 template<> struct ToStyle<CSS::MaskBorderWidth::Value> { auto operator()(const CSS::MaskBorderWidth::Value&, const BuilderState&) -> MaskBorderWidth::Value; };
 
-auto ToCSS<MaskBorderWidth::Value>::operator()(const MaskBorderWidth::Value& value, const Style::ComputedStyle& style) -> CSS::MaskBorderWidth::Value
+auto ToCSS<MaskBorderWidth::Value>::operator()(const MaskBorderWidth::Value& value, const RenderStyle& style) -> CSS::MaskBorderWidth::Value
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::Auto& keyword) -> CSS::MaskBorderWidth::Value {
@@ -82,7 +82,7 @@ auto ToStyle<CSS::MaskBorderWidth::Value>::operator()(const CSS::MaskBorderWidth
     );
 }
 
-auto ToCSS<MaskBorderWidth>::operator()(const MaskBorderWidth& value, const Style::ComputedStyle& style) -> CSS::MaskBorderWidth
+auto ToCSS<MaskBorderWidth>::operator()(const MaskBorderWidth& value, const RenderStyle& style) -> CSS::MaskBorderWidth
 {
     return { toCSS(value.values, style) };
 }
@@ -110,7 +110,7 @@ auto CSSValueConversion<MaskBorderWidth>::operator()(BuilderState& state, const 
     return toStyleFromCSSValue<MaskBorderWidthValue::LengthPercentage>(state, *primitiveValue);
 }
 
-auto CSSValueCreation<MaskBorderWidth>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const MaskBorderWidth& value) -> Ref<CSSValue>
+auto CSSValueCreation<MaskBorderWidth>::operator()(CSSValuePool&, const RenderStyle& style, const MaskBorderWidth& value) -> Ref<CSSValue>
 {
     return CSSMaskBorderWidthValue::create(toCSS(value, style));
 }

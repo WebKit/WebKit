@@ -73,7 +73,7 @@ bool SVGAltGlyphElement::childShouldCreateRenderer(const Node& child) const
     return child.isTextNode();
 }
 
-RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
 }

@@ -55,11 +55,11 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleKeyword+Mappings.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -936,7 +936,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setMinLength(int minLength)
     return { };
 }
 
-void HTMLTextFormControlElement::adjustInnerTextStyle(const Style::ComputedStyle& parentStyle, Style::ComputedStyle& textBlockStyle) const
+void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentStyle, RenderStyle& textBlockStyle) const
 {
     // The inner block, if present, always has its direction set to LTR,
     // so we need to inherit the direction and unicode-bidi style from the element.

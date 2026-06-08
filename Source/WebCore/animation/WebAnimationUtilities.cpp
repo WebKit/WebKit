@@ -40,9 +40,10 @@
 #include "HTMLDialogElement.h"
 #include "KeyframeEffectStack.h"
 #include "NodeDocument.h"
+#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "ScriptExecutionContext.h"
 #include "StyleAnimations.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOriginatedAnimation.h"
 #include "ViewTransition.h"
 #include "WebAnimation.h"
@@ -407,7 +408,7 @@ AtomString animatablePropertyAsString(AnimatableCSSProperty property)
     );
 }
 
-bool styleHasDisplayTransition(const Style::ComputedStyle& style, const Element& element)
+bool styleHasDisplayTransition(const RenderStyle& style, const Element& element)
 {
     // FIXME: Best-effort disablement of this feature for elements participating in the top layer as
     // that requires some more specification design work that has not happened yet.

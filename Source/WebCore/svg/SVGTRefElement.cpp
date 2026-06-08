@@ -181,7 +181,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 }
@@ -191,7 +191,7 @@ bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const
     return child.isInShadowTree();
 }
 
-bool SVGTRefElement::rendererIsNeeded(const Style::ComputedStyle& style)
+bool SVGTRefElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (parentNode()
         && (parentNode()->hasTagName(SVGNames::aTag)

@@ -36,11 +36,8 @@ class Document;
 class LegacyRenderSVGResourceContainer;
 class RenderElement;
 class RenderObject;
+class RenderStyle;
 class LegacyRenderSVGRoot;
-
-namespace Style {
-class ComputedStyle;
-}
 
 // Holds a set of resources associated with a RenderObject
 class SVGResources {
@@ -49,7 +46,7 @@ class SVGResources {
 public:
     SVGResources();
 
-    static std::unique_ptr<SVGResources> buildCachedResources(const RenderElement&, const Style::ComputedStyle&);
+    static std::unique_ptr<SVGResources> buildCachedResources(const RenderElement&, const RenderStyle&);
     void layoutDifferentRootIfNeeded(const RenderElement& resourcesClient);
 
     bool markerReverseStart() const;

@@ -38,8 +38,8 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <cmath>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -51,13 +51,13 @@ using namespace MathMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLOperator);
 
-RenderMathMLOperator::RenderMathMLOperator(Type type, MathMLOperatorElement& element, Style::ComputedStyle&& style)
+RenderMathMLOperator::RenderMathMLOperator(Type type, MathMLOperatorElement& element, RenderStyle&& style)
     : RenderMathMLToken(type, element, WTF::move(style))
 {
     updateTokenContent();
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Type type, Document& document, Style::ComputedStyle&& style)
+RenderMathMLOperator::RenderMathMLOperator(Type type, Document& document, RenderStyle&& style)
     : RenderMathMLToken(type, document, WTF::move(style))
 {
 }
@@ -300,7 +300,7 @@ bool RenderMathMLOperator::useMathOperator() const
     return isStretchy() || (singleCharCodePoint() && isLargeOperatorInDisplayStyle()) || singleCharCodePoint() == minusSign;
 }
 
-void RenderMathMLOperator::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderMathMLOperator::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     m_mathOperator.reset(style());

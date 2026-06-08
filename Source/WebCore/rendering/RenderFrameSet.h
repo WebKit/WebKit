@@ -58,7 +58,7 @@ class RenderFrameSet final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderFrameSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrameSet);
 public:
-    RenderFrameSet(HTMLFrameSetElement&, Style::ComputedStyle&&);
+    RenderFrameSet(HTMLFrameSetElement&, RenderStyle&&);
     virtual ~RenderFrameSet();
 
     HTMLFrameSetElement& NODELETE frameSetElement() const;
@@ -97,7 +97,7 @@ private:
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool canHaveChildren() const override { return true; }
-    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
 
     void setIsResizing(bool);

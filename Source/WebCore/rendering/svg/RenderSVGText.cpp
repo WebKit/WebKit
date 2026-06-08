@@ -78,7 +78,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGText);
 
-RenderSVGText::RenderSVGText(SVGTextElement& element, Style::ComputedStyle&& style)
+RenderSVGText::RenderSVGText(SVGTextElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGText, element, WTF::move(style))
 {
     ASSERT(isRenderSVGText());
@@ -94,7 +94,7 @@ SVGTextElement& RenderSVGText::textElement() const
     return downcast<SVGTextElement>(RenderSVGBlock::graphicsElement());
 }
 
-bool RenderSVGText::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
+bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
     auto isEmptySVGInlineText = [](const RenderObject* object) {
         const auto svgInlineText = dynamicDowncast<RenderSVGInlineText>(object);
@@ -766,7 +766,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
     return false;
 }
 
-void RenderSVGText::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGText::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
     applySVGTransform(transform, protect(textElement()), style, boundingBox, std::nullopt, std::nullopt, options);
@@ -1004,7 +1004,7 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
     ASSERT(m_objectBoundingBox == frameRect());
 }
 
-void RenderSVGText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderSVGText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     auto needsTransformUpdate = [&]() {
         if (document().settings().layerBasedSVGEngineEnabled())

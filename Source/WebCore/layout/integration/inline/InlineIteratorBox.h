@@ -32,11 +32,8 @@ namespace WebCore {
 
 class RenderLineBreak;
 class RenderObject;
+class RenderStyle;
 class RenderSVGText;
-
-namespace Style {
-class ComputedStyle;
-}
 
 namespace InlineIterator {
 
@@ -98,7 +95,7 @@ public:
 
     const RenderObject& renderer() const;
     const RenderBlockFlow& formattingContextRoot() const;
-    CheckedRef<const Style::ComputedStyle> style() const;
+    CheckedRef<const RenderStyle> style() const;
     WritingMode writingMode() const { return style()->writingMode(); }
 
     // FIXME: Remove. For intermediate porting steps only.
@@ -316,9 +313,9 @@ inline const RenderBlockFlow& Box::formattingContextRoot() const
     });
 }
 
-inline CheckedRef<const Style::ComputedStyle> Box::style() const
+inline CheckedRef<const RenderStyle> Box::style() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> CheckedRef<const Style::ComputedStyle> {
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> CheckedRef<const RenderStyle> {
         return path.style();
     });
 }

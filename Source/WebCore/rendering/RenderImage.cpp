@@ -62,6 +62,7 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderImageResource.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
@@ -69,7 +70,6 @@
 #include "SVGSVGElement.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "TextPainter.h"
 #include <wtf/StackStats.h>
@@ -153,7 +153,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<ReplacedFlag> flags, Style::Image* styleImage, const float imageDevicePixelRatio)
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags, Style::Image* styleImage, const float imageDevicePixelRatio)
     : RenderReplaced(type, element, WTF::move(style), IntSize(), flags | ReplacedFlag::IsImage)
     , m_imageResource(makeUnique<RenderImageResource>(styleImage))
     , m_hasImageOverlay([&] {
@@ -173,12 +173,12 @@ RenderImage::RenderImage(Type type, Element& element, Style::ComputedStyle&& sty
 #endif
 }
 
-RenderImage::RenderImage(Type type, Element& element, Style::ComputedStyle&& style, Style::Image* styleImage, const float imageDevicePixelRatio)
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Style::Image* styleImage, const float imageDevicePixelRatio)
     : RenderImage(type, element, WTF::move(style), ReplacedFlag::IsImage, styleImage, imageDevicePixelRatio)
 {
 }
 
-RenderImage::RenderImage(Type type, Document& document, Style::ComputedStyle&& style, Style::Image* styleImage)
+RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, Style::Image* styleImage)
     : RenderReplaced(type, document, WTF::move(style), IntSize(), ReplacedFlag::IsImage)
     , m_imageResource(makeUnique<RenderImageResource>(styleImage))
 {
@@ -246,14 +246,14 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     return ImageSizeChangeForAltText;
 }
 
-void RenderImage::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderImage::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     if (!hasInitializedStyle())
         imageResource().initialize(*this);
     RenderReplaced::styleWillChange(diff, newStyle);
 }
 
-void RenderImage::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderImage::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_needsToSetSizeForAltText) {

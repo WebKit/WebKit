@@ -30,8 +30,8 @@
 #include "Element.h"
 #include "NodeDocument.h"
 #include "RenderElement.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

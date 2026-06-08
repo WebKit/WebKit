@@ -42,8 +42,8 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/Range.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/RenderView.h>
-#include <WebCore/StyleComputedStyle+GettersInlines.h>
 #include <WebCore/TextIterator.h>
 #include <ranges>
 #include <wtf/HashCountedSet.h>

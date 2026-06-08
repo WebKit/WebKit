@@ -48,8 +48,8 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleScope.h"
 #include <wtf/Scope.h>

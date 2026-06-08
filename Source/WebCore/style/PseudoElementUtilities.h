@@ -33,10 +33,9 @@
 namespace WebCore {
 
 class Element;
+class RenderStyle;
 
 namespace Style {
-
-class ComputedStyle;
 
 struct ResolvedComputedPseudoElement {
     RefPtr<Element> element;
@@ -45,7 +44,7 @@ struct ResolvedComputedPseudoElement {
 
 ResolvedComputedPseudoElement resolveComputedPseudoElement(Element&, const WTF::String& pseudoElement);
 
-bool pseudoElementRendererIsNeeded(const Style::ComputedStyle&);
+bool pseudoElementRendererIsNeeded(const RenderStyle&);
 
 } // namespace Style
 } // namespace WebCore

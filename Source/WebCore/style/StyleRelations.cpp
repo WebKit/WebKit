@@ -28,14 +28,15 @@
 
 #include "Element.h"
 #include "NodeRenderStyle.h"
-#include "StyleComputedStyle+GettersInlines.h"
-#include "StyleComputedStyle+SettersInlines.h"
+#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "StyleUpdate.h"
 
 namespace WebCore {
 namespace Style {
 
-std::unique_ptr<Relations> commitRelationsToRenderStyle(Style::ComputedStyle& style, const Element& element, const Relations& relations)
+std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, const Element& element, const Relations& relations)
 {
     std::unique_ptr<Relations> remainingRelations;
 
@@ -144,7 +145,7 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
     }
 }
 
-void copyRelations(Style::ComputedStyle& to, const Style::ComputedStyle& from)
+void copyRelations(RenderStyle& to, const RenderStyle& from)
 {
     if (from.firstChildState())
         to.setFirstChildState();

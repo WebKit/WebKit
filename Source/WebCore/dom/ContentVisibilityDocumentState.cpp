@@ -38,9 +38,9 @@
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "SimpleRange.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
 #include <wtf/TZoneMallocInlines.h>

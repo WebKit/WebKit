@@ -27,13 +27,13 @@
 
 #include <WebCore/Element.h>
 #include <WebCore/NodeName.h>
-#include <WebCore/StyleComputedStyle+GettersInlines.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/StyleContainmentChecker.h>
 
 namespace WebCore {
 namespace Style {
 
-inline ContainmentChecker::ContainmentChecker(const Style::ComputedStyle& style, const Element& element)
+inline ContainmentChecker::ContainmentChecker(const RenderStyle& style, const Element& element)
     : m_style { style }
     , m_element { element }
 {

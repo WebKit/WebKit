@@ -45,8 +45,8 @@
 #include "Quirks.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

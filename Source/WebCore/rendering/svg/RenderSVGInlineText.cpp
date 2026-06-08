@@ -108,7 +108,7 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
         textAncestor->subtreeTextDidChange(this);
 }
 
-void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderSVGInlineText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
     updateScaledFont();
@@ -253,7 +253,7 @@ float RenderSVGInlineText::computeScalingFactorForRenderer(const RenderObject& r
     return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
 }
 
-bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, FontCascade& scaledFont)
+bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const RenderStyle& style, float& scalingFactor, FontCascade& scaledFont)
 {
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = computeScalingFactorForRenderer(renderer);

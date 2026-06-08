@@ -46,9 +46,9 @@
 #include "Page.h"
 #include "RenderObjectInlines.h"
 #include "RenderSearchField.h"
+#include "RenderStyle+GettersInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePreferredSize.h"
 #include "TextControlInnerElements.h"
 #include "UserAgentParts.h"
@@ -120,7 +120,7 @@ PopupMenuStyle SearchInputType::itemStyle(unsigned) const
 
 PopupMenuStyle SearchInputType::menuStyle() const
 {
-    auto defaultStyle = Style::ComputedStyle::create();
+    auto defaultStyle = RenderStyle::create();
     CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
     CheckedRef style = renderer ? renderer->style() : defaultStyle;
     return PopupMenuStyle(
@@ -267,7 +267,7 @@ void SearchInputType::attributeChanged(const QualifiedName& name)
     BaseTextInputType::attributeChanged(name);
 }
 
-RenderPtr<RenderElement> SearchInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> SearchInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.

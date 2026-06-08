@@ -73,7 +73,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTable);
 
-RenderTable::RenderTable(Type type, Element& element, Style::ComputedStyle&& style)
+RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
     : RenderBlock(type, element, WTF::move(style), { })
     , m_columnPos(FillWith { }, 1, 0)
 {
@@ -81,7 +81,7 @@ RenderTable::RenderTable(Type type, Element& element, Style::ComputedStyle&& sty
     ASSERT(isRenderTable());
 }
 
-RenderTable::RenderTable(Type type, Document& document, Style::ComputedStyle&& style)
+RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
     : RenderBlock(type, document, WTF::move(style), { })
     , m_columnPos(FillWith { }, 1, 0)
 {
@@ -115,7 +115,7 @@ RenderTableSection* RenderTable::bottomSection() const
     return m_head.get();
 }
 
-void RenderTable::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderTable::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
@@ -331,7 +331,7 @@ void RenderTable::updateLogicalWidth()
     }
 }
 
-// This method takes a Style::ComputedStyle's logical width, min-width, or max-width length and computes its actual value.
+// This method takes a RenderStyle's logical width, min-width, or max-width length and computes its actual value.
 
 template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const SizeType& styleLogicalWidth, LayoutUnit availableWidth)
 {
@@ -702,7 +702,7 @@ void RenderTable::layout()
     clearNeedsLayout();
 }
 
-void RenderTable::invalidateCollapsedBordersAfterStyleChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, RenderTableCell* cellWithStyleChange)
+void RenderTable::invalidateCollapsedBordersAfterStyleChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle, RenderTableCell* cellWithStyleChange)
 {
     auto shouldInvalidate = [&] {
         if (oldStyle.writingMode() != newStyle.writingMode())

@@ -48,8 +48,8 @@ private:
 
     bool isGradientStop() const final { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool rendererIsNeeded(const Style::ComputedStyle&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool rendererIsNeeded(const RenderStyle&) final;
 
     const Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this, 0) };
 };

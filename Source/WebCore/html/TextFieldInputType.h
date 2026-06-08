@@ -91,7 +91,7 @@ private:
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) override;
     void forwardEvent(Event&) final;
     bool shouldSubmitImplicitly(Event&) final;
-    RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) override;
+    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     bool shouldUseInputMethod() const override { return true; }
     bool shouldRespectListAttribute() override;
     HTMLElement* NODELETE placeholderElement() const final;

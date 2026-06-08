@@ -35,7 +35,7 @@
 #include "KeyframeEffect.h"
 #include "Logging.h"
 #include "NodeDocument.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 #include "StyleOriginatedAnimationEvent.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -97,7 +97,7 @@ void StyleOriginatedAnimation::disassociateFromOwningElement()
     m_owningElement = nullptr;
 }
 
-void StyleOriginatedAnimation::initialize(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle, const Style::ResolutionContext& resolutionContext)
+void StyleOriginatedAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     WebAnimation::initialize();
 

@@ -48,8 +48,8 @@ class RenderTable : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
 public:
-    RenderTable(Type, Element&, Style::ComputedStyle&&);
-    RenderTable(Type, Document&, Style::ComputedStyle&&);
+    RenderTable(Type, Element&, RenderStyle&&);
+    RenderTable(Type, Document&, RenderStyle&&);
     virtual ~RenderTable();
 
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns
@@ -182,7 +182,7 @@ public:
     typedef Vector<CollapsedBorderValue> CollapsedBorderValues;
     bool collapsedBordersAreValid() const { return m_collapsedBordersValid; }
     void invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange = nullptr);
-    void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
+    void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
     void collapsedEmptyBorderIsPresent() { m_collapsedEmptyBorderIsPresent = true; }
     const CollapsedBorderValue* currentBorderValue() const LIFETIME_BOUND { return m_currentBorder; }
     void paintCollapsedBordersForRow(PaintInfo&, RenderTableRow&, const LayoutPoint& paintOffset);
@@ -217,7 +217,7 @@ public:
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect&, unsigned) const override { return false; }
 
 protected:
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
     void simplifiedNormalFlowLayout() final;
 
     ASCIILiteral renderName() const override { return "RenderTable"_s; }

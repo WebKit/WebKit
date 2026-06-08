@@ -3094,6 +3094,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/GridSpan.h
     rendering/style/OutlineValue.h
     rendering/style/PositionTryOrder.h
+    rendering/style/RenderStyle.h
+    rendering/style/RenderStyle+GettersInlines.h
     rendering/style/RenderStyleConstants.h
     rendering/style/StyleContentAlignmentData.h
     rendering/style/StyleSelfAlignmentData.h
@@ -3723,6 +3725,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/MathMLNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/Namespace.h
     ${WebCore_DERIVED_SOURCES_DIR}/NodeName.h
+    ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.h
+    ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+GettersInlines.h
     ${WebCore_DERIVED_SOURCES_DIR}/SVGNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/Settings.h
     ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.h

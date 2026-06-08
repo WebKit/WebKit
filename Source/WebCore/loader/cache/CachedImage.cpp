@@ -41,12 +41,12 @@
 #include "MemoryCache.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "SubresourceLoader.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>

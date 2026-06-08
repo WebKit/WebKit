@@ -175,7 +175,7 @@ void SVGMarkerElement::setOrientToAutoStartReverse()
     invalidateMarkerResource();
 }
 
-RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceMarker>(*this, WTF::move(style));

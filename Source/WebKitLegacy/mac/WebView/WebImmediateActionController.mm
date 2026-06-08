@@ -53,7 +53,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
 #import <objc/objc-class.h>

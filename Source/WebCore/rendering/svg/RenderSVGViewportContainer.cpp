@@ -29,11 +29,11 @@
 #include "RenderObjectDocument.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include "SVGViewSpec.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include "RenderObjectNode.h"
 
@@ -41,14 +41,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
-RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, Style::ComputedStyle&& style)
+RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, RenderStyle&& style)
     : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTF::move(style))
     , m_owningSVGRoot(parent)
 {
     ASSERT(isRenderSVGViewportContainer());
 }
 
-RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, Style::ComputedStyle&& style)
+RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
     : RenderSVGContainer(Type::SVGViewportContainer, element, WTF::move(style))
 {
     ASSERT(isRenderSVGViewportContainer());
@@ -186,7 +186,7 @@ void RenderSVGViewportContainer::updateLayerTransform()
     RenderSVGContainer::updateLayerTransform();
 }
 
-void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protect(svgSVGElement()), style, boundingBox, m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform), std::nullopt, options);
 }

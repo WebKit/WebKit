@@ -45,10 +45,10 @@
 #include "LocalizedStrings.h"
 #include "NodeName.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTextControlMultiLine.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -205,7 +205,7 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
     }
 }
 
-RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlMultiLine>(*this, WTF::move(style));
 }
@@ -541,9 +541,9 @@ void HTMLTextAreaElement::updatePlaceholderText()
     protect(m_placeholder)->setInnerText(String { attributeWithoutSynchronization(placeholderAttr) });
 }
 
-Style::ComputedStyle HTMLTextAreaElement::createInnerTextStyle(const Style::ComputedStyle& style)
+RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style)
 {
-    auto textBlockStyle = Style::ComputedStyle::create();
+    auto textBlockStyle = RenderStyle::create();
     textBlockStyle.inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
     textBlockStyle.setDisplay(Style::DisplayType::BlockFlow);

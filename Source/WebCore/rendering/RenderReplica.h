@@ -36,7 +36,7 @@ class RenderReplica final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderReplica);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderReplica);
 public:
-    RenderReplica(Document&, Style::ComputedStyle&&);
+    RenderReplica(Document&, RenderStyle&&);
     virtual ~RenderReplica();
 
     ASCIILiteral renderName() const override { return "RenderReplica"_s; }

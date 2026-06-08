@@ -43,11 +43,11 @@
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderBox.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptTrackingPrivacyCategory.h"
 #include "SelectionRestorationMode.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
 #include <wtf/Ref.h>

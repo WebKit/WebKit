@@ -237,8 +237,8 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     // Rendering overrides.
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const RenderStyle* = nullptr) const final { return true; }
     void didAttachRenderers() final;
     void willDetachRenderers() final;
 

@@ -62,10 +62,10 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderObjectInlines.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SimpleRange.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/Touch.h>

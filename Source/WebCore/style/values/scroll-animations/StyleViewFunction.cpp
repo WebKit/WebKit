@@ -84,7 +84,7 @@ auto CSSValueConversion<ViewFunction>::operator()(BuilderState& state, const CSS
     };
 }
 
-Ref<CSSValue> CSSValueCreation<ViewFunction>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const ViewFunction& value)
+Ref<CSSValue> CSSValueCreation<ViewFunction>::operator()(CSSValuePool& pool, const RenderStyle& style, const ViewFunction& value)
 {
     return CSSViewValue::create(
         createCSSValue(pool, style, value.parameters.axis),
@@ -95,7 +95,7 @@ Ref<CSSValue> CSSValueCreation<ViewFunction>::operator()(CSSValuePool& pool, con
 
 // MARK: - Serialization
 
-void Serialize<ViewFunctionParameters>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const ViewFunctionParameters& value)
+void Serialize<ViewFunctionParameters>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const ViewFunctionParameters& value)
 {
     bool needsSpace = false;
     if (value.axis != ScrollAxis::Block) {

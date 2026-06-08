@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 
 namespace WebCore {
 namespace Style {
 
-inline bool supportsFirstLineAndLetterPseudoElement(const Style::ComputedStyle& style)
+inline bool supportsFirstLineAndLetterPseudoElement(const RenderStyle& style)
 {
     auto display = style.display();
     return display == DisplayType::BlockFlow

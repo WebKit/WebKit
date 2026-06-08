@@ -30,19 +30,19 @@
 
 #include "Gradient.h"
 #include "LegacyRenderSVGShapeInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGPath);
 
-LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTF::move(style))
 {
     ASSERT(isLegacyRenderSVGPath());
@@ -303,7 +303,7 @@ bool LegacyRenderSVGPath::isRenderingDisabled() const
     return !hasPath() || path().isEmpty();
 }
 
-void LegacyRenderSVGPath::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void LegacyRenderSVGPath::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (oldStyle && oldStyle->hasMarkers() && !style().hasMarkers())
         m_markerPositions.clear();

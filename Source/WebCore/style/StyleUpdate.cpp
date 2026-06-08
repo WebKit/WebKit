@@ -73,18 +73,18 @@ const TextUpdate* Update::textUpdate(const Text& text) const
     return &it->value;
 }
 
-const Style::ComputedStyle* Update::elementStyle(const Element& element) const
+const RenderStyle* Update::elementStyle(const Element& element) const
 {
     if (auto* update = elementUpdate(element))
         return update->style.get();
     return element.renderOrDisplayContentsStyle();
 }
 
-Style::ComputedStyle* Update::elementStyle(const Element& element)
+RenderStyle* Update::elementStyle(const Element& element)
 {
     if (auto* update = elementUpdate(element))
         return update->style.get();
-    return const_cast<Style::ComputedStyle*>(element.renderOrDisplayContentsStyle());
+    return const_cast<RenderStyle*>(element.renderOrDisplayContentsStyle());
 }
 
 void Update::addElement(Element& element, Element* parent, ElementUpdate&& elementUpdate)
@@ -135,7 +135,7 @@ void Update::addSVGRendererUpdate(SVGElement& element)
     element.setNeedsSVGRendererUpdate(true);
 }
 
-void Update::addInitialContainingBlockUpdate(std::unique_ptr<Style::ComputedStyle> style)
+void Update::addInitialContainingBlockUpdate(std::unique_ptr<RenderStyle> style)
 {
     m_initialContainingBlockUpdate = WTF::move(style);
 }

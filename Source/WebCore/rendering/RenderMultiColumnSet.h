@@ -46,7 +46,7 @@ class RenderMultiColumnSet final : public RenderFragmentContainerSet {
     WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSet);
 public:
-    RenderMultiColumnSet(RenderFragmentedFlow&, Style::ComputedStyle&&);
+    RenderMultiColumnSet(RenderFragmentedFlow&, RenderStyle&&);
     virtual ~RenderMultiColumnSet();
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }

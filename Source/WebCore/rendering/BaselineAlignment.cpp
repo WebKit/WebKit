@@ -29,7 +29,7 @@
 #include "BaselineAlignmentInlines.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

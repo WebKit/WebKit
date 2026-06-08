@@ -114,6 +114,7 @@
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/RenderObjectStyle.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -123,7 +124,6 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SimpleRange.h>
 #import <WebCore/SmartReplace.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/SubframeLoader.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>

@@ -35,9 +35,9 @@
 #include "CSSCalcTree.h"
 #include "CSSPrimitiveNumericCategory.h"
 #include "CSSUnevaluatedCalc.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderState.h"
 #include "StyleCalculationTree.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleZoomPrimitivesInlines.h"
@@ -51,7 +51,7 @@ namespace Calculation {
 struct ToCSSConversionOptions {
     CSSCalc::CanonicalDimension::Dimension canonicalDimension;
     CSSCalc::SimplificationOptions simplification;
-    const Style::ComputedStyle& style;
+    const RenderStyle& style;
 };
 
 struct ToStyleConversionOptions {

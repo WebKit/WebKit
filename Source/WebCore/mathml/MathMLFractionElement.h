@@ -47,7 +47,7 @@ public:
 
 private:
     MathMLFractionElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool acceptsLegacyMathVariantAttribute() final { return false; };
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

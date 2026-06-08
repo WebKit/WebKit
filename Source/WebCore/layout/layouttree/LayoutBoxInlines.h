@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LayoutBox.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 

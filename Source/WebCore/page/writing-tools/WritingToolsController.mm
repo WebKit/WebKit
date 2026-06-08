@@ -48,7 +48,7 @@
 #import "Logging.h"
 #import "NodeRenderStyle.h"
 #import "Page.h"
-#import "StyleComputedStyle+GettersInlines.h"
+#import "RenderStyle+GettersInlines.h"
 #import "RenderedDocumentMarker.h"
 #import "TextAnimationTypes.h"
 #import "TextIterator.h"

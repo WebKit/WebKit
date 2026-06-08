@@ -617,7 +617,7 @@ bool InputType::shouldSubmitImplicitly(Event& event)
     return keyboardEvent && event.type() == eventNames().keypressEvent && keyboardEvent->charCode() == '\r';
 }
 
-RenderPtr<RenderElement> InputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.

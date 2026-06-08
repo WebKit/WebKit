@@ -193,15 +193,15 @@ inline std::optional<WebCore::Path> tryPath(const BoxPath& boxPath, const Transf
 template<> struct CSSValueConversion<RefPtr<PathOperation>> { RefPtr<PathOperation> operator()(BuilderState&, const CSSValue&, SupportRayPathOperation); };
 
 // `RayPath` is special-cased to return a `CSSRayValue`.
-template<> struct CSSValueCreation<RayPath> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const RayPath&); };
+template<> struct CSSValueCreation<RayPath> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const RayPath&); };
 
 // `BasicShapePath` is special-cased to handle non-standard `PathConversion` argument.
-template<> struct CSSValueCreation<BasicShapePath> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const BasicShapePath&, PathConversion = PathConversion::None); };
+template<> struct CSSValueCreation<BasicShapePath> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const BasicShapePath&, PathConversion = PathConversion::None); };
 
 // MARK: - Serialization
 
 // `BasicShapePath` is special-cased to handle non-standard `PathConversion` argument.
-template<> struct Serialize<BasicShapePath> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const BasicShapePath&, PathConversion = PathConversion::None); };
+template<> struct Serialize<BasicShapePath> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const BasicShapePath&, PathConversion = PathConversion::None); };
 
 // MARK: - Evaluation
 

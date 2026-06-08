@@ -70,6 +70,7 @@
 #include "PlatformMouseEvent.h"
 #include "QuirksData.h"
 #include "RegistrableDomain.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceRequest.h"
@@ -81,7 +82,6 @@
 #include "Settings.h"
 #include "SpaceSplitString.h"
 #include "StaticNodeList.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "TrustedFonts.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserAgent.h"
@@ -2433,7 +2433,7 @@ bool Quirks::needsPointerTouchCompatibility(const Element& target) const
 #endif
 
 // facebook.com rdar://141103350
-bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const Style::ComputedStyle& computedStyle) const
+bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const RenderStyle& computedStyle) const
 {
 #if PLATFORM(IOS_FAMILY)
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2503,7 +2503,7 @@ bool Quirks::needsExpediaGroupAnimationQuirk(Element& element) const
 
 #if PLATFORM(IOS_FAMILY)
 // claude.ai rdar://162616694
-bool Quirks::needsClaudeSidebarViewportUnitQuirk(Element& element, const Style::ComputedStyle& style) const
+bool Quirks::needsClaudeSidebarViewportUnitQuirk(Element& element, const RenderStyle& style) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
@@ -2608,7 +2608,7 @@ bool Quirks::needsSuppressPostLayoutBoundaryEventsQuirk() const
 }
 
 // tiktok.com rdar://149712691
-std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOverflowingContentQuirk(const Element& element, const Style::ComputedStyle& parentStyle) const
+std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOverflowingContentQuirk(const Element& element, const RenderStyle& parentStyle) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE({ });
 
@@ -2655,7 +2655,7 @@ std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOver
 }
 
 // rdar://166400170
-bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const Style::ComputedStyle& elementStyle, const Style::ComputedStyle& parentStyle) const
+bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const RenderStyle& elementStyle, const RenderStyle& parentStyle) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 

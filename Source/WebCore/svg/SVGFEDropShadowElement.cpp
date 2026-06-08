@@ -24,11 +24,11 @@
 #include "ContainerNodeInlines.h"
 #include "NodeName.h"
 #include "RenderElement.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGFilterRenderer.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 

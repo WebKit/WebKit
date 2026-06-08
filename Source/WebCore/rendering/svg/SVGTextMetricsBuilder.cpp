@@ -27,7 +27,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "WidthIterator.h"
 #include <wtf/WeakPtr.h>
 

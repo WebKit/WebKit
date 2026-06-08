@@ -28,15 +28,14 @@
 
 namespace WebCore {
 
+class BuilderState;
 class CubicBezierTimingFunction;
+class RenderStyle;
 class TimingFunction;
 
 namespace Style {
 
-class BuilderState;
-class ComputedStyle;
-
-CSS::CubicBezierEasingFunction toCSSCubicBezierEasingFunction(const CubicBezierTimingFunction&, const Style::ComputedStyle&);
+CSS::CubicBezierEasingFunction toCSSCubicBezierEasingFunction(const CubicBezierTimingFunction&, const RenderStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::CubicBezierEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::CubicBezierEasingFunction&);

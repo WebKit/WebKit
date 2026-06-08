@@ -356,7 +356,7 @@ void LineLayout::updateStyle(const RenderObject& renderer)
     BoxTreeUpdater::updateStyle(renderer);
 }
 
-bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const Style::ComputedStyle& newStyle)
+bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const RenderStyle& newStyle)
 {
     if (!root.layoutBox() || !root.layoutBox()->isElementBox()) {
         ASSERT_NOT_REACHED();
@@ -368,7 +368,7 @@ bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const Style::C
     return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.rootStyleWillChange(downcast<Layout::ElementBox>(*root.layoutBox()), newStyle);
 }
 
-bool LineLayout::styleWillChange(const RenderElement& renderer, const Style::ComputedStyle& newStyle, Style::Difference diff)
+bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle, Style::Difference diff)
 {
     if (!renderer.layoutBox()) {
         ASSERT_NOT_REACHED();
@@ -751,7 +751,7 @@ void LineLayout::preparePlacedFloats()
 
         auto& visualRect = floatingObject->frameRect();
 
-        auto usedPosition = Style::ComputedStyle::usedFloat(*floatingObject->renderer());
+        auto usedPosition = RenderStyle::usedFloat(*floatingObject->renderer());
         auto logicalPosition = (usedPosition == UsedFloat::Left) == placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
 
         auto boxGeometry = Layout::BoxGeometry { };

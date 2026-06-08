@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CSSToLengthConversionData;
 class FontCascade;
+class RenderStyle;
 class RenderView;
 
 enum CSSPropertyID : uint16_t;
@@ -41,8 +42,6 @@ enum class LengthUnit : uint8_t;
 }
 
 namespace Style {
-
-class ComputedStyle;
 
 // FIXME: These functions have odd names and invariants and could use improvements.
 
@@ -61,12 +60,12 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit, const CSSToLeng
 double computeCanonicalNonCalcLengthDouble(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // True if `computeNonCalcLengthDouble` would produce identical results when resolved against both these styles.
-bool equalForLengthResolution(const Style::ComputedStyle&, const Style::ComputedStyle&);
+bool equalForLengthResolution(const RenderStyle&, const RenderStyle&);
 
 // Utilities for common conversions.
 
 double emToPxDouble(double value, const CSSToLengthConversionData&);
-double emToPxDouble(double value, const Style::ComputedStyle&);
+double emToPxDouble(double value, const RenderStyle&);
 
 template<typename T> inline T emToPx(double value, const CSSToLengthConversionData& conversionData)
 {
@@ -76,9 +75,9 @@ template<typename T> inline T emToPx(double value, const CSSToLengthConversionDa
         return roundForImpreciseConversion<T>(emToPxDouble(value, conversionData));
 }
 
-template<typename T> inline T emToPx(double value, const Style::ComputedStyle& style)
+template<typename T> inline T emToPx(double value, const RenderStyle& style)
 {
-    // For `em`, we only need the element's style, so we can overload this to take just a `ComputedStyle`.
+    // For `em`, we only need the element's style, so we can overload this to take just a `RenderStyle`.
     if constexpr (std::floating_point<T>)
         return static_cast<T>(emToPxDouble(value, style));
     else if constexpr (std::integral<T>)

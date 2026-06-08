@@ -1506,7 +1506,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, Style::GridTrackSizingD
     );
 }
 
-static Style::GridOrderedNamedLinesMap gridLineNames(const Style::ComputedStyle* renderStyle, Style::GridTrackSizingDirection direction, unsigned expectedLineCount)
+static Style::GridOrderedNamedLinesMap gridLineNames(const RenderStyle* renderStyle, Style::GridTrackSizingDirection direction, unsigned expectedLineCount)
 {
     if (!renderStyle)
         return { };

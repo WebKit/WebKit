@@ -72,6 +72,7 @@ enum class PseudoElementType : uint8_t;
 class RenderBox;
 class RenderBoxModelObject;
 class RenderObject;
+class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
@@ -85,11 +86,10 @@ enum class TextDirection : bool;
 template<typename T> class ExceptionOr;
 
 namespace Style {
-class ComputedStyle;
 struct PseudoElementIdentifier;
 }
 
-} // namespace WebCore
+}
 
 WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(WebCore::NodeRareData);
 
@@ -397,7 +397,7 @@ public:
     enum class Editability { ReadOnly, CanEditPlainText, CanEditRichly };
     enum class ShouldUpdateStyle { Update, DoNotUpdate };
     WEBCORE_EXPORT Editability computeEditability(UserSelectAllTreatment, ShouldUpdateStyle) const;
-    Editability computeEditabilityWithStyle(const Style::ComputedStyle*, UserSelectAllTreatment, ShouldUpdateStyle) const;
+    Editability computeEditabilityWithStyle(const RenderStyle*, UserSelectAllTreatment, ShouldUpdateStyle) const;
 
     WEBCORE_EXPORT LayoutRect absoluteBoundingRect(bool* isReplaced);
     inline IntRect pixelSnappedAbsoluteBoundingRect(bool* isReplaced); // Defined in NodeInlines.h
@@ -480,10 +480,10 @@ public:
     inline RenderBoxModelObject* renderBoxModelObject() const; // Defined in NodeInlines.h
 
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
-    inline const Style::ComputedStyle* renderStyle() const; // Defined in NodeRenderStyle.h
+    inline const RenderStyle* renderStyle() const; // Defined in NodeRenderStyle.h
 
-    WEBCORE_EXPORT const Style::ComputedStyle* computedStyle();
-    virtual const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&);
+    WEBCORE_EXPORT const RenderStyle* computedStyle();
+    virtual const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&);
 
     enum class NeedsPostConnectionSteps : bool { No, Yes };
     struct InsertionType {
@@ -525,8 +525,8 @@ public:
     void clearNodeLists();
 
     virtual bool willRespondToMouseMoveEvents() const;
-    WEBCORE_EXPORT bool willRespondToMouseClickEvents(const Style::ComputedStyle* = nullptr) const;
-    Editability computeEditabilityForMouseClickEvents(const Style::ComputedStyle* = nullptr) const;
+    WEBCORE_EXPORT bool willRespondToMouseClickEvents(const RenderStyle* = nullptr) const;
+    Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
     virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
     virtual bool willRespondToTouchEvents() const;
 

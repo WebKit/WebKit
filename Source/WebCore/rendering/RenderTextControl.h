@@ -44,14 +44,14 @@ public:
 #endif
 
 protected:
-    RenderTextControl(Type, HTMLTextFormControlElement&, Style::ComputedStyle&&);
+    RenderTextControl(Type, HTMLTextFormControlElement&, RenderStyle&&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     RefPtr<TextControlInnerTextElement> innerTextElement() const;
 
     int scrollbarThickness() const;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -82,7 +82,7 @@ class RenderTextControlInnerContainer final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTextControlInnerContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlInnerContainer);
 public:
-    RenderTextControlInnerContainer(Element&, Style::ComputedStyle&&);
+    RenderTextControlInnerContainer(Element&, RenderStyle&&);
     virtual ~RenderTextControlInnerContainer();
 
     std::optional<LayoutUnit> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }

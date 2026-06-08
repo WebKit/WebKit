@@ -55,6 +55,8 @@
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderSVGRoot.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
@@ -63,9 +65,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "VisiblePosition.h"
 #include <wtf/StackStats.h>
@@ -83,7 +83,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderReplaced);
 const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
-RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<ReplacedFlag> flags)
+RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags)
     : RenderBox(type, element, WTF::move(style), { }, flags)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
@@ -92,7 +92,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle
     ASSERT(isRenderReplaced());
 }
 
-RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
+RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
     : RenderBox(type, element, WTF::move(style), { }, flags)
     , m_intrinsicSize(intrinsicSize)
 {
@@ -101,7 +101,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, Style::ComputedStyle
     ASSERT(isRenderReplaced());
 }
 
-RenderReplaced::RenderReplaced(Type type, Document& document, Style::ComputedStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
+RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
     : RenderBox(type, document, WTF::move(style), { }, flags)
     , m_intrinsicSize(intrinsicSize)
 {
@@ -127,7 +127,7 @@ void RenderReplaced::willBeDestroyed()
     RenderBox::willBeDestroyed();
 }
 
-void RenderReplaced::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderReplaced::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
     auto previousUsedZoom = oldStyle ? oldStyle->usedZoom() : Style::evaluate<float>(Style::ComputedStyle::initialZoom());

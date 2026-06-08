@@ -66,8 +66,8 @@ public:
     virtual ~RenderBlock();
 
 protected:
-    RenderBlock(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
-    RenderBlock(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
+    RenderBlock(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
+    RenderBlock(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags = { });
 
 public:
     String debugDescription() const override;
@@ -137,19 +137,19 @@ public:
     bool establishesIndependentFormattingContext() const;
     bool createsNewFormattingContext() const;
 
-    static TextRun constructTextRun(StringView, const Style::ComputedStyle&,
+    static TextRun constructTextRun(StringView, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const String&, const Style::ComputedStyle&,
+    static TextRun constructTextRun(const String&, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const AtomString&, const Style::ComputedStyle&,
+    static TextRun constructTextRun(const AtomString&, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRun(const RenderText&, const Style::ComputedStyle&,
+    static TextRun constructTextRun(const RenderText&, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
-    static TextRun constructTextRun(const RenderText&, unsigned offset, unsigned length, const Style::ComputedStyle&,
+    static TextRun constructTextRun(const RenderText&, unsigned offset, unsigned length, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
-    static TextRun constructTextRun(std::span<const Latin1Character> characters, const Style::ComputedStyle&,
+    static TextRun constructTextRun(std::span<const Latin1Character> characters, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
-    static TextRun constructTextRun(std::span<const char16_t> characters, const Style::ComputedStyle&,
+    static TextRun constructTextRun(std::span<const char16_t> characters, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior());
 
     LayoutUnit NODELETE paginationStrut() const;
@@ -228,7 +228,7 @@ public:
     bool hasDefiniteLogicalHeight() const;
     bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const;
 
-    static String updateSecurityDiscCharacters(const Style::ComputedStyle&, String&&);
+    static String updateSecurityDiscCharacters(const RenderStyle&, String&&);
 
     virtual bool hasLineIfEmpty() const;
 
@@ -265,7 +265,7 @@ public:
 
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
-    bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
+    bool establishesIndependentFormattingContextIgnoringDisplayType(const RenderStyle&) const;
 
     void layout() override;
 
@@ -300,8 +300,8 @@ protected:
 
     std::optional<ScrollbarUpdateScope> updateScrollInfoAfterLayout();
 
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
@@ -365,7 +365,7 @@ private:
     std::pair<LayoutUnit, LayoutUnit> computeBlockIntrinsicLogicalWidths() const;
     
     LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const final;
-    const Style::ComputedStyle& outlineStyleForRepaint() const LIFETIME_BOUND final;
+    const RenderStyle& outlineStyleForRepaint() const LIFETIME_BOUND final;
 
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) final
     {
@@ -391,9 +391,9 @@ private:
 
     void paintDebugBoxShadowIfApplicable(GraphicsContext&, const LayoutRect&) const;
 
-    bool contentBoxLogicalWidthChanged(const Style::ComputedStyle&, const Style::ComputedStyle&);
-    bool paddingBoxLogicaHeightChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
-    bool scrollbarWidthDidChange(const Style::ComputedStyle&, const Style::ComputedStyle&, ScrollbarOrientation);
+    bool contentBoxLogicalWidthChanged(const RenderStyle&, const RenderStyle&);
+    bool paddingBoxLogicaHeightChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle);
+    bool scrollbarWidthDidChange(const RenderStyle&, const RenderStyle&, ScrollbarOrientation);
 
 private:
     // Used to store state between styleWillChange and styleDidChange

@@ -35,14 +35,12 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 enum class CompositeOperation : uint8_t;
 enum CSSPropertyID : uint16_t;
 
-namespace Style {
-
-class ComputedStyle;
-
-namespace Interpolation {
+namespace Style::Interpolation {
 
 struct Context;
 
@@ -59,18 +57,17 @@ public:
 
     CSSPropertyID property() const { return m_property; }
 
-    virtual bool equals(const Style::ComputedStyle&, const Style::ComputedStyle&) const = 0;
-    virtual bool canInterpolate(const Style::ComputedStyle&, const Style::ComputedStyle&, CompositeOperation) const { return true; }
-    virtual bool requiresInterpolationForAccumulativeIteration(const Style::ComputedStyle&, const Style::ComputedStyle&) const { return false; }
-    virtual void interpolate(Style::ComputedStyle&, const Style::ComputedStyle&, const Style::ComputedStyle&, const Context&) const = 0;
+    virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
+    virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
+    virtual bool requiresInterpolationForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const { return false; }
+    virtual void interpolate(RenderStyle&, const RenderStyle&, const RenderStyle&, const Context&) const = 0;
 #if !LOG_DISABLED
-    virtual void log(const Style::ComputedStyle&, const Style::ComputedStyle&, const Style::ComputedStyle&, double) const = 0;
+    virtual void log(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const = 0;
 #endif
 
 private:
     CSSPropertyID m_property;
 };
 
-} // namespace Interpolation
-} // namespace Style
+} // namespace Style::Interpolation
 } // namespace WebCore

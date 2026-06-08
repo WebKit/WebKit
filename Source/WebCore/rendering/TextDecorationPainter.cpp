@@ -31,9 +31,9 @@
 #include "RenderBlock.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "StyleAppleColorFilter.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextDecorationLine.h"
 #include "TextBoxPainter.h"
 #include "TextRun.h"
@@ -192,7 +192,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor)
+void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor)
 {
     auto paintDecoration = [&] (auto decoration, auto underlineStyle, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
@@ -322,7 +322,7 @@ void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry&
 
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, std::optional<PseudoElementType> pseudoElementType)
 {
-    auto extractDecorations = [&] (const Style::ComputedStyle& style, Style::TextDecorationLine decorations) {
+    auto extractDecorations = [&] (const RenderStyle& style, Style::TextDecorationLine decorations) {
         if (!decorations.containsAny({ Style::TextDecorationLine::Flag::Underline, Style::TextDecorationLine::Flag::Overline, Style::TextDecorationLine::Flag::LineThrough }))
             return;
 
@@ -350,7 +350,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         }
     };
 
-    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const Style::ComputedStyle> {
+    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const RenderStyle> {
         if (pseudoElementType && renderer.style().hasPseudoStyle(*pseudoElementType)) {
             if (auto textRenderer = dynamicDowncast<RenderText>(renderer))
                 return *textRenderer->lazyPseudoElementStyle({ *pseudoElementType });
@@ -379,7 +379,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         extractDecorations(styleForRenderer(*current), remainingDecorations);
 }
 
-Color TextDecorationPainter::decorationColor(const Style::ComputedStyle& style, OptionSet<PaintBehavior> paintBehavior)
+Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet<PaintBehavior> paintBehavior)
 {
     if (paintBehavior.contains(PaintBehavior::ForceBlackText))
         return Color::black;

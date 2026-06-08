@@ -35,8 +35,8 @@
 #include "LayoutState.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StringTruncator.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace LayoutIntegration {

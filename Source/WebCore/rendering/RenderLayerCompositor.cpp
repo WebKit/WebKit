@@ -66,6 +66,7 @@
 #include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
@@ -75,7 +76,6 @@
 #include "ScaleTransformOperation.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOffsetRotate.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
@@ -2111,21 +2111,21 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, ASCIILiteral 
 }
 #endif
 
-static bool NODELETE clippingChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static bool NODELETE clippingChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return oldStyle.overflowX() != newStyle.overflowX()
         || oldStyle.overflowY() != newStyle.overflowY()
         || oldStyle.clip() != newStyle.clip();
 }
 
-static bool styleAffectsLayerGeometry(const Style::ComputedStyle& style)
+static bool styleAffectsLayerGeometry(const RenderStyle& style)
 {
     return !style.clip().isAuto()
         || !style.clipPath().isNone()
         || style.border().hasBorderRadius();
 }
 
-static bool recompositeChangeRequiresGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return oldStyle.transform() != newStyle.transform()
         || oldStyle.translate() != newStyle.translate()
@@ -2149,7 +2149,7 @@ static bool recompositeChangeRequiresGeometryUpdate(const Style::ComputedStyle& 
         || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
 }
 
-static bool NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static bool NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return oldStyle.perspective().isNone() != newStyle.perspective().isNone()
         || oldStyle.usedTransformStyle3D() != newStyle.usedTransformStyle3D();
@@ -2169,7 +2169,7 @@ void RenderLayerCompositor::layerGainedCompositedScrollableOverflow(RenderLayer&
     backing->updateConfigurationAfterStyleChange();
 }
 
-void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLayer& layer, const Style::ComputedStyle* oldStyle)
+void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLayer& layer, const RenderStyle* oldStyle)
 {
     if (diff == Style::DifferenceResult::Equal)
         return;
@@ -2210,7 +2210,7 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
             }
 
             // This ensures that the viewport anchor layer will be updated when updating compositing layers upon style change
-            auto styleChangeAffectsAnchorLayer = [](const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle) {
+            auto styleChangeAffectsAnchorLayer = [](const RenderStyle* oldStyle, const RenderStyle& newStyle) {
                 if (!oldStyle)
                     return false;
 
@@ -2243,7 +2243,7 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
         return;
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    auto styleChangeAffectsSeparatedProperties = [](const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle) {
+    auto styleChangeAffectsSeparatedProperties = [](const RenderStyle* oldStyle, const RenderStyle& newStyle) {
         if (!oldStyle)
             return newStyle.usedTransformStyle3D() == TransformStyle3D::Separated;
 
@@ -2862,7 +2862,7 @@ void RenderLayerCompositor::updateScrollLayerClipping()
     if (layerForClipping == m_clipLayer) {
         EventRegion eventRegion;
         auto eventRegionContext = eventRegion.makeContext();
-        eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, layerRect.size())), m_renderView, Style::ComputedStyle::defaultStyleSingleton());
+        eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, layerRect.size())), m_renderView, RenderStyle::defaultStyleSingleton());
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         eventRegionContext.copyInteractionRegionsToEventRegion(m_renderView.settings().interactionRegionMinimumCornerRadius());
 #endif
@@ -3836,7 +3836,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     return false;
 }
 
-static bool styleHas3DTransformOperation(const Style::ComputedStyle& style)
+static bool styleHas3DTransformOperation(const RenderStyle& style)
 {
     return style.transform().has3DOperation()
         || style.translate().is3DOperation()
@@ -3844,7 +3844,7 @@ static bool styleHas3DTransformOperation(const Style::ComputedStyle& style)
         || style.rotate().is3DOperation();
 }
 
-static bool styleTransformOperationsAreRepresentableIn2D(const Style::ComputedStyle& style)
+static bool styleTransformOperationsAreRepresentableIn2D(const RenderStyle& style)
 {
     return style.transform().isRepresentableIn2D()
         && style.translate().isRepresentableIn2D()
@@ -4182,7 +4182,7 @@ IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReaso
     return IndirectCompositingReason::None;
 }
 
-bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     if (RenderElement::createsGroupForStyle(newStyle) != RenderElement::createsGroupForStyle(oldStyle))
         return true;
@@ -4906,7 +4906,7 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
 
 // We can't rely on getting layerStyleChanged() for a style change that affects the root background, because the style change may
 // be on the body which has no RenderLayer.
-void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, const Style::ComputedStyle* oldStyle)
+void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
 {
     if (!usesCompositing())
         return;
@@ -5419,7 +5419,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     constraints.setViewportRectAtLastLayout(m_renderView.frameView().rectForFixedPositionLayout());
     constraints.setAlignmentOffset(scrollingNodeLayer->pixelAlignmentOffset());
 
-    const Style::ComputedStyle& style = layer.renderer().style();
+    const RenderStyle& style = layer.renderer().style();
     if (!style.left().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
 

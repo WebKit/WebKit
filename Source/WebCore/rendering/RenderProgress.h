@@ -32,7 +32,7 @@ class RenderProgress final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderProgress);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderProgress);
 public:
-    RenderProgress(HTMLElement&, Style::ComputedStyle&&);
+    RenderProgress(HTMLElement&, RenderStyle&&);
     virtual ~RenderProgress();
 
     double position() const { return m_position; }

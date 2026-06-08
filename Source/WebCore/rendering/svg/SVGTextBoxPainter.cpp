@@ -35,13 +35,13 @@
 #include "RenderObjectDocument.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGInlineTextBox.h"
 #include "SVGPaintServerHandlingInlines.h"
 #include "SVGResourcesCache.h"
 #include "SVGTextFragment.h"
 #include "Settings.h"
 #include "StyleAppleColorFilter.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextShadow.h"
 #include "TextPainter.h"
 
@@ -83,7 +83,7 @@ const RenderBoxModelObject& SVGTextBoxPainter<TextBoxPath>::parentRenderer() con
     return textBoxIterator()->parentInlineBox()->renderer();
 }
 
-FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, TextDirection direction, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition, const Style::ComputedStyle& style)
+FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, TextDirection direction, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition, const RenderStyle& style)
 {
     ASSERT(startPosition < endPosition);
 
@@ -195,7 +195,7 @@ void SVGTextBoxPainter<TextBoxPath>::paint()
     bool hasFill = !style.fill().isNone();
     bool hasVisibleStroke = !style.stroke().isNone() && style.strokeWidth().isPossiblyPositive();
 
-    const Style::ComputedStyle* selectionStyle = &style;
+    const RenderStyle* selectionStyle = &style;
     if (hasSelection && shouldPaintSelectionHighlight) {
         selectionStyle = parentRenderer.lazyPseudoElementStyle({ PseudoElementType::Selection });
         if (selectionStyle) {
@@ -266,7 +266,7 @@ void SVGTextBoxPainter<TextBoxPath>::paint()
 }
 
 template<typename TextBoxPath>
-bool SVGTextBoxPainter<TextBoxPath>::acquirePaintingResource(SVGPaintServerHandling& paintServerHandling, float scalingFactor, const RenderBoxModelObject& renderer, const Style::ComputedStyle& style)
+bool SVGTextBoxPainter<TextBoxPath>::acquirePaintingResource(SVGPaintServerHandling& paintServerHandling, float scalingFactor, const RenderBoxModelObject& renderer, const RenderStyle& style)
 {
     ASSERT(scalingFactor);
     ASSERT(!paintingResourceMode().isEmpty());
@@ -321,7 +321,7 @@ void SVGTextBoxPainter<TextBoxPath>::releasePaintingResource(SVGPaintServerHandl
 }
 
 template<typename TextBoxPath>
-bool SVGTextBoxPainter<TextBoxPath>::acquireLegacyPaintingResource(GraphicsContext*& context, float scalingFactor, RenderBoxModelObject& renderer, const Style::ComputedStyle& style)
+bool SVGTextBoxPainter<TextBoxPath>::acquireLegacyPaintingResource(GraphicsContext*& context, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
 {
     ASSERT(scalingFactor);
     ASSERT(paintingResourceMode().containsAny({ RenderSVGResourceMode::ApplyToFill, RenderSVGResourceMode::ApplyToStroke }));
@@ -449,7 +449,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintDecoration(Style::TextDecorationLine d
 
     ASSERT(decorationRenderer);
 
-    const Style::ComputedStyle& decorationStyle = decorationRenderer->style();
+    const RenderStyle& decorationStyle = decorationRenderer->style();
 
     if (decorationStyle.usedVisibility() == Visibility::Hidden)
         return;
@@ -531,7 +531,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintDecorationWithStyle(Style::TextDecorat
 }
 
 template<typename TextBoxPath>
-void SVGTextBoxPainter<TextBoxPath>::paintTextWithShadows(const Style::ComputedStyle& style, TextRun& textRun, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
+void SVGTextBoxPainter<TextBoxPath>::paintTextWithShadows(const RenderStyle& style, TextRun& textRun, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
 {
     auto& context = m_paintInfo.context();
 
@@ -639,7 +639,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintTextWithShadows(const Style::ComputedS
 }
 
 template<typename TextBoxPath>
-void SVGTextBoxPainter<TextBoxPath>::paintText(const Style::ComputedStyle& style, const Style::ComputedStyle& selectionStyle, const SVGTextFragment& fragment, bool hasSelection, bool paintSelectedTextOnly)
+void SVGTextBoxPainter<TextBoxPath>::paintText(const RenderStyle& style, const RenderStyle& selectionStyle, const SVGTextFragment& fragment, bool hasSelection, bool paintSelectedTextOnly)
 {
     unsigned startPosition = 0;
     unsigned endPosition = 0;
@@ -670,7 +670,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintText(const Style::ComputedStyle& style
         paintTextWithShadows(style, textRun, fragment, endPosition, fragment.length);
 }
 
-TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style, const SVGTextFragment& fragment)
+TextRun constructTextRun(StringView text, TextDirection direction, const RenderStyle& style, const SVGTextFragment& fragment)
 {
     TextRun run(text.substring(fragment.characterOffset, fragment.length),
         0, /* xPos, only relevant with allowTabs=true */

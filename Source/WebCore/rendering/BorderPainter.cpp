@@ -45,9 +45,9 @@
 #include "RenderInline.h"
 #include "RenderListBox.h"
 #include "RenderObjectDocument.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <numeric>
 
@@ -139,7 +139,7 @@ BorderPainter::BorderPainter(const RenderElement& renderer, const PaintInfo& pai
 {
 }
 
-std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, const Style::ComputedStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges)
+std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, const RenderStyle& style, float deviceScaleFactor, RectEdges<bool> closedEdges)
 {
     auto edges = borderEdges(style, deviceScaleFactor, closedEdges);
     if (!decorationHasAllSimpleEdges(edges))
@@ -203,7 +203,7 @@ bool BorderPainter::decorationHasAllSolidEdges(const RectEdges<BorderEdge>& edge
     return true;
 }
 
-void BorderPainter::paintBorder(const LayoutRect& rect, const Style::ComputedStyle& style, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
+void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style, BleedAvoidance bleedAvoidance, RectEdges<bool> closedEdges) const
 {
     auto& graphicsContext = m_paintInfo.context();
 
@@ -424,7 +424,7 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
 }
 
 template<typename T>
-bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style::ComputedStyle& style, const T& ninePieceImage, CompositeOperator op) const
+bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const RenderStyle& style, const T& ninePieceImage, CompositeOperator op) const
 {
     auto image = ninePieceImage.source().tryStyleImage();
     if (!image)
@@ -464,12 +464,12 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style:
     return true;
 }
 
-bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const Style::ComputedStyle& style, const Style::BorderImage& borderImage, CompositeOperator op) const
+bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const Style::BorderImage& borderImage, CompositeOperator op) const
 {
     return paintNinePieceImageImpl(rect, style, borderImage, op);
 }
 
-bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const Style::ComputedStyle& style, const Style::MaskBorder& maskBorder, CompositeOperator op) const
+bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyle& style, const Style::MaskBorder& maskBorder, CompositeOperator op) const
 {
     return paintNinePieceImageImpl(rect, style, maskBorder, op);
 }

@@ -34,7 +34,7 @@ class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceMasker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceMasker);
 public:
-    RenderSVGResourceMasker(SVGMaskElement&, Style::ComputedStyle&&);
+    RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
     virtual ~RenderSVGResourceMasker();
 
     inline SVGMaskElement& maskElement() const;

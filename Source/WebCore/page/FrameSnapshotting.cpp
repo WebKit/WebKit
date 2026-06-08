@@ -46,8 +46,8 @@
 #include "Page.h"
 #include "RenderAncestorIterator.h"
 #include "RenderObject.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 
@@ -185,7 +185,7 @@ RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&
     return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTF::move(options));
 }
 
-static bool styleContainsComplexBackground(const Style::ComputedStyle& style)
+static bool styleContainsComplexBackground(const RenderStyle& style)
 {
     return style.blendMode() != BlendMode::Normal
         || Style::hasImageInAnyLayer(style.backgroundLayers())

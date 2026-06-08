@@ -24,6 +24,7 @@
 #include "NodeName.h"
 #include "Path.h"
 #include "RenderElement.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
@@ -38,7 +39,6 @@
 #include "SVGPolylineElement.h"
 #include "SVGRectElement.h"
 #include "SVGUseElement.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {

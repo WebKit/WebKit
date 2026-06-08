@@ -46,8 +46,8 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "Position.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
 

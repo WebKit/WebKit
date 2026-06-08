@@ -30,8 +30,8 @@
 #include "AnimationUtilities.h"
 #include "CSSKeywordValue.h"
 #include "FontMetrics.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 
@@ -40,7 +40,7 @@ namespace Style {
 
 static constexpr float textDecorationBaseFontSize = 16;
 
-float TextDecorationThickness::resolve(const Style::ComputedStyle& style) const
+float TextDecorationThickness::resolve(const RenderStyle& style) const
 {
     return WTF::switchOn(m_value,
         [&](const CSS::Keyword::Auto&) {
@@ -78,14 +78,14 @@ auto CSSValueConversion<TextDecorationThickness>::operator()(BuilderState& state
 
 // MARK: - Blending
 
-auto Blending<TextDecorationThickness>::canBlend(const TextDecorationThickness& a, const TextDecorationThickness& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
+auto Blending<TextDecorationThickness>::canBlend(const TextDecorationThickness& a, const TextDecorationThickness& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
 {
     if (a.isAuto() || b.isAuto())
         return false;
     return a.resolve(aStyle) != b.resolve(bStyle);
 }
 
-auto Blending<TextDecorationThickness>::blend(const TextDecorationThickness& a, const TextDecorationThickness& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> TextDecorationThickness
+auto Blending<TextDecorationThickness>::blend(const TextDecorationThickness& a, const TextDecorationThickness& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> TextDecorationThickness
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1.0);

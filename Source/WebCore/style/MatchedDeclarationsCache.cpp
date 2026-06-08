@@ -34,7 +34,7 @@
 #include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "NodeDocument.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleResolver.h"
@@ -65,7 +65,7 @@ void MatchedDeclarationsCache::deref() const
     m_owner->deref();
 }
 
-bool MatchedDeclarationsCache::isCacheable(const Element& element, const Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle)
+bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderStyle& style, const RenderStyle& parentStyle)
 {
     // FIXME: Writing mode and direction properties modify state when applying to document element by calling
     // Document::setWritingMode/DirectionSetOnDocumentElement. We can't skip the applying by caching.
@@ -107,7 +107,7 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const Style::
     return true;
 }
 
-bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const Style::ComputedStyle& style) const
+bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const RenderStyle& style) const
 {
     if (style.usedZoom() != renderStyle->usedZoom())
         return false;
@@ -136,7 +136,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
     return AlreadyHashed::avoidDeletedValue(WTF::computeHash(matchResult, &inheritedCustomProperties));
 }
 
-std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const Style::CustomPropertyData& inheritedCustomProperties, const Style::ComputedStyle& parentStyle)
+std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult, const Style::CustomPropertyData& inheritedCustomProperties, const RenderStyle& parentStyle)
 {
     if (!hash)
         return std::nullopt;
@@ -162,7 +162,7 @@ std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(u
     return std::nullopt;
 }
 
-void MatchedDeclarationsCache::add(const Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle, unsigned hash, const MatchResult& matchResult)
+void MatchedDeclarationsCache::add(const RenderStyle& style, const RenderStyle& parentStyle, unsigned hash, const MatchResult& matchResult)
 {
     constexpr unsigned additionsBetweenSweeps = 100;
     if (++m_additionsSinceLastSweep >= additionsBetweenSweeps && !m_sweepTimer.isActive()) {
@@ -171,8 +171,8 @@ void MatchedDeclarationsCache::add(const Style::ComputedStyle& style, const Styl
     }
 
     ASSERT(hash);
-    // Note that we don't cache the original ComputedStyle instance. It may be further modified.
-    // The ComputedStyle in the cache is really just a holder for the substructures and never used as-is.
+    // Note that we don't cache the original RenderStyle instance. It may be further modified.
+    // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
     constexpr unsigned maxEntriesPerHash = 4;
     auto addResult = m_entries.ensure(hash, [&] {
         Vector<Entry> newBucket;
@@ -180,7 +180,7 @@ void MatchedDeclarationsCache::add(const Style::ComputedStyle& style, const Styl
         return newBucket;
     });
     if (addResult.iterator->value.size() < maxEntriesPerHash)
-        addResult.iterator->value.append(Entry { &matchResult, Style::ComputedStyle::clonePtr(style), Style::ComputedStyle::clonePtr(parentStyle) });
+        addResult.iterator->value.append(Entry { &matchResult, RenderStyle::clonePtr(style), RenderStyle::clonePtr(parentStyle) });
 
     // Protect against unlimited growth.
 #if PLATFORM(WPE)

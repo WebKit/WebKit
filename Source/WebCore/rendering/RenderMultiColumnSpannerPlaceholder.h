@@ -38,7 +38,7 @@ class RenderMultiColumnSpannerPlaceholder final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnSpannerPlaceholder);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSpannerPlaceholder);
 public:
-    static RenderPtr<RenderMultiColumnSpannerPlaceholder> createAnonymous(RenderMultiColumnFlow&, RenderBox& spanner, const Style::ComputedStyle& parentStyle);
+    static RenderPtr<RenderMultiColumnSpannerPlaceholder> createAnonymous(RenderMultiColumnFlow&, RenderBox& spanner, const RenderStyle& parentStyle);
     virtual ~RenderMultiColumnSpannerPlaceholder();
 
     RenderBox* spanner() const { return m_spanner.get(); }
@@ -47,7 +47,7 @@ public:
 private:
     template<class T, class... Args> friend RenderPtr<T> createRenderer(Args&&...);
 
-    RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow&, RenderBox& spanner, Style::ComputedStyle&&);
+    RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow&, RenderBox& spanner, RenderStyle&&);
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
 
     bool canHaveChildren() const override { return false; }

@@ -37,17 +37,14 @@
 namespace WebCore {
 
 class Document;
+class RenderStyle;
 class Settings;
 
-namespace Style {
-
-class ComputedStyle;
-
-namespace Interpolation {
+namespace Style::Interpolation {
 
 class Client;
 
-// MARK: - ComputedStyle independent
+// MARK: - RenderStyle independent
 
 // Returns whether the property can ever be interpolated.
 //
@@ -64,29 +61,28 @@ bool isAdditiveOrCumulative(const AnimatableCSSProperty&);
 // Controlled for non-custom properties by the "animation-wrapper-acceleration" key in CSSProperties.json.
 bool isAccelerated(const AnimatableCSSProperty&, const Settings&);
 
-// MARK: - ComputedStyle dependent
+// MARK: - RenderStyle dependent
 
-// Returns whether the property's values in ComputedStyle `a` and `b` are equal.
+// Returns whether the property's values in RenderStyle `a` and `b` are equal.
 //
 // Controlled for non-custom properties by implementing `equals` on the properties interpolation wrapper.
-bool equals(const AnimatableCSSProperty&, const ComputedStyle& a, const ComputedStyle& b, const Document&);
+bool equals(const AnimatableCSSProperty&, const RenderStyle& a, const RenderStyle& b, const Document&);
 
-// Returns whether the property can be interpolated with the values in ComputedStyle `a` and `b`.
+// Returns whether the property can be interpolated with the values in RenderStyle `a` and `b`.
 //
 // Controlled for non-custom properties by implementing `canInterpolate` on the properties interpolation wrapper.
-bool canInterpolate(const AnimatableCSSProperty&, const ComputedStyle& a, const ComputedStyle& b, const Document&);
+bool canInterpolate(const AnimatableCSSProperty&, const RenderStyle& a, const RenderStyle& b, const Document&);
 
-// Interpolates the property from ComputedStyle `a` to ComputedStyle `b` into ComputedStyle `destination`.
+// Interpolates the property from RenderStyle `a` to RenderStyle `b` into RenderStyle `destination`.
 //
 // Controlled for non-custom properties by implementing `interpolate` on the properties interpolation wrapper.
-void interpolate(const AnimatableCSSProperty&, ComputedStyle& destination, const ComputedStyle& from, const ComputedStyle& to, double progress, CompositeOperation, IterationCompositeOperation, double currentIteration, const Client&);
-void interpolate(const AnimatableCSSProperty&, ComputedStyle& destination, const ComputedStyle& from, const ComputedStyle& to, double progress, CompositeOperation, const Client&);
+void interpolate(const AnimatableCSSProperty&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation, double currentIteration, const Client&);
+void interpolate(const AnimatableCSSProperty&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, const Client&);
 
-// Returns whether the property requires interpolation for accumulative iteration for the values in ComputedStyle `a` and `b`
+// Returns whether the property requires interpolation for accumulative iteration for the values in RenderStyle `a` and `b`
 //
 // Controlled for non-custom properties by implementing `requiresInterpolationForAccumulativeIteration` on the properties interpolation wrapper.
-bool requiresInterpolationForAccumulativeIteration(const AnimatableCSSProperty&, const ComputedStyle& a, const ComputedStyle& b, const Client&);
+bool requiresInterpolationForAccumulativeIteration(const AnimatableCSSProperty&, const RenderStyle& a, const RenderStyle& b, const Client&);
 
-} // namespace Interpolation
-} // namespace Style
+} // namespace Style::Interpolation
 } // namespace WebCore

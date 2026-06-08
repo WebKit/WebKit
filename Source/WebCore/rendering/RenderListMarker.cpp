@@ -42,8 +42,8 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
@@ -76,7 +76,7 @@ static float snap(float value, const RenderListMarker& listMarker, SnapDirection
     return value;
 }
 
-RenderListMarker::RenderListMarker(RenderListItem& listItem, Style::ComputedStyle&& style)
+RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
     : RenderBox(Type::ListMarker, listItem.document(), WTF::move(style))
     , m_listItem(listItem)
 {
@@ -122,11 +122,11 @@ void RenderListMarker::willBeDestroyed()
     RenderBox::willBeDestroyed();
 }
 
-static Style::Difference NODELETE adjustedStyleDifference(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static Style::Difference NODELETE adjustedStyleDifference(Style::Difference diff, const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     if (diff >= Style::DifferenceResult::Layout)
         return diff;
-    // FIXME: Preferably we do this at Style::ComputedStyle::changeRequiresLayout but checking against pseudo(::marker) is not sufficient.
+    // FIXME: Preferably we do this at RenderStyle::changeRequiresLayout but checking against pseudo(::marker) is not sufficient.
     auto needsLayout =
            oldStyle.listStylePosition() != newStyle.listStylePosition()
         || oldStyle.listStyleType() != newStyle.listStyleType()
@@ -134,12 +134,12 @@ static Style::Difference NODELETE adjustedStyleDifference(Style::Difference diff
     return needsLayout ? Style::DifferenceResult::Layout : diff;
 }
 
-void RenderListMarker::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderListMarker::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     RenderBox::styleWillChange(adjustedStyleDifference(diff, style(), newStyle), newStyle);
 }
 
-void RenderListMarker::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderListMarker::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (oldStyle)
         diff = adjustedStyleDifference(diff, *oldStyle, style());
@@ -182,7 +182,7 @@ struct TextRunWithUnderlyingString {
     operator const TextRun&() const { return textRun; }
 };
 
-static FontCascade disclosureMarkerFontCascade(const Style::ComputedStyle& style, Document& document)
+static FontCascade disclosureMarkerFontCascade(const RenderStyle& style, Document& document)
 {
     auto fontDescription = FontCascadeDescription { style.fontDescription() };
     fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
@@ -191,7 +191,7 @@ static FontCascade disclosureMarkerFontCascade(const Style::ComputedStyle& style
     return fontCascade;
 }
 
-static auto textRunForContent(ListMarkerTextContent textContent, const Style::ComputedStyle& style) -> TextRunWithUnderlyingString
+static auto textRunForContent(ListMarkerTextContent textContent, const RenderStyle& style) -> TextRunWithUnderlyingString
 {
     ASSERT(!textContent.isEmpty());
 

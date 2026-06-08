@@ -46,11 +46,11 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptElement.h"
 #include "SelectPopoverElement.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/Ref.h>

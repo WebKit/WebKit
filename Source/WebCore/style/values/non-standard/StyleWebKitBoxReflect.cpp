@@ -40,13 +40,13 @@ namespace Style {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<WebkitBoxReflection::Direction> { auto operator()(const WebkitBoxReflection::Direction&, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection::Direction; };
+template<> struct ToCSS<WebkitBoxReflection::Direction> { auto operator()(const WebkitBoxReflection::Direction&, const RenderStyle&) -> CSS::WebkitBoxReflection::Direction; };
 template<> struct ToStyle<CSS::WebkitBoxReflection::Direction> { auto operator()(const CSS::WebkitBoxReflection::Direction&, const BuilderState&) -> WebkitBoxReflection::Direction; };
 
-template<> struct ToCSS<WebkitBoxReflection> { auto operator()(const WebkitBoxReflection&, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection; };
+template<> struct ToCSS<WebkitBoxReflection> { auto operator()(const WebkitBoxReflection&, const RenderStyle&) -> CSS::WebkitBoxReflection; };
 template<> struct ToStyle<CSS::WebkitBoxReflection> { auto operator()(const CSS::WebkitBoxReflection&, const BuilderState&) -> WebkitBoxReflection; };
 
-auto ToCSS<WebkitBoxReflection::Direction>::operator()(const WebkitBoxReflection::Direction& value, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection::Direction
+auto ToCSS<WebkitBoxReflection::Direction>::operator()(const WebkitBoxReflection::Direction& value, const RenderStyle&) -> CSS::WebkitBoxReflection::Direction
 {
     switch (value) {
     case WebkitBoxReflection::Direction::Above: return CSS::Keyword::Above { };
@@ -67,7 +67,7 @@ auto ToStyle<CSS::WebkitBoxReflection::Direction>::operator()(const CSS::WebkitB
     );
 }
 
-auto ToCSS<WebkitBoxReflection>::operator()(const WebkitBoxReflection& value, const Style::ComputedStyle& style) -> CSS::WebkitBoxReflection
+auto ToCSS<WebkitBoxReflection>::operator()(const WebkitBoxReflection& value, const RenderStyle& style) -> CSS::WebkitBoxReflection
 {
     auto convertOffset = [](auto& offset, auto& style) {
         // FIXME: Support direct conversion from Style::LengthWrapperBase<LengthPercentage<...>> to CSS::LengthPercentage<...>.
@@ -129,14 +129,14 @@ auto CSSValueConversion<WebkitBoxReflect>::operator()(BuilderState& state, const
     }
 }
 
-Ref<CSSValue> CSSValueCreation<WebkitBoxReflect>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const WebkitBoxReflect& value)
+Ref<CSSValue> CSSValueCreation<WebkitBoxReflect>::operator()(CSSValuePool&, const RenderStyle& style, const WebkitBoxReflect& value)
 {
     return CSSWebkitBoxReflectValue::create(toCSS(value, style));
 }
 
 // MARK: - Serialization
 
-void Serialize<WebkitBoxReflection>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const WebkitBoxReflection& value)
+void Serialize<WebkitBoxReflection>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const WebkitBoxReflection& value)
 {
     auto serializeMask = [&](auto& mask) {
         if (mask.source().isNone())

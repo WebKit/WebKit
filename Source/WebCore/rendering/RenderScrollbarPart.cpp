@@ -31,8 +31,8 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderScrollbarPart);
 
-RenderScrollbarPart::RenderScrollbarPart(Document& document, Style::ComputedStyle&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
+RenderScrollbarPart::RenderScrollbarPart(Document& document, RenderStyle&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
     : RenderBlock(Type::ScrollbarPart, document, WTF::move(style), { })
     , m_scrollbar(scrollbar)
     , m_part(part)
@@ -136,7 +136,7 @@ void RenderScrollbarPart::computeScrollbarHeight()
     m_marginBox.setBottom(Style::evaluateMinimum<LayoutUnit>(style().marginBottom(), 0_lu, style().usedZoomForLength()));
 }
 
-void RenderScrollbarPart::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderScrollbarPart::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     setInline(false);

@@ -39,12 +39,9 @@ class Document;
 class Element;
 class Node;
 class RenderImage;
+class RenderStyle;
 class RenderObject;
 class StyleProperties;
-
-namespace Style {
-class ComputedStyle;
-}
 
 bool hasRole(Element&, StringView role);
 bool hasAnyRole(Element&, std::initializer_list<StringView> roles);
@@ -74,12 +71,12 @@ bool isNodeFocused(Node&);
 
 bool needsLayoutOrStyleRecalc(const Document&);
 
-bool NODELETE isRenderHidden(const Style::ComputedStyle*);
+bool NODELETE isRenderHidden(const RenderStyle*);
 // Checks both CSS display properties, and CSS visibility properties.
-bool NODELETE isRenderHidden(const Style::ComputedStyle&);
+bool NODELETE isRenderHidden(const RenderStyle&);
 // Only checks CSS visibility properties.
-bool NODELETE isVisibilityHidden(const Style::ComputedStyle&);
-const Style::ComputedStyle* safeStyleFrom(Element&);
+bool NODELETE isVisibilityHidden(const RenderStyle&);
+const RenderStyle* safeStyleFrom(Element&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXNotification);
 WTF::TextStream& operator<<(WTF::TextStream&, const AXNotificationWithData&);

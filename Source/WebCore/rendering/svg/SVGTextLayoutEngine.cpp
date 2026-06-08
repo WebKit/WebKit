@@ -25,6 +25,7 @@
 #include "PathTraversalState.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGTextPath.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElement.h"
 #include "SVGGeometryElement.h"
 #include "SVGInlineTextBoxInlines.h"
@@ -32,7 +33,6 @@
 #include "SVGTextContentElement.h"
 #include "SVGTextLayoutEngineBaseline.h"
 #include "SVGTextLayoutEngineSpacing.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 // Set to a value > 0 to dump the text fragments
 #define DUMP_SVG_TEXT_LAYOUT_FRAGMENTS 0
@@ -226,7 +226,7 @@ void SVGTextLayoutEngine::layoutInlineTextBox(InlineIterator::SVGTextBoxIterator
     ASSERT(text.parent()->element());
     ASSERT(text.parent()->element()->isSVGElement());
 
-    const Style::ComputedStyle& style = text.style();
+    const RenderStyle& style = text.style();
 
     m_isVerticalText = style.writingMode().isVertical();
     layoutTextOnLineOrPath(textBox, text, style);
@@ -403,7 +403,7 @@ void SVGTextLayoutEngine::advanceToNextVisualCharacter(const SVGTextMetrics& vis
     m_visualCharacterOffset += visualMetrics.length();
 }
 
-void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator textBox, const RenderSVGInlineText& text, const Style::ComputedStyle& style)
+void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator textBox, const RenderSVGInlineText& text, const RenderStyle& style)
 {
     if (m_inPathLayout && m_textPath.isEmpty())
         return;

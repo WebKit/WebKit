@@ -38,6 +38,7 @@
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "NodeName.h"
 #include "RenderSVGTransformableContainer.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
@@ -47,7 +48,6 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDisplay.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "XLinkNames.h"
@@ -323,7 +323,7 @@ RefPtr<SVGElement> SVGUseElement::targetClone() const
     return root ? downcast<SVGElement>(root->firstChild()) : nullptr;
 }
 
-RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGUseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (style.display() == Style::DisplayType::Contents)
         return nullptr;

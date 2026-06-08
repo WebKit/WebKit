@@ -34,7 +34,7 @@
 #include "NodeName.h"
 #include "RenderMathMLOperator.h"
 #include "RenderObjectInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -336,7 +336,7 @@ void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const At
     MathMLTokenElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMathMLOperator>(RenderObject::Type::MathMLOperator, *this, WTF::move(style));
 }

@@ -46,7 +46,7 @@ void FilterReference::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedR
 
 // MARK: - Conversion
 
-auto ToCSS<FilterReference>::operator()(const FilterReference& value, const Style::ComputedStyle& style) -> CSS::FilterReference
+auto ToCSS<FilterReference>::operator()(const FilterReference& value, const RenderStyle& style) -> CSS::FilterReference
 {
     return { .url = toCSS(value.url, style) };
 }

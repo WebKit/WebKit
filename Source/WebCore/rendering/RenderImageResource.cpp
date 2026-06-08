@@ -32,8 +32,8 @@
 #include "NullGraphicsContext.h"
 #include "RenderElement.h"
 #include "RenderObjectDocument.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleCachedImage.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleInvalidImage.h"
 #include <wtf/TZoneMallocInlines.h>
 

@@ -81,8 +81,8 @@ protected:
 private:
     bool isFilterEffect() const override { return true; }
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
-    bool rendererIsNeeded(const Style::ComputedStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override { return false; }
 
     RefPtr<FilterEffect> m_effect;

@@ -2632,12 +2632,12 @@ void AXObjectCache::handleRemoteFrameGainedFocus(RemoteFrame& remoteFrame, Eleme
     recomputeIsIgnored(oldFocusedElement);
 }
 
-static bool NODELETE isContentVisibilityHidden(const Style::ComputedStyle& style)
+static bool NODELETE isContentVisibilityHidden(const RenderStyle& style)
 {
     return style.usedContentVisibility() == ContentVisibility::Hidden;
 }
 
-void AXObjectCache::onStyleChange(Element& element, OptionSet<Style::Change> change, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
+void AXObjectCache::onStyleChange(Element& element, OptionSet<Style::Change> change, const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
     if (!change || !oldStyle || !newStyle)
         return;
@@ -2716,7 +2716,7 @@ void AXObjectCache::onAccessibilityPaintFinished()
     startUpdateTreeSnapshotTimer();
 }
 
-bool AXObjectCache::onFontChange(Element& element, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
+bool AXObjectCache::onFontChange(Element& element, const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
     if (!oldStyle || !newStyle)
         return false;
@@ -2737,7 +2737,7 @@ bool AXObjectCache::onFontChange(Element& element, const Style::ComputedStyle* o
     return false;
 }
 
-bool AXObjectCache::onTextColorChange(Element& element, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
+bool AXObjectCache::onTextColorChange(Element& element, const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
     if (!oldStyle || !newStyle)
         return false;
@@ -2759,7 +2759,7 @@ bool AXObjectCache::onTextColorChange(Element& element, const Style::ComputedSty
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-void AXObjectCache::onStyleChange(RenderText& renderText, Style::Difference difference, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle)
+void AXObjectCache::onStyleChange(RenderText& renderText, Style::Difference difference, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!oldStyle)
@@ -6075,19 +6075,19 @@ bool isNodeFocused(Node& node)
     return is<Element>(node) && uncheckedDowncast<Element>(node).focused();
 }
 
-bool isVisibilityHidden(const Style::ComputedStyle& style)
+bool isVisibilityHidden(const RenderStyle& style)
 {
     return style.usedVisibility() != Visibility::Visible || isContentVisibilityHidden(style);
 }
 
 // DOM component of hidden definition.
 // https://www.w3.org/TR/wai-aria/#dfn-hidden
-bool isRenderHidden(const Style::ComputedStyle& style)
+bool isRenderHidden(const RenderStyle& style)
 {
     return style.display() == Style::DisplayType::None || isVisibilityHidden(style);
 }
 
-bool isRenderHidden(const Style::ComputedStyle* style)
+bool isRenderHidden(const RenderStyle* style)
 {
     return style ? isRenderHidden(*style) : true;
 }

@@ -34,7 +34,7 @@
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
@@ -60,12 +60,12 @@ bool GradientImage::equals(const GradientImage& other) const
     return m_gradient == other.m_gradient;
 }
 
-Ref<CSSValue> GradientImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> GradientImage::computedStyleValue(const RenderStyle& style) const
 {
     return CSSGradientValue::create(toCSS(m_gradient, style));
 }
 
-Ref<DeprecatedCSSOMValue> GradientImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> GradientImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }

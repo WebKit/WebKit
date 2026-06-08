@@ -72,6 +72,7 @@ class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderFragmentContainer;
+class RenderStyle;
 class RenderTheme;
 class RenderTreeBuilder;
 class RenderView;
@@ -95,7 +96,6 @@ class Box;
 }
 
 namespace Style {
-class ComputedStyle;
 class PseudoElementRequest;
 enum class MarginTrimSide : uint8_t;
 }
@@ -861,12 +861,12 @@ public:
     // the rect that will be painted if this object is passed as the paintingRoot
     WEBCORE_EXPORT LayoutRect paintingRootRect(LayoutRect& topLevelRect);
 
-    inline const Style::ComputedStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
-    inline CheckedRef<const Style::ComputedStyle> firstLineStyle() const LIFETIME_BOUND;
+    inline const RenderStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
+    inline CheckedRef<const RenderStyle> firstLineStyle() const LIFETIME_BOUND;
     inline WritingMode writingMode() const; // Defined in RenderObjectStyle.h.
     // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
 
-    virtual const Style::ComputedStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
+    virtual const RenderStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 

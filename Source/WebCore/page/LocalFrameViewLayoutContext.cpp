@@ -53,11 +53,12 @@
 #include "RenderLayoutState.h"
 #include "RenderSVGText.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle.h"
 #include "RenderView.h"
 #include "SVGTextFragment.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>

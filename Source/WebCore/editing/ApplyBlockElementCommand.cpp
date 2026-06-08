@@ -32,7 +32,7 @@
 #include "HTMLNames.h"
 #include "RenderElement.h"
 #include "RenderText.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 
@@ -190,7 +190,7 @@ static bool NODELETE isNewLineAtPosition(const Position& position)
     return textNode->data()[offset] == '\n';
 }
 
-CheckedPtr<const Style::ComputedStyle> ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
+CheckedPtr<const RenderStyle> ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
 {
     RefPtr node = position.containerNode();
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())

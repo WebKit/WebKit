@@ -59,6 +59,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
@@ -72,7 +73,6 @@
 #include "SVGStopElement.h"
 #include "Settings.h"
 #include "StyleCachedImage.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <math.h>
@@ -578,7 +578,7 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, Opt
 
 void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    const RenderStyle& style = renderer.style();
 
     // FIXME: We want to use SVGResourcesCache to determine which resources are present, instead of quering the resource <-> id cache.
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.

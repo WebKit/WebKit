@@ -127,7 +127,7 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
         auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
         RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
-        auto usedPosition = Style::ComputedStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
+        auto usedPosition = RenderStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
         placedFloats.add({ usedPosition, boxGeometry, floatRect.location(), WTF::move(shape) });
     }
 }

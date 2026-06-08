@@ -27,8 +27,8 @@
 #include "MatchResultCache.h"
 
 #include "MatchResult.h"
+#include "RenderStyle+SettersInlines.h"
 #include "ResolvedStyle.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
 #include <wtf/BitSet.h>
@@ -79,7 +79,7 @@ MatchResultCache::~MatchResultCache() = default;
 inline UnadjustedStyle copy(const UnadjustedStyle& other)
 {
     return {
-        .style = ComputedStyle::clonePtr(*other.style),
+        .style = RenderStyle::clonePtr(*other.style),
         .relations = other.relations ? makeUnique<Relations>(*other.relations) : std::unique_ptr<Relations> { },
         .matchResult = other.matchResult
     };
@@ -92,7 +92,7 @@ bool MatchResultCache::isUsableAfterInlineStyleChange(const MatchResultCache::En
 
     auto& inlineStyle = entry.inlineStyle;
 
-    // Only allow the same exact properties after a change. This way the previous values in ComputedStyle are guaranteed to get overwritten.
+    // Only allow the same exact properties after a change. This way the previous values in RenderStyle are guranteed to get overwritten.
     // Adding properties could be allowed without other changes. Removal would require resetting the removed property to initial
     // value in the style builder.
 
@@ -169,12 +169,12 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
     };
 }
 
-void MatchResultCache::update(CachedMatchResult& result, const Style::ComputedStyle& style)
+void MatchResultCache::update(CachedMatchResult& result, const RenderStyle& style)
 {
-    result.styleToUpdate.get() = ComputedStyle::clone(style);
+    result.styleToUpdate.get() = RenderStyle::clone(style);
 }
 
-void MatchResultCache::updateForFastPathInherit(const Element& element, const Style::ComputedStyle& parentStyle)
+void MatchResultCache::updateForFastPathInherit(const Element& element, const RenderStyle& parentStyle)
 {
     CheckedPtr entry = m_entries.get(element);
     if (!entry)

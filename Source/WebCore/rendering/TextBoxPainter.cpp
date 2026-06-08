@@ -74,7 +74,7 @@ static float snap(float value, const RenderText& renderer)
 
 static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
 
-static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText& renderer, const Style::ComputedStyle& style)
+static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText& renderer, const RenderStyle& style)
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
     if (style.textEmphasisStyle().isNone())
@@ -186,7 +186,7 @@ static void buildTextForShaping(ShapedContent& shapedContent, InlineIterator::Bo
     computeVisualLeftForTextBox();
 }
 
-TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, const Style::ComputedStyle& style, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, const RenderStyle& style, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : m_textBox(InlineIterator::BoxModernPath { inlineContent, inlineContent.indexForBox(box) })
     , m_renderer(downcast<RenderText>(m_textBox.renderer()))
     , m_document(m_renderer->document())
@@ -758,12 +758,12 @@ TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarked
     };
 }
 
-static inline float computedAutoTextDecorationThickness(const Style::ComputedStyle& styleToUse, float deviceScaleFactor)
+static inline float computedAutoTextDecorationThickness(const RenderStyle& styleToUse, float deviceScaleFactor)
 {
     return ceilToDevicePixel(Style::TextDecorationThickness { CSS::Keyword::Auto { } }.resolve(styleToUse), deviceScaleFactor);
 }
 
-static inline float resolveTextDecorationThicknessForPaintingBox(const std::optional<Style::TextDecorationThickness>& originatorThickness, const Style::ComputedStyle& paintingBoxStyle, float deviceScaleFactor)
+static inline float resolveTextDecorationThicknessForPaintingBox(const std::optional<Style::TextDecorationThickness>& originatorThickness, const RenderStyle& paintingBoxStyle, float deviceScaleFactor)
 {
     // The originator's text-decoration-thickness propagates to descendants and is resolved against the painting
     // box so its font size and zoom apply. When the originator did not specify a thickness, fall back to auto.
@@ -771,20 +771,20 @@ static inline float resolveTextDecorationThicknessForPaintingBox(const std::opti
     return ceilToDevicePixel(thickness.resolve(paintingBoxStyle), deviceScaleFactor);
 }
 
-static inline float computedLinethroughCenter(const Style::ComputedStyle& styleToUse, float textDecorationThickness, float autoTextDecorationThickness)
+static inline float computedLinethroughCenter(const RenderStyle& styleToUse, float textDecorationThickness, float autoTextDecorationThickness)
 {
     auto center = 2 * styleToUse.metricsOfPrimaryFont().ascent() / 3 + autoTextDecorationThickness / 2;
     return center - textDecorationThickness / 2;
 }
 
-static inline Style::TextDecorationLine computedTextDecorationType(const Style::ComputedStyle& style, const TextDecorationPainter::Styles& textDecorationStyles)
+static inline Style::TextDecorationLine computedTextDecorationType(const RenderStyle& style, const TextDecorationPainter::Styles& textDecorationStyles)
 {
     auto textDecorations = style.textDecorationLineInEffect();
     textDecorations.addOrReplaceIfNotNone(TextDecorationPainter::textDecorationsInEffectForStyle(textDecorationStyles));
     return textDecorations;
 }
 
-static inline CheckedRef<const Style::ComputedStyle> decoratingBoxStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, bool isFirstLine)
+static inline CheckedRef<const RenderStyle> decoratingBoxStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, bool isFirstLine)
 {
     if (!inlineBox.isRootInlineBox())
         return inlineBox.style();
@@ -800,7 +800,7 @@ static inline CheckedRef<const Style::ComputedStyle> decoratingBoxStyleForInline
     return inlineBox.style();
 }
 
-static inline bool isDecoratingBoxForBackground(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& styleToUse)
+static inline bool isDecoratingBoxForBackground(const InlineIterator::InlineBox& inlineBox, const RenderStyle& styleToUse)
 {
     RefPtr element = inlineBox.renderer().element();
     if (element && (is<HTMLAnchorElement>(*element) || element->hasTagName(HTMLNames::fontTag))) {
@@ -811,7 +811,7 @@ static inline bool isDecoratingBoxForBackground(const InlineIterator::InlineBox&
         || (inlineBox.isRootInlineBox() && styleToUse.textDecorationLineInEffect().containsAny({ Style::TextDecorationLine::Flag::Underline, Style::TextDecorationLine::Flag::Overline }));
 }
 
-static inline bool isDecoratingBoxForForeground(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& styleToUse)
+static inline bool isDecoratingBoxForForeground(const InlineIterator::InlineBox& inlineBox, const RenderStyle& styleToUse)
 {
     // Line-through has no <a>/<font> always-decorating quirk (that is an under/overline behavior). A box
     // establishes line-through when its own style sets it, or - for the root inline box - when it is in effect.

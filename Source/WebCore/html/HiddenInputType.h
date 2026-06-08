@@ -52,7 +52,7 @@ private:
     const AtomString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
-    RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
+    RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
     bool accessKeyAction(bool sendMouseEvents) final;
     bool rendererIsNeeded() final;
     bool storesValueSeparateFromAttribute() final;

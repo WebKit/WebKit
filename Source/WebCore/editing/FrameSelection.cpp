@@ -77,6 +77,7 @@
 #include "Range.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -89,7 +90,6 @@
 #include "ShadowRoot.h"
 #include "SimpleCaretAnimator.h"
 #include "SimpleRange.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleProperties.h"
 #include "StyleTreeResolver.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -105,7 +105,7 @@
 #include "ChromeClient.h"
 #include "Color.h"
 #include "RenderObject.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 #endif
 
 namespace WebCore {
@@ -1989,7 +1989,7 @@ void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& pai
         CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr());
 }
 
-Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, const Node* node)
+Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
 {
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

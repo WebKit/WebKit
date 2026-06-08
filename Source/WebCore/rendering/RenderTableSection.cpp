@@ -89,14 +89,14 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     }
 }
 
-RenderTableSection::RenderTableSection(Element& element, Style::ComputedStyle&& style)
+RenderTableSection::RenderTableSection(Element& element, RenderStyle&& style)
     : RenderBox(Type::TableSection, element, WTF::move(style))
 {
     setInline(false);
     ASSERT(isRenderTableSection());
 }
 
-RenderTableSection::RenderTableSection(Document& document, Style::ComputedStyle&& style)
+RenderTableSection::RenderTableSection(Document& document, RenderStyle&& style)
     : RenderBox(Type::TableSection, document, WTF::move(style))
 {
     setInline(false);
@@ -110,7 +110,7 @@ ASCIILiteral RenderTableSection::renderName() const
     return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)"_s : "RenderTableSection"_s;
 }
 
-void RenderTableSection::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderTableSection::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
@@ -1247,7 +1247,7 @@ void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInf
     if (paintInfo.context().paintingDisabled())
         return;
 
-    const Style::ComputedStyle& style = this->style();
+    const RenderStyle& style = this->style();
     bool antialias = BorderPainter::shouldAntialiasLines(paintInfo.context());
     LayoutRect rowGroupRect = LayoutRect(paintOffset, size());
     rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(table()->writingMode()), (borderSide == BoxSide::Right) ? 0_lu : outerBorderTop(table()->writingMode())));

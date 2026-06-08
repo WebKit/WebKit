@@ -757,12 +757,14 @@ public:
     WEBCORE_EXPORT float deviceScaleFactor() const;
 
     WEBCORE_EXPORT bool NODELETE useElevatedUserInterfaceLevel() const;
+    WEBCORE_EXPORT bool useDarkAppearance(const RenderStyle*) const;
     WEBCORE_EXPORT bool useDarkAppearance(const Style::ComputedStyle*) const;
     void appearanceDidChange();
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> resolvedColorScheme(const Style::ComputedStyle*) const;
 #endif
 
+    OptionSet<StyleColorOptions> styleColorOptions(const RenderStyle*) const;
     OptionSet<StyleColorOptions> styleColorOptions(const Style::ComputedStyle*) const;
 
     CompositeOperator compositeOperatorForBackgroundColor(const Color&, const RenderElement&) const;
@@ -799,7 +801,7 @@ public:
     // so calling this may cause a flash of unstyled content (FOUC).
     WEBCORE_EXPORT UpdateLayoutResult updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> = { }, const Element* = nullptr);
 
-    std::unique_ptr<Style::ComputedStyle> styleForElementIgnoringPendingStylesheets(Element&, const Style::ComputedStyle* parentStyle, const std::optional<Style::PseudoElementIdentifier>& = std::nullopt);
+    std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, const std::optional<Style::PseudoElementIdentifier>& = std::nullopt);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     WEBCORE_EXPORT bool isPageBoxVisible(int pageIndex);
@@ -832,9 +834,9 @@ public:
     void suspendFontLoading();
 
     RenderView* renderView() const { return m_renderView.get(); }
-    const Style::ComputedStyle* initialContainingBlockStyle() const LIFETIME_BOUND { return m_initialContainingBlockStyle.get(); } // This may end up differing from renderView()->style() due to adjustments.
+    const RenderStyle* initialContainingBlockStyle() const LIFETIME_BOUND { return m_initialContainingBlockStyle.get(); } // This may end up differing from renderView()->style() due to adjustments.
 
-    const Style::ComputedStyle& initialStyle() const LIFETIME_BOUND;
+    const RenderStyle& initialStyle() const LIFETIME_BOUND;
     void invalidateCachedInitialStyle();
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
@@ -1598,10 +1600,10 @@ public:
     void suspendScheduledTasks(ReasonForSuspension);
     void resumeScheduledTasks(ReasonForSuspension);
 
-    std::optional<float> NODELETE zoomForClient(const Style::ComputedStyle&) const;
-    void convertAbsoluteToClientQuads(Vector<FloatQuad>&, const Style::ComputedStyle&);
-    void convertAbsoluteToClientRects(Vector<FloatRect>&, const Style::ComputedStyle&);
-    void convertAbsoluteToClientRect(FloatRect&, const Style::ComputedStyle&);
+    std::optional<float> NODELETE zoomForClient(const RenderStyle&) const;
+    void convertAbsoluteToClientQuads(Vector<FloatQuad>&, const RenderStyle&);
+    void convertAbsoluteToClientRects(Vector<FloatRect>&, const RenderStyle&);
+    void convertAbsoluteToClientRect(FloatRect&, const RenderStyle&);
 
     bool hasActiveParser();
     void incrementActiveParserCount() { ++m_activeParserCount; }
@@ -2443,11 +2445,11 @@ private:
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 
     RenderPtr<RenderView> m_renderView;
-    std::unique_ptr<Style::ComputedStyle> m_initialContainingBlockStyle;
+    std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
 
     // The `initial style` is used to resolve CSS values used outside of element contexts
     // such as in media queries.
-    mutable std::unique_ptr<Style::ComputedStyle> m_cachedInitialStyle;
+    mutable std::unique_ptr<RenderStyle> m_cachedInitialStyle;
 
     WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;

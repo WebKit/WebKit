@@ -54,6 +54,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
@@ -62,7 +63,6 @@
 #include "StyleCachedImage.h"
 #include "StyleCanvasImage.h"
 #include "StyleColor.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleCursorImage.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -83,12 +83,12 @@ namespace Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BuilderState);
 
-BuilderState::BuilderState(Style::ComputedStyle& style)
+BuilderState::BuilderState(RenderStyle& style)
     : m_style(style)
 {
 }
 
-BuilderState::BuilderState(Style::ComputedStyle& style, BuilderContext&& context)
+BuilderState::BuilderState(RenderStyle& style, BuilderContext&& context)
     : m_style(style)
     , m_context(WTF::move(context))
     , m_cssToLengthConversionData(style, *this)
@@ -117,7 +117,7 @@ float BuilderState::zoomWithTextZoomFactor()
 // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
 // Though all CSS values that can be applied to outermost <svg> elements (width/height/border/padding...)
 // need to respect the scaling. RenderBox (the parent class of LegacyRenderSVGRoot) grabs values like
-// width/height/border/padding/... from the ComputedStyle -> for SVG these values would never scale,
+// width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
 // if we'd pass a 1.0 zoom factor everywhere. So we only pass a zoom factor of 1.0 for specific
 // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
 bool BuilderState::useSVGZoomRules() const

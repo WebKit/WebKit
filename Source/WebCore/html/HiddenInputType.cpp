@@ -67,7 +67,7 @@ void HiddenInputType::restoreFormControlState(const FormControlState& state)
     protect(element())->setAttributeWithoutSynchronization(valueAttr, AtomString { state[0] });
 }
 
-RenderPtr<RenderElement> HiddenInputType::createInputRenderer(Style::ComputedStyle&&)
+RenderPtr<RenderElement> HiddenInputType::createInputRenderer(RenderStyle&&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -40,7 +40,7 @@ class RenderMathMLFraction final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLFraction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFraction);
 public:
-    RenderMathMLFraction(MathMLFractionElement&, Style::ComputedStyle&&);
+    RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
     virtual ~RenderMathMLFraction();
 
     LayoutUnit defaultLineThickness() const;

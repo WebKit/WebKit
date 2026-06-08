@@ -28,15 +28,14 @@
 
 namespace WebCore {
 
+class BuilderState;
+class RenderStyle;
 class SpringTimingFunction;
 class TimingFunction;
 
 namespace Style {
 
-class BuilderState;
-class ComputedStyle;
-
-CSS::SpringEasingFunction NODELETE toCSSSpringEasingFunction(const SpringTimingFunction&, const Style::ComputedStyle&);
+CSS::SpringEasingFunction NODELETE toCSSSpringEasingFunction(const SpringTimingFunction&, const RenderStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::SpringEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::SpringEasingFunction&);

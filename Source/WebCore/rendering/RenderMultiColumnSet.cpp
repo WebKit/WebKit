@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMultiColumnSet);
 
-RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, Style::ComputedStyle&& style)
+RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow, RenderStyle&& style)
     : RenderFragmentContainerSet(Type::MultiColumnSet, fragmentedFlow.document(), WTF::move(style), fragmentedFlow)
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
@@ -430,7 +430,7 @@ RenderBox::LogicalExtentComputedValues RenderMultiColumnSet::computeLogicalHeigh
 LayoutUnit RenderMultiColumnSet::calculateMaxColumnHeight() const
 {
     RenderBlockFlow* multicolBlock = multiColumnBlockFlow();
-    const Style::ComputedStyle& multicolStyle = multicolBlock->style();
+    const RenderStyle& multicolStyle = multicolBlock->style();
     LayoutUnit availableHeight = multiColumnFlow()->columnHeightAvailable();
     LayoutUnit maxColumnHeight = availableHeight ? availableHeight : RenderFragmentedFlow::maxLogicalHeight();
     if (!multicolStyle.logicalMaxHeight().isNone())

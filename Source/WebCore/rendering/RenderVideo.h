@@ -37,7 +37,7 @@ class RenderVideo final : public RenderMedia {
     WTF_MAKE_TZONE_ALLOCATED(RenderVideo);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderVideo);
 public:
-    RenderVideo(HTMLVideoElement&, Style::ComputedStyle&&);
+    RenderVideo(HTMLVideoElement&, RenderStyle&&);
     virtual ~RenderVideo();
 
     WEBCORE_EXPORT HTMLVideoElement& NODELETE videoElement() const;
@@ -78,7 +78,7 @@ private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
 
     void layout() final;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 
     void visibleInViewportStateChanged() final;
 

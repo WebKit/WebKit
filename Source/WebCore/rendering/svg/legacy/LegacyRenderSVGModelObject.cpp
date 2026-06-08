@@ -51,7 +51,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
-LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
     : RenderElement(type, element, WTF::move(style), { }, typeFlags | SVGModelObjectFlag::IsLegacy | SVGModelObjectFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGModelObject());
@@ -148,7 +148,7 @@ void LegacyRenderSVGModelObject::insertedIntoTree()
     SVGRenderSupport::elementInsertedIntoTree(*this);
 }
 
-void LegacyRenderSVGModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void LegacyRenderSVGModelObject::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (diff == Style::DifferenceResult::Layout) {
         invalidateCachedBoundaries();

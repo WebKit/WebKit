@@ -25,9 +25,9 @@
 #include "ContainerNodeInlines.h"
 #include "FEFlood.h"
 #include "RenderElement.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGNames.h"
 #include "SVGPropertyOwnerRegistry.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 

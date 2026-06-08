@@ -31,9 +31,11 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Style {
 
-class ComputedStyle;
 class CustomProperty;
 
 class CustomPropertyRegistry {
@@ -48,7 +50,7 @@ public:
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);
     void clearRegisteredFromStylesheets();
 
-    const Style::ComputedStyle& initialValuePrototypeStyle() const LIFETIME_BOUND;
+    const RenderStyle& initialValuePrototypeStyle() const LIFETIME_BOUND;
 
     bool invalidatePropertiesWithViewportUnits(Document&);
 
@@ -65,7 +67,7 @@ private:
     UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
     UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
 
-    mutable std::unique_ptr<Style::ComputedStyle> m_initialValuePrototypeStyle;
+    mutable std::unique_ptr<RenderStyle> m_initialValuePrototypeStyle;
     mutable bool m_hasInvalidPrototypeStyle { false };
 };
 

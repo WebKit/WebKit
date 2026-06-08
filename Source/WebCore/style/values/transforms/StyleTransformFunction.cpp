@@ -39,8 +39,8 @@
 #include "CSSValueList.h"
 #include "DeprecatedCSSOMValue.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleInterpolationContext.h"
 #include "StyleKeyword+CSSValueConversion.h"
 #include "StyleLengthWrapper+Blending.h"
@@ -515,7 +515,7 @@ auto CSSValueConversion<TransformFunction>::operator()(BuilderState& state, cons
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const TransformFunction& value) -> Ref<CSSValue>
+auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const RenderStyle& style, const TransformFunction& value) -> Ref<CSSValue>
 {
     auto translateLength = [&](const auto& length) -> Ref<CSSValue> {
         if (length.isKnownZero())
@@ -626,7 +626,7 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const S
     return createCSSValue(pool, style, CSS::Keyword::None { });
 }
 
-auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const TransformationMatrix& transform) -> Ref<CSSValue>
+auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const RenderStyle& style, const TransformationMatrix& transform) -> Ref<CSSValue>
 {
     auto zoom = style.usedZoom();
     if (transform.isAffine()) {
@@ -649,14 +649,14 @@ auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Sty
     return CSSFunctionValue::create(CSSValueMatrix3d, WTF::move(arguments));
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const TransformFunction& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const TransformFunction& value)
 {
     return createCSSValue(pool, style, value)->createDeprecatedCSSOMWrapper(owner);
 }
 
 // MARK: - Serialization
 
-void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const TransformFunction& value)
+void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const TransformFunction& value)
 {
     auto translateLength = [&](const auto& length) {
         if (length.isKnownZero())
@@ -828,7 +828,7 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void Serialize<TransformationMatrix>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const TransformationMatrix& transform)
+void Serialize<TransformationMatrix>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const TransformationMatrix& transform)
 {
     auto zoom = style.usedZoom();
     if (transform.isAffine()) {

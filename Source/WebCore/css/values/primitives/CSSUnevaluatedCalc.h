@@ -40,12 +40,12 @@ class CSSCalcSymbolsAllowed;
 class CSSCalcSymbolTable;
 class CSSParserTokenRange;
 class CSSToLengthConversionData;
+class RenderStyle;
 struct ComputedStyleDependencies;
 struct CSSPropertyParserOptions;
 
 namespace Style {
 class BuilderState;
-class ComputedStyle;
 class UnevaluatedCalculationBase;
 }
 
@@ -72,7 +72,7 @@ class UnevaluatedCalcBase {
 public:
     WEBCORE_EXPORT UnevaluatedCalcBase(CSSCalc::Value&);
     UnevaluatedCalcBase(Ref<CSSCalc::Value>&&);
-    UnevaluatedCalcBase(Category, Range, const Style::UnevaluatedCalculationBase&, const Style::ComputedStyle&);
+    UnevaluatedCalcBase(Category, Range, const Style::UnevaluatedCalculationBase&, const RenderStyle&);
 
     UnevaluatedCalcBase(const UnevaluatedCalcBase&);
     UnevaluatedCalcBase(UnevaluatedCalcBase&&);
@@ -131,7 +131,7 @@ template<NumericRaw RawType> struct UnevaluatedCalc : UnevaluatedCalcBase {
     static constexpr auto range = Raw::range;
     static constexpr auto category = Raw::category;
 
-    explicit UnevaluatedCalc(const Style::UnevaluatedCalculationBase& value, const Style::ComputedStyle& style)
+    explicit UnevaluatedCalc(const Style::UnevaluatedCalculationBase& value, const RenderStyle& style)
         : UnevaluatedCalcBase(category, range, value, style)
     {
     }

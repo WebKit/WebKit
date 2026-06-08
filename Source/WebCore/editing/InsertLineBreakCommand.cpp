@@ -37,8 +37,8 @@
 #include "LocalFrame.h"
 #include "RenderElement.h"
 #include "RenderObjectStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 

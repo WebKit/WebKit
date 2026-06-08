@@ -34,8 +34,8 @@
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLMenclose.h"
 #include "RenderMathMLRow.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -66,7 +66,7 @@ void MathMLRowElement::childrenChanged(const ChildChange& change)
     MathMLPresentationElement::childrenChanged(change);
 }
 
-RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (!document().settings().coreMathMLEnabled() && hasTagName(mfencedTag))
         return createRenderer<RenderMathMLFenced>(*this, WTF::move(style));

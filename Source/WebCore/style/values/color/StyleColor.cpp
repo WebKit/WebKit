@@ -41,12 +41,12 @@
 #include "ColorBlending.h"
 #include "DeprecatedCSSOMValue.h"
 #include "Document.h"
+#include "RenderStyle.h"
 #include "RenderTheme.h"
 #include "StyleAbsoluteColor.h"
 #include "StyleColorLayers.h"
 #include "StyleColorMix.h"
 #include "StyleColorResolutionState.h"
-#include "StyleComputedStyle.h"
 #include "StyleContrastColor.h"
 #include "StyleHexColor.h"
 #include "StyleKeywordColor.h"
@@ -349,7 +349,7 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     WTF::switchOn(value, [&](const auto& kind) { WebCore::Style::serializationForCSSTokenization(builder, context, kind); });
 }
 
-void Serialize<Color>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle& style, const Color& value)
+void Serialize<Color>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle& style, const Color& value)
 {
     // NOTE: The specialization of Style::Serialize is used for computed value serialization, so the resolved "used" value is used.
     ColorResolver colorResolver { style };
@@ -390,7 +390,7 @@ Color toStyleColor(const CSS::Color& value, const BuilderState& builderState, Fo
     return toStyleColor(value, builderState.document(), builderState.style(), builderState.cssToLengthConversionData(), forVisitedLink);
 }
 
-auto ToCSS<Color>::operator()(const Color& value, const Style::ComputedStyle& style) -> CSS::Color
+auto ToCSS<Color>::operator()(const Color& value, const RenderStyle& style) -> CSS::Color
 {
     ColorResolver colorResolver { style };
     return CSS::Color { CSS::ResolvedColor { colorResolver.colorResolvingCurrentColor(value) } };
@@ -428,20 +428,20 @@ auto CSSValueConversion<Color>::operator()(BuilderState& builderState, const CSS
     return this->operator()(builderState, value, ForVisitedLink::No);
 }
 
-Ref<CSSValue> CSSValueCreation<Color>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const Color& value)
+Ref<CSSValue> CSSValueCreation<Color>::operator()(CSSValuePool& pool, const RenderStyle& style, const Color& value)
 {
     ColorResolver colorResolver { style };
     return pool.createColorValue(colorResolver.colorResolvingCurrentColor(value));
 }
 
-Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Color>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, CSSStyleDeclaration& owner, const Color& value)
+Ref<DeprecatedCSSOMValue> DeprecatedCSSOMValueCreation<Color>::operator()(CSSValuePool& pool, const RenderStyle& style, CSSStyleDeclaration& owner, const Color& value)
 {
     return CSS::createDeprecatedCSSOMValue(pool, owner, toCSS(value, style));
 }
 
 // MARK: - Blending
 
-auto Blending<Color>::equals(const Color& a, const Color& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
+auto Blending<Color>::equals(const Color& a, const Color& b, const RenderStyle& aStyle, const RenderStyle& bStyle) -> bool
 {
     if (a.isCurrentColor() && b.isCurrentColor())
         return true;
@@ -462,7 +462,7 @@ auto Blending<Color>::canBlend(const Color& a, const Color& b) -> bool
     return !(a.isCurrentColor() && b.isCurrentColor());
 }
 
-auto Blending<Color>::blend(const Color& a, const Color& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> Color
+auto Blending<Color>::blend(const Color& a, const Color& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> Color
 {
     ColorResolver aColorResolver { aStyle };
     ColorResolver bColorResolver { bStyle };

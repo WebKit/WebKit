@@ -31,7 +31,7 @@
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 
 #include <limits>
 #include <wtf/TZoneMallocInlines.h>

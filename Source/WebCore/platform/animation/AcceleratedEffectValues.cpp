@@ -34,7 +34,7 @@
 #include "Path.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayerModelObject.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleOffsetAnchor.h"
 #include "StyleOffsetDistance.h"
 #include "StyleOffsetPath.h"
@@ -106,14 +106,14 @@ static constexpr TransformBox NODELETE toTransformBox(AcceleratedEffectTransform
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-AcceleratedEffectValues::AcceleratedEffectValues(const Style::ComputedStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
+AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
 {
     auto borderBoxSize = borderBoxRect.size();
 
     if (renderer)
         transformOperationData = TransformOperationData(renderer->transformReferenceBoxRect(style), renderer);
 
-    // FIXME: Style::ComputedStyle::applyCSSTransform uses `transformOperationData.boundingBox` for all the reference boxes, but this uses a mixture of `transformOperationData.boundingBox` and the passed in `borderBoxSize`. Instead, probably `TransformOperationData` should be passed in directly and `borderBoxRect` removed.
+    // FIXME: RenderStyle::applyCSSTransform uses `transformOperationData.boundingBox` for all the reference boxes, but this uses a mixture of `transformOperationData.boundingBox` and the passed in `borderBoxSize`. Instead, probably `TransformOperationData` should be passed in directly and `borderBoxRect` removed.
 
     auto zoom = style.usedZoomForLength();
 
@@ -169,7 +169,7 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
     // 6. Translate and rotate by the transform specified by offset.
     if (transformOperationData) {
         if (auto path = tryPath(offsetPath, *transformOperationData)) {
-            // FIXME: This transform of `transformOrigin` is not present in the overload of MotionPath::applyMotionPathTransform() that takes a `StyleComputedStyle`.
+            // FIXME: This transform of `transformOrigin` is not present in the overload of MotionPath::applyMotionPathTransform() that takes a `RenderStyle`.
             auto computedTransformOrigin = boundingBox.location() + transformOrigin.value;
 
             // FIXME: It is a layering violation to use `MotionPath::applyMotionPathTransform` here, as it is defined in the rendering directory.

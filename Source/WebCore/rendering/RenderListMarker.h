@@ -56,7 +56,7 @@ class RenderListMarker final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderListMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListMarker);
 public:
-    RenderListMarker(RenderListItem&, Style::ComputedStyle&&);
+    RenderListMarker(RenderListItem&, RenderStyle&&);
     virtual ~RenderListMarker();
 
     String textWithoutSuffix() const { return m_textContent.textWithoutSuffix().toString(); };
@@ -97,8 +97,8 @@ private:
     void imageChanged(WrappedImagePtr, const IntRect*) final;
     LayoutRect NODELETE selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
     bool canBeSelectionLeaf() const final { return true; }
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) final;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
     Node* nodeForHitTest() const final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { ASSERT_NOT_REACHED(); return { }; }
     std::pair<float, float> layoutBoundForTextContent(String) const;

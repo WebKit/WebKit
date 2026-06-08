@@ -38,7 +38,7 @@ class RenderMathMLFenced final : public RenderMathMLRow {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLFenced);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLFenced);
 public:
-    RenderMathMLFenced(MathMLRowElement&, Style::ComputedStyle&&);
+    RenderMathMLFenced(MathMLRowElement&, RenderStyle&&);
     virtual ~RenderMathMLFenced();
 
     StringImpl* separators() const { return m_separators.get(); }

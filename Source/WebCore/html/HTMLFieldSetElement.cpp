@@ -180,7 +180,7 @@ const AtomString& HTMLFieldSetElement::formControlType() const
     return fieldset;
 }
 
-RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     // Fieldsets should make a block flow if display: inline, table types, or deprecated flex types are set.
     return RenderElement::createFor(*this, WTF::move(style), { RenderElement::ConstructBlockLevelRendererFor::Inline, RenderElement::ConstructBlockLevelRendererFor::TableOrTablePart, RenderElement::ConstructBlockLevelRendererFor::DeprecatedFlexBox });

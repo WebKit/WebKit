@@ -23,10 +23,10 @@
 #include "SVGTextChunk.h"
 
 #include "RenderSVGInlineText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGInlineTextBoxInlines.h"
 #include "SVGTextContentElement.h"
 #include "SVGTextFragment.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 
 namespace WebCore {

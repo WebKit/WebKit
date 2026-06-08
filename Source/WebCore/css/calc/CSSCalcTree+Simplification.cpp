@@ -38,8 +38,9 @@
 #include "CSSPrimitiveNumericCategory.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSUnevaluatedCalc.h"
+#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderState.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include <wtf/StdLibExtras.h>
 

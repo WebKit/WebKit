@@ -45,7 +45,7 @@ class RenderEmbeddedObject final : public RenderWidget {
     WTF_MAKE_TZONE_ALLOCATED(RenderEmbeddedObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderEmbeddedObject);
 public:
-    RenderEmbeddedObject(HTMLFrameOwnerElement&, Style::ComputedStyle&&);
+    RenderEmbeddedObject(HTMLFrameOwnerElement&, RenderStyle&&);
     virtual ~RenderEmbeddedObject();
 
     PluginUnavailabilityReason pluginUnavailabilityReason() const { return m_pluginUnavailabilityReason; };

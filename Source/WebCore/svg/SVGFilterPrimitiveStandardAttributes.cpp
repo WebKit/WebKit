@@ -184,7 +184,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
     updateSVGRendererForElementChange();
 }
 
-RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTF::move(style));
@@ -192,7 +192,7 @@ RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRend
     return createRenderer<LegacyRenderSVGResourceFilterPrimitive>(*this, WTF::move(style));
 }
 
-bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const Style::ComputedStyle& style)
+bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const RenderStyle& style)
 {
     if (parentNode() && (parentNode()->hasTagName(SVGNames::filterTag)))
         return SVGElement::rendererIsNeeded(style);

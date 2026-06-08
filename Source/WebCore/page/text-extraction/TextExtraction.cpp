@@ -877,13 +877,13 @@ static bool areSameOrigin(Document& document, Document& other)
     return protect(document.securityOrigin())->isSameOriginAs(protect(other.securityOrigin()));
 }
 
-static bool hasVisuallyDistinctStyling(const Style::ComputedStyle& style)
+static bool hasVisuallyDistinctStyling(const RenderStyle& style)
 {
     bool hasEnclosingBorder = style.border().hasVisibleBorder() && style.usedBorderTopWidth() && style.usedBorderRightWidth() && style.usedBorderBottomWidth() && style.usedBorderLeftWidth();
     return style.hasBackground() || style.hasOutline() || !style.boxShadow().isNone() || style.hasExplicitlySetBorderRadius() || hasEnclosingBorder;
 }
 
-static bool isVisuallyDistinctContainer(const Style::ComputedStyle& style, const FloatRect& rect)
+static bool isVisuallyDistinctContainer(const RenderStyle& style, const FloatRect& rect)
 {
     if (!hasVisuallyDistinctStyling(protect(style)))
         return false;

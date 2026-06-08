@@ -40,8 +40,8 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "TextRun.h"
 #include <math.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -50,7 +50,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMenuList);
 
-RenderMenuList::RenderMenuList(HTMLSelectElement& element, Style::ComputedStyle&& style)
+RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     : RenderFlexibleBox(Type::MenuList, element, WTF::move(style))
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
@@ -65,7 +65,7 @@ HTMLSelectElement& NODELETE RenderMenuList::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-void RenderMenuList::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderMenuList::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 

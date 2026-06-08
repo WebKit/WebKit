@@ -43,10 +43,10 @@ namespace Style {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageWidth::Value> { auto operator()(const BorderImageWidth::Value&, const Style::ComputedStyle&) -> CSS::BorderImageWidth::Value; };
+template<> struct ToCSS<BorderImageWidth::Value> { auto operator()(const BorderImageWidth::Value&, const RenderStyle&) -> CSS::BorderImageWidth::Value; };
 template<> struct ToStyle<CSS::BorderImageWidth::Value> { auto operator()(const CSS::BorderImageWidth::Value&, const BuilderState&) -> BorderImageWidth::Value; };
 
-auto ToCSS<BorderImageWidth::Value>::operator()(const BorderImageWidth::Value& value, const Style::ComputedStyle& style) -> CSS::BorderImageWidth::Value
+auto ToCSS<BorderImageWidth::Value>::operator()(const BorderImageWidth::Value& value, const RenderStyle& style) -> CSS::BorderImageWidth::Value
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::Auto& keyword) -> CSS::BorderImageWidth::Value {
@@ -82,7 +82,7 @@ auto ToStyle<CSS::BorderImageWidth::Value>::operator()(const CSS::BorderImageWid
     );
 }
 
-auto ToCSS<BorderImageWidth>::operator()(const BorderImageWidth& value, const Style::ComputedStyle& style) -> CSS::BorderImageWidth
+auto ToCSS<BorderImageWidth>::operator()(const BorderImageWidth& value, const RenderStyle& style) -> CSS::BorderImageWidth
 {
     return { toCSS(value.values, style), value.legacyWebkitBorderImage };
 }
@@ -112,7 +112,7 @@ auto CSSValueConversion<BorderImageWidth>::operator()(BuilderState& state, const
     return toStyleFromCSSValue<BorderImageWidthValue::LengthPercentage>(state, *primitiveValue);
 }
 
-auto CSSValueCreation<BorderImageWidth>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageWidth& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageWidth>::operator()(CSSValuePool&, const RenderStyle& style, const BorderImageWidth& value) -> Ref<CSSValue>
 {
     return CSSBorderImageWidthValue::create(toCSS(value, style));
 }

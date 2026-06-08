@@ -37,8 +37,8 @@
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include <ranges>
 #include <wtf/Scope.h>
@@ -133,7 +133,7 @@ private:
     unsigned m_ordinalIteration;
 };
 
-RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Style::ComputedStyle&& style)
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, RenderStyle&& style)
     : RenderBlock(RenderObject::Type::DeprecatedFlexibleBox, element, WTF::move(style), { })
 {
     setChildrenInline(false); // All of our children must be block-level
@@ -207,7 +207,7 @@ static void setOverridingMainAxisExtent(RenderBox* child, bool isVerticalBox, La
         child->setOverridingBorderBoxLogicalWidth(extent);
 }
 
-void RenderDeprecatedFlexibleBox::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderDeprecatedFlexibleBox::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     auto shouldClearLineClamp = [&] {
         auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;

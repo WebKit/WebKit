@@ -207,7 +207,7 @@ struct StyleFeatureSchema : public FeatureSchema {
                 context.conversionData.elementForContainerUnitResolution()
             };
 
-            auto dummyStyle = Style::ComputedStyle::clone(*style);
+            auto dummyStyle = RenderStyle::clone(*style);
             auto dummyMatchResult = Style::MatchResult::create();
 
             auto styleBuilder = Style::Builder { dummyStyle, WTF::move(builderContext), dummyMatchResult };

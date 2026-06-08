@@ -37,12 +37,11 @@ class ContainerNode;
 class Document;
 class Element;
 class Node;
+class RenderStyle;
 class SVGElement;
 class Text;
 
 namespace Style {
-
-class ComputedStyle;
 
 enum class SVGRendererUpdateType : bool {
     Default, // Routes through Style::Update -> RenderTreeUpdater::updateSVGRenderer.
@@ -50,7 +49,7 @@ enum class SVGRendererUpdateType : bool {
 };
 
 struct ElementUpdate {
-    std::unique_ptr<Style::ComputedStyle> style;
+    std::unique_ptr<RenderStyle> style;
     OptionSet<Change> changes { };
     bool recompositeLayer { false };
     bool mayNeedRebuildRoot { false };
@@ -59,7 +58,7 @@ struct ElementUpdate {
 struct TextUpdate {
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };
-    std::optional<std::unique_ptr<Style::ComputedStyle>> inheritedDisplayContentsStyle;
+    std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
 };
 
 class Update final : public CanMakeCheckedPtr<Update, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
@@ -77,10 +76,10 @@ public:
 
     const TextUpdate* NODELETE textUpdate(const Text&) const;
 
-    const Style::ComputedStyle* initialContainingBlockUpdate() const LIFETIME_BOUND { return m_initialContainingBlockUpdate.get(); }
+    const RenderStyle* initialContainingBlockUpdate() const LIFETIME_BOUND { return m_initialContainingBlockUpdate.get(); }
 
-    const Style::ComputedStyle* NODELETE elementStyle(const Element&) const;
-    Style::ComputedStyle* NODELETE elementStyle(const Element&);
+    const RenderStyle* NODELETE elementStyle(const Element&) const;
+    RenderStyle* NODELETE elementStyle(const Element&);
 
     const Document& document() const { return m_document; }
 
@@ -91,7 +90,7 @@ public:
     void addText(Text&, Element* parent, TextUpdate&&);
     void addText(Text&, TextUpdate&&);
     void addSVGRendererUpdate(SVGElement&);
-    void addInitialContainingBlockUpdate(std::unique_ptr<Style::ComputedStyle>);
+    void addInitialContainingBlockUpdate(std::unique_ptr<RenderStyle>);
 
 private:
     void addPossibleRoot(Element*);
@@ -102,7 +101,7 @@ private:
     OrderedHashSet<Ref<Element>> m_rebuildRoots;
     HashMap<Ref<const Element>, ElementUpdate> m_elements;
     HashMap<Ref<const Text>, TextUpdate> m_texts;
-    std::unique_ptr<Style::ComputedStyle> m_initialContainingBlockUpdate;
+    std::unique_ptr<RenderStyle> m_initialContainingBlockUpdate;
 };
 
 }

@@ -41,8 +41,8 @@ class RenderTableCell final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableCell);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCell);
 public:
-    RenderTableCell(Element&, Style::ComputedStyle&&);
-    RenderTableCell(Document&, Style::ComputedStyle&&);
+    RenderTableCell(Element&, RenderStyle&&);
+    RenderTableCell(Document&, RenderStyle&&);
     virtual ~RenderTableCell();
     
     unsigned colSpan() const;
@@ -143,12 +143,12 @@ protected:
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
 private:
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void computeIntrinsicLogicalWidthContributions() override;
 
     LayoutUnit containingBlockLogicalWidthForContent() const override;
 
-    static RenderPtr<RenderTableCell> createTableCellWithStyle(Document&, const Style::ComputedStyle&);
+    static RenderPtr<RenderTableCell> createTableCellWithStyle(Document&, const RenderStyle&);
 
     ASCIILiteral renderName() const override;
 

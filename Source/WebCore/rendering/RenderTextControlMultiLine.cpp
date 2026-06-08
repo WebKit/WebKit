@@ -28,8 +28,8 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderStyle+SettersInlines.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "TextControlInnerElements.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlMultiLine);
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, Style::ComputedStyle&& style)
+RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, RenderStyle&& style)
     : RenderTextControl(Type::TextControlMultiLine, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlMultiLine());

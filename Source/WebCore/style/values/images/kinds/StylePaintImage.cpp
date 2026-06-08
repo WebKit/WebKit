@@ -56,12 +56,12 @@ bool PaintImage::operator==(const Image& other) const
     return otherPaintImage && otherPaintImage->m_name == m_name;
 }
 
-Ref<CSSValue> PaintImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> PaintImage::computedStyleValue(const RenderStyle& style) const
 {
     return CSSPaintImageValue::create(toCSS(m_name, style), m_arguments);
 }
 
-Ref<DeprecatedCSSOMValue> PaintImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> PaintImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }

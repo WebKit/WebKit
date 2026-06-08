@@ -47,7 +47,7 @@ class RenderFragmentContainer : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderFragmentContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentContainer);
 public:
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void setFragmentedFlowPortionRect(const LayoutRect& rect) { m_fragmentedFlowPortionRect = rect; }
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
@@ -123,8 +123,8 @@ public:
     virtual bool contentRectSpansFragments(const LayoutRect&) const { return false; }
 
 protected:
-    RenderFragmentContainer(Type, Element&, Style::ComputedStyle&&, RenderFragmentedFlow*);
-    RenderFragmentContainer(Type, Document&, Style::ComputedStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Element&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Type, Document&, RenderStyle&&, RenderFragmentedFlow*);
     virtual ~RenderFragmentContainer();
 
     RenderOverflow* overflowForBox(const RenderBox&) const;

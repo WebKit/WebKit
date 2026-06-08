@@ -21,7 +21,7 @@
 
 #include "LegacyInlineIterator.h"
 #include "LegacyLineLayout.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 

@@ -24,10 +24,10 @@
 
 #include "RenderChildIterator.h"
 #include "RenderSVGInline.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGTextPositioningElement.h"
-#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 

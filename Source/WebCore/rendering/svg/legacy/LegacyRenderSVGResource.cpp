@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderElement& renderer, const Style::ComputedStyle& style, Color& fallbackColor)
+static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
 {
     bool applyToFill = mode == RenderSVGResourceMode::ApplyToFill;
 
@@ -126,12 +126,12 @@ void LegacyRenderSVGResource::removeAllClientsFromCacheAndMarkForInvalidation(bo
     removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(markForInvalidation, &visitedRenderers);
 }
 
-LegacyRenderSVGResource* LegacyRenderSVGResource::fillPaintingResource(RenderElement& renderer, const Style::ComputedStyle& style, Color& fallbackColor)
+LegacyRenderSVGResource* LegacyRenderSVGResource::fillPaintingResource(RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
 {
     return requestPaintingResource(RenderSVGResourceMode::ApplyToFill, renderer, style, fallbackColor);
 }
 
-LegacyRenderSVGResource* LegacyRenderSVGResource::strokePaintingResource(RenderElement& renderer, const Style::ComputedStyle& style, Color& fallbackColor)
+LegacyRenderSVGResource* LegacyRenderSVGResource::strokePaintingResource(RenderElement& renderer, const RenderStyle& style, Color& fallbackColor)
 {
     return requestPaintingResource(RenderSVGResourceMode::ApplyToStroke, renderer, style, fallbackColor);
 }

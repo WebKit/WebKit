@@ -108,7 +108,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
     event.setDefaultHandled();
 }
 
-RenderPtr<RenderElement> ImageInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.

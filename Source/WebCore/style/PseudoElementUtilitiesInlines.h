@@ -26,11 +26,11 @@
 #pragma once
 
 #include "PseudoElementUtilities.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore::Style {
 
-inline bool pseudoElementRendererIsNeeded(const Style::ComputedStyle& style)
+inline bool pseudoElementRendererIsNeeded(const RenderStyle& style)
 {
     return style.display() != DisplayType::None
         && style.content().isData();

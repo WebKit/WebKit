@@ -31,11 +31,11 @@
 #include "FontMetrics.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -330,7 +330,7 @@ double SVGLengthContext::convertValueFromPercentageToUserUnits(double value, SVG
     return value * dimensionForLengthMode(lengthMode, viewportSize);
 }
 
-static inline const Style::ComputedStyle* NODELETE renderStyleForLengthResolving(const SVGElement* context)
+static inline const RenderStyle* NODELETE renderStyleForLengthResolving(const SVGElement* context)
 {
     if (!context)
         return nullptr;
@@ -345,7 +345,7 @@ static inline const Style::ComputedStyle* NODELETE renderStyleForLengthResolving
     return nullptr;
 }
 
-static inline const Style::ComputedStyle* NODELETE rootRenderStyleForLengthResolving(const SVGElement* svgElement)
+static inline const RenderStyle* NODELETE rootRenderStyleForLengthResolving(const SVGElement* svgElement)
 {
     if (!svgElement)
         return nullptr;
@@ -369,7 +369,7 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
 
     auto* rootStyle = rootRenderStyleForLengthResolving(element.get());
 
-    const Style::ComputedStyle* parentStyle = nullptr;
+    const RenderStyle* parentStyle = nullptr;
     if (auto* renderer = element->renderer())
         parentStyle = renderer->parentStyle();
 

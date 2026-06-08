@@ -51,6 +51,7 @@
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEImageElement.h"
@@ -61,7 +62,6 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SocketProvider.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>

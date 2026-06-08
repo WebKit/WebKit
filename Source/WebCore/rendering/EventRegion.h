@@ -47,11 +47,8 @@ namespace WebCore {
 class EventRegion;
 class Path;
 class RenderObject;
+class RenderStyle;
 enum class TrackingType : uint8_t;
-
-namespace Style {
-class ComputedStyle;
-}
 
 class EventRegionContext final : public RegionContext {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(EventRegionContext, WEBCORE_EXPORT);
@@ -63,7 +60,7 @@ public:
     bool isEventRegionContext() const final { return true; }
 
     enum class ContributeToInteractionRegions : bool { No, Yes };
-    WEBCORE_EXPORT void unite(const FloatRoundedRect&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false, ContributeToInteractionRegions = ContributeToInteractionRegions::Yes);
+    WEBCORE_EXPORT void unite(const FloatRoundedRect&, const RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false, ContributeToInteractionRegions = ContributeToInteractionRegions::Yes);
     bool contains(const IntRect&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -134,7 +131,7 @@ public:
 
     friend bool operator==(const EventRegion&, const EventRegion&) = default;
 
-    void unite(const Region&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false);
+    void unite(const Region&, const RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     void NODELETE translate(const IntSize&);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }

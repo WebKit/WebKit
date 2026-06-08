@@ -30,7 +30,7 @@
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutElementBox.h"
 #include "LayoutUnit.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TextBreakingPositionContext.h"
 #include "WritingMode.h"
 #include <wtf/Range.h>
@@ -48,7 +48,7 @@ InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineI
 {
 }
 
-bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContextRoot, const Style::ComputedStyle& newStyle)
+bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContextRoot, const RenderStyle& newStyle)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
 
@@ -84,7 +84,7 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
     return true;
 }
 
-bool InlineInvalidation::styleWillChange(const Box& layoutBox, const Style::ComputedStyle& newStyle, Style::Difference diff)
+bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle, Style::Difference diff)
 {
     if (diff == Style::DifferenceResult::Layout) {
         m_inlineDamage.resetLayoutPosition();

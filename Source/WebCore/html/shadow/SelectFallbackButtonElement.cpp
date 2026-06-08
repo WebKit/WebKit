@@ -31,11 +31,11 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "PlatformRenderTheme.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleKeyword+Mappings.h"
 #include "StyleResolver.h"
 #include "StyleTextAlign.h"
@@ -122,7 +122,7 @@ void SelectFallbackButtonElement::setText(const String& text)
         textNode->setData(textToUse);
 }
 
-std::optional<Style::UnadjustedStyle> SelectFallbackButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* hostStyle)
+std::optional<Style::UnadjustedStyle> SelectFallbackButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
 {
     if (!hostStyle)
         return std::nullopt;

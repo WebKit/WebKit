@@ -29,12 +29,11 @@ namespace WebCore {
 
 class Document;
 class Element;
+class RenderStyle;
 
 namespace Style {
 
-class ComputedStyle;
+void loadPendingResources(RenderStyle&, Document&, const Element*);
 
-void loadPendingResources(ComputedStyle&, Document&, const Element*);
-
-} // namespace Style
-} // namespace WebCore
+}
+}

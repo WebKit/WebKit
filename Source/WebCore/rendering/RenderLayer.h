@@ -73,7 +73,6 @@ void outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, 
 namespace WebCore {
 
 namespace Style {
-class ComputedStyle;
 enum class TransformResolverOption : uint8_t;
 }
 
@@ -94,6 +93,7 @@ class RenderReplica;
 class RenderScrollbarPart;
 class RenderSVGHiddenContainer;
 class RenderSVGResourceClipper;
+class RenderStyle;
 class RenderView;
 class Scrollbar;
 class TransformationMatrix;
@@ -486,7 +486,7 @@ public:
     void setBackingNeedsRepaintInRect(const LayoutRect&, GraphicsLayerShouldClipToLayer = GraphicsLayerShouldClipToLayer::Clip);
     void repaintIncludingNonCompositingDescendants(const RenderLayerModelObject* repaintContainer);
 
-    void styleChanged(Style::Difference, const Style::ComputedStyle* oldStyle);
+    void styleChanged(Style::Difference, const RenderStyle* oldStyle);
 
     bool isSelfPaintingLayer() const { return m_isSelfPaintingLayer; }
 
@@ -829,7 +829,7 @@ public:
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const LIFETIME_BOUND { return m_transform.get(); }
     // updateTransformFromStyle computes a transform according to the passed options (e.g. transform-origin baked in or excluded) and the given style.
-    void updateTransformFromStyle(TransformationMatrix&, const Style::ComputedStyle&, OptionSet<Style::TransformResolverOption>) const;
+    void updateTransformFromStyle(TransformationMatrix&, const RenderStyle&, OptionSet<Style::TransformResolverOption>) const;
     // currentTransform computes a transform which takes accelerated animations into account. The
     // resulting transform has transform-origin baked in, unless non-default options are given. If
     // the layer does not have a transform, the identity matrix is returned.
@@ -1324,11 +1324,11 @@ private:
     void createReflection();
     void removeReflection();
 
-    Style::ComputedStyle createReflectionStyle();
+    RenderStyle createReflectionStyle();
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 
-    void updateFiltersAfterStyleChange(Style::Difference, const Style::ComputedStyle* oldStyle);
+    void updateFiltersAfterStyleChange(Style::Difference, const RenderStyle* oldStyle);
     void updateFilterPaintingStrategy();
 
     void updateAncestorChainHasBlendingDescendants();

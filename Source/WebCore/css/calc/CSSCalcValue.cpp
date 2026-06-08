@@ -82,7 +82,7 @@ RefPtr<Value> Value::parse(CSSParserTokenRange& tokens, CSS::PropertyParserState
     return result;
 }
 
-Ref<Value> Value::create(CSS::Category category, CSS::Range range, const Style::Calculation::Value& value, const Style::ComputedStyle& style)
+Ref<Value> Value::create(CSS::Category category, CSS::Range range, const Style::Calculation::Value& value, const RenderStyle& style)
 {
     auto toCSSOptions = Style::Calculation::ToCSSOptions {
         .category = category,

@@ -38,10 +38,7 @@ class LayoutSize;
 class RenderBoxModelObject;
 class RenderElement;
 class RenderView;
-
-namespace Style {
-class ComputedStyle;
-}
+class RenderStyle;
 
 class ImageQualityController {
     WTF_MAKE_TZONE_ALLOCATED(ImageQualityController);
@@ -49,7 +46,7 @@ class ImageQualityController {
 public:
     explicit ImageQualityController(const RenderView&);
 
-    static std::optional<InterpolationQuality> NODELETE interpolationQualityFromStyle(const Style::ComputedStyle&);
+    static std::optional<InterpolationQuality> NODELETE interpolationQualityFromStyle(const RenderStyle&);
     static InterpolationQuality chooseInterpolationQualityForSVG(GraphicsContext&, const RenderElement&, Image&);
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
 

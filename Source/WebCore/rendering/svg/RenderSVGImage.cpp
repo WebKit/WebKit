@@ -52,7 +52,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGImage);
 
-RenderSVGImage::RenderSVGImage(SVGImageElement& element, Style::ComputedStyle&& style)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : RenderSVGModelObject(Type::SVGImage, element, WTF::move(style))
     , m_imageResource(makeUniqueRef<RenderImageResource>())
 {
@@ -426,7 +426,7 @@ bool RenderSVGImage::needsHasSVGTransformFlags() const
     return protect(imageElement())->hasTransformRelatedAttributes();
 }
 
-void RenderSVGImage::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderSVGImage::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protect(imageElement()), style, boundingBox, std::nullopt, std::nullopt, options);
 }

@@ -737,12 +737,12 @@ static LayoutRect overflowControlsHostLayerRect(const RenderBox& renderBox)
     return renderBox.paddingBoxRectIncludingScrollbar();
 }
 
-void RenderLayerBacking::updateOpacity(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 {
     m_graphicsLayer->setOpacity(compositingOpacity(Style::evaluate<float>(style.opacity())));
 }
 
-void RenderLayerBacking::updateTransform(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
     TransformationMatrix t;
     if (renderer().effectiveCapturedInViewTransition()) {
@@ -856,12 +856,12 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     removeChildrenTransformFromLayers(layerForPerspective);
 }
 
-void RenderLayerBacking::updateFilters(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
     m_canCompositeFilters = !style.filter().hasReferenceFilter() && m_graphicsLayer->setFilters(Style::toPlatform(style.filter(), style));
 }
 
-void RenderLayerBacking::updateBackdropFilters(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
 {
     m_canCompositeBackdropFilters = !style.backdropFilter().hasReferenceFilter() && m_graphicsLayer->setBackdropFilters(Style::toPlatform(style.backdropFilter(), style));
 }
@@ -916,7 +916,7 @@ bool RenderLayerBacking::updateBackdropRoot()
     return true;
 }
 
-void RenderLayerBacking::updateBlendMode(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 {
     // FIXME: where is the blend mode updated when m_ancestorClippingStacks come and go?
     if (m_ancestorClippingStack) {
@@ -927,7 +927,7 @@ void RenderLayerBacking::updateBlendMode(const Style::ComputedStyle& style)
 }
 
 #if ENABLE(VIDEO)
-void RenderLayerBacking::updateVideoGravity(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
 {
     if (!renderer().isRenderVideo())
         return;
@@ -952,7 +952,7 @@ void RenderLayerBacking::updateVideoGravity(const Style::ComputedStyle& style)
 }
 #endif
 
-void RenderLayerBacking::updateContentsScalingFilters(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 {
     if (!renderer().isRenderHTMLCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
         return;
@@ -973,7 +973,7 @@ void RenderLayerBacking::updateContentsScalingFilters(const Style::ComputedStyle
 }
 
 #if HAVE(CORE_MATERIAL)
-void RenderLayerBacking::updateAppleVisualEffect(const Style::ComputedStyle& style)
+void RenderLayerBacking::updateAppleVisualEffect(const RenderStyle& style)
 {
     AppleVisualEffectData visualEffectData;
 
@@ -1539,7 +1539,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     ASSERT(!m_owningLayer.descendantDependentFlagsAreDirty());
     ASSERT(!renderer().view().needsLayout());
 
-    const Style::ComputedStyle& style = renderer().style();
+    const RenderStyle& style = renderer().style();
     const auto deviceScaleFactor = this->deviceScaleFactor();
 
     auto styleable = Styleable::fromRenderer(renderer());
@@ -3183,7 +3183,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
 }
 
 // FIXME: Code is duplicated in RenderLayer. Also, we should probably not consider filters a box decoration here.
-static inline bool hasVisibleBoxDecorations(const Style::ComputedStyle& style)
+static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
 {
     return style.border().hasVisibleBorder()
         || style.border().hasBorderRadius()
@@ -3195,7 +3195,7 @@ static inline bool hasVisibleBoxDecorations(const Style::ComputedStyle& style)
 
 static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& renderer)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    const RenderStyle& style = renderer.style();
 
     if (!GraphicsLayer::supportsContentsTiling())
         return false;
@@ -3231,7 +3231,7 @@ static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderElement& r
 
 static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& renderer)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    const RenderStyle& style = renderer.style();
 
     if (hasVisibleBoxDecorations(style))
         return true;
@@ -3242,7 +3242,7 @@ static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& rende
     return !canDirectlyCompositeBackgroundBackgroundImage(renderer);
 }
 
-static inline bool NODELETE hasPerspectiveOrPreserves3D(const Style::ComputedStyle& style)
+static inline bool NODELETE hasPerspectiveOrPreserves3D(const RenderStyle& style)
 {
     return !style.perspective().isNone() || style.usedTransformStyle3D() == TransformStyle3D::Preserve3D;
 }
@@ -3379,7 +3379,7 @@ void RenderLayerBacking::updatePaintingPhases()
 
 static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObject& renderer)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    const RenderStyle& style = renderer.style();
     if (renderer.hasClip())
         return false;
 
@@ -4725,7 +4725,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
     GraphicsLayerKeyframeValueList backdropFilterVector(AnimatedProperty::WebkitBackdropFilter);
 
     for (auto& currentKeyframe : keyframes) {
-        const Style::ComputedStyle* keyframeStyle = currentKeyframe.style();
+        const RenderStyle* keyframeStyle = currentKeyframe.style();
         double offset = currentKeyframe.offset();
 
         if (!keyframeStyle)

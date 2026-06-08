@@ -41,7 +41,7 @@ public:
     const Length& depth() LIFETIME_BOUND;
 private:
     MathMLSpaceElement(const QualifiedName& tagName, Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     std::optional<Length> m_width;

@@ -465,7 +465,7 @@ Text* NODELETE RenderText::textNode() const
 
 bool RenderText::computeUseBackslashAsYenSymbol() const
 {
-    const Style::ComputedStyle& style = this->style();
+    const RenderStyle& style = this->style();
     const auto& fontDescription = style.fontDescription();
     if (style.fontCascade().useBackslashAsYenSymbol())
         return true;
@@ -520,7 +520,7 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     }
 }
 
-void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderText::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     // There is no need to ever schedule repaints from a style change of a text run, since
     // we already did this for the parent of the text run.
@@ -531,7 +531,7 @@ void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedSty
         m_knownToHaveNoOverflowAndNoFallbackFonts = false;
     }
 
-    const Style::ComputedStyle& newStyle = style();
+    const RenderStyle& newStyle = style();
     if (!oldStyle) {
         initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(m_text);
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
@@ -1020,7 +1020,7 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
     return createPositionWithAffinity(0, Affinity::Downstream);
 }
 
-static inline std::optional<float> NODELETE combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const Style::ComputedStyle& style)
+static inline std::optional<float> NODELETE combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const RenderStyle& style)
 {
     if (style.textCombine() == TextCombine::None)
         return { };
@@ -1030,7 +1030,7 @@ static inline std::optional<float> NODELETE combineTextWidth(const RenderText& r
     return combineTextRenderer->isCombined() ? std::make_optional(combineTextRenderer->combinedTextWidth(fontCascade)) : std::nullopt;
 }
 
-ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, unsigned start, unsigned length, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow, const Style::ComputedStyle& style) const
+ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, unsigned start, unsigned length, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
     if (auto width = combineTextWidth(*this, fontCascade, style))
         return *width;
@@ -1042,7 +1042,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, u
     return fontCascade.width(run, fallbackFonts, glyphOverflow);
 }
 
-ALWAYS_INLINE float RenderText::widthFromCacheConsideringPossibleTrailingSpace(const Style::ComputedStyle& style, const FontCascade& font, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace& wordTrailingSpace, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow) const
+ALWAYS_INLINE float RenderText::widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle& style, const FontCascade& font, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace& wordTrailingSpace, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow) const
 {
     return measureTextConsideringPossibleTrailingSpace(currentCharacterIsSpace, startIndex, wordLen, wordTrailingSpace, fallbackFonts, [&] (unsigned from, unsigned len) {
         return widthFromCache(font, from, len, xPos, &fallbackFonts, &glyphOverflow, style);
@@ -1202,7 +1202,7 @@ RenderText::Widths RenderText::trimmedIntrinsicLogicalWidths(float leadingWidth,
     return widths;
 }
 
-static inline bool NODELETE isSpaceAccordingToStyle(char16_t c, const Style::ComputedStyle& style)
+static inline bool NODELETE isSpaceAccordingToStyle(char16_t c, const RenderStyle& style)
 {
     return c == ' ' || (c == noBreakSpace && style.nbspMode() == NBSPMode::Space);
 }
@@ -1266,12 +1266,12 @@ void RenderText::computeMinMaxIntrinsicLogicalWidths(float leadingWidth, bool fo
 
 static inline float hyphenWidth(RenderText& renderer, const FontCascade& font)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    const RenderStyle& style = renderer.style();
     auto textRun = RenderBlock::constructTextRun(style.hyphenString(), style);
     return font.width(textRun);
 }
 
-float RenderText::maxWordFragmentWidth(const Style::ComputedStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace& wordTrailingSpace, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow)
+float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace& wordTrailingSpace, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     unsigned suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
@@ -1549,7 +1549,7 @@ void RenderText::computeMinMaxIntrinsicLogicalWidths(float leadingWidth, SingleT
     clearContentLogicalWidthsInvalidation();
 }
 
-template<typename CharacterType> static inline bool containsOnlyCollapsibleWhitespace(std::span<const CharacterType> characters, const Style::ComputedStyle& style)
+template<typename CharacterType> static inline bool containsOnlyCollapsibleWhitespace(std::span<const CharacterType> characters, const RenderStyle& style)
 {
     for (auto character : characters) {
         if (!style.isCollapsibleWhiteSpace(character))
@@ -1755,12 +1755,12 @@ static String convertToMathAuto(const String& string)
     return string;
 }
 
-String applyTextTransform(const Style::ComputedStyle& style, const String& text)
+String applyTextTransform(const RenderStyle& style, const String& text)
 {
     return applyTextTransform(style, text, ' ');
 }
 
-String applyTextTransform(const Style::ComputedStyle& style, const String& text, char32_t previousCharacter)
+String applyTextTransform(const RenderStyle& style, const String& text, char32_t previousCharacter)
 {
     auto transform = style.textTransform();
 
@@ -1972,7 +1972,7 @@ float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine,
     if (from + len > text().length())
         len = text().length() - from;
 
-    const Style::ComputedStyle& lineStyle = firstLine ? firstLineStyle() : style();
+    const RenderStyle& lineStyle = firstLine ? firstLineStyle() : style();
     return width(from, len, lineStyle.fontCascade(), xPos, fallbackFonts, glyphOverflow);
 }
 

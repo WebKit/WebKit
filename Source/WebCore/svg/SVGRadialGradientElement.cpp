@@ -109,7 +109,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
     SVGGradientElement::svgAttributeChanged(attrName);
 }
 
-RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceRadialGradient>(*this, WTF::move(style));

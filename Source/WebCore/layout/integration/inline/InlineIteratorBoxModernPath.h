@@ -113,7 +113,7 @@ public:
         return m_inlineContent->formattingContextRoot();
     }
 
-    const Style::ComputedStyle& style() const
+    const RenderStyle& style() const
     {
         return box().style();
     }

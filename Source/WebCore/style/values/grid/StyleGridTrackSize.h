@@ -282,7 +282,7 @@ template<typename... F> decltype(auto) GridTrackSize::switchOn(F&&... f) const
 
 // MARK: - Conversion
 
-template<> struct ToCSS<GridTrackSize> { auto operator()(const GridTrackSize&, const Style::ComputedStyle&) -> CSS::GridTrackSize; };
+template<> struct ToCSS<GridTrackSize> { auto operator()(const GridTrackSize&, const RenderStyle&) -> CSS::GridTrackSize; };
 template<> struct ToStyle<CSS::GridTrackSize> { auto operator()(const CSS::GridTrackSize&, const BuilderState&) -> GridTrackSize; };
 
 // MARK: - Blending

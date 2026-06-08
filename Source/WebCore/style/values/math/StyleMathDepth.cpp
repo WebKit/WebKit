@@ -26,7 +26,7 @@
 #include "StyleMathDepth.h"
 
 #include "CSSKeywordValue.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {

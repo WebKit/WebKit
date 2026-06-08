@@ -62,7 +62,7 @@ protected:
 
 private:
     // DateTimeFieldElement functions:
-    void adjustMinInlineSize(Style::ComputedStyle&) const final;
+    void adjustMinInlineSize(RenderStyle&) const final;
     ValueOrReference<String> value() const final;
     String placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;

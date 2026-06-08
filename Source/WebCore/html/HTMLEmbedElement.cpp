@@ -192,7 +192,7 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
     requestObject(m_url, m_serviceType, paramNames, paramValues);
 }
 
-bool HTMLEmbedElement::rendererIsNeeded(const Style::ComputedStyle& style)
+bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (!hasTypeOrSrc(*this))
         return false;

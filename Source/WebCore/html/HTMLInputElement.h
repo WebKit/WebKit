@@ -180,7 +180,7 @@ public:
 
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() final;
-    Style::ComputedStyle createInnerTextStyle(const Style::ComputedStyle&) final;
+    RenderStyle createInnerTextStyle(const RenderStyle&) final;
 
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
@@ -220,9 +220,9 @@ public:
     // delay the 'input' event with EventQueueScope.
     void setValueFromRenderer(const String&);
 
-    bool rendererIsNeeded(const Style::ComputedStyle&) final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+    bool rendererIsNeeded(const RenderStyle&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const RenderStyle* = nullptr) const final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;
     void didDetachRenderers() final;
@@ -341,7 +341,7 @@ public:
 
     void capsLockStateMayHaveChanged();
 
-    bool NODELETE shouldTruncateText(const Style::ComputedStyle&) const;
+    bool NODELETE shouldTruncateText(const RenderStyle&) const;
 
     String resultForDialogSubmit() const final;
 

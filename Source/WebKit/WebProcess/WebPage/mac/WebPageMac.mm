@@ -103,9 +103,9 @@
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
+#import <WebCore/RenderStyle.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollView.h>
-#import <WebCore/StyleComputedStyle.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>

@@ -72,12 +72,12 @@ class RenderGrid final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderGrid);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderGrid);
 public:
-    RenderGrid(Element&, Style::ComputedStyle&&);
+    RenderGrid(Element&, RenderStyle&&);
     virtual ~RenderGrid();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
     bool canDropAnonymousBlockChild() const override { return false; }
@@ -107,7 +107,7 @@ public:
     bool isBaselineAlignmentForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContext) const;
 
     StyleContentAlignmentData contentAlignment(Style::GridTrackSizingDirection) const;
-    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal, const Style::ComputedStyle* = nullptr) const;
+    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal, const RenderStyle* = nullptr) const;
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
     // These functions handle the actual implementation of layoutBlock based on if
@@ -176,13 +176,13 @@ private:
     ASCIILiteral renderName() const override;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
 
-    bool selfAlignmentChangedToStretch(LogicalBoxAxis containingAxis, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, const RenderBox& gridItem) const;
-    bool selfAlignmentChangedFromStretch(LogicalBoxAxis containingAxis, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, const RenderBox& gridItem) const;
+    bool selfAlignmentChangedToStretch(LogicalBoxAxis containingAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& gridItem) const;
+    bool selfAlignmentChangedFromStretch(LogicalBoxAxis containingAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& gridItem) const;
 
-    SubgridDidChange NODELETE subgridDidChange(const Style::ComputedStyle& oldStyle) const;
-    bool NODELETE explicitGridDidResize(const Style::ComputedStyle&) const;
-    bool namedGridLinesDefinitionDidChange(const Style::ComputedStyle&) const;
-    bool implicitGridLinesDefinitionDidChange(const Style::ComputedStyle&) const;
+    SubgridDidChange NODELETE subgridDidChange(const RenderStyle& oldStyle) const;
+    bool NODELETE explicitGridDidResize(const RenderStyle&) const;
+    bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
+    bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
     unsigned computeAutoRepeatTracksCount(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 

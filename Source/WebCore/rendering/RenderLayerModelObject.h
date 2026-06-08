@@ -56,8 +56,8 @@ public:
     bool NODELETE hasSelfPaintingLayer() const;
     RenderLayer* layer() const LIFETIME_BOUND { return m_layer.get(); }
 
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     virtual bool requiresLayer() const = 0;
 
@@ -94,7 +94,7 @@ public:
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 
-    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
+    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
     void updateHasSVGTransformFlags();
     virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
 
@@ -111,8 +111,8 @@ public:
     virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
     virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
 
-    RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const Style::ComputedStyle&) const;
-    RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const Style::ComputedStyle&) const;
+    RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const RenderStyle&) const;
+    RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const RenderStyle&) const;
 
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceFilter* svgFilterResourceFromStyle() const;
@@ -132,8 +132,8 @@ public:
     TransformationMatrix* NODELETE layerTransform() const;
 
     virtual void updateLayerTransform();
-    virtual void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
-    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox) const;
+    virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox) const;
 
     virtual void invalidateCachedVisualOverflowRect() { }
 
@@ -152,8 +152,8 @@ public:
     AffineTransform computeRendererTransform() const;
 
 protected:
-    RenderLayerModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderLayerModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderLayerModelObject(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderLayerModelObject(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     void createLayer();
     void willBeDestroyed() override;

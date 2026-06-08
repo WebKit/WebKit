@@ -87,7 +87,7 @@ void MathMLUnderOverElement::attributeChanged(const QualifiedName& name, const A
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLUnderOverElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLUnderOverElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(munderTag) || hasTagName(moverTag) || hasTagName(munderoverTag));
     return createRenderer<RenderMathMLUnderOver>(*this, WTF::move(style));

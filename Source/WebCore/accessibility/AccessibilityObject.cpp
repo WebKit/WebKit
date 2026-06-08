@@ -2176,7 +2176,7 @@ std::optional<VisiblePosition> AccessibilityObject::previousLineStartPositionInt
 bool AccessibilityObject::isVisited() const
 {
     if (!isLink()) {
-        // Note that this isLink() check is necessary in addition to the Style::ComputedStyle::isLink() check below, as multiple
+        // Note that this isLink() check is necessary in addition to the RenderStyle::isLink() check below, as multiple
         // renderers can share the same style, e.g. RenderTexts within a link take their parent's (the link) style.
         return false;
     }
@@ -3157,7 +3157,7 @@ CheckedPtr<RenderObject> AccessibilityObject::rendererOrNearestAncestor() const
     return node ? nearestRendererFromNode(*node) : nullptr;
 }
 
-const Style::ComputedStyle* AccessibilityObject::style() const
+const RenderStyle* AccessibilityObject::style() const
 {
     if (auto* renderer = this->renderer()) {
         if (auto* renderText = dynamicDowncast<RenderText>(*renderer)) {

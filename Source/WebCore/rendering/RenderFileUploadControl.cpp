@@ -70,7 +70,7 @@ constexpr int iconFilenameSpacing = afterButtonSpacing;
 constexpr int defaultWidthNumChars = 38;
 #endif
 
-RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, Style::ComputedStyle&& style)
+RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, RenderStyle&& style)
     : RenderBlockFlow(Type::FileUploadControl, input, WTF::move(style))
     , m_canReceiveDroppedFiles(input.canReceiveDroppedFiles())
 {

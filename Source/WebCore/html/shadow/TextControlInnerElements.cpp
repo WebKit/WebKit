@@ -42,6 +42,7 @@
 #include "PlatformRenderTheme.h"
 #include "Quirks.h"
 #include "RenderSearchField.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -49,7 +50,6 @@
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleResolver.h"
 #include "TextEvent.h"
@@ -81,7 +81,7 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
     return adoptRef(*new TextControlInnerContainer(document));
 }
     
-RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerContainer>(*this, WTF::move(style));
 }
@@ -92,7 +92,7 @@ static inline bool NODELETE isStrongPasswordTextField(const Element* element)
     return inputElement && inputElement->hasAutofillStrongPasswordButton();
 }
 
-std::optional<Style::UnadjustedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     RefPtr shadowHost = this->shadowHost();
     auto elementStyle = resolveStyle(resolutionContext);
@@ -119,9 +119,9 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
     return adoptRef(*new TextControlInnerElement(document));
 }
 
-std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
 {
-    auto newStyle = Style::ComputedStyle::createPtr();
+    auto newStyle = RenderStyle::createPtr();
     newStyle->inheritFrom(*shadowHostStyle);
     newStyle->setFlexGrow(1);
 
@@ -188,7 +188,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event& event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerBlock>(*this, WTF::move(style));
 }
@@ -198,7 +198,7 @@ RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
     return downcast<RenderTextControlInnerBlock>(HTMLDivElement::renderer());
 }
 
-std::optional<Style::UnadjustedStyle> TextControlInnerTextElement::resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> TextControlInnerTextElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
 {
     Ref shadowHost = *this->shadowHost();
     auto style = downcast<HTMLTextFormControlElement>(shadowHost.get()).createInnerTextStyle(*shadowHostStyle);
@@ -206,7 +206,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerTextElement::resolveCustom
     if (shadowHostStyle)
         RenderTheme::singleton().adjustTextControlInnerTextStyle(style, *shadowHostStyle, shadowHost.ptr());
 
-    return Style::UnadjustedStyle { makeUnique<Style::ComputedStyle>(WTF::move(style)) };
+    return Style::UnadjustedStyle { makeUnique<RenderStyle>(WTF::move(style)) };
 }
 
 // MARK: TextControlPlaceholderElement
@@ -224,7 +224,7 @@ Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Documen
     return element;
 }
 
-std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto style = resolveStyle(resolutionContext);
 
@@ -246,7 +246,7 @@ std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCust
 
 // MARK: SearchFieldResultsButtonElement
 
-static inline bool NODELETE searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(const Style::ComputedStyle& style)
+static inline bool NODELETE searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(const RenderStyle& style)
 {
     auto appearance = style.appearance();
     return appearance == StyleAppearance::TextField && appearance == style.usedAppearance();
@@ -262,7 +262,7 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
     return adoptRef(*new SearchFieldResultsButtonElement(document));
 }
 
-std::optional<Style::UnadjustedStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     m_canAdjustStyleForAppearance = true;
 
@@ -343,7 +343,7 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
     return element;
 }
 
-std::optional<Style::UnadjustedStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(resolutionContext);
     Ref inputElement = downcast<HTMLInputElement>(*shadowHost());

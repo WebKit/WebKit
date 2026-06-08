@@ -61,7 +61,7 @@ Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Doc
     return meter;
 }
 
-RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (!RenderTheme::singleton().supportsMeter(style.usedAppearance()))
         return RenderElement::createFor(*this, WTF::move(style));

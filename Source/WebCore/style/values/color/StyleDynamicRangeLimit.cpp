@@ -73,7 +73,7 @@ static DynamicRangeLimit resolve(DynamicRangeLimitMixFunction&& mix)
 
 // MARK: - Conversion
 
-auto ToCSS<DynamicRangeLimit>::operator()(const DynamicRangeLimit& limit, const Style::ComputedStyle& style) -> CSS::DynamicRangeLimit
+auto ToCSS<DynamicRangeLimit>::operator()(const DynamicRangeLimit& limit, const RenderStyle& style) -> CSS::DynamicRangeLimit
 {
     return WTF::switchOn(limit,
         [&](const auto& value) -> CSS::DynamicRangeLimit {
@@ -94,7 +94,7 @@ auto ToStyle<CSS::DynamicRangeLimit>::operator()(const CSS::DynamicRangeLimit& l
     );
 }
 
-Ref<CSSValue> CSSValueCreation<DynamicRangeLimit>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const DynamicRangeLimit& value)
+Ref<CSSValue> CSSValueCreation<DynamicRangeLimit>::operator()(CSSValuePool&, const RenderStyle& style, const DynamicRangeLimit& value)
 {
     return CSSDynamicRangeLimitValue::create(toCSS(value, style));
 }
@@ -122,7 +122,7 @@ auto CSSValueConversion<DynamicRangeLimit>::operator()(BuilderState& state, cons
 
 // MARK: - Serialization
 
-void Serialize<DynamicRangeLimit>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const DynamicRangeLimit& value)
+void Serialize<DynamicRangeLimit>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const DynamicRangeLimit& value)
 {
     CSS::serializationForCSS(builder, context, toCSS(value, style));
 }

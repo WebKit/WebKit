@@ -26,7 +26,7 @@
 #pragma once
 
 #include "InlineDisplayBox.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace InlineDisplay {

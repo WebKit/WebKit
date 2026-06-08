@@ -33,11 +33,11 @@
 #include "LayoutRect.h"
 #include "Logging.h"
 #include "RenderBox.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "ScrollableArea.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 
 namespace WebCore {
@@ -251,14 +251,14 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
     return velocity < 0 ? *previous : *next;
 }
 
-static LayoutRect computeScrollSnapPortRect(const Style::ComputedStyle& style, const LayoutRect& rect)
+static LayoutRect computeScrollSnapPortRect(const RenderStyle& style, const LayoutRect& rect)
 {
     auto result = rect;
     result.contract(Style::extentForRect(style.scrollPaddingBox(), rect, style.usedZoomForLength()));
     return result;
 }
 
-static LayoutRect NODELETE computeScrollSnapAreaRect(const Style::ComputedStyle& style, const LayoutRect& rect)
+static LayoutRect NODELETE computeScrollSnapAreaRect(const RenderStyle& style, const LayoutRect& rect)
 {
     auto result = rect;
     result.expand(Style::extentForRect(style.scrollMarginBox(), rect, style.usedZoomForLength()));
@@ -292,7 +292,7 @@ bool mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox)
     return true;
 }
 
-void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const RenderBox& scrollingElementBox, const Style::ComputedStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode writingMode, Element* focusedElement)
+void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode writingMode, Element* focusedElement)
 {
     auto scrollSnapTypeContainer = scrollingElementStyle.scrollSnapType().tryContainer();
     const auto& boxesWithScrollSnapPositions = scrollingElementBox.view().boxesWithScrollSnapPositions();

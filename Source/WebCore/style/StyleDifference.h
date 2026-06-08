@@ -27,6 +27,9 @@
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Style {
 
 class ComputedStyle;
@@ -84,17 +87,17 @@ struct Difference {
     std::strong_ordering operator<=>(const Difference& other) const { return result <=> other.result; }
     std::strong_ordering operator<=>(const DifferenceResult& other) const { return result <=> other; }
 };
-Difference difference(const ComputedStyle&, const ComputedStyle&);
+Difference difference(const RenderStyle&, const RenderStyle&);
 
-bool differenceRequiresLayerRepaint(const ComputedStyle&, const ComputedStyle&, bool isComposited);
-bool borderIsEquivalentForPainting(const ComputedStyle&, const ComputedStyle&);
+bool differenceRequiresLayerRepaint(const RenderStyle&, const RenderStyle&, bool isComposited);
+bool borderIsEquivalentForPainting(const RenderStyle&, const RenderStyle&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, Difference);
 WTF::TextStream& operator<<(WTF::TextStream&, DifferenceResult);
 WTF::TextStream& operator<<(WTF::TextStream&, DifferenceContextSensitiveProperty);
 
 #if !LOG_DISABLED
-void dumpDifferences(WTF::TextStream&, const ComputedStyle&, const ComputedStyle&);
+void dumpDifferences(WTF::TextStream&, const RenderStyle&, const RenderStyle&);
 #endif
 
 } // namespace Style

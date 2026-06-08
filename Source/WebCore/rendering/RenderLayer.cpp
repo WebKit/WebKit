@@ -102,7 +102,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
-#include "RenderElementStyleInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
@@ -132,6 +132,7 @@
 #include "RenderSVGViewportContainer.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
@@ -152,7 +153,6 @@
 #include "ShadowRoot.h"
 #include "SourceGraphic.h"
 #include "StyleAttributeMutationScope.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -1714,7 +1714,7 @@ FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const Lay
     return referenceBoxRect;
 }
 
-void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, const Style::ComputedStyle& style, OptionSet<Style::TransformResolverOption> options) const
+void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, const RenderStyle& style, OptionSet<Style::TransformResolverOption> options) const
 {
     // https://drafts.csswg.org/css-anchor-position-1/#default-scroll-shift
     // > After layout has been performed for abspos, it is additionally shifted by
@@ -1788,7 +1788,7 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<Style::TransformRes
     // Query the animatedStyle() to obtain the current transformation, when accelerated transform animations are running.
     auto styleable = Styleable::fromRenderer(renderer());
     if ((styleable && styleable->isRunningAcceleratedTransformRelatedAnimation()) || !options.contains(Style::TransformResolverOption::TransformOrigin)) {
-        std::unique_ptr<Style::ComputedStyle> animatedStyle = renderer().animatedStyle();
+        std::unique_ptr<RenderStyle> animatedStyle = renderer().animatedStyle();
 
         TransformationMatrix transform;
         updateTransformFromStyle(transform, *animatedStyle, options);
@@ -6216,7 +6216,7 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
     return request->probablyHasPaintedContent();
 }
 
-void RenderLayer::styleChanged(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderLayer::styleChanged(Style::Difference diff, const RenderStyle* oldStyle)
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
     setCanBeBackdropRoot(computeCanBeBackdropRoot());
@@ -6346,9 +6346,9 @@ void RenderLayer::removeReflection()
     m_reflection = nullptr;
 }
 
-Style::ComputedStyle RenderLayer::createReflectionStyle()
+RenderStyle RenderLayer::createReflectionStyle()
 {
-    auto newStyle = Style::ComputedStyle::create();
+    auto newStyle = RenderStyle::create();
     newStyle.inheritFrom(renderer().style());
     
     auto reflection = renderer().style().boxReflect().tryReflection();
@@ -6439,7 +6439,7 @@ void RenderLayer::clearLayerScrollableArea()
     }
 }
 
-void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (renderer().style().filter().hasReferenceFilter())
         ensureLayerFilters().updateReferenceFilterClients(renderer().style().filter());

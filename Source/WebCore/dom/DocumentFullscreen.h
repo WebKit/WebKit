@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 class DocumentFullscreen final : public CanMakeWeakPtr<DocumentFullscreen> {
     WTF_MAKE_TZONE_ALLOCATED(DocumentFullscreen);
 public:

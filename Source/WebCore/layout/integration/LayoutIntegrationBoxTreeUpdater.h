@@ -37,11 +37,8 @@ class RenderBoxModelObject;
 class RenderElement;
 class RenderObject;
 class RenderInline;
+class RenderStyle;
 class RenderText;
-
-namespace Style {
-class ComputedStyle;
-}
 
 namespace Layout {
 class Box;
@@ -80,7 +77,7 @@ private:
     Layout::InitialContainingBlock& NODELETE initialContainingBlock();
 
     static UniqueRef<Layout::Box> createLayoutBox(RenderObject&);
-    static void adjustStyleIfNeeded(const RenderElement&, Style::ComputedStyle&, Style::ComputedStyle* firstLineStyle);
+    static void adjustStyleIfNeeded(const RenderElement&, RenderStyle&, RenderStyle* firstLineStyle);
 
     void buildTreeForInlineContent();
     void buildTreeForFlexContent();

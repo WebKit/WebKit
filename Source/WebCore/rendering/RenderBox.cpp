@@ -70,7 +70,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderDeprecatedFlexibleBox.h"
-#include "RenderElementStyleInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderGeometryMap.h"
@@ -87,6 +87,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCellInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
@@ -99,7 +100,6 @@
 #include "ScrollbarsController.h"
 #include "Settings.h"
 #include "StyleBoxShadow.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleTransformResolver.h"
@@ -148,13 +148,13 @@ static const unsigned backgroundObscurationTestMaxDepth = 4;
 
 bool RenderBox::s_hadNonVisibleOverflow = false;
 
-RenderBox::RenderBox(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderBoxModelObject(type, element, WTF::move(style), flags | TypeFlag::IsBox, typeSpecificFlags)
 {
     ASSERT(isRenderBox());
 }
 
-RenderBox::RenderBox(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderBoxModelObject(type, document, WTF::move(style), flags | TypeFlag::IsBox, typeSpecificFlags)
 {
     ASSERT(isRenderBox());
@@ -256,11 +256,11 @@ void RenderBox::removeFloatingOrOutOfFlowChildFromBlockLists()
     ASSERT_NOT_REACHED();
 }
 
-void RenderBox::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderBox::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     s_hadNonVisibleOverflow = hasNonVisibleOverflow();
 
-    const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
         // The background of the root element or the body element could propagate up to
         // the canvas. Issue full repaint, when our style changes substantially.
@@ -328,7 +328,7 @@ void RenderBox::invalidateAncestorBackgroundObscurationStatus()
     }
 }
 
-void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderBox::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     // Horizontal writing mode definition is updated in RenderBoxModelObject::updateFromStyle,
     // (as part of the RenderBoxModelObject::styleDidChange call below). So, we can safely cache the horizontal
@@ -337,7 +337,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
 
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
 
-    const Style::ComputedStyle& newStyle = style();
+    const RenderStyle& newStyle = style();
     if (needsLayout() && oldStyle) {
         RenderBlock::removePercentHeightDescendant(*this);
 
@@ -444,7 +444,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
         layoutContext().invalidateAnchorDependenciesForScroller(*this);
 }
 
-static bool NODELETE hasEquivalentGridPositioningStyle(const Style::ComputedStyle& style, const Style::ComputedStyle& oldStyle)
+static bool NODELETE hasEquivalentGridPositioningStyle(const RenderStyle& style, const RenderStyle& oldStyle)
 {
     return oldStyle.gridItemColumnStart() == style.gridItemColumnStart()
         && oldStyle.gridItemColumnEnd() == style.gridItemColumnEnd()
@@ -456,7 +456,7 @@ static bool NODELETE hasEquivalentGridPositioningStyle(const Style::ComputedStyl
         && (oldStyle.gridTemplateRows().subgrid == style.gridTemplateRows().subgrid || style.gridTemplateRows().orderedNamedLines.map.isEmpty());
 }
 
-void RenderBox::updateGridPositionAfterStyleChange(const Style::ComputedStyle& style, const Style::ComputedStyle* oldStyle)
+void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
 {
     if (!oldStyle)
         return;
@@ -475,7 +475,7 @@ void RenderBox::updateGridPositionAfterStyleChange(const Style::ComputedStyle& s
     parentGrid->setNeedsItemPlacement();
 }
 
-void RenderBox::updateShapeOutsideInfoAfterStyleChange(const Style::ComputedStyle& style, const Style::ComputedStyle* oldStyle, Style::Difference diff)
+void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle, Style::Difference diff)
 {
     Style::ShapeOutside shapeOutside = style.shapeOutside();
     Style::ShapeOutside oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : Style::ComputedStyle::initialShapeOutside();
@@ -496,7 +496,7 @@ void RenderBox::updateFromStyle()
 {
     RenderBoxModelObject::updateFromStyle();
 
-    const Style::ComputedStyle& styleToUse = style();
+    const RenderStyle& styleToUse = style();
     bool isDocElementRenderer = isDocumentElementRenderer();
     bool isViewObject = isRenderView();
 
@@ -542,7 +542,7 @@ void RenderBox::updateFromStyle()
     setHasReflection(!styleToUse.boxReflect().isNone());
 }
 
-bool RenderBox::computeHasTransformRelatedProperty(const Style::ComputedStyle& styleToUse) const
+bool RenderBox::computeHasTransformRelatedProperty(const RenderStyle& styleToUse) const
 {
     if (styleToUse.hasTransformRelatedProperty())
         return true;
@@ -699,7 +699,7 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     quads.append(localToAbsoluteQuad(localRect, MapCoordinatesMode::UseTransforms, wasFixed));
 }
 
-void RenderBox::applyTransform(TransformationMatrix& t, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
+void RenderBox::applyTransform(TransformationMatrix& t, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     Style::TransformResolver::applyTransform(t, style, TransformOperationData(boundingBox, this), options);
 }
@@ -709,7 +709,7 @@ void RenderBox::constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& computedMin
     // TODO: Here we use isSpecified() to present the definite value. This is not quite correct, for the definite value should also include
     // a size of the initial containing block and the “stretch-fit” sizing of non-replaced blocks if they have definite values.
     // See https://www.w3.org/TR/css-sizing-3/#definite
-    const Style::ComputedStyle& styleToUse = style();
+    const RenderStyle& styleToUse = style();
     ASSERT(styleToUse.aspectRatio().hasRatio() || preferredAspectRatio().value_or(0.0));
     auto logicalSize = dimension == ConstrainDimension::Width ? styleToUse.logicalWidth() : styleToUse.logicalHeight();
     // https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
@@ -1706,7 +1706,7 @@ BleedAvoidance RenderBox::determineBleedAvoidance(GraphicsContext& context) cons
     if (context.paintingDisabled())
         return BleedAvoidance::None;
 
-    const Style::ComputedStyle& style = this->style();
+    const RenderStyle& style = this->style();
 
     if (!style.hasBackground() || !style.border().hasBorder() || !style.border().hasBorderRadius() || borderImageIsLoadedAndCanBeRendered())
         return BleedAvoidance::None;
@@ -1915,7 +1915,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
 
 static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
 {
-    const Style::ComputedStyle& childStyle = childBox.style();
+    const RenderStyle& childStyle = childBox.style();
     if (childStyle.position() != PositionType::Static && childBox.containingBlock() != childBox.parent())
         return false;
     if (childStyle.usedVisibility() != Visibility::Visible)
@@ -2631,7 +2631,7 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
     // RenderView::computeVisibleRectInContainer then converts the rect to physical coordinates. We also convert to
     // physical when we hit a repaint container boundary. Therefore the final rect returned is always in the
     // physical coordinate space of the container.
-    const Style::ComputedStyle& styleToUse = style();
+    const RenderStyle& styleToUse = style();
     // Paint offset cache is only valid for root-relative, non-fixed position repainting
     if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.options.contains(VisibleRectContext::Option::UseEdgeInclusiveIntersection))
         return computeVisibleRectsUsingPaintOffset(rects);

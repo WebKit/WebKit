@@ -35,7 +35,7 @@ class RenderSearchField final : public RenderTextControlSingleLine {
     WTF_MAKE_TZONE_ALLOCATED(RenderSearchField);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSearchField);
 public:
-    RenderSearchField(HTMLInputElement&, Style::ComputedStyle&&);
+    RenderSearchField(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderSearchField();
 
     void updateCancelButtonVisibility() const;

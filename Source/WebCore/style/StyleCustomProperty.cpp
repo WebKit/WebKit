@@ -34,7 +34,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "DeprecatedCSSOMValueList.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
@@ -72,7 +72,7 @@ bool CustomProperty::valueEquals(const CustomProperty& other) const
     );
 }
 
-Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const Style::ComputedStyle& style) const
+Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const RenderStyle& style) const
 {
     auto convertValue = [&](const Value& value) {
         return WTF::switchOn(value,
@@ -109,7 +109,7 @@ Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const Style::Com
     );
 }
 
-Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CSSValuePool& pool, CSSStyleDeclaration& owner, const Style::ComputedStyle& style) const
+Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CSSValuePool& pool, CSSStyleDeclaration& owner, const RenderStyle& style) const
 {
     auto convertValue = [&](const Value& value) {
         return WTF::switchOn(value,
@@ -140,14 +140,14 @@ Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CS
     );
 }
 
-WTF::String CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+WTF::String CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const RenderStyle& style) const
 {
     StringBuilder builder;
     propertyValueSerialization(builder, context, style);
     return builder.toString();
 }
 
-void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style) const
 {
     auto serializeValue = [&](StringBuilder& builder, const Value& value) {
         WTF::switchOn(value,
@@ -177,14 +177,14 @@ void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CS
     );
 }
 
-WTF::String CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+WTF::String CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const RenderStyle& style) const
 {
     StringBuilder builder;
     propertyValueSerializationForTokenization(builder, context, style);
     return builder.toString();
 }
 
-void CustomProperty::propertyValueSerializationForTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+void CustomProperty::propertyValueSerializationForTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style) const
 {
     // `propertyValueSerializationForTokenization` differs from `propertyValueSerialization` only in how it handles custom `color`
     // values:
@@ -233,7 +233,7 @@ const Vector<CSSParserToken>& CustomProperty::tokens() const
         },
         [&](auto&) -> const Vector<CSSParserToken>& {
             if (!m_cachedTokens) {
-                CSSTokenizer tokenizer { propertyValueSerializationForTokenization(CSS::defaultSerializationContext(), Style::ComputedStyle::defaultStyleSingleton()) };
+                CSSTokenizer tokenizer { propertyValueSerializationForTokenization(CSS::defaultSerializationContext(), RenderStyle::defaultStyleSingleton()) };
                 m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange(), m_isAttrTainted);
             }
             return m_cachedTokens->tokens();

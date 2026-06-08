@@ -45,6 +45,7 @@ class BlendingKeyframes;
 class CSSStyleSheet;
 class Document;
 class Element;
+class RenderStyle;
 class RuleData;
 class RuleSet;
 class SelectorFilter;
@@ -66,7 +67,6 @@ enum class RuleMatchingBehavior: uint8_t {
 
 namespace Style {
 
-class ComputedStyle;
 class CustomFunctionRegistry;
 struct BuilderContext;
 struct CachedMatchResult;
@@ -75,10 +75,10 @@ struct SelectorMatchingState;
 struct UnadjustedStyle;
 
 struct ResolutionContext {
-    const Style::ComputedStyle* parentStyle;
-    const Style::ComputedStyle* parentBoxStyle { nullptr };
+    const RenderStyle* parentStyle;
+    const RenderStyle* parentBoxStyle { nullptr };
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
-    const Style::ComputedStyle* documentElementStyle { nullptr };
+    const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
 
@@ -100,12 +100,12 @@ public:
 
     ResolvedStyle styleForElement(Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    bool keyframeStylesForAnimation(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&, const TimingFunction*) const;
+    bool keyframeStylesForAnimation(Element&, const RenderStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&, const TimingFunction*) const;
 
     WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(Element&, const PseudoElementRequest&, const ResolutionContext&);
 
-    std::unique_ptr<Style::ComputedStyle> styleForPage(int pageIndex);
-    std::unique_ptr<Style::ComputedStyle> defaultStyleForElement(const Element*);
+    std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
+    std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);
 
     Document& NODELETE document();
     const Document& NODELETE document() const;
@@ -122,7 +122,7 @@ public:
 
     void addCurrentSVGFontFaceRules();
 
-    std::unique_ptr<Style::ComputedStyle> styleForKeyframe(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&) const;
+    std::unique_ptr<RenderStyle> styleForKeyframe(Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&) const;
     bool isAnimationNameValid(const AtomString&) const;
 
     void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);
@@ -172,7 +172,7 @@ private:
 
     class State;
 
-    State initializeStateAndStyle(const Element&, const ResolutionContext&, std::unique_ptr<Style::ComputedStyle>&& initialStyle = { });
+    State initializeStateAndStyle(const Element&, const ResolutionContext&, std::unique_ptr<RenderStyle>&& initialStyle = { });
     BuilderContext NODELETE builderContext(State&) const;
 
     void applyMatchedProperties(State&, const MatchResult&, PropertyCascade::IncludedProperties&&);

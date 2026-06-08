@@ -52,9 +52,9 @@
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderSVGRoot.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTable.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
@@ -100,7 +100,7 @@ LayoutUnit RenderFlexibleBox::FlexLayoutItem::flexedMarginBoxSize() const
     return flexedContentSize + mainAxisBorderAndPadding + mainAxisMargin;
 }
 
-const Style::ComputedStyle& RenderFlexibleBox::FlexLayoutItem::style() const
+const RenderStyle& RenderFlexibleBox::FlexLayoutItem::style() const
 {
     return renderer->style();
 }
@@ -125,14 +125,14 @@ struct RenderFlexibleBox::LineState {
     FlexLayoutItems flexLayoutItems;
 };
 
-RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, Style::ComputedStyle&& style)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, RenderStyle&& style)
     : RenderBlock(type, element, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
     ASSERT(isRenderFlexibleBox());
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, Style::ComputedStyle&& style)
+RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, RenderStyle&& style)
     : RenderBlock(type, document, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
     ASSERT(isRenderFlexibleBox());
@@ -371,7 +371,7 @@ static const StyleContentAlignmentData& NODELETE contentAlignmentNormalBehavior(
     return normalBehavior;
 }
 
-void RenderFlexibleBox::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderFlexibleBox::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     if (!oldStyle || diff != Style::DifferenceResult::Layout)
@@ -2187,7 +2187,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, FlexLayoutItem
     return !totalViolation;
 }
 
-inline ContentPosition NODELETE resolveLeftRightAlignment(ContentPosition position, StyleContentAlignmentData justifyContent, const Style::ComputedStyle& style, bool isReversed)
+inline ContentPosition NODELETE resolveLeftRightAlignment(ContentPosition position, StyleContentAlignmentData justifyContent, const RenderStyle& style, bool isReversed)
 {
     if (position == ContentPosition::Left || position == ContentPosition::Right) {
         auto leftRightAxisDirection = RenderFlexibleBox::leftRightAxisDirectionFromStyle(style);
@@ -2197,7 +2197,7 @@ inline ContentPosition NODELETE resolveLeftRightAlignment(ContentPosition positi
     return position;
 }
 
-static LayoutUnit initialJustifyContentOffset(const Style::ComputedStyle& style, LayoutUnit availableFreeSpace, unsigned numberOfFlexItems, bool isReversed)
+static LayoutUnit initialJustifyContentOffset(const RenderStyle& style, LayoutUnit availableFreeSpace, unsigned numberOfFlexItems, bool isReversed)
 {
     auto resolvedJustifyContent = style.justifyContent().resolve(contentAlignmentNormalBehavior());
     auto justifyContentPosition = resolvedJustifyContent.position();
@@ -3119,7 +3119,7 @@ void RenderFlexibleBox::flipForWrapReverse(const FlexLineStates& lineStates, Lay
     }
 }
 
-std::optional<TextDirection> RenderFlexibleBox::leftRightAxisDirectionFromStyle(const Style::ComputedStyle& style)
+std::optional<TextDirection> RenderFlexibleBox::leftRightAxisDirectionFromStyle(const RenderStyle& style)
 {
     if (!style.isColumnFlexDirection()) // Prioritize text direction.
         return style.writingMode().bidiDirection();

@@ -1114,12 +1114,12 @@ void HTMLMediaElement::finishParsingChildren()
         scheduleConfigureTextTracks();
 }
 
-bool HTMLMediaElement::rendererIsNeeded(const Style::ComputedStyle& style)
+bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 {
     return controls() && HTMLElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderMedia>(RenderObject::Type::Media, *this, WTF::move(style));
 }

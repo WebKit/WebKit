@@ -34,7 +34,7 @@
 #include "LayoutChildIterator.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleGapGutter.h"
 #include "StylePrimitiveNumeric.h"
 #include "UnplacedGridItem.h"

@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
 
-LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceFilter, element, WTF::move(style))
 {
 }
@@ -74,7 +74,7 @@ void LegacyRenderSVGResourceFilter::removeClientFromCache(RenderElement& client)
     }
 }
 
-auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const Style::ComputedStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);

@@ -258,7 +258,7 @@ void VTTCueBox::applyCSSProperties()
     // NOTE: Set in text-tracks.css
 }
 
-RenderPtr<RenderElement> VTTCueBox::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderVTTCue>(*this, WTF::move(style));
 }

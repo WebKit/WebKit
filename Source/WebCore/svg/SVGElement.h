@@ -139,7 +139,7 @@ public:
 
     void setCorrespondingElement(SVGElement*);
 
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle) override;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 
     static QualifiedName animatableAttributeForName(const AtomString&);
 #ifndef NDEBUG
@@ -182,7 +182,7 @@ public:
     void animatorWillBeDeleted(const QualifiedName&);
 
     using Node::computedStyle;
-    const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) final;
+    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) final;
 
     ColorInterpolation colorInterpolation() const;
 
@@ -200,7 +200,7 @@ protected:
     SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
     virtual ~SVGElement();
 
-    bool rendererIsNeeded(const Style::ComputedStyle&) override;
+    bool rendererIsNeeded(const RenderStyle&) override;
 
     void finishParsingChildren() override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;

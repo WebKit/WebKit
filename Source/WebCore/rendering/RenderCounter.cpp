@@ -35,8 +35,8 @@
 #include "RenderElementInlines.h"
 #include "RenderListItem.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle.h"
 #include "RenderView.h"
-#include "StyleComputedStyle.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -521,7 +521,7 @@ void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomString& i
     // will be called.
 }
 
-void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle)
+void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     Element* element = renderer.generatingElement();
     if (!element || !element->renderer())

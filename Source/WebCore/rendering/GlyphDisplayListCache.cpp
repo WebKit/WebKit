@@ -31,7 +31,7 @@
 #include "LegacyInlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderLayer.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

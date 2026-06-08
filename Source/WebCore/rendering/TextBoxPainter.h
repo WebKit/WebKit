@@ -40,19 +40,16 @@ namespace WebCore {
 class Color;
 class Document;
 class RenderCombineText;
+class RenderStyle;
 class RenderText;
 struct CompositionUnderline;
 struct MarkedText;
 struct StyledMarkedText;
 class TextPainter;
 
-namespace Style {
-class ComputedStyle;
-}
-
 class TextBoxPainter {
 public:
-    TextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, const Style::ComputedStyle&, PaintInfo&, const LayoutPoint& paintOffset);
+    TextBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, const RenderStyle&, PaintInfo&, const LayoutPoint& paintOffset);
     ~TextBoxPainter();
 
     void paint();
@@ -94,7 +91,7 @@ protected:
 
     struct DecoratingBox {
         InlineIterator::InlineBoxIterator inlineBox;
-        const CheckedRef<const Style::ComputedStyle> style;
+        const CheckedRef<const RenderStyle> style;
         TextDecorationPainter::Styles textDecorationStyles;
         FloatPoint location;
         float contentWidth { 0.f };
@@ -107,7 +104,7 @@ protected:
     const InlineIterator::BoxModernPath m_textBox;
     const CheckedRef<const RenderText> m_renderer;
     const CheckedRef<const Document> m_document;
-    const CheckedRef<const Style::ComputedStyle> m_style;
+    const CheckedRef<const RenderStyle> m_style;
     const FloatRect m_logicalRect;
     const TextRun m_paintTextRun;
     PaintInfo& m_paintInfo;

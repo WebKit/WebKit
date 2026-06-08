@@ -98,11 +98,11 @@ private:
 DEFINE_TYPE_MAPPING(CSS::WebkitBoxReflect, WebkitBoxReflect);
 
 template<> struct CSSValueConversion<WebkitBoxReflect> { auto operator()(BuilderState&, const CSSValue&) -> WebkitBoxReflect; };
-template<> struct CSSValueCreation<WebkitBoxReflect> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const WebkitBoxReflect&); };
+template<> struct CSSValueCreation<WebkitBoxReflect> { Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const WebkitBoxReflect&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<WebkitBoxReflection> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const WebkitBoxReflection&); };
+template<> struct Serialize<WebkitBoxReflection> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const WebkitBoxReflection&); };
 
 } // namespace Style
 } // namespace WebCore

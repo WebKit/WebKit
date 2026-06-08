@@ -59,6 +59,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
@@ -79,7 +80,6 @@
 #include "RenderTreeMutationDisallowedScope.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -635,7 +635,7 @@ void RenderTreeBuilder::moveAllChildrenIncludingFloats(RenderBlock& from, Render
     moveAllChildren(from, to, normalizeAfterInsertion);
 }
 
-void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, Style::ComputedStyle& oldStyle)
+void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, RenderStyle& oldStyle)
 {
     if (!renderer.parent())
         return;
@@ -1155,7 +1155,7 @@ void RenderTreeBuilder::removeFloatingObjects(RenderBlock& renderer)
     }
 }
 
-RenderPtr<RenderBox> RenderTreeBuilder::createAnonymousBoxWithSameTypeAndWithStyle(const RenderBox& renderer, const Style::ComputedStyle& style)
+RenderPtr<RenderBox> RenderTreeBuilder::createAnonymousBoxWithSameTypeAndWithStyle(const RenderBox& renderer, const RenderStyle& style)
 {
     if (is<RenderTableCell>(renderer))
         return Table::createAnonymousTableCellWithStyle(protect(renderer.document()), style);

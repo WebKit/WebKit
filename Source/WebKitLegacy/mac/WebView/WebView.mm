@@ -220,6 +220,7 @@
 #import <WebCore/RemoteFrameClient.h>
 #import <WebCore/RemoteFrameGeometryTransformer.h>
 #import <WebCore/RemoteUserInputEventData.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderTheme.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -233,7 +234,6 @@
 #import <WebCore/Settings.h>
 #import <WebCore/ShouldTreatAsContinuingLoad.h>
 #import <WebCore/StringUtilities.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TranslationContextMenuInfo.h>
@@ -9335,7 +9335,7 @@ FORWARD(toggleUnderline)
     return self._isRichlyEditable ? _private->_richTextTouchBar.get() : _private->_plainTextTouchBar.get();
 }
 
-static NSTextAlignment NODELETE nsTextAlignmentFromRenderStyle(const WebCore::Style::ComputedStyle* style)
+static NSTextAlignment NODELETE nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle* style)
 {
     NSTextAlignment textAlignment;
     switch (style->textAlign()) {

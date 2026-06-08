@@ -29,6 +29,7 @@
 
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceFilter.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEDropShadowElement.h"
@@ -36,14 +37,13 @@
 #include "SVGFESpecularLightingElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
 
-RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& element, Style::ComputedStyle&& style)
+RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& element, RenderStyle&& style)
     : RenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceFilterPrimitive());
@@ -75,7 +75,7 @@ SVGFilterPrimitiveStandardAttributes& RenderSVGResourceFilterPrimitive::filterPr
     return static_cast<SVGFilterPrimitiveStandardAttributes&>(RenderSVGHiddenContainer::element());
 }
 
-void RenderSVGResourceFilterPrimitive::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderSVGResourceFilterPrimitive::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 

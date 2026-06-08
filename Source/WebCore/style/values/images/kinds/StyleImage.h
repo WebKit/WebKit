@@ -45,11 +45,10 @@ class CSSValuePool;
 class Document;
 class RenderElement;
 class RenderObject;
+class RenderStyle;
 struct ResourceLoaderOptions;
 
 namespace Style {
-
-class ComputedStyle;
 
 class Image : public RefCountedAndCanMakeWeakPtr<Image> {
 public:
@@ -58,8 +57,8 @@ public:
     virtual bool operator==(const Image&) const = 0;
 
     // Computed Style representation.
-    virtual Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const = 0;
-    virtual Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const = 0;
+    virtual Ref<CSSValue> computedStyleValue(const RenderStyle&) const = 0;
+    virtual Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration&) const = 0;
 
     // Opaque representation.
     virtual WrappedImagePtr data() const = 0;

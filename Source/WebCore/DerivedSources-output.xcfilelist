@@ -3763,6 +3763,11 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+ConstructionInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+GettersInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+SettersInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementTypeHelpers.h

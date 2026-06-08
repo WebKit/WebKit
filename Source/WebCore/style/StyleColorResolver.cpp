@@ -26,7 +26,7 @@
 #include "config.h"
 #include "StyleColorResolver.h"
 
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Style {

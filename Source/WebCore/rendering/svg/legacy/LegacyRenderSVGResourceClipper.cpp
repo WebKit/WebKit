@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -45,7 +46,6 @@
 #include "SVGResourcesCache.h"
 #include "SVGUseElement.h"
 #include "SVGVisitedRendererTracking.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -53,7 +53,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
 
-LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceClipper, element, WTF::move(style))
 {
 }
@@ -71,7 +71,7 @@ void LegacyRenderSVGResourceClipper::removeClientFromCache(RenderElement& client
     m_clipperMap.remove(client);
 }
 
-auto LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, const Style::ComputedStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+auto LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
@@ -272,7 +272,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
             view().frameView().setPaintBehavior(oldBehavior);
             return false;
         }
-        const Style::ComputedStyle& style = renderer->style();
+        const RenderStyle& style = renderer->style();
         if (style.display() == Style::DisplayType::None || (style.usedVisibility() != Visibility::Visible && !is<SVGUseElement>(child)))
             continue;
 
@@ -311,7 +311,7 @@ void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect(RepaintRect
             continue;
         if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
-        const Style::ComputedStyle& style = renderer->style();
+        const RenderStyle& style = renderer->style();
         if (style.display() == Style::DisplayType::None || (style.usedVisibility() != Visibility::Visible && !childNode->hasTagName(SVGNames::useTag)))
             continue;
 

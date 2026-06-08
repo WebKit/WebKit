@@ -39,11 +39,11 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "WritingSuggestionData.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -144,7 +144,7 @@ static bool needsPseudoElementForAnimation(const Element& element, PseudoElement
     return stack->requiresPseudoElement() || stack->containsProperty(CSSPropertyDisplay);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const RenderStyle&)
 {
     if (value.text.value.isEmpty() && altText.isEmpty())
         return { };
@@ -154,27 +154,27 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text&
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, const String& altText, Document& document, const Style::ComputedStyle& pseudoStyle)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Image& value, const String& altText, Document& document, const RenderStyle& pseudoStyle)
 {
-    auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.image.value.ptr());
+    auto contentRenderer = createRenderer<RenderImage>(RenderObject::Type::Image, document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.image.value.ptr());
     contentRenderer->initializeStyle();
     contentRenderer->setAltText(altText);
     return contentRenderer;
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, const String&, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Counter& value, const String&, Document& document, const RenderStyle&)
 {
     return createRenderer<RenderCounter>(document, value);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, const String&, Document& document, const Style::ComputedStyle& pseudoStyle)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote& value, const String&, Document& document, const RenderStyle& pseudoStyle)
 {
-    auto contentRenderer = createRenderer<RenderQuote>(document, Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.quote);
+    auto contentRenderer = createRenderer<RenderQuote>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.quote);
     contentRenderer->initializeStyle();
     return contentRenderer;
 }
 
-void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const Style::ComputedStyle& style, PseudoElementType pseudoElementType)
+void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoElementType pseudoElementType)
 {
     if (auto* contentData = style.content().tryData()) {
         auto altText = contentData->alt.value_or(String { nullString() });
@@ -209,13 +209,13 @@ void RenderTreeUpdater::GeneratedContent::createContentRenderers(RenderTreeBuild
 #endif
 }
 
-void RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(RenderElement& pseudoRenderer, const Style::ComputedStyle& style)
+void RenderTreeUpdater::GeneratedContent::updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
 {
     for (auto& contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
         // We only manage the style for the generated content which must be images or text.
         if (!is<RenderImage>(contentRenderer) && !is<RenderQuote>(contentRenderer))
             continue;
-        contentRenderer.setStyle(Style::ComputedStyle::createStyleInheritingFromPseudoStyle(style));
+        contentRenderer.setStyle(RenderStyle::createStyleInheritingFromPseudoStyle(style));
     }
 }
 
@@ -262,7 +262,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
     if (updateStyle->display() == Style::DisplayType::Contents) {
         // For display:contents we create an inline wrapper that inherits its
         // style from the display:contents style.
-        auto contentsStyle = Style::ComputedStyle::createPtr();
+        auto contentsStyle = RenderStyle::createPtr();
         contentsStyle->setPseudoElementIdentifier({ { pseudoElementType } });
         contentsStyle->inheritFrom(*updateStyle);
         contentsStyle->copyContentFrom(*updateStyle);
@@ -270,11 +270,11 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
 
         Style::ElementUpdate contentsUpdate { WTF::move(contentsStyle), styleChanges, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTF::move(contentsUpdate));
-        auto pseudoElementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*updateStyle);
-        pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<Style::ComputedStyle>(WTF::move(pseudoElementUpdateStyle)));
+        auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
+        pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTF::move(pseudoElementUpdateStyle)));
     } else {
-        auto pseudoElementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*updateStyle);
-        Style::ElementUpdate pseudoElementUpdate { makeUnique<Style::ComputedStyle>(WTF::move(pseudoElementUpdateStyle)), styleChanges, elementUpdate.recompositeLayer };
+        auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
+        Style::ElementUpdate pseudoElementUpdate { makeUnique<RenderStyle>(WTF::move(pseudoElementUpdateStyle)), styleChanges, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTF::move(pseudoElementUpdate));
     }
 
@@ -313,7 +313,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         return;
     }
 
-    auto newStyle = Style::ComputedStyle::clone(*style);
+    auto newStyle = RenderStyle::clone(*style);
     if (auto backdropRenderer = renderer.pseudoElementRenderer(PseudoElementType::Backdrop))
         backdropRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
     else {
@@ -324,7 +324,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
     }
 }
 
-bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::ComputedStyle* style)
+bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const RenderStyle* style)
 {
     if (!style)
         return false;
@@ -415,7 +415,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
 
     nodeBeforeWritingSuggestionsTextRenderer->setText(prefix);
 
-    auto newStyle = Style::ComputedStyle::clone(*style);
+    auto newStyle = RenderStyle::clone(*style);
     newStyle.setDisplay(Style::DisplayType::InlineFlow);
 
     if (auto writingSuggestionsRenderer = editor->writingSuggestionRenderer()) {

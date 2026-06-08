@@ -34,7 +34,7 @@ class RenderFrame final : public RenderFrameBase {
     WTF_MAKE_TZONE_ALLOCATED(RenderFrame);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFrame);
 public:
-    RenderFrame(HTMLFrameElement&, Style::ComputedStyle&&);
+    RenderFrame(HTMLFrameElement&, RenderStyle&&);
     virtual ~RenderFrame();
 
     HTMLFrameElement& NODELETE frameElement() const;

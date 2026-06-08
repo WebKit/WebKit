@@ -34,8 +34,8 @@
 #include "HTTPParsers.h"
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -68,7 +68,7 @@ void MathMLTokenElement::childrenChanged(const ChildChange& change)
         mathmlRenderer->updateTokenContent();
 }
 
-RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 

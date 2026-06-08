@@ -52,9 +52,9 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "StyleableInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "WebAnimation.h"
 #include <ranges>
 #include <wtf/HashCountedSet.h>

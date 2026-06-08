@@ -32,11 +32,9 @@ OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
 
-struct AttachmentLayout;
+class RenderStyle;
 
-namespace Style {
-class ComputedStyle;
-}
+struct AttachmentLayout;
 
 class RenderThemeMac final : public RenderThemeCocoa {
 public:
@@ -50,7 +48,7 @@ public:
 
     void inflateRectForControlRenderer(const RenderElement&, FloatRect&) final;
 
-    bool isControlStyled(const Style::ComputedStyle&) const final;
+    bool isControlStyled(const RenderStyle&) const final;
 
     bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final;
 
@@ -71,15 +69,15 @@ public:
 
     ScrollbarWidth scrollbarWidthStyleForPart(StyleAppearance) final { return ScrollbarWidth::Thin; }
 
-    int minimumMenuListSize(const Style::ComputedStyle&) const final;
+    int minimumMenuListSize(const RenderStyle&) const final;
 
-    void adjustSliderThumbSize(Style::ComputedStyle&, const Element*) const final;
+    void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
 
     IntSize NODELETE sliderTickSize() const final;
     int NODELETE sliderTickOffsetFromTrackCenter() const final;
 
-    Style::PaddingBox platformPopupInternalPaddingBox(const Style::ComputedStyle&) const final;
-    PopupMenuStyle::Size popupMenuSize(const Style::ComputedStyle&, IntRect&) const final;
+    Style::PaddingBox platformPopupInternalPaddingBox(const RenderStyle&) const final;
+    PopupMenuStyle::Size popupMenuSize(const RenderStyle&, IntRect&) const final;
 
     std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const final;
     Style::PaddingBox controlPadding(StyleAppearance, const Style::PaddingBox&, float zoomFactor) const final;
@@ -115,28 +113,28 @@ public:
 
     bool supportsLargeFormControls() const final;
 
-    void adjustMenuListStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustMenuListStyle(RenderStyle&, const Element*) const final;
 
-    void adjustMenuListButtonStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSliderTrackStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSliderTrackStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSliderThumbStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSliderThumbStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldCancelButtonStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldDecorationPartStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldResultsDecorationPartStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
 
-    void adjustSearchFieldResultsButtonStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
 
-    void adjustListButtonStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 
 #if ENABLE(SERVICE_CONTROLS)
-    void adjustImageControlsButtonStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const final;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -146,7 +144,7 @@ public:
 
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    bool NODELETE searchFieldShouldAppearAsTextField(const Style::ComputedStyle&, const Settings&) const final;
+    bool NODELETE searchFieldShouldAppearAsTextField(const RenderStyle&, const Settings&) const final;
 
 #if ENABLE(SERVICE_CONTROLS)
     IntSize imageControlsButtonSize() const final;
@@ -160,7 +158,7 @@ private:
     std::span<const IntSize, 4> NODELETE searchFieldSizes() const;
     std::span<const IntSize, 4> NODELETE cancelButtonSizes() const;
     std::span<const IntSize, 4> NODELETE resultsButtonSizes() const;
-    void setSearchFieldSize(Style::ComputedStyle&) const;
+    void setSearchFieldSize(RenderStyle&) const;
 
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;

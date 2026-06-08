@@ -175,7 +175,7 @@ template<typename Layers> void BackgroundPainter::paintFillLayersImpl(const Colo
         context.endTransparencyLayer();
 }
 
-static void applyBoxShadowForBackground(GraphicsContext& context, const Style::ComputedStyle& style)
+static void applyBoxShadowForBackground(GraphicsContext& context, const RenderStyle& style)
 {
     Style::ColorResolver colorResolver { style };
     const auto& zoomFactor = style.usedZoomForLength();
@@ -870,7 +870,7 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
     );
 }
 
-void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Style::ComputedStyle& style, Style::ShadowStyle shadowStyle, RectEdges<bool> closedEdges) const
+void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const RenderStyle& style, Style::ShadowStyle shadowStyle, RectEdges<bool> closedEdges) const
 {
     // FIXME: Deal with border-image. Would be great to use border-image as a mask.
     GraphicsContext& context = m_paintInfo.context();

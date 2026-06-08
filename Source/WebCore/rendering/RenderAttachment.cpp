@@ -36,8 +36,8 @@
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
@@ -47,7 +47,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderAttachment);
 
-RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, Style::ComputedStyle&& style)
+RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&& style)
     : RenderReplaced(Type::Attachment, element, WTF::move(style), LayoutSize())
     , m_isWideLayout(element.isWideLayout())
 {

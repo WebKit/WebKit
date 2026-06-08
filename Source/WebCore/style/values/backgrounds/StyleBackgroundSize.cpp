@@ -71,7 +71,7 @@ auto CSSValueConversion<BackgroundSize>::operator()(BuilderState& state, const C
     return toStyleFromCSSValue<BackgroundSizeLength>(state, value);
 }
 
-auto CSSValueCreation<BackgroundSize>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const BackgroundSize& value) -> Ref<CSSValue>
+auto CSSValueCreation<BackgroundSize>::operator()(CSSValuePool& pool, const RenderStyle& style, const BackgroundSize& value) -> Ref<CSSValue>
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::Cover& keyword) -> Ref<CSSValue> {
@@ -91,7 +91,7 @@ auto CSSValueCreation<BackgroundSize>::operator()(CSSValuePool& pool, const Styl
 
 // MARK: - Serialization
 
-void Serialize<BackgroundSize>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BackgroundSize& value)
+void Serialize<BackgroundSize>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const BackgroundSize& value)
 {
     WTF::switchOn(value,
         [&](const CSS::Keyword::Cover& keyword) {

@@ -77,7 +77,7 @@ struct SameSizeAsRenderTableCell : public RenderBlockFlow {
 static_assert(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), "RenderTableCell should stay small");
 static_assert(sizeof(CollapsedBorderValue) <= 24, "CollapsedBorderValue should stay small");
 
-RenderTableCell::RenderTableCell(Element& element, Style::ComputedStyle&& style)
+RenderTableCell::RenderTableCell(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::TableCell, element, WTF::move(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
@@ -94,7 +94,7 @@ RenderTableCell::RenderTableCell(Element& element, Style::ComputedStyle&& style)
     ASSERT(isRenderTableCell());
 }
 
-RenderTableCell::RenderTableCell(Document& document, Style::ComputedStyle&& style)
+RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::TableCell, document, WTF::move(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
@@ -646,7 +646,7 @@ static inline void markCellDirtyWhenCollapsedBorderChanges(RenderTableCell* cell
     cell->setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
 
-void RenderTableCell::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderTableCell::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     ASSERT(style().display() == Style::DisplayType::TableCell);
     ASSERT(!row() || row()->rowIndexWasSet());
@@ -756,7 +756,7 @@ CollapsedBorderValue RenderTableCell::collapsedStartBorder(IncludeBorderColorOrN
     return result;
 }
 
-static Color resolvedBorderColor(const Style::ComputedStyle& style, CSSPropertyID borderColor)
+static Color resolvedBorderColor(const RenderStyle& style, CSSPropertyID borderColor)
 {
     switch (borderColor) {
     case CSSPropertyBorderTopColor:

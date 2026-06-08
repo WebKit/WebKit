@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-bool FontCascade::canUseGlyphDisplayList(const Style::ComputedStyle&)
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle&)
 {
     return true;
 }

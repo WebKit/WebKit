@@ -29,8 +29,8 @@
 #undef new
 #undef delete
 
-#include "StyleComputedStyle+GettersInlines.h"
-#include "StyleComputedStyle+SettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"

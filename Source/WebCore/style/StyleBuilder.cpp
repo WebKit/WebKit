@@ -45,12 +45,12 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StyleBuilderGenerated.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -99,7 +99,7 @@ static const StyleProperties* NODELETE positionTryFallbackProperties(const Build
     return context.positionTryFallback ? context.positionTryFallback->properties.get() : nullptr;
 }
 
-Builder::Builder(Style::ComputedStyle& style, BuilderContext&& context, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties, const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>* animatedProperties)
+Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties, const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>* animatedProperties)
     : m_cascade(matchResult, WTF::move(includedProperties), animatedProperties, positionTryFallbackProperties(context))
     , m_state(BuilderState::create(style, WTF::move(context)))
 {

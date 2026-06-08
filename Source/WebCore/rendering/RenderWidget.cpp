@@ -100,7 +100,7 @@ static void moveWidgetToParentSoon(Widget& child, LocalFrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, Style::ComputedStyle&& style)
+RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyle&& style)
     : RenderReplaced(type, element, WTF::move(style), ReplacedFlag::IsWidget)
 {
     relaxAdoptionRequirement();
@@ -229,7 +229,7 @@ void RenderWidget::layout()
     clearNeedsLayout();
 }
 
-void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderWidget::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_widget) {

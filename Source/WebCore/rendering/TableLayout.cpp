@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TableLayout.h"
 
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

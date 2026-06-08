@@ -32,14 +32,14 @@ class RenderDeprecatedFlexibleBox final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderDeprecatedFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderDeprecatedFlexibleBox);
 public:
-    RenderDeprecatedFlexibleBox(Element&, Style::ComputedStyle&&);
+    RenderDeprecatedFlexibleBox(Element&, RenderStyle&&);
     virtual ~RenderDeprecatedFlexibleBox();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     ASCIILiteral renderName() const override;
 
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
 
     void layoutBlock(RelayoutChildren, LayoutUnit pageHeight = 0_lu) override;
     void layoutHorizontalBox(RelayoutChildren);

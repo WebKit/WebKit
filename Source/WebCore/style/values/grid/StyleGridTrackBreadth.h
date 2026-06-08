@@ -174,7 +174,7 @@ private:
 // MARK: - Conversion
 
 template<> struct ToCSS<GridTrackBreadth> {
-    auto operator()(const GridTrackBreadth&, const Style::ComputedStyle&) -> CSS::GridTrackBreadth;
+    auto operator()(const GridTrackBreadth&, const RenderStyle&) -> CSS::GridTrackBreadth;
 };
 template<> struct ToStyle<CSS::GridTrackBreadth> {
     auto operator()(const CSS::GridTrackBreadth&, const BuilderState&) -> GridTrackBreadth;

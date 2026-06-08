@@ -37,10 +37,10 @@ class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHidde
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilterPrimitive);
 public:
-    LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, Style::ComputedStyle&&);
+    LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
     SVGFilterPrimitiveStandardAttributes& NODELETE filterPrimitiveElement() const;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
+    void styleDidChange(Style::Difference, const RenderStyle*) override;
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilterPrimitive"_s; }
 

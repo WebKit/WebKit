@@ -66,7 +66,7 @@
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "ExceptionOr.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 #include "ScriptWrappableInlines.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"

@@ -21,8 +21,8 @@
 
 #pragma once
 
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "WordTrailingSpace.h"
 
 namespace WebCore {

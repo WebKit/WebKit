@@ -30,7 +30,8 @@
 #include "FontCascadeInlines.h"
 #include "FontSelector.h"
 #include "Logging.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleCustomProperty.h"
 #include "StyleKeyword+Logging.h"
@@ -97,12 +98,12 @@ std::optional<PseudoElementIdentifier> ComputedStyleBase::pseudoElementIdentifie
     return PseudoElementIdentifier { *pseudoElementType(), pseudoElementNameArgument() };
 }
 
-Style::ComputedStyle* ComputedStyleBase::pseudoElementStyle(const PseudoElementIdentifier& pseudoElementIdentifier) const
+RenderStyle* ComputedStyleBase::pseudoElementStyle(const PseudoElementIdentifier& pseudoElementIdentifier) const
 {
     return m_pseudoElementStyles.get(pseudoElementIdentifier);
 }
 
-Style::ComputedStyle* ComputedStyleBase::addPseudoElementStyle(std::unique_ptr<Style::ComputedStyle> pseudo)
+RenderStyle* ComputedStyleBase::addPseudoElementStyle(std::unique_ptr<RenderStyle> pseudo)
 {
     if (!pseudo)
         return nullptr;

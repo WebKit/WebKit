@@ -39,8 +39,8 @@ class RenderMathMLOperator : public RenderMathMLToken {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLOperator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLOperator);
 public:
-    RenderMathMLOperator(Type, MathMLOperatorElement&, Style::ComputedStyle&&);
-    RenderMathMLOperator(Type, Document&, Style::ComputedStyle&&);
+    RenderMathMLOperator(Type, MathMLOperatorElement&, RenderStyle&&);
+    RenderMathMLOperator(Type, Document&, RenderStyle&&);
     virtual ~RenderMathMLOperator();
 
     MathMLOperatorElement& NODELETE element() const;
@@ -72,7 +72,7 @@ protected:
     virtual bool useMathOperator() const;
 
 private:
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
     void computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;

@@ -52,14 +52,14 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderTreeUpdaterViewTransition.h"
 #include "RenderView.h"
 #include "SVGElement.h"
 #include "Settings.h"
 #include "StyleableInlines.h"
-#include "StyleComputedStyle+GettersInlines.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include "TextManipulationController.h"
@@ -187,7 +187,7 @@ void RenderTreeUpdater::updateRebuildRoots()
 
         auto* parent = composedTreeAncestors(element).first();
         m_styleUpdate->addElement(element, parent, Style::ElementUpdate {
-            makeUnique<Style::ComputedStyle>(Style::ComputedStyle::cloneIncludingPseudoElements(*existingStyle)),
+            makeUnique<RenderStyle>(RenderStyle::cloneIncludingPseudoElements(*existingStyle)),
             Style::Change::Renderer
         });
         return true;
@@ -389,9 +389,9 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         element.didAttachRenderers();
 }
 
-void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, Style::ComputedStyle&& newStyle, Style::DifferenceResult minimalStyleDifference)
+void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle&& newStyle, Style::DifferenceResult minimalStyleDifference)
 {
-    auto oldStyle = Style::ComputedStyle::clone(renderer.style());
+    auto oldStyle = RenderStyle::clone(renderer.style());
     renderer.setStyle(WTF::move(newStyle), minimalStyleDifference);
     m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
 }
@@ -422,7 +422,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     ContentChangeObserver::StyleChangeScope observingScope(m_document, element);
 #endif
 
-    auto elementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*elementUpdate.style);
+    auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
     bool shouldTearDownRenderers = [&]() {
         if (element.isInTopLayer() && elementUpdate.changes.contains(Style::Change::Inherited) && elementUpdate.style->isSkippedRootOrSkippedContent())
@@ -452,7 +452,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     bool hasDisplayNonePreventingRendererCreation = elementUpdate.style->display() == Style::DisplayType::None && !element.rendererIsNeeded(elementUpdateStyle);
     bool hasDisplayContentsOrNone = hasDisplayContents || hasDisplayNonePreventingRendererCreation;
     if (hasDisplayContentsOrNone)
-        element.storeDisplayContentsOrNoneStyle(makeUnique<Style::ComputedStyle>(WTF::move(elementUpdateStyle)));
+        element.storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTF::move(elementUpdateStyle)));
     else
         element.clearDisplayContentsOrNoneStyle();
 
@@ -498,7 +498,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     updateRendererStyle(renderer, WTF::move(elementUpdateStyle), Style::DifferenceResult::Equal);
 }
 
-void RenderTreeUpdater::createRenderer(Element& element, Style::ComputedStyle&& style)
+void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 {
     auto computeInsertionPosition = [this, &element] () {
         renderTreePosition().computeNextSibling(element);
@@ -611,7 +611,7 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
     if (textUpdate && textUpdate->inheritedDisplayContentsStyle && *textUpdate->inheritedDisplayContentsStyle) {
         // Wrap text renderer into anonymous inline so we can give it a style.
         // This is to support "<div style='display:contents;color:green'>text</div>" type cases
-        auto newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, textNode.document(), Style::ComputedStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
+        auto newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
         newDisplayContentsAnonymousWrapper->initializeStyle();
         auto& displayContentsAnonymousWrapper = *newDisplayContentsAnonymousWrapper;
         m_builder.attach(renderTreePosition.parent(), WTF::move(newDisplayContentsAnonymousWrapper), renderTreePosition.nextSibling());
@@ -641,7 +641,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
         auto& newStylePtr = *textUpdate->inheritedDisplayContentsStyle;
         if (existingWrapper && newStylePtr) {
             // Update wrapper style in place instead of teardown+recreate.
-            existingWrapper->setStyle(Style::ComputedStyle::clone(*newStylePtr));
+            existingWrapper->setStyle(RenderStyle::clone(*newStylePtr));
         } else if (existingWrapper || newStylePtr) {
             tearDownTextRenderer(text, root, m_builder);
             existingRenderer = nullptr;
@@ -678,7 +678,7 @@ void RenderTreeUpdater::storePreviousRenderer(Node& node)
 void RenderTreeUpdater::updateRenderViewStyle()
 {
     if (m_styleUpdate->initialContainingBlockUpdate())
-        m_document->renderView()->setStyle(Style::ComputedStyle::clone(*m_styleUpdate->initialContainingBlockUpdate()));
+        m_document->renderView()->setStyle(RenderStyle::clone(*m_styleUpdate->initialContainingBlockUpdate()));
 }
 
 static void invalidateRebuildRootIfNeeded(Node& node)

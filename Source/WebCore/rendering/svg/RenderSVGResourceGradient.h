@@ -34,23 +34,23 @@ public:
 
     inline SVGGradientElement& gradientElement() const;
 
-    bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) final;
-    bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) final;
+    bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) final;
+    bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) final;
 
     virtual void invalidateGradient() = 0;
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
 
 protected:
-    RenderSVGResourceGradient(Type, SVGElement&, Style::ComputedStyle&&);
+    RenderSVGResourceGradient(Type, SVGElement&, RenderStyle&&);
 
     virtual void collectGradientAttributesIfNeeded() = 0;
-    virtual RefPtr<Gradient> createGradient(const Style::ComputedStyle&) = 0;
+    virtual RefPtr<Gradient> createGradient(const RenderStyle&) = 0;
 
     virtual AffineTransform gradientTransform() const = 0;
 
-    bool buildGradientIfNeeded(const RenderLayerModelObject&, const Style::ComputedStyle&, AffineTransform& userspaceTransform);
-    GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const Style::ComputedStyle&) const;
+    bool buildGradientIfNeeded(const RenderLayerModelObject&, const RenderStyle&, AffineTransform& userspaceTransform);
+    GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&) const;
     GradientSpreadMethod NODELETE platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
     ColorInterpolationMethod gradientColorInterpolationMethod() const;
 

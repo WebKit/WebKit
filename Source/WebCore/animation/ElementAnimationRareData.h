@@ -33,11 +33,8 @@ namespace WebCore {
 
 class CSSAnimation;
 class CSSTransition;
+class RenderStyle;
 class WebAnimation;
-
-namespace Style {
-class ComputedStyle;
-}
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
 class ElementAnimationRareData {
@@ -55,8 +52,8 @@ public:
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
     AnimatableCSSPropertyToTransitionMap& completedTransitionsByProperty() LIFETIME_BOUND { return m_completedTransitionsByProperty; }
     AnimatableCSSPropertyToTransitionMap& runningTransitionsByProperty() LIFETIME_BOUND { return m_runningTransitionsByProperty; }
-    const Style::ComputedStyle* lastStyleChangeEventStyle() const LIFETIME_BOUND { return m_lastStyleChangeEventStyle.get(); }
-    void setLastStyleChangeEventStyle(std::unique_ptr<const Style::ComputedStyle>&&);
+    const RenderStyle* lastStyleChangeEventStyle() const LIFETIME_BOUND { return m_lastStyleChangeEventStyle.get(); }
+    void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&&);
     void cssAnimationsDidUpdate() { m_hasPendingKeyframesUpdate = false; }
     void keyframesRuleDidChange() { m_hasPendingKeyframesUpdate = true; }
     bool hasPendingKeyframesUpdate() const { return m_hasPendingKeyframesUpdate; }
@@ -65,7 +62,7 @@ public:
 
 private:
     std::unique_ptr<KeyframeEffectStack> m_keyframeEffectStack;
-    std::unique_ptr<const Style::ComputedStyle> m_lastStyleChangeEventStyle;
+    std::unique_ptr<const RenderStyle> m_lastStyleChangeEventStyle;
     AnimationCollection m_animations;
     CSSAnimationCollection m_animationsCreatedByMarkup;
     AnimatableCSSPropertyToTransitionMap m_completedTransitionsByProperty;

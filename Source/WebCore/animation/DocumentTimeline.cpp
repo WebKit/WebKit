@@ -248,10 +248,10 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
 IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
-    CheckedRef style = [&]() -> const Style::ComputedStyle& {
+    CheckedRef style = [&]() -> const RenderStyle& {
         if (auto* renderer = target->renderer())
             return renderer->style();
-        return Style::ComputedStyle::defaultStyleSingleton();
+        return RenderStyle::defaultStyleSingleton();
     }();
 IGNORE_GCC_WARNINGS_END
 

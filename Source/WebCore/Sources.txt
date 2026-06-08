@@ -3090,6 +3090,7 @@ rendering/style/BorderValue.cpp
 rendering/style/GridSpan.cpp
 rendering/style/OutlineValue.cpp
 rendering/style/PositionTryOrder.cpp
+rendering/style/RenderStyle.cpp @header:RenderStyleGetters
 rendering/style/RenderStyleConstants.cpp
 rendering/style/StyleContentAlignmentData.cpp
 rendering/style/StyleSelfAlignmentData.cpp
@@ -3793,6 +3794,7 @@ JSHTMLElementWrapperFactory.cpp
 JSMathMLElementWrapperFactory.cpp
 JSSVGElementWrapperFactory.cpp
 MathMLElementFactory.cpp
+RenderStyleProperties.cpp
 SVGElementFactory.cpp @cost:4
 StyleBuilderGenerated.cpp @cost:13
 StyleChangedAnimatablePropertiesGenerated.cpp @cost:6

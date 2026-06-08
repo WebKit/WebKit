@@ -47,10 +47,10 @@
 #include "QualifiedName.h"
 #include "RegisterAllocator.h"
 #include "RenderElement.h"
+#include "RenderStyle.h"
 #include "SVGElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "StackAllocator.h"
-#include "StyleComputedStyle.h"
 #include "StyleRelations.h"
 #include "StyledElement.h"
 #include <JavaScriptCore/GPRInfo.h>
@@ -3880,7 +3880,7 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     notElementCase.link(&m_assembler);
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
-    // Otherwise we need to apply setFirstChildState() on the StyleComputedStyle.
+    // Otherwise we need to apply setFirstChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
     generateAddStyleRelation(checkingContext, elementAddressRegister, Style::Relation::FirstChild);
     Assembler::Jump successCase = m_assembler.jump();
@@ -4028,7 +4028,7 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
     notElement.link(&m_assembler);
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
-    // Otherwise we need to apply setLastChildState() on the StyleComputedStyle.
+    // Otherwise we need to apply setLastChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isLastChildRegister));
     generateAddStyleRelation(checkingContext, elementAddressRegister, Style::Relation::LastChild);
     Assembler::Jump successCase = m_assembler.jump();
@@ -4094,7 +4094,7 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     notElement.link(&m_assembler);
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
-    // Otherwise we need to apply setLastChildState() on the StyleComputedStyle.
+    // Otherwise we need to apply setLastChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isOnlyChildRegister));
     generateAddStyleRelation(checkingContext, elementAddressRegister, Style::Relation::FirstChild);
     generateAddStyleRelation(checkingContext, elementAddressRegister, Style::Relation::LastChild);

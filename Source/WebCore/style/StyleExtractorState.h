@@ -31,18 +31,17 @@
 namespace WebCore {
 
 class CSSValuePool;
+class RenderStyle;
 class Element;
 class RenderElement;
 
 namespace Style {
 
-class ComputedStyle;
-
 struct ExtractorState {
     enum class PropertyValueType : bool { Resolved, Computed };
     PropertyValueType valueType;
 
-    const Style::ComputedStyle& style;
+    const RenderStyle& style;
 
     Ref<Element> element;
     const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier;

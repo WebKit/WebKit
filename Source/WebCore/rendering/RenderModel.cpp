@@ -36,8 +36,9 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderObjectNode.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyle.h"
 #include "RenderTheme.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDifference.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -45,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderModel);
 
-RenderModel::RenderModel(HTMLModelElement& element, Style::ComputedStyle&& style)
+RenderModel::RenderModel(HTMLModelElement& element, RenderStyle&& style)
     : RenderReplaced { Type::Model, element, WTF::move(style) }
 {
     ASSERT(isRenderModel());
@@ -70,7 +71,7 @@ void RenderModel::updateFromElement()
     update();
 }
 
-void RenderModel::styleDidChange(Style::Difference difference, const Style::ComputedStyle* oldStyle)
+void RenderModel::styleDidChange(Style::Difference difference, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(difference, oldStyle);
 

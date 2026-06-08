@@ -27,11 +27,10 @@
 
 namespace WebCore {
 
+class RenderStyle;
 struct CSSPropertiesBitSet;
 
 namespace Style {
-
-class ComputedStyle;
 
 // Conservatively answers what CSS properties we should visit for CSS transitions. We do not need
 // to precisely check equivalence before saying "this property needs to be visited". This is tuned
@@ -40,7 +39,7 @@ class ComputedStyle;
 enum class AnimatablePropertiesCollectionQuirks : uint8_t {
     ComparareUsedValuesForBorderWidth
 };
-void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle&, const Style::ComputedStyle&, CSSPropertiesBitSet&, EnumSet<AnimatablePropertiesCollectionQuirks>);
+void conservativelyCollectChangedAnimatableProperties(const RenderStyle&, const RenderStyle&, CSSPropertiesBitSet&, EnumSet<AnimatablePropertiesCollectionQuirks>);
 
 } // namespace Style
 } // namespace WebCore

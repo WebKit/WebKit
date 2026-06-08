@@ -95,7 +95,7 @@ void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomS
     MathMLPresentationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
-RenderPtr<RenderElement> MathMLSpaceElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> MathMLSpaceElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mspaceTag));
     return createRenderer<RenderMathMLSpace>(*this, WTF::move(style));

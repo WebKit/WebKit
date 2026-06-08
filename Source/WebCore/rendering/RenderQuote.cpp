@@ -212,7 +212,7 @@ static constexpr std::array quoteTable {
     QuotesForLanguage { "zu"_span,         0, 0x201c, 0x201d, 0x2018, 0x2019 },
 };
 
-RenderQuote::RenderQuote(Document& document, Style::ComputedStyle&& style, QuoteType quote)
+RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quote)
     : RenderInline(Type::Quote, document, WTF::move(style))
     , m_type(quote)
     , m_text(emptyString())
@@ -235,7 +235,7 @@ void RenderQuote::willBeRemovedFromTree()
     RenderInline::willBeRemovedFromTree();
 }
 
-void RenderQuote::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderQuote::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderInline::styleDidChange(diff, oldStyle);
     if (diff >= Style::DifferenceResult::Layout) {

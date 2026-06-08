@@ -63,12 +63,12 @@ bool CanvasImage::equals(const CanvasImage& other) const
     return m_name == other.m_name;
 }
 
-Ref<CSSValue> CanvasImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> CanvasImage::computedStyleValue(const RenderStyle& style) const
 {
     return CSSCanvasValue::create(toCSS(m_name, style));
 }
 
-Ref<DeprecatedCSSOMValue> CanvasImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CanvasImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }

@@ -1621,7 +1621,7 @@ void WebAnimation::setPendingStartTime(WebAnimationTime pendingStartTime)
     Ref { downcast<DocumentTimeline>(*m_timeline) }->pendingStartTimeWasSetOnAnimation();
 }
 
-OptionSet<AnimationImpact> WebAnimation::resolve(Style::ComputedStyle& targetStyle, const Style::ResolutionContext& resolutionContext, EndpointInclusiveActiveInterval endpointInclusiveActiveInterval)
+OptionSet<AnimationImpact> WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, EndpointInclusiveActiveInterval endpointInclusiveActiveInterval)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
@@ -1817,11 +1817,11 @@ ExceptionOr<void> WebAnimation::commitStyles()
     auto unanimatedStyle = [&]() {
         if (auto styleable = Styleable::fromRenderer(*renderer)) {
             if (auto* lastStyleChangeEventStyle = styleable->lastStyleChangeEventStyle())
-                return Style::ComputedStyle::clone(*lastStyleChangeEventStyle);
+                return RenderStyle::clone(*lastStyleChangeEventStyle);
         }
         // If we don't have a style for the last style change event, then the
         // current renderer style cannot be animated.
-        return Style::ComputedStyle::clone(renderer->style());
+        return RenderStyle::clone(renderer->style());
     }();
 
     Style::Extractor computedStyleExtractor { styledElement.get() };
@@ -1862,7 +1862,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
         // We actually perform those steps in a different way: instead of building a copy of the sorted animation list and then removing stuff, we iterate through the
         // sorted animation list and stop when we've found this animation's effect or when we've found an effect associated with an animation with a higher composite order.
-        auto animatedStyle = Style::ComputedStyle::clonePtr(unanimatedStyle);
+        auto animatedStyle = RenderStyle::clonePtr(unanimatedStyle);
         for (const auto& animation : sortedAnimations) {
             RefPtr effectInStack = animation->keyframeEffect();
             if (!effectInStack)

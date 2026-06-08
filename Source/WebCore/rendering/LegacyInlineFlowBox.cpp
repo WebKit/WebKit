@@ -35,11 +35,11 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "Text.h"
 #include "TextBoxPainter.h"
 #include <math.h>

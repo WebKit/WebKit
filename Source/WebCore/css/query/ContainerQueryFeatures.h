@@ -30,14 +30,11 @@ namespace WebCore {
 
 class CSSToLengthConversionData;
 class RenderBox;
+class RenderStyle;
 class RenderView;
 
 namespace CSS {
 enum class Category : uint8_t;
-}
-
-namespace Style {
-class ComputedStyle;
 }
 
 namespace CQ {

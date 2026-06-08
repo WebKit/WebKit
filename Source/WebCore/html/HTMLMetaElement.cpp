@@ -42,8 +42,8 @@
 #include "MediaQueryParserContext.h"
 #include "NodeName.h"
 #include "Quirks.h"
+#include "RenderStyle.h"
 #include "Settings.h"
-#include "StyleComputedStyle.h"
 #include "StyleResolveForDocument.h"
 #include <wtf/TZoneMallocInlines.h>
 

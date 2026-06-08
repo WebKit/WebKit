@@ -160,11 +160,11 @@ DEFINE_TYPE_WRAPPER_GET(MaskBorderWidth, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<MaskBorderWidth> { auto operator()(const MaskBorderWidth&, const Style::ComputedStyle&) -> CSS::MaskBorderWidth; };
+template<> struct ToCSS<MaskBorderWidth> { auto operator()(const MaskBorderWidth&, const RenderStyle&) -> CSS::MaskBorderWidth; };
 template<> struct ToStyle<CSS::MaskBorderWidth> { auto operator()(const CSS::MaskBorderWidth&, const BuilderState&) -> MaskBorderWidth; };
 
 template<> struct CSSValueConversion<MaskBorderWidth> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorderWidth; };
-template<> struct CSSValueCreation<MaskBorderWidth> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorderWidth&) -> Ref<CSSValue>; };
+template<> struct CSSValueCreation<MaskBorderWidth> { auto operator()(CSSValuePool&, const RenderStyle&, const MaskBorderWidth&) -> Ref<CSSValue>; };
 
 // MARK: - Blending
 

@@ -36,8 +36,8 @@
 #include "HTMLSelectElement.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -87,7 +87,7 @@ void HTMLButtonElement::removingSteps(RemovalType removalType, ContainerNode& ol
     computeType(attributeWithoutSynchronization(HTMLNames::typeAttr));
 }
 
-RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
     if (style.display().isFlexibleOrGridFormattingContextBox())

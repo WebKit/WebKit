@@ -33,7 +33,7 @@ class RenderLineBreak final : public RenderBoxModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderLineBreak);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLineBreak);
 public:
-    RenderLineBreak(HTMLElement&, Style::ComputedStyle&&);
+    RenderLineBreak(HTMLElement&, RenderStyle&&);
     virtual ~RenderLineBreak();
 
     // FIXME: The lies here keep render tree dump based test results unchanged.

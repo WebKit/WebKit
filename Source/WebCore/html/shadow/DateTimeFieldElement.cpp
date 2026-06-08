@@ -36,9 +36,9 @@
 #include "NodeDocument.h"
 #include "PlatformLocale.h"
 #include "PlatformRenderTheme.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -58,7 +58,7 @@ DateTimeFieldElement::DateTimeFieldElement(Document& document, DateTimeFieldElem
 {
 }
 
-std::optional<Style::UnadjustedStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle* shadowHostStyle)
+std::optional<Style::UnadjustedStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(resolutionContext);
 

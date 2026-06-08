@@ -206,7 +206,7 @@ bool Extractor::updateStyleIfNeededForProperty(Element& element, CSSPropertyID p
     return true;
 }
 
-static inline const Style::ComputedStyle* computeRenderStyleForProperty(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID propertyID, std::unique_ptr<Style::ComputedStyle>& ownedStyle)
+static inline const RenderStyle* computeRenderStyleForProperty(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
 {
     if (Style::Interpolation::isAccelerated(propertyID, element.document().settings())) {
         Styleable styleable(element, pseudoElementIdentifier);
@@ -219,7 +219,7 @@ static inline const Style::ComputedStyle* computeRenderStyleForProperty(Element&
     return element.computedStyle(pseudoElementIdentifier);
 }
 
-const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique_ptr<Style::ComputedStyle>& ownedStyle) const
+const RenderStyle* Extractor::computeStyleForCustomProperty(std::unique_ptr<RenderStyle>& ownedStyle) const
 {
     RefPtr element = m_element;
     if (!element)
@@ -245,7 +245,7 @@ const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique
 
 RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) const
 {
-    std::unique_ptr<Style::ComputedStyle> ownedStyle;
+    std::unique_ptr<RenderStyle> ownedStyle;
     auto* style = computeStyleForCustomProperty(ownedStyle);
     if (!style)
         return nullptr;
@@ -259,7 +259,7 @@ RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) 
 
 RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(const AtomString& propertyName, CSSStyleDeclaration& owner) const
 {
-    std::unique_ptr<Style::ComputedStyle> ownedStyle;
+    std::unique_ptr<RenderStyle> ownedStyle;
     auto* style = computeStyleForCustomProperty(ownedStyle);
     if (!style)
         return nullptr;
@@ -273,26 +273,26 @@ RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(
 
 WTF::String Extractor::customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
 {
-    std::unique_ptr<Style::ComputedStyle> ownedStyle;
+    std::unique_ptr<RenderStyle> ownedStyle;
     if (auto* style = computeStyleForCustomProperty(ownedStyle))
         return customPropertyValueSerializationInStyle(*style, propertyName, serializationContext);
     return emptyString();
 }
 
-WTF::String Extractor::customPropertyValueSerializationInStyle(const Style::ComputedStyle& style, const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
+WTF::String Extractor::customPropertyValueSerializationInStyle(const RenderStyle& style, const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
 {
     if (RefPtr value = style.customPropertyValue(propertyName))
         return value->propertyValueSerialization(serializationContext, style);
     return emptyString();
 }
 
-static bool isLayoutDependent(CSSPropertyID propertyID, const Style::ComputedStyle* style, const RenderObject* renderer)
+static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, const RenderObject* renderer)
 {
     auto isNonReplacedInline = [](auto& renderer) {
         return renderer.isInline() && !renderer.isBlockLevelReplacedOrAtomicInline();
     };
 
-    auto formattingContextRootStyle = [](auto& renderer) -> const Style::ComputedStyle& {
+    auto formattingContextRootStyle = [](auto& renderer) -> const RenderStyle& {
         if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
             return ancestorToUse->style();
         ASSERT_NOT_REACHED();
@@ -385,13 +385,13 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const Style::ComputedSty
             return isLayoutDependent(mapLogicalToPhysicalPaddingProperty(FlowRelativeDirection::InlineEnd, *renderBox), style, renderBox);
         return false;
     case CSSPropertyPaddingTop:
-        return paddingIsLayoutDependent.template operator()<&Style::ComputedStyle::paddingTop>(style, renderer);
+        return paddingIsLayoutDependent.template operator()<&RenderStyle::paddingTop>(style, renderer);
     case CSSPropertyPaddingRight:
-        return paddingIsLayoutDependent.template operator()<&Style::ComputedStyle::paddingRight>(style, renderer);
+        return paddingIsLayoutDependent.template operator()<&RenderStyle::paddingRight>(style, renderer);
     case CSSPropertyPaddingBottom:
-        return paddingIsLayoutDependent.template operator()<&Style::ComputedStyle::paddingBottom>(style, renderer);
+        return paddingIsLayoutDependent.template operator()<&RenderStyle::paddingBottom>(style, renderer);
     case CSSPropertyPaddingLeft:
-        return paddingIsLayoutDependent.template operator()<&Style::ComputedStyle::paddingLeft>(style, renderer);
+        return paddingIsLayoutDependent.template operator()<&RenderStyle::paddingLeft>(style, renderer);
     case CSSPropertyGridTemplateColumns:
     case CSSPropertyGridTemplateRows:
     case CSSPropertyGridTemplate:
@@ -402,7 +402,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const Style::ComputedSty
     }
 }
 
-const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, UpdateLayout updateLayout, std::unique_ptr<Style::ComputedStyle>& ownedStyle) const
+const RenderStyle* Extractor::computeStyle(CSSPropertyID propertyID, UpdateLayout updateLayout, std::unique_ptr<RenderStyle>& ownedStyle) const
 {
     RefPtr element = m_element.get();
     if (!element)
@@ -413,7 +413,7 @@ const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, Up
         return nullptr;
     }
 
-    const Style::ComputedStyle* style = nullptr;
+    const RenderStyle* style = nullptr;
     auto forcedLayout = ForcedLayout::No;
 
     if (updateLayout == UpdateLayout::Yes) {
@@ -466,7 +466,7 @@ const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, Up
 
 RefPtr<CSSValue> Extractor::propertyValue(CSSPropertyID propertyID, UpdateLayout updateLayout, ExtractorState::PropertyValueType valueType) const
 {
-    std::unique_ptr<Style::ComputedStyle> ownedStyle;
+    std::unique_ptr<RenderStyle> ownedStyle;
     auto style = computeStyle(propertyID, updateLayout, ownedStyle);
     if (!style)
         return nullptr;
@@ -490,7 +490,7 @@ RefPtr<DeprecatedCSSOMValue> Extractor::propertyValueDeprecatedCSSOMValue(CSSPro
 
 WTF::String Extractor::propertyValueSerialization(CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, UpdateLayout updateLayout, ExtractorState::PropertyValueType valueType) const
 {
-    std::unique_ptr<Style::ComputedStyle> ownedStyle;
+    std::unique_ptr<RenderStyle> ownedStyle;
     auto style = computeStyle(propertyID, updateLayout, ownedStyle);
     if (!style)
         return emptyString();
@@ -520,7 +520,7 @@ WTF::String Extractor::propertyValueSerialization(CSSPropertyID propertyID, cons
     );
 }
 
-RefPtr<CSSValue> Extractor::propertyValueInStyle(const Style::ComputedStyle& style, CSSPropertyID propertyID, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
+RefPtr<CSSValue> Extractor::propertyValueInStyle(const RenderStyle& style, CSSPropertyID propertyID, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
 {
     ASSERT(isExposed(propertyID, m_element->document().settings()));
 
@@ -536,7 +536,7 @@ RefPtr<CSSValue> Extractor::propertyValueInStyle(const Style::ComputedStyle& sty
     return ExtractorGenerated::extractValue(state, propertyID);
 }
 
-WTF::String Extractor::propertyValueSerializationInStyle(const Style::ComputedStyle& style, CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
+WTF::String Extractor::propertyValueSerializationInStyle(const RenderStyle& style, CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
 {
     ASSERT(isExposed(propertyID, m_element->document().settings()));
 

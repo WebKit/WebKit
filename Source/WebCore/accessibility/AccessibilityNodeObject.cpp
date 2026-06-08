@@ -4079,7 +4079,7 @@ String AccessibilityNodeObject::revealableText() const
     if (!isStaticText())
         return nullString();
 
-    CheckedPtr<const Style::ComputedStyle> style = this->style();
+    CheckedPtr<const RenderStyle> style = this->style();
     if (!style || !style->autoRevealsWhenFound())
         return nullString();
 

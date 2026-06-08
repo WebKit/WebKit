@@ -79,7 +79,7 @@
 #import "RenderObject.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
-#import "StyleComputedStyle+SettersInlines.h"
+#import "RenderStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "Settings.h"
 #import "StyleLengthResolution.h"
@@ -132,7 +132,7 @@ bool RenderThemeIOS::canCreateControlPartForRenderer(const RenderElement& render
 #endif
 }
 
-void RenderThemeIOS::adjustCheckboxStyle(Style::ComputedStyle& style, const Element*) const
+void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) const
 {
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Checkbox, style);
 
@@ -157,7 +157,7 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
     return baseline;
 }
 
-bool RenderThemeIOS::isControlStyled(const Style::ComputedStyle& style) const
+bool RenderThemeIOS::isControlStyled(const RenderStyle& style) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
     if (style.usedAppearance() == StyleAppearance::PushButton || style.usedAppearance() == StyleAppearance::MenulistButton)
@@ -169,7 +169,7 @@ bool RenderThemeIOS::isControlStyled(const Style::ComputedStyle& style) const
     return RenderTheme::isControlStyled(style);
 }
 
-void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, Style::ComputedStyle& style) const
+void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, RenderStyle& style) const
 {
     auto minimumControlSize = this->minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
 
@@ -233,7 +233,7 @@ Style::PreferredSizePair RenderThemeIOS::controlSize(StyleAppearance appearance,
     return { size, size };
 }
 
-void RenderThemeIOS::adjustRadioStyle(Style::ComputedStyle& style, const Element*) const
+void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
 {
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Radio, style);
 
@@ -249,7 +249,7 @@ void RenderThemeIOS::adjustRadioStyle(Style::ComputedStyle& style, const Element
     style.setBorderRadius({ radius, radius });
 }
 
-static void applyCommonNonCapsuleBorderRadiusToStyle(Style::ComputedStyle& style)
+static void applyCommonNonCapsuleBorderRadiusToStyle(RenderStyle& style)
 {
     if (style.hasExplicitlySetBorderRadius())
         return;
@@ -258,7 +258,7 @@ static void applyCommonNonCapsuleBorderRadiusToStyle(Style::ComputedStyle& style
     style.setBorderRadius({ commonNonCapsuleBorderRadius, commonNonCapsuleBorderRadius });
 }
 
-void RenderThemeIOS::adjustTextFieldStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -351,7 +351,7 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
     }
 }
 
-void RenderThemeIOS::adjustTextAreaStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustTextAreaStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -390,7 +390,7 @@ static Style::PaddingEdge toTruncatedPaddingEdge(auto value)
     return Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(value)) };
 }
 
-Style::PaddingBox RenderThemeIOS::platformPopupInternalPaddingBox(const Style::ComputedStyle& style) const
+Style::PaddingBox RenderThemeIOS::platformPopupInternalPaddingBox(const RenderStyle& style) const
 {
     const auto padding = Style::emToPx<float>(1, style);
 
@@ -422,7 +422,7 @@ static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance
     };
 }
 
-void RenderThemeIOS::adjustRoundBorderRadius(Style::ComputedStyle& style, RenderBox& box)
+void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
     if (!canAdjustBorderRadiusForAppearance(style.usedAppearance(), box) || Style::hasImageInAnyLayer(style.backgroundLayers()))
         return;
@@ -452,7 +452,7 @@ void RenderThemeIOS::adjustRoundBorderRadius(Style::ComputedStyle& style, Render
     style.setBorderRadius(WTF::move(borderRadius));
 }
 
-static void applyCommonButtonPaddingToStyle(Style::ComputedStyle& style)
+static void applyCommonButtonPaddingToStyle(RenderStyle& style)
 {
     auto edge = toTruncatedPaddingEdge(Style::emToPx<int>(0.5, style));
 
@@ -463,7 +463,7 @@ static void applyCommonButtonPaddingToStyle(Style::ComputedStyle& style)
     style.setPaddingBox(WTF::move(paddingBox));
 }
 
-static void adjustSelectListButtonStyle(Style::ComputedStyle& style)
+static void adjustSelectListButtonStyle(RenderStyle& style)
 {
     // Enforce "padding: 0 0.5em".
     applyCommonButtonPaddingToStyle(style);
@@ -473,7 +473,7 @@ static void adjustSelectListButtonStyle(Style::ComputedStyle& style)
 
 class RenderThemeMeasureTextClient : public MeasureTextClient {
 public:
-    RenderThemeMeasureTextClient(const FontCascade& font, const Style::ComputedStyle& style)
+    RenderThemeMeasureTextClient(const FontCascade& font, const RenderStyle& style)
         : m_font(font)
         , m_style(style)
     {
@@ -485,10 +485,10 @@ public:
     }
 private:
     const FontCascade& m_font;
-    const Style::ComputedStyle& m_style;
+    const RenderStyle& m_style;
 };
 
-static void adjustInputElementButtonStyle(Style::ComputedStyle& style, const HTMLInputElement& inputElement)
+static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputElement& inputElement)
 {
     // Always Enforce "padding: 0 0.5em".
     applyCommonButtonPaddingToStyle(style);
@@ -522,7 +522,7 @@ static void adjustInputElementButtonStyle(Style::ComputedStyle& style, const HTM
     }
 }
 
-void RenderThemeIOS::adjustMenuListButtonStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -652,7 +652,7 @@ constexpr auto defaultTrackThickness = 4.0;
 constexpr auto defaultTrackRadius = defaultTrackThickness / 2.0;
 constexpr auto defaultSliderThumbSize = 16_css_px;
 
-void RenderThemeIOS::adjustSliderTrackStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -749,7 +749,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderElement& box, const PaintInfo&
     return false;
 }
 
-void RenderThemeIOS::adjustSliderThumbSize(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -883,7 +883,7 @@ int RenderThemeIOS::sliderTickOffsetFromTrackCenter() const
     return -9;
 }
 
-void RenderThemeIOS::adjustSearchFieldStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -917,7 +917,7 @@ void RenderThemeIOS::paintSearchFieldDecorations(const RenderBox& box, const Pai
 // This value matches the opacity applied to UIKit controls.
 constexpr auto pressedStateOpacity = 0.75f;
 
-void RenderThemeIOS::adjustButtonLikeControlStyle(Style::ComputedStyle& style, const Element& element) const
+void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Element& element) const
 {
     if (PAL::currentUserInterfaceIdiomIsVision())
         return;
@@ -945,7 +945,7 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(Style::ComputedStyle& style, c
         style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 }
 
-void RenderThemeIOS::adjustButtonStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1072,7 +1072,7 @@ bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
     return false;
 }
 
-bool RenderThemeIOS::supportsFocusRing(const RenderElement& renderer, const Style::ComputedStyle& style) const
+bool RenderThemeIOS::supportsFocusRing(const RenderElement& renderer, const RenderStyle& style) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (renderer.settings().formControlRefreshEnabled())
@@ -1084,7 +1084,7 @@ bool RenderThemeIOS::supportsFocusRing(const RenderElement& renderer, const Styl
     return false;
 }
 
-bool RenderThemeIOS::supportsBoxShadow(const Style::ComputedStyle& style) const
+bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
 {
     // FIXME: See if additional native controls can support box shadows.
     switch (style.usedAppearance()) {
@@ -1455,7 +1455,7 @@ Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStyle::State> st
     return defaultBorderColor;
 }
 
-Color RenderThemeIOS::checkboxRadioBackgroundColor(const Style::ComputedStyle& style, OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBackgroundColor(const RenderStyle& style, OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
     bool isEnabled = states.contains(ControlStyle::State::Enabled);
@@ -1905,7 +1905,7 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderElement& renderer, co
     context.strokeEllipse(strokeRect);
 }
 
-void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
     if (element && element->document().settings().formControlRefreshEnabled()) {
@@ -1971,7 +1971,7 @@ bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderElement& box, co
     return false;
 }
 
-void RenderThemeIOS::adjustSearchFieldResultsDecorationPartStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
     adjustSearchFieldDecorationPartStyle(style, element);
 }
@@ -1981,7 +1981,7 @@ bool RenderThemeIOS::paintSearchFieldResultsDecorationPart(const RenderBox& box,
     return paintSearchFieldDecorationPart(box, paintInfo, rect);
 }
 
-void RenderThemeIOS::adjustSearchFieldResultsButtonStyle(Style::ComputedStyle& style, const Element* element) const
+void RenderThemeIOS::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element* element) const
 {
     adjustSearchFieldDecorationPartStyle(style, element);
 }

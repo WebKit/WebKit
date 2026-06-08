@@ -203,7 +203,7 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
     return container;
 }
 
-std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const Style::ComputedStyle& style)
+std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)
 {
     ASSERT(renderer.element());
     if (!renderer.element())

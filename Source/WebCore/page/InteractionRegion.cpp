@@ -257,7 +257,7 @@ static bool NODELETE shouldGetOcclusion(const RenderElement& renderer)
     return false;
 }
 
-static bool hasTransparentContainerStyle(const Style::ComputedStyle& style)
+static bool hasTransparentContainerStyle(const RenderStyle& style)
 {
     return !style.hasBackground()
         && !style.hasOutline()
@@ -269,7 +269,7 @@ static bool hasTransparentContainerStyle(const Style::ComputedStyle& style)
             || !(style.usedBorderTopWidth() && style.usedBorderRightWidth() && style.usedBorderBottomWidth() && style.usedBorderLeftWidth()));
 }
 
-static bool canTweakShapeForStyle(const Style::ComputedStyle& style)
+static bool canTweakShapeForStyle(const RenderStyle& style)
 {
     if (!hasTransparentContainerStyle(style))
         return false;
@@ -291,7 +291,7 @@ static bool colorIsChallengingToHighlight(const Color& color)
         && ((color.luminance() < luminanceThreshold || std::abs(color.luminance() - 1) < luminanceThreshold));
 }
 
-static bool styleIsChallengingToHighlight(const Style::ComputedStyle& style)
+static bool styleIsChallengingToHighlight(const RenderStyle& style)
 {
     auto color = (style.fill().isNone() ? style.stroke() : style.fill()).tryColor();
     if (!color)

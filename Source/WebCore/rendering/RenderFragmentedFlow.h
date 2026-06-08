@@ -41,15 +41,12 @@ namespace WebCore {
 
 class CurrentRenderFragmentContainerMaintainer;
 class RenderFragmentedFlow;
+class RenderStyle;
 class RenderFragmentContainer;
 
 typedef SingleThreadWeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
 typedef Vector<InlineWeakPtr<RenderLayer>> RenderLayerList;
 typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>> FragmentIntervalTree;
-
-namespace Style {
-class ComputedStyle;
-}
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -91,7 +88,7 @@ public:
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void repaintRectangleInFragments(const LayoutRect&) const;
 
@@ -181,7 +178,7 @@ private:
     bool requiresLayer() const final { return true; }
 
 protected:
-    RenderFragmentedFlow(Type, Document&, Style::ComputedStyle&&);
+    RenderFragmentedFlow(Type, Document&, RenderStyle&&);
 
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override { return const_cast<RenderFragmentedFlow*>(this); }
 

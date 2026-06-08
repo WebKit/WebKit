@@ -30,7 +30,7 @@
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
 #include "RenderObjectStyle.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {

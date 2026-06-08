@@ -30,13 +30,13 @@
 
 #include "CSSKeywordValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
-#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
-#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {

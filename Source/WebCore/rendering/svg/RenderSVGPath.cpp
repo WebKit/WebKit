@@ -35,19 +35,19 @@
 #include "RenderLayer.h"
 #include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGShapeInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGMarkerElement.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
 #include "SVGVisitedRendererTracking.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGPath);
 
-RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, Style::ComputedStyle&& style)
+RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGPath, element, WTF::move(style))
 {
     ASSERT(isRenderSVGPath());
@@ -293,7 +293,7 @@ bool RenderSVGPath::isRenderingDisabled() const
     return !hasPath() || path().isEmpty();
 }
 
-void RenderSVGPath::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderSVGPath::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
         if (!oldStyle || style().d() != oldStyle->d())

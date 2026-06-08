@@ -27,7 +27,7 @@
 #include "InlineIteratorLogicalOrderTraversal.h"
 
 #include "InlineIteratorLineBox.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include <algorithm>
 #include <ranges>
 

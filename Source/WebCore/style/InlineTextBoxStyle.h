@@ -31,9 +31,7 @@
 
 namespace WebCore {
 
-namespace Style {
-class ComputedStyle;
-}
+class RenderStyle;
 
 inline float wavyOffsetFromDecoration()
 {
@@ -70,12 +68,12 @@ struct TextUnderlinePositionUnder {
     // on line that belong to the same decorating box.
     float textRunOffsetFromBottomMost { 0.f };
 };
-InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle&);
-InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle&, TextUnderlinePositionUnder);
-bool NODELETE isAlignedForUnder(const Style::ComputedStyle& decoratingBoxStyle);
+InkOverflowForDecorations inkOverflowForDecorations(const RenderStyle&);
+InkOverflowForDecorations inkOverflowForDecorations(const RenderStyle&, TextUnderlinePositionUnder);
+bool NODELETE isAlignedForUnder(const RenderStyle& decoratingBoxStyle);
 
-float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const Style::ComputedStyle&);
-float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const Style::ComputedStyle&);
-float textBoxEdgeAdjustmentForUnderline(const Style::ComputedStyle&);
+float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);
+float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);
+float textBoxEdgeAdjustmentForUnderline(const RenderStyle&);
 
 } // namespace WebCore

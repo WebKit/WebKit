@@ -27,7 +27,7 @@
 #include "CSSCalcSymbolTable.h"
 #include "CSSPrimitiveNumericRange.h"
 #include "CSSToLengthConversionData.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
@@ -51,8 +51,8 @@ struct ToCSSOptions {
     // `range` represents the allowed numeric range for the calculated result.
     CSS::Range range;
 
-    // `style` represents the ComputedStyle the Tree is from for zoom calculations.
-    const ComputedStyle& style;
+    // `style` represents the RenderStyle the Tree is from for zoom calculations.
+    const RenderStyle& style;
 };
 
 struct ToStyleOptions {

@@ -69,7 +69,7 @@ private:
     // RenderView.
     TransformationMatrix m_childFrameOwnerToRootContentTransform;
 
-    // Style::ComputedStyle::usedZoom of the owner renderer of the frame.
+    // RenderStyle::usedZoom of the owner renderer of the frame.
     float m_usedZoom;
 
     // The offset of the content box of the frame's owner element

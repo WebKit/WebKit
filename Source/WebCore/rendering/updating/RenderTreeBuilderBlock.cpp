@@ -31,10 +31,10 @@
 #include "RenderChildIterator.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -303,7 +303,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             // to clear out inherited column properties by just making a new style, and to also clear the
             // column span flag if it is set.
             // Cache this value as it might get changed in setStyle() call.
-            inlineChildrenBlock.setStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(parent.style(), Style::DisplayType::BlockFlow));
+            inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent.style(), Style::DisplayType::BlockFlow));
             auto blockToMove = m_builder.detachFromRenderElement(parent, inlineChildrenBlock, WillBeDestroyed::No);
 
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
@@ -394,9 +394,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent
     return detach(static_cast<RenderBlock&>(parent), child, willBeDestroyed, canCollapseAnonymousBlock);
 }
 
-RenderPtr<RenderBlockFlow> RenderTreeBuilder::Block::createAnonymousBlockWithStyle(Document& document, const Style::ComputedStyle& style)
+RenderPtr<RenderBlockFlow> RenderTreeBuilder::Block::createAnonymousBlockWithStyle(Document& document, const RenderStyle& style)
 {
-    RenderPtr<RenderBlockFlow> newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, Style::ComputedStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::BlockFlow));
+    RenderPtr<RenderBlockFlow> newBox = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::DisplayType::BlockFlow));
     newBox->initializeStyle();
     return newBox;
 }

@@ -39,11 +39,11 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGForeignObject.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
@@ -95,7 +95,7 @@ enum class IncludeReasons : bool {
     }
 #endif
 
-static inline bool NODELETE mayHaveScrollbarOrScrollableOverflow(const Style::ComputedStyle& style)
+static inline bool NODELETE mayHaveScrollbarOrScrollableOverflow(const RenderStyle& style)
 {
     return !style.isOverflowVisible() || !style.scrollbarGutter().isAuto();
 }

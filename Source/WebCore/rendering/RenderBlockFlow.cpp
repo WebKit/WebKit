@@ -172,7 +172,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(bool canCollapseWithChildren, bool canCo
 {
 }
 
-RenderBlockFlow::RenderBlockFlow(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<BlockFlowFlag> flags)
+RenderBlockFlow::RenderBlockFlow(Type type, Element& element, RenderStyle&& style, OptionSet<BlockFlowFlag> flags)
     : RenderBlock(type, element, WTF::move(style), { }, flags)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
@@ -183,7 +183,7 @@ RenderBlockFlow::RenderBlockFlow(Type type, Element& element, Style::ComputedSty
     setChildrenInline(true);
 }
 
-RenderBlockFlow::RenderBlockFlow(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<BlockFlowFlag> flags)
+RenderBlockFlow::RenderBlockFlow(Type type, Document& document, RenderStyle&& style, OptionSet<BlockFlowFlag> flags)
     : RenderBlock(type, document, WTF::move(style), { }, flags)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
@@ -594,7 +594,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
     LayoutUnit repaintLogicalBottom;
     LayoutUnit maxFloatLogicalBottom;
     LayoutUnit pageRemaining;
-    const Style::ComputedStyle& styleToUse = style();
+    const RenderStyle& styleToUse = style();
     do {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || styleToUse.writingMode().isBlockFlipped(), pageLogicalHeight, pageLogicalHeightChanged);
 
@@ -1574,7 +1574,7 @@ std::optional<LayoutUnit> RenderBlockFlow::selfCollapsingMarginBeforeWithClear(R
     if (!candidateBlockFlow->isSelfCollapsingBlock())
         return { };
 
-    if (Style::ComputedStyle::usedClear(*candidateBlockFlow) == UsedClear::None || !containsFloats())
+    if (RenderStyle::usedClear(*candidateBlockFlow) == UsedClear::None || !containsFloats())
         return { };
 
     auto clear = computedClearDeltaForChild(*candidateBlockFlow, candidateBlockFlow->logicalHeight());
@@ -1828,7 +1828,7 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
     // If we have a 'clear' value but also have a margin we may not actually require clearance to move past any floats.
     // If that's the case we want to be sure we estimate the correct position including margins after any floats rather
     // than use 'clearance' later which could give us the wrong position.
-    if (Style::ComputedStyle::usedClear(*grandchildBox) != UsedClear::None && !childBlock->marginBeforeForChild(*grandchildBox))
+    if (RenderStyle::usedClear(*grandchildBox) != UsedClear::None && !childBlock->marginBeforeForChild(*grandchildBox))
         return;
 
     // Collapse the margin of the grandchild box with our own to produce an estimate.
@@ -2116,7 +2116,7 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
     return result;
 }
 
-static inline LayoutUnit calculateMinimumPageHeight(const Style::ComputedStyle& renderStyle, const InlineIterator::LineBoxIterator& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
+static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderStyle, const InlineIterator::LineBoxIterator& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // We may require a certain minimum number of lines per page in order to satisfy
     // orphans and widows, and that may affect the minimum page height.
@@ -2521,7 +2521,7 @@ bool RenderBlockFlow::subtreeContainsFloats() const
     return false;
 }
 
-void RenderBlockFlow::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderBlockFlow::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     
@@ -2560,19 +2560,19 @@ void RenderBlockFlow::styleDidChange(Style::Difference diff, const Style::Comput
         updateStylesForColumnChildren(oldStyle);
 }
 
-void RenderBlockFlow::updateStylesForColumnChildren(const Style::ComputedStyle* oldStyle)
+void RenderBlockFlow::updateStylesForColumnChildren(const RenderStyle* oldStyle)
 {
     auto columnsNeedLayout = oldStyle && (oldStyle->columnCount() != style().columnCount() || oldStyle->columnWidth() != style().columnWidth()); 
     for (auto* child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
-        child->setStyle(Style::ComputedStyle::createAnonymousStyleWithDisplay(style(), Style::DisplayType::BlockFlow));
+        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), Style::DisplayType::BlockFlow));
         if (columnsNeedLayout)
             child->setNeedsLayoutAndInvalidateContentLogicalWidths();
     }
 }
 
-void RenderBlockFlow::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderBlockFlow::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
-    const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrOutOfFlowPositioned() && !avoidsFloats() : false;
 
     if (oldStyle) {
@@ -2847,7 +2847,7 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
         }
     }
 
-    if (Style::ComputedStyle::usedFloat(childBox) == UsedFloat::Left) {
+    if (RenderStyle::usedFloat(childBox) == UsedFloat::Left) {
         LayoutUnit heightRemainingLeft = 1_lu;
         LayoutUnit heightRemainingRight = 1_lu;
         floatLogicalLeft = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset, &heightRemainingLeft);
@@ -2899,7 +2899,7 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
 
 void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUnit& logicalTopOffset, LayoutUnit& marginBeforeOffset)
 {
-    const Style::ComputedStyle& style = firstLineStyle();
+    const RenderStyle& style = firstLineStyle();
     const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
     if (!fontMetrics.capHeight())
         return;
@@ -2973,7 +2973,7 @@ bool RenderBlockFlow::positionNewFloats()
             continue;
 
         LayoutRect oldRect = childBox.frameRect();
-        auto childBoxUsedClear = Style::ComputedStyle::usedClear(childBox);
+        auto childBoxUsedClear = RenderStyle::usedClear(childBox);
         if (childBoxUsedClear == UsedClear::Left || childBoxUsedClear == UsedClear::Both)
             logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);
         if (childBoxUsedClear == UsedClear::Right || childBoxUsedClear == UsedClear::Both)
@@ -3331,7 +3331,7 @@ LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutU
         return 0;
     
     // At least one float is present. We need to perform the clearance computation.
-    UsedClear usedClear = Style::ComputedStyle::usedClear(child);
+    UsedClear usedClear = RenderStyle::usedClear(child);
     bool clearSet = usedClear != UsedClear::None;
     LayoutUnit logicalBottom;
     switch (usedClear) {
@@ -4160,7 +4160,7 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
     return true;
 }
 
-static bool NODELETE hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const Style::ComputedStyle& rootStyle)
+static bool NODELETE hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const RenderStyle& rootStyle)
 {
     if (rootStyle.textAlign() != Style::TextAlign::Start)
         return false;
@@ -4692,7 +4692,7 @@ void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width
     multiColumnFlow()->setProgressionIsReversed(style().columnProgression() == ColumnProgression::Reverse);
 }
 
-void RenderBlockFlow::updateColumnProgressionFromStyle(const Style::ComputedStyle& style)
+void RenderBlockFlow::updateColumnProgressionFromStyle(const RenderStyle& style)
 {
     if (!multiColumnFlow())
         return;
@@ -4969,7 +4969,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
     float inlineMax = 0.f;
     float inlineMin = 0.f;
 
-    const Style::ComputedStyle& styleToUse = style();
+    const RenderStyle& styleToUse = style();
     // If we are at the start of a line, we want to ignore all white-space.
     // Also strip spaces if we previously had text that ended in a trailing space.
     bool stripFrontSpaces = true;
@@ -5172,9 +5172,9 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
 
             bool clearPreviousFloat = false;
             if (box->isFloating()) {
-                auto childClearValue = Style::ComputedStyle::usedClear(*box);
+                auto childClearValue = RenderStyle::usedClear(*box);
                 if (previousFloat) {
-                    auto previousFloatValue = Style::ComputedStyle::usedFloat(*previousFloat);
+                    auto previousFloatValue = RenderStyle::usedFloat(*previousFloat);
                     clearPreviousFloat =
                         (previousFloatValue == UsedFloat::Left && (childClearValue == UsedClear::Left || childClearValue == UsedClear::Both))
                         || (previousFloatValue == UsedFloat::Right && (childClearValue == UsedClear::Right || childClearValue == UsedClear::Both));

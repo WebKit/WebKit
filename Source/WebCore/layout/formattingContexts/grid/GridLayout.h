@@ -30,12 +30,12 @@
 #include "StyleGridTrackBreadth.h"
 
 namespace WebCore {
+class RenderStyle;
 
 namespace Style {
-class ComputedStyle;
 struct GridTrackSize;
 struct ZoomFactor;
-}
+};
 
 namespace Layout {
 

@@ -493,7 +493,7 @@ void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
 
 void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
 {
-    const Style::ComputedStyle& styleToUse = style();
+    const RenderStyle& styleToUse = style();
     LineWhitespaceCollapsingState& lineWhitespaceCollapsingState = resolver.whitespaceCollapsingState();
     LegacyInlineIterator end = resolver.position();
     RenderTextInfo renderTextInfo;
@@ -592,7 +592,7 @@ size_t LegacyLineLayout::lineCount() const
     return legacyRootBox() ? 1 : 0;
 }
 
-const Style::ComputedStyle& LegacyLineLayout::style() const
+const RenderStyle& LegacyLineLayout::style() const
 {
     return m_flow.style();
 }

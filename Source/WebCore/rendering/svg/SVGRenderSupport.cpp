@@ -54,13 +54,13 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
 #include "VisibleRectContext.h"
@@ -513,7 +513,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
     return true;
 }
 
-void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const Style::ComputedStyle& style, const RenderElement& renderer)
+void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const RenderStyle& style, const RenderElement& renderer)
 {
     auto element = dynamicDowncast<SVGElement>(protect(renderer.element()));
     if (!element) {
@@ -566,7 +566,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
     }
 }
 
-void SVGRenderSupport::styleChanged(RenderElement& renderer, const Style::ComputedStyle* oldStyle)
+void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
 {
     if (renderer.element() && renderer.element()->isSVGElement() && (!oldStyle || (renderer.style().blendMode() != BlendMode::Normal) != (oldStyle->blendMode() != BlendMode::Normal)))
         SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(renderer);
@@ -599,7 +599,7 @@ void SVGRenderSupport::elementWillBeRemovedFromTree(RenderElement& renderer)
         updateAncestorNonScalingStrokeCounts(renderer, -1);
 }
 
-bool SVGRenderSupport::isolatesBlending(const Style::ComputedStyle& style)
+bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 {
     return style.hasPositionedMask()
         || !style.filter().isNone()

@@ -35,7 +35,7 @@ class RenderIFrame final : public RenderFrameBase {
     WTF_MAKE_TZONE_ALLOCATED(RenderIFrame);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderIFrame);
 public:
-    RenderIFrame(HTMLIFrameElement&, Style::ComputedStyle&&);
+    RenderIFrame(HTMLIFrameElement&, RenderStyle&&);
     virtual ~RenderIFrame();
 
     HTMLIFrameElement& NODELETE iframeElement() const;

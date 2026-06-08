@@ -28,8 +28,8 @@
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGResourceGradientInlines.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGRenderingContext.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
 
-LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(type, node, WTF::move(style))
 {
 }
@@ -74,7 +74,7 @@ GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElemen
     return { objectBoundingBox, textPaintingScale };
 }
 
-GradientData* LegacyRenderSVGResourceGradient::gradientDataForRenderer(RenderElement& renderer, const Style::ComputedStyle& style, OptionSet<RenderSVGResourceMode> resourceMode)
+GradientData* LegacyRenderSVGResourceGradient::gradientDataForRenderer(RenderElement& renderer, const RenderStyle& style, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     // Be sure to synchronize all SVG properties on the gradientElement _before_ processing any further.
     // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
@@ -128,7 +128,7 @@ GradientData* LegacyRenderSVGResourceGradient::gradientDataForRenderer(RenderEle
     return &gradientData;
 }
 
-static inline void applyGradientResource(RenderElement& renderer, const Style::ComputedStyle& style, GraphicsContext& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
+static inline void applyGradientResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
         context.setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
@@ -155,13 +155,13 @@ public:
     PathOrShapeGradientApplier() = default;
 
 private:
-    bool applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
     void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PathOrShapeGradientApplier);
 
-bool PathOrShapeGradientApplier::applyResource(RenderElement& renderer, const Style::ComputedStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
+bool PathOrShapeGradientApplier::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     context->save();
     applyGradientResource(renderer, style, *context, gradientData, resourceMode);
@@ -182,7 +182,7 @@ public:
     TextGradientClipper() = default;
 
 private:
-    bool applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
     void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
 
     GraphicsContext* m_savedContext { nullptr };
@@ -224,7 +224,7 @@ static inline AffineTransform calculateGradientUserspaceTransform(RenderElement&
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextGradientClipper);
 
-bool TextGradientClipper::applyResource(RenderElement& renderer, const Style::ComputedStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
+bool TextGradientClipper::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(resourceMode.contains(RenderSVGResourceMode::ApplyToText));
 
@@ -273,13 +273,13 @@ public:
     TextGradientCompositor() = default;
 
 private:
-    bool applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
     void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextGradientCompositor);
 
-bool TextGradientCompositor::applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*& context, const GradientData&, OptionSet<RenderSVGResourceMode>)
+bool TextGradientCompositor::applyResource(RenderElement&, const RenderStyle&, GraphicsContext*& context, const GradientData&, OptionSet<RenderSVGResourceMode>)
 {
     context->save();
 
@@ -308,7 +308,7 @@ void TextGradientCompositor::postApplyResource(RenderElement& renderer, Graphics
 }
 #endif
 
-auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const Style::ComputedStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -353,7 +353,7 @@ void LegacyRenderSVGResourceGradient::postApplyResource(RenderElement& renderer,
     m_gradientApplier = nullptr;
 }
 
-GradientColorStops LegacyRenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const Style::ComputedStyle& style)
+GradientColorStops LegacyRenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style)
 {
     if (style.appleColorFilter().isNone())
         return stops;

@@ -47,7 +47,7 @@ static float snap(float value, const RenderObject& renderer)
 }
 
 struct UnderlineOffsetArguments {
-    const Style::ComputedStyle& lineStyle;
+    const RenderStyle& lineStyle;
     std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
 };
 
@@ -109,7 +109,7 @@ static float boxOffsetFromBottomMost(const InlineIterator::LineBoxIterator& line
     return maxLogicalBottomForTextDecorationLineUnder(lineBox, boxLogicalBottom, decoratingInlineBoxRenderer) - boxLogicalBottom;
 }
 
-static inline float defaultGap(const Style::ComputedStyle& style)
+static inline float defaultGap(const RenderStyle& style)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     const float textDecorationBaseFontSize = 16.f;
@@ -165,7 +165,7 @@ WavyStrokeParameters wavyStrokeParameters(float fontSize)
     return result;
 }
 
-static InkOverflowForDecorations computedInkOverflowForDecorations(const Style::ComputedStyle& lineStyle, std::optional<float> underlineOffset)
+static InkOverflowForDecorations computedInkOverflowForDecorations(const RenderStyle& lineStyle, std::optional<float> underlineOffset)
 {
     // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
     if (underlineOffset)
@@ -232,7 +232,7 @@ static InkOverflowForDecorations computedInkOverflowForDecorations(const Style::
     return overflowResult;
 }
 
-bool isAlignedForUnder(const Style::ComputedStyle& decoratingBoxStyle)
+bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle)
 {
     auto underlinePosition = decoratingBoxStyle.textUnderlinePosition();
     if (underlinePosition.isUnder())
@@ -254,7 +254,7 @@ bool isAlignedForUnder(const Style::ComputedStyle& decoratingBoxStyle)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle& style, TextUnderlinePositionUnder textUnderlinePositionUnder)
+InkOverflowForDecorations inkOverflowForDecorations(const RenderStyle& style, TextUnderlinePositionUnder textUnderlinePositionUnder)
 {
     auto underlineOffset = style.textDecorationLineInEffect().hasUnderline()
         ? std::make_optional(computedUnderlineOffset({ style, textUnderlinePositionUnder }, { }))
@@ -262,7 +262,7 @@ InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle& 
     return computedInkOverflowForDecorations(style, underlineOffset);
 }
 
-InkOverflowForDecorations inkOverflowForDecorations(const Style::ComputedStyle& style)
+InkOverflowForDecorations inkOverflowForDecorations(const RenderStyle& style)
 {
     auto underlineOffset = style.textDecorationLineInEffect().hasUnderline()
         ? std::make_optional(computedUnderlineOffset({ style, { } }, { }))
@@ -278,7 +278,7 @@ static inline float inlineBoxContentBoxHeight(const InlineIterator::InlineBox& i
     return contentBoxHeight;
 }
 
-float textBoxEdgeAdjustmentForUnderline(const Style::ComputedStyle& style)
+float textBoxEdgeAdjustmentForUnderline(const RenderStyle& style)
 {
     if (!style.writingMode().isHorizontal()) {
         // FIXME: In TextBoxPainter, we need to figure out how logical coords work in vertical writing mode (when context is rotated).
@@ -311,7 +311,7 @@ float textBoxEdgeAdjustmentForUnderline(const Style::ComputedStyle& style)
     }
 }
 
-float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& style)
+float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
 {
     auto underlineOffset = 0.f;
     auto& renderer = inlineBox.renderer();
@@ -325,7 +325,7 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
     return underlineOffset - (!inlineBox.isRootInlineBox() ? snap(textBoxEdgeAdjustmentForUnderline(style), inlineBox.renderer()) : 0.f);
 }
 
-float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& style)
+float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)
 {
     if (!style.writingMode().isVerticalTypographic())
         return { };

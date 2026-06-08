@@ -38,9 +38,9 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "RenderSlider.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SliderThumbElement.h"
 #include "StyleAppearance.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/Scope.h>
 
 namespace WebCore {

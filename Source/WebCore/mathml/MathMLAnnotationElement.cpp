@@ -35,10 +35,10 @@
 #include "MathMLNames.h"
 #include "MathMLSelectElement.h"
 #include "RenderMathMLBlock.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -58,7 +58,7 @@ Ref<MathMLAnnotationElement> MathMLAnnotationElement::create(const QualifiedName
     return adoptRef(*new MathMLAnnotationElement(tagName, document));
 }
 
-RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (document().settings().coreMathMLEnabled() || hasTagName(MathMLNames::annotationTag))
         return MathMLElement::createElementRenderer(WTF::move(style), insertionPosition);

@@ -48,7 +48,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    bool rendererIsNeeded(const Style::ComputedStyle&) final { return false; }
+    bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     WeakPtr<SVGSVGElement, WeakPtrImplWithEventTargetData> m_targetElement;
 };

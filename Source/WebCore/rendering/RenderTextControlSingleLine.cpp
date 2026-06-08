@@ -46,9 +46,9 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "RenderScrollbar.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 #include <wtf/StackStats.h>
@@ -61,7 +61,7 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlSingleLine);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, Style::ComputedStyle&& style)
+RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(type, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlSingleLine());
@@ -306,7 +306,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     return true;
 }
 
-void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderTextControl::styleDidChange(diff, oldStyle);
 
@@ -518,7 +518,7 @@ RenderTextControlInnerBlock* RenderTextControlSingleLine::innerTextRenderer() co
     return innerTextElement() ? innerTextElement()->renderer() : nullptr;
 }
 
-RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, Style::ComputedStyle&& style)
+RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::TextControlInnerBlock, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlInnerBlock());

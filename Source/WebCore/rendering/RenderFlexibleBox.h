@@ -46,8 +46,8 @@ class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFlexibleBox);
 public:
-    RenderFlexibleBox(Type, Element&, Style::ComputedStyle&&);
-    RenderFlexibleBox(Type, Document&, Style::ComputedStyle&&);
+    RenderFlexibleBox(Type, Element&, RenderStyle&&);
+    RenderFlexibleBox(Type, Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
 
     using Direction = FlowDirection;
@@ -60,7 +60,7 @@ public:
     std::optional<LayoutUnit> firstLineBaseline() const override;
     std::optional<LayoutUnit> lastLineBaseline() const override;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
+    void styleDidChange(Style::Difference, const RenderStyle*) override;
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
@@ -101,7 +101,7 @@ public:
 
     bool isComputingFlexBaseSizes() const { return m_isComputingFlexBaseSizes; }
 
-    static std::optional<TextDirection> NODELETE leftRightAxisDirectionFromStyle(const Style::ComputedStyle&);
+    static std::optional<TextDirection> NODELETE leftRightAxisDirectionFromStyle(const RenderStyle&);
 
     bool hasModernLayout() const { return m_hasFlexFormattingContextLayout && *m_hasFlexFormattingContextLayout; }
 
@@ -164,7 +164,7 @@ private:
         LayoutUnit NODELETE hypotheticalMainAxisMarginBoxSize() const;
         LayoutUnit NODELETE flexBaseMarginBoxSize() const;
         LayoutUnit NODELETE flexedMarginBoxSize() const;
-        const Style::ComputedStyle& NODELETE style() const LIFETIME_BOUND;
+        const RenderStyle& NODELETE style() const LIFETIME_BOUND;
         LayoutUnit constrainSizeByMinMax(const LayoutUnit size) const;
 
         CheckedRef<RenderBox> renderer;

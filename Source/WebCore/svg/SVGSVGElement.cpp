@@ -487,7 +487,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(CTMScope mode) cons
     return transform.multiply(viewBoxTransform);
 }
 
-bool SVGSVGElement::rendererIsNeeded(const Style::ComputedStyle& style)
+bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (!isValid())
         return false;
@@ -500,7 +500,7 @@ bool SVGSVGElement::rendererIsNeeded(const Style::ComputedStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (isOutermostSVGSVGElement()) {
         if (document().settings().layerBasedSVGEngineEnabled()) {
@@ -515,7 +515,7 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(Style::ComputedSty
     return createRenderer<LegacyRenderSVGViewportContainer>(*this, WTF::move(style));
 }
 
-bool SVGSVGElement::isReplaced(const Style::ComputedStyle*) const
+bool SVGSVGElement::isReplaced(const RenderStyle*) const
 {
     return isOutermostSVGSVGElement();
 }

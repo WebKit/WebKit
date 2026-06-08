@@ -511,7 +511,7 @@ HTMLElement* HTMLAttachmentElement::wideLayoutImageElement() const
     return m_imageElement.get();
 }
 
-RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderAttachment>(*this, WTF::move(style));
 }

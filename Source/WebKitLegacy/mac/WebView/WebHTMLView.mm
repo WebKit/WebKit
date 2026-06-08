@@ -123,10 +123,10 @@
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderStyle+GettersInlines.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/StyleDocumentScope.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/Text.h>

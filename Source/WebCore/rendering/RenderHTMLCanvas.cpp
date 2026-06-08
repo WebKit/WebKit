@@ -41,8 +41,8 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderHTMLCanvas);
 
-RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, Style::ComputedStyle&& style)
+RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& style)
     : RenderReplaced(Type::HTMLCanvas, element, WTF::move(style), element.size())
 {
     ASSERT(isRenderHTMLCanvas());
@@ -121,7 +121,7 @@ void RenderHTMLCanvas::canvasSizeChanged()
     setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 }
 
-void RenderHTMLCanvas::styleDidChange(Style::Difference difference, const Style::ComputedStyle* oldStyle)
+void RenderHTMLCanvas::styleDidChange(Style::Difference difference, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(difference, oldStyle);
 

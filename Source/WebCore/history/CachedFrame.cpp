@@ -45,11 +45,11 @@
 #include "NavigationDisabler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderWidgetInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "WindowEventLoop.h"
 #include <wtf/TZoneMallocInlines.h>

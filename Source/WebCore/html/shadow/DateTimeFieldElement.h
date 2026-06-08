@@ -45,11 +45,9 @@ namespace WebCore {
 
 class DateComponents;
 class DateTimeFieldElement;
-struct DateTimeFieldsState;
+class RenderStyle;
 
-namespace Style {
-class ComputedStyle;
-}
+struct DateTimeFieldsState;
 
 enum class DateTimePlaceholderIfNoValue : bool { No, Yes };
 
@@ -95,14 +93,14 @@ protected:
     Locale& localeForOwner() const;
     AtomString localeIdentifier() const;
     void updateVisibleValue(EventBehavior);
-    virtual void adjustMinInlineSize(Style::ComputedStyle&) const = 0;
+    virtual void adjustMinInlineSize(RenderStyle&) const = 0;
     virtual int valueAsInteger() const = 0;
     virtual int placeholderValueAsInteger() const = 0;
     virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
     virtual void handleBlurEvent(Event&);
 
 private:
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle*) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
 
     bool supportsFocus() const override;
 

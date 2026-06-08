@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderViewTransitionCapture);
 
-RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, Style::ComputedStyle&& style, bool isRootElement)
+RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, RenderStyle&& style, bool isRootElement)
     : RenderReplaced(type, document, WTF::move(style), { }, ReplacedFlag::IsViewTransitionCapture)
     , m_isRootElementCapture(isRootElement)
 {
@@ -116,7 +116,7 @@ void RenderViewTransitionCapture::updateFromStyle()
         setHasNonVisibleOverflow();
 }
 
-void RenderViewTransitionCapture::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderViewTransitionCapture::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
 

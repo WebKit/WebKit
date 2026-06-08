@@ -34,7 +34,7 @@ class RenderFileUploadControl final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderFileUploadControl);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFileUploadControl);
 public:
-    RenderFileUploadControl(HTMLInputElement&, Style::ComputedStyle&&);
+    RenderFileUploadControl(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderFileUploadControl();
 
     String buttonValue();

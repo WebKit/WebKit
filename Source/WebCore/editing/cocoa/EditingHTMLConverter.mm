@@ -62,8 +62,8 @@
 #import "Page.h"
 #import "RenderImage.h"
 #import "RenderObjectStyle.h"
+#import "RenderStyle+GettersInlines.h"
 #import "RenderText.h"
-#import "StyleComputedStyle+GettersInlines.h"
 #import "StyleExtractor.h"
 #import "StyleProperties.h"
 #import "StyledElement.h"
@@ -344,7 +344,7 @@ static void associateElementWithTextLists(Element* element, ElementCache<RefPtr<
 }
 
 // FIXME: Encapsulate all these parameters into a type for readability and maintainability.
-static void updateAttributes(const Node* node, const Style::ComputedStyle& style, OptionSet<IncludedElement> includedElements, ElementCache<bool>& elementQualifiesForWritingToolsPreservationCache, ElementCache<RefPtr<Element>>& enclosingLinkCache, ElementCache<RefPtr<Element>>& enclosingListCache, NSMutableDictionary<NSAttributedStringKey, id> *attributes, ElementCache<RetainPtr<NSArray<NSTextList *>>>& textListsForListElements, const WeakHashSet<Node, WeakPtrImplWithEventTargetData>& clientPreservedNodes)
+static void updateAttributes(const Node* node, const RenderStyle& style, OptionSet<IncludedElement> includedElements, ElementCache<bool>& elementQualifiesForWritingToolsPreservationCache, ElementCache<RefPtr<Element>>& enclosingLinkCache, ElementCache<RefPtr<Element>>& enclosingListCache, NSMutableDictionary<NSAttributedStringKey, id> *attributes, ElementCache<RetainPtr<NSArray<NSTextList *>>>& textListsForListElements, const WeakHashSet<Node, WeakPtrImplWithEventTargetData>& clientPreservedNodes)
 {
 #if ENABLE(WRITING_TOOLS)
     if (includedElements.contains(IncludedElement::PreservedContent)) {

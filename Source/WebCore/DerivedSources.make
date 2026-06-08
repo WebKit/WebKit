@@ -1980,6 +1980,11 @@ all : \
     Namespace.h \
     NodeName.cpp \
     NodeName.h \
+    RenderStyleProperties.cpp \
+    RenderStyleProperties.h \
+    RenderStyleProperties+ConstructionInlines.h \
+    RenderStyleProperties+GettersInlines.h \
+    RenderStyleProperties+SettersInlines.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -2037,6 +2042,11 @@ CSS_PROPERTY_NAME_FILES = \
     CSSPropertyParsing.cpp \
     CSSPropertyParsing.h \
     CSSStyleProperties+PropertyNames.idl \
+    RenderStyleProperties.cpp \
+    RenderStyleProperties.h \
+    RenderStyleProperties+ConstructionInlines.h \
+    RenderStyleProperties+GettersInlines.h \
+    RenderStyleProperties+SettersInlines.h \
     StyleBuilderGenerated.cpp \
     StyleComputedStyleProperties.cpp \
     StyleComputedStyleProperties.h \

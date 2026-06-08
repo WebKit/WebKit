@@ -47,6 +47,7 @@ namespace WebCore {
 
 class Color;
 class Document;
+class RenderStyle;
 
 namespace Style {
 
@@ -181,7 +182,7 @@ void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationCon
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
 
 template<> struct Serialize<Color> {
-    void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const Color&);
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const Color&);
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
@@ -193,7 +194,7 @@ Color toStyleColor(const CSS::Color&, Ref<const Document>, const ComputedStyle&,
 Color toStyleColor(const CSS::Color&, const BuilderState&, ForVisitedLink);
 
 template<> struct ToCSS<Color> {
-    auto operator()(const Color&, const Style::ComputedStyle&) -> CSS::Color;
+    auto operator()(const Color&, const RenderStyle&) -> CSS::Color;
 };
 template<> struct ToStyle<CSS::Color> {
     auto operator()(const CSS::Color&, const BuilderState&, ForVisitedLink) -> Color;
@@ -206,20 +207,20 @@ template<> struct CSSValueConversion<Color> {
 };
 
 template<> struct CSSValueCreation<Color> {
-    auto operator()(CSSValuePool&, const Style::ComputedStyle&, const Color&) -> Ref<CSSValue>;
+    auto operator()(CSSValuePool&, const RenderStyle&, const Color&) -> Ref<CSSValue>;
 };
 
 template<> struct DeprecatedCSSOMValueCreation<Color> {
-    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&, const Color&);
+    Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const RenderStyle&, CSSStyleDeclaration&, const Color&);
 };
 
 // MARK: - Blending
 
 template<> struct Blending<Color> {
-    auto equals(const Color&, const Color&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
+    auto equals(const Color&, const Color&, const RenderStyle&, const RenderStyle&) -> bool;
     bool NODELETE canBlend(const Color&, const Color&);
     constexpr auto requiresInterpolationForAccumulativeIteration(const Color&, const Color&) -> bool { return true; }
-    auto blend(const Color&, const Color&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> Color;
+    auto blend(const Color&, const Color&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> Color;
 };
 
 // MARK: - Color Implementation

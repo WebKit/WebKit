@@ -390,20 +390,20 @@ private:
 
     void connectClippingStackLayers(LayerAncestorClippingStack&);
 
-    void updateOpacity(const Style::ComputedStyle&);
-    void updateTransform(const Style::ComputedStyle&);
+    void updateOpacity(const RenderStyle&);
+    void updateTransform(const RenderStyle&);
     void updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer);
-    void updateFilters(const Style::ComputedStyle&);
-    void updateBackdropFilters(const Style::ComputedStyle&);
+    void updateFilters(const RenderStyle&);
+    void updateBackdropFilters(const RenderStyle&);
     void updateBackdropFiltersGeometry();
     bool updateBackdropRoot();
-    void updateBlendMode(const Style::ComputedStyle&);
+    void updateBlendMode(const RenderStyle&);
 #if ENABLE(VIDEO)
-    void updateVideoGravity(const Style::ComputedStyle&);
+    void updateVideoGravity(const RenderStyle&);
 #endif
-    void updateContentsScalingFilters(const Style::ComputedStyle&);
+    void updateContentsScalingFilters(const RenderStyle&);
 #if HAVE(CORE_MATERIAL)
-    void updateAppleVisualEffect(const Style::ComputedStyle&);
+    void updateAppleVisualEffect(const RenderStyle&);
 #endif
 
     // Return the opacity value that this layer should use for compositing.

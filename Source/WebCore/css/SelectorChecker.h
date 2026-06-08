@@ -41,6 +41,7 @@ class CSSSelector;
 struct CompiledSelector;
 class Element;
 class RenderScrollbar;
+class RenderStyle;
 class StyleRuleScope;
 
 namespace SelectorCompiler {

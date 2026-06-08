@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "RenderBlockFlow.h"
+#include <WebCore/RenderBlockFlow.h>
 #include "RenderListMarker.h"
 
 namespace WebCore {
@@ -33,7 +33,7 @@ class RenderListItem final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderListItem);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
-    RenderListItem(Element&, Style::ComputedStyle&&);
+    RenderListItem(Element&, RenderStyle&&);
     virtual ~RenderListItem();
 
     int value() const;
@@ -48,7 +48,7 @@ public:
     static unsigned itemCountForOrderedList(const HTMLOListElement&);
     static int startForReversedOrderedList(const HTMLOListElement&);
 
-    Style::ComputedStyle computeMarkerStyle() const;
+    RenderStyle computeMarkerStyle() const;
 
     RenderListMarker* markerRenderer() const { return m_marker.get(); }
     void setMarkerRenderer(RenderListMarker& marker) { m_marker = marker; }
@@ -60,7 +60,7 @@ private:
     
     void paint(PaintInfo&, const LayoutPoint&) final;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
 
     void computeIntrinsicLogicalWidthContributions() final;
 

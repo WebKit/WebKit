@@ -34,7 +34,7 @@ class RenderMenuList final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderMenuList);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMenuList);
 public:
-    RenderMenuList(HTMLSelectElement&, Style::ComputedStyle&&);
+    RenderMenuList(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderMenuList();
 
     HTMLSelectElement& NODELETE selectElement() const;
@@ -73,7 +73,7 @@ private:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
     void computeIntrinsicLogicalWidthContributions() override;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     bool hasLineIfEmpty() const override { return true; }
 

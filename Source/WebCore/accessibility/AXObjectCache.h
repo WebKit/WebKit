@@ -83,12 +83,9 @@ class RenderImage;
 
 class AXTextMarker;
 
-namespace Style {
-class ComputedStyle;
-struct Difference;
-}
-
+namespace Style { struct Difference; }
 class RenderObject;
+class RenderStyle;
 class RenderText;
 class RenderWidget;
 class Scrollbar;
@@ -435,15 +432,15 @@ public:
     void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
     void onSlottedContentChange(const HTMLSlotElement&);
-    void onStyleChange(Element&, OptionSet<Style::Change>, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle);
-    void onStyleChange(RenderText&, Style::Difference, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
+    void onStyleChange(Element&, OptionSet<Style::Change>, const RenderStyle* oldStyle, const RenderStyle* newStyle);
+    void onStyleChange(RenderText&, Style::Difference, const RenderStyle* oldStyle, const RenderStyle& newStyle);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onAccessibilityPaintStarted();
     void onAccessibilityPaintFinished();
     // Returns true if the font changes, requiring all descendants to update the Font property.
-    bool onFontChange(Element&, const Style::ComputedStyle*, const Style::ComputedStyle*);
+    bool onFontChange(Element&, const RenderStyle*, const RenderStyle*);
     // Returns true if the text color changes, requiring all descendants to update the TextColor property.
-    bool onTextColorChange(Element&, const Style::ComputedStyle*, const Style::ComputedStyle*);
+    bool onTextColorChange(Element&, const RenderStyle*, const RenderStyle*);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);

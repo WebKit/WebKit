@@ -64,9 +64,9 @@ public:
     FloatSize preferredAspectRatioAsSize() const override;
 
 protected:
-    RenderReplaced(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag> = { });
-    RenderReplaced(Type, Element&, Style::ComputedStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
-    RenderReplaced(Type, Document&, Style::ComputedStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Element&, RenderStyle&&, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Element&, RenderStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
+    RenderReplaced(Type, Document&, RenderStyle&&, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> = { });
 
     void layout() override;
 
@@ -77,7 +77,7 @@ protected:
 
     bool NODELETE isSelected() const;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
     void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();

@@ -40,8 +40,8 @@
 #include "FontCascade.h"
 #include "NodeRenderStyle.h"
 #include "RenderBoxInlines.h"
+#include "RenderStyle.h"
 #include "RenderView.h"
-#include "StyleComputedStyle.h"
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes+Rounding.h"
 #include <wtf/Hasher.h>

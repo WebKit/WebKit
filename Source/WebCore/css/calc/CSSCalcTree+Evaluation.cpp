@@ -34,8 +34,8 @@
 #include "CSSCalcTree.h"
 #include "CSSCalcType.h"
 #include "CSSUnevaluatedCalc.h"
+#include "RenderStyle.h"
 #include "StyleBuilderState.h"
-#include "StyleComputedStyle.h"
 #include "StyleCustomIdent.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 

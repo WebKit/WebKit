@@ -66,6 +66,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
@@ -75,7 +76,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -294,7 +294,7 @@ bool HTMLPlugInElement::supportsFocus() const
     return renderer && !renderer->isPluginUnavailable();
 }
 
-RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer()) {
         RenderPtr<RenderElement> renderer = m_pluginReplacement->createElementRenderer(*this, WTF::move(style), insertionPosition);
@@ -306,7 +306,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createPluginRenderer(Style::Computed
     return createRenderer<RenderEmbeddedObject>(*this, WTF::move(style));
 }
 
-RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& insertionPosition)
+RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     ASSERT(document().backForwardCacheState() == Document::NotInBackForwardCache);
 
@@ -329,7 +329,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(Style::Compute
     return createPluginRenderer(WTF::move(style), insertionPosition);
 }
 
-bool HTMLPlugInElement::isReplaced(const Style::ComputedStyle*) const
+bool HTMLPlugInElement::isReplaced(const RenderStyle*) const
 {
     return !m_pluginReplacement || !m_pluginReplacement->willCreateRenderer();
 }

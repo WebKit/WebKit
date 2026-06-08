@@ -49,7 +49,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLMenclose);
 // For now, we use a Bezier curve and this somewhat arbitrary value.
 const unsigned short longDivLeftSpace = 10;
 
-RenderMathMLMenclose::RenderMathMLMenclose(MathMLMencloseElement& element, Style::ComputedStyle&& style)
+RenderMathMLMenclose::RenderMathMLMenclose(MathMLMencloseElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLMenclose, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLMenclose());

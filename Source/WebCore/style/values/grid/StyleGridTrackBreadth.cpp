@@ -39,7 +39,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<GridTrackBreadth>::operator()(const GridTrackBreadth& value, const Style::ComputedStyle& style) -> CSS::GridTrackBreadth
+auto ToCSS<GridTrackBreadth>::operator()(const GridTrackBreadth& value, const RenderStyle& style) -> CSS::GridTrackBreadth
 {
     return value.switchOnUsingSpecified(
         [&](const LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> CSS::GridTrackBreadth {

@@ -53,7 +53,7 @@
 #include "LayoutState.h"
 #include "Logging.h"
 #include "RangeBasedLineBuilder.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TextOnlySimpleLineBuilder.h"
 #include "TextUtil.h"
 #include <wtf/TZoneMallocInlines.h>

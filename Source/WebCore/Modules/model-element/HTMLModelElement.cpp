@@ -347,7 +347,7 @@ void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
 // MARK: - Rendering overrides.
 
-RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
     if (RefPtr page = document().page()) {
         if (RefPtr provider = page->modelPlayerProvider(); provider && !provider->isAvailable())

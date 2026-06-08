@@ -50,7 +50,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLRoot);
 
-RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, Style::ComputedStyle&& style)
+RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLRoot, element, WTF::move(style))
 {
     m_radicalOperator.setOperator(RenderMathMLRoot::style(), gRadicalCharacter, MathOperator::Type::VerticalOperator);
@@ -99,7 +99,7 @@ RenderBox& RenderMathMLRoot::getIndex() const
     return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
-void RenderMathMLRoot::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderMathMLRoot::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLRow::styleDidChange(diff, oldStyle);
     resetRadicalOperator();

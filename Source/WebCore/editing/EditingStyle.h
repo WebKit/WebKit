@@ -52,13 +52,10 @@ class MutableStyleProperties;
 class Node;
 class Position;
 class QualifiedName;
+class RenderStyle;
 class StyleProperties;
 class StyledElement;
 class VisibleSelection;
-
-namespace Style {
-class ComputedStyle;
-}
 
 enum class TextDecorationChange : uint8_t { None, Add, Remove };
 
@@ -185,7 +182,7 @@ private:
     EditingStyle(CSSPropertyID, const String& value);
     EditingStyle(CSSPropertyID, CSSValueID);
     void init(Node*, PropertiesToInclude);
-    void removeTextFillAndStrokeColorsIfNeeded(const Style::ComputedStyle*);
+    void removeTextFillAndStrokeColorsIfNeeded(const RenderStyle*);
     Ref<MutableStyleProperties> removeInlineStyleRedundantDueToMatchedRules(StyledElement&);
     void removeStyleInContextNotOverridenByMatchedRules(StyledElement&, Node*, MutableStyleProperties&);
     void removeDisplayPropertyFromSpanStyleIfRedundant(StyledElement&, MutableStyleProperties&);

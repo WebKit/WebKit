@@ -200,8 +200,8 @@ private:
     bool virtualHasPendingActivity() const final;
 
     void didAttachRenderers() override;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
-    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool isReplaced(const RenderStyle* = nullptr) const final;
     void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
 
     bool canStartSelection() const override;

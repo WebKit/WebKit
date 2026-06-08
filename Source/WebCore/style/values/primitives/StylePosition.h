@@ -112,19 +112,19 @@ template<size_t I> const auto& get(const Position& position)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<TwoComponentPositionHorizontal> { auto operator()(const TwoComponentPositionHorizontal&, const Style::ComputedStyle&) -> CSS::TwoComponentPositionHorizontal; };
+template<> struct ToCSS<TwoComponentPositionHorizontal> { auto operator()(const TwoComponentPositionHorizontal&, const RenderStyle&) -> CSS::TwoComponentPositionHorizontal; };
 template<> struct ToStyle<CSS::TwoComponentPositionHorizontal> { auto operator()(const CSS::TwoComponentPositionHorizontal&, const BuilderState&) -> TwoComponentPositionHorizontal; };
 
-template<> struct ToCSS<TwoComponentPositionVertical> { auto operator()(const TwoComponentPositionVertical&, const Style::ComputedStyle&) -> CSS::TwoComponentPositionVertical; };
+template<> struct ToCSS<TwoComponentPositionVertical> { auto operator()(const TwoComponentPositionVertical&, const RenderStyle&) -> CSS::TwoComponentPositionVertical; };
 template<> struct ToStyle<CSS::TwoComponentPositionVertical> { auto operator()(const CSS::TwoComponentPositionVertical&, const BuilderState&) -> TwoComponentPositionVertical; };
 
-template<> struct ToCSS<Position> { auto operator()(const Position&, const Style::ComputedStyle&) -> CSS::Position; };
+template<> struct ToCSS<Position> { auto operator()(const Position&, const RenderStyle&) -> CSS::Position; };
 template<> struct ToStyle<CSS::Position> { auto operator()(const CSS::Position&, const BuilderState&) -> Position; };
 
-template<> struct ToCSS<PositionX> { auto operator()(const PositionX&, const Style::ComputedStyle&) -> CSS::PositionX; };
+template<> struct ToCSS<PositionX> { auto operator()(const PositionX&, const RenderStyle&) -> CSS::PositionX; };
 template<> struct ToStyle<CSS::PositionX> { auto operator()(const CSS::PositionX&, const BuilderState&) -> PositionX; };
 
-template<> struct ToCSS<PositionY> { auto operator()(const PositionY&, const Style::ComputedStyle&) -> CSS::PositionY; };
+template<> struct ToCSS<PositionY> { auto operator()(const PositionY&, const RenderStyle&) -> CSS::PositionY; };
 template<> struct ToStyle<CSS::PositionY> { auto operator()(const CSS::PositionY&, const BuilderState&) -> PositionY; };
 
 template<> struct CSSValueConversion<Position> { auto operator()(BuilderState&, const CSSValue&) -> Position; };

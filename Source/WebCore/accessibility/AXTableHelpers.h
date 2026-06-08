@@ -35,11 +35,8 @@ class Element;
 class HTMLTableElement;
 class HTMLTableSectionElement;
 class RenderObject;
+class RenderStyle;
 struct AccessibilityText;
-
-namespace Style {
-class ComputedStyle;
-}
 
 namespace AXTableHelpers {
 

@@ -45,8 +45,8 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -55,13 +55,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentContainer);
 
-RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, Style::ComputedStyle&& style, RenderFragmentedFlow* fragmentedFlow)
+RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsFragmentContainer)
     , m_fragmentedFlow(fragmentedFlow)
 {
 }
 
-RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, Style::ComputedStyle&& style, RenderFragmentedFlow* fragmentedFlow)
+RenderFragmentContainer::RenderFragmentContainer(Type type, Document& document, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentContainer)
     , m_fragmentedFlow(fragmentedFlow)
 {
@@ -205,7 +205,7 @@ bool RenderFragmentContainer::shouldClipFragmentedFlowContent() const
     return hasNonVisibleOverflow();
 }
 
-void RenderFragmentContainer::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderFragmentContainer::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 

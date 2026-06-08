@@ -29,9 +29,9 @@
 #include "CSSCursorImageValue.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
 #include "StyleImage.h"
 
@@ -69,7 +69,7 @@ static void loadPendingImage(Document& document, const Image* image, const Eleme
     const_cast<Image&>(*image).load(document.cachedResourceLoader(), options);
 }
 
-void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
+void loadPendingResources(RenderStyle& style, Document& document, const Element* element)
 {
     for (auto& backgroundLayer : style.backgroundLayers().usedValues())
         loadPendingImage(document, backgroundLayer.image().tryStyleImage().get(), element);

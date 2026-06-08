@@ -37,9 +37,9 @@
 #include "LayoutBoxInlines.h"
 #include "LayoutElementBox.h"
 #include "RenderObjectDocument.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RubyFormattingContext.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <ranges>
 
 namespace WebCore {
@@ -194,7 +194,7 @@ FloatingContext::Constraints InlineFormattingUtils::floatConstraintsForLine(Inli
     return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
-InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const Style::ComputedStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride)
+InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride)
 {
     // Depending on the line's alignment/justification, the hanging glyph can be placed outside the line box.
     if (hangingTrailingWidth) {
@@ -586,7 +586,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
-LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful)
+LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful)
 {
     if (numberOfVisibleLinesAllowed) {
         // text-overflow: ellipsis should not apply inside clamping content.

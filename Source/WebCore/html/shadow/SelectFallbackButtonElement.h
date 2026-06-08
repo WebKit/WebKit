@@ -48,7 +48,7 @@ private:
 
     void setText(const String&);
 
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* hostStyle) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* hostStyle) final;
 };
 
 } // namespace WebCore

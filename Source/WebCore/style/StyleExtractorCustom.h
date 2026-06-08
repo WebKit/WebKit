@@ -57,9 +57,9 @@
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderSVGModelObject.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElement.h"
 #include "SVGLengthContext.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleExtractorState.h"
 #include "StyleInterpolation.h"
@@ -281,7 +281,7 @@ public:
 
 // MARK: - Shared Adaptor
 
-// Shared adaptors are used by adaptors to further adapt a value that has been partially extracted from a ComputedStyle. Like adaptors, they use a provided functor to allow them to be used for both CSSValue creation and serialization.
+// Shared adaptors are used by adaptors to further adapt a value that has been partially extracted from a RenderStyle. Like adaptors, they use a provided functor to allow them to be used for both CSSValue creation and serialization.
 
 template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const InsetEdge& value, F&& functor) const
@@ -436,7 +436,7 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
         };
 
         auto toMarginTrimSide = [](const RenderBox& renderer) -> Style::MarginTrimSide {
-            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const Style::ComputedStyle& {
+            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const RenderStyle& {
                 if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
                     return ancestorToUse->style();
                 ASSERT_NOT_REACHED();
@@ -678,7 +678,7 @@ template<CSSPropertyID> struct WebkitColumnBreakSharedAdaptor {
 
 // MARK: - Adaptors
 
-// Adaptors are used to implement the logic for extracting a value from a ComputedStyle and performing some operation of the CSS value equivalent. This allows the same code to be used for CSS creation and serialization.
+// Adaptors are used to implement the logic for extracting a value from a RenderStyle and performing some operation of the CSS value equivalent. This allows the same code to be used for CSS creation and serialization.
 
 template<CSSPropertyID> struct PropertyExtractorAdaptor;
 
@@ -1864,7 +1864,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
 {
     static_assert(property == CSSPropertyBackground || property == CSSPropertyMask);
 
-    auto computeRenderStyle = [&](std::unique_ptr<Style::ComputedStyle>& ownedStyle) -> const Style::ComputedStyle* {
+    auto computeRenderStyle = [&](std::unique_ptr<RenderStyle>& ownedStyle) -> const RenderStyle* {
         if (auto renderer = state.element->renderer(); renderer && renderer->isComposited() && Interpolation::isAccelerated(property, state.element->document().settings())) {
             ownedStyle = renderer->animatedStyle();
             if (state.pseudoElementIdentifier) {
@@ -1880,7 +1880,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
     auto layerCount = [&] -> size_t {
         // FIXME: Why does this not use state.style?
 
-        std::unique_ptr<Style::ComputedStyle> ownedStyle;
+        std::unique_ptr<RenderStyle> ownedStyle;
         auto style = computeRenderStyle(ownedStyle);
         if (!style)
             return 0;

@@ -45,9 +45,9 @@
 #include "MathMLNames.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>

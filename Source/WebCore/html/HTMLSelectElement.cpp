@@ -218,7 +218,7 @@ HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, 
     return findOwnerSelect(startNode->parentNode(), excludeOptGroup);
 }
 
-static bool NODELETE hasBaseAppearance(const Style::ComputedStyle* style)
+static bool NODELETE hasBaseAppearance(const RenderStyle* style)
 {
     return style && style->usedAppearance() == StyleAppearance::Base;
 }
@@ -622,7 +622,7 @@ bool HTMLSelectElement::isMouseFocusable() const
     return HTMLFormControlElement::isMouseFocusable();
 }
 
-RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
+RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
     if (usesMenuList()) {
         if (hasBaseAppearance(&style))
@@ -2502,7 +2502,7 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
     if (!renderer) {
         // Fallback with minimal valid style - this shouldn't normally happen
         // since showPopup() requires a renderer
-        auto defaultStyle = Style::ComputedStyle::createPtr();
+        auto defaultStyle = RenderStyle::createPtr();
         return PopupMenuStyle(
             Color::black,
             Color::white,

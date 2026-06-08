@@ -33,11 +33,11 @@ class RenderSVGResourcePaintServer : public RenderSVGResourceContainer {
 public:
     virtual ~RenderSVGResourcePaintServer();
 
-    virtual bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) { return false; }
-    virtual bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) { return false; }
+    virtual bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) { return false; }
+    virtual bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const RenderStyle&) { return false; }
 
 protected:
-    RenderSVGResourcePaintServer(Type, SVGElement&, Style::ComputedStyle&&);
+    RenderSVGResourcePaintServer(Type, SVGElement&, RenderStyle&&);
 };
 
 using SVGPaintServerOrColor = Variant<std::monostate, RenderSVGResourcePaintServer*, Color>;

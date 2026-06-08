@@ -33,7 +33,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSValuePool.h"
-#include "StyleComputedStyle.h"
+#include "RenderStyle.h"
 #include "StyleCustomProperty.h"
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/ParsingUtilities.h>

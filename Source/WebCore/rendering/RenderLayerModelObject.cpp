@@ -50,6 +50,7 @@
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceRadialGradient.h"
 #include "RenderSVGText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGFilterElement.h"
@@ -59,7 +60,6 @@
 #include "SVGTextElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
@@ -75,13 +75,13 @@ bool RenderLayerModelObject::s_hadLayer = false;
 bool RenderLayerModelObject::s_wasTransformed = false;
 bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 
-RenderLayerModelObject::RenderLayerModelObject(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderLayerModelObject::RenderLayerModelObject(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsLayerModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderLayerModelObject());
 }
 
-RenderLayerModelObject::RenderLayerModelObject(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderLayerModelObject::RenderLayerModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsLayerModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderLayerModelObject());
@@ -122,7 +122,7 @@ bool RenderLayerModelObject::hasSelfPaintingLayer() const
     return m_layer && m_layer->isSelfPaintingLayer();
 }
 
-void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderLayerModelObject::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     s_wasFloating = isFloating();
     s_hadLayer = hasLayer();
@@ -136,7 +136,7 @@ void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style
     RenderElement::styleWillChange(diff, newStyle);
 }
 
-void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderLayerModelObject::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     updateFromStyle();
     RenderElement::styleDidChange(diff, oldStyle);
@@ -407,7 +407,7 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
 {
     auto svgTransform = graphicsElement.transform().concatenate().value_or(identity);
     auto* supplementalTransform = graphicsElement.supplementalTransform(); // SMIL <animateMotion>
@@ -595,7 +595,7 @@ RenderSVGResourceMarker* RenderLayerModelObject::svgMarkerResourceFromStyle(cons
     return nullptr;
 }
 
-RenderSVGResourcePaintServer* RenderLayerModelObject::svgFillPaintServerResourceFromStyle(const Style::ComputedStyle& style) const
+RenderSVGResourcePaintServer* RenderLayerModelObject::svgFillPaintServerResourceFromStyle(const RenderStyle& style) const
 {
     if (!document().settings().layerBasedSVGEngineEnabled())
         return nullptr;
@@ -615,7 +615,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgFillPaintServerResource
     return nullptr;
 }
 
-RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResourceFromStyle(const Style::ComputedStyle& style) const
+RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResourceFromStyle(const RenderStyle& style) const
 {
     if (!document().settings().layerBasedSVGEngineEnabled())
         return nullptr;

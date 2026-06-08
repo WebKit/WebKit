@@ -272,13 +272,13 @@ public:
 using RenderBlockRareDataMap = SingleThreadWeakHashMap<const RenderBlock, std::unique_ptr<RenderBlockRareData>>;
 static RenderBlockRareDataMap* gRareDataMap;
 
-RenderBlock::RenderBlock(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderBox(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
 }
 
-RenderBlock::RenderBlock(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderBox(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
@@ -293,9 +293,9 @@ RenderBlock::~RenderBlock()
     // Do not add any more code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderBlock::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderBlock::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
-    const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     setBlockLevelReplacedOrAtomicInline(newStyle.display().isInlineType());
     if (oldStyle) {
         removeOutOfFlowBoxesIfNeededOnStyleChange(*this, *oldStyle, newStyle);
@@ -305,12 +305,12 @@ void RenderBlock::styleWillChange(Style::Difference diff, const Style::ComputedS
     RenderBox::styleWillChange(diff, newStyle);
 }
 
-bool RenderBlock::scrollbarWidthDidChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, ScrollbarOrientation orientation)
+bool RenderBlock::scrollbarWidthDidChange(const RenderStyle& oldStyle, const RenderStyle& newStyle, ScrollbarOrientation orientation)
 {
     return (orientation == ScrollbarOrientation::Vertical ? includeVerticalScrollbarSize() : includeHorizontalScrollbarSize()) && oldStyle.scrollbarWidth() != newStyle.scrollbarWidth();
 }
 
-bool RenderBlock::contentBoxLogicalWidthChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+bool RenderBlock::contentBoxLogicalWidthChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     if (newStyle.writingMode().isHorizontal()) {
         return oldStyle.usedBorderLeftWidth() != newStyle.usedBorderLeftWidth()
@@ -327,7 +327,7 @@ bool RenderBlock::contentBoxLogicalWidthChanged(const Style::ComputedStyle& oldS
         || scrollbarWidthDidChange(oldStyle, newStyle, ScrollbarOrientation::Horizontal);
 }
 
-bool RenderBlock::paddingBoxLogicaHeightChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+bool RenderBlock::paddingBoxLogicaHeightChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     auto scrollbarHeightDidChange = [&] (auto orientation) {
         return (orientation == ScrollbarOrientation::Vertical ? includeVerticalScrollbarSize() : includeHorizontalScrollbarSize()) && oldStyle.scrollbarWidth() != newStyle.scrollbarWidth();
@@ -337,7 +337,7 @@ bool RenderBlock::paddingBoxLogicaHeightChanged(const Style::ComputedStyle& oldS
     return oldStyle.usedBorderLeftWidth() != newStyle.usedBorderLeftWidth() || oldStyle.usedBorderRightWidth() != newStyle.usedBorderRightWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
 }
 
-void RenderBlock::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderBlock::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
 
@@ -1336,7 +1336,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintCarets(paintInfo, paintOffset);
 }
 
-bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle& style) const
+bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(const RenderStyle& style) const
 {
     RefPtr element = this->element();
     if (!element) {
@@ -2334,7 +2334,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         auto childAvoidsFloats = childBox.avoidsFloats() || (childBox.isAnonymousBlock() && childBox.childrenInline());
         if (childBox.isFloating() || childAvoidsFloats) {
             LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
-            auto childUsedClear = Style::ComputedStyle::usedClear(childBox);
+            auto childUsedClear = RenderStyle::usedClear(childBox);
             if (childUsedClear == UsedClear::Left || childUsedClear == UsedClear::Both) {
                 maxLogicalWidth = std::max(floatTotalWidth, maxLogicalWidth);
                 floatLeftWidth = 0.f;
@@ -2378,7 +2378,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         }
 
         if (childBox.isFloating()) {
-            if (Style::ComputedStyle::usedFloat(childBox) == UsedFloat::Left)
+            if (RenderStyle::usedFloat(childBox) == UsedFloat::Left)
                 floatLeftWidth += logicalWidth;
             else
                 floatRightWidth += logicalWidth;
@@ -2695,7 +2695,7 @@ LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* 
     return RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth);
 }
 
-const Style::ComputedStyle& RenderBlock::outlineStyleForRepaint() const
+const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 {
     return RenderElement::outlineStyleForRepaint();
 }
@@ -2956,7 +2956,7 @@ String RenderBlock::debugDescription() const
     return RenderObject::debugDescription();
 }
 
-TextRun RenderBlock::constructTextRun(StringView stringView, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(StringView stringView, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     auto textDirection = TextDirection::LTR;
     bool directionalOverride = style.rtlOrdering() == Order::Visual;
@@ -2975,34 +2975,34 @@ TextRun RenderBlock::constructTextRun(StringView stringView, const Style::Comput
     return TextRun(WTF::move(updatedString), 0, 0, expansion, textDirection, directionalOverride);
 }
 
-TextRun RenderBlock::constructTextRun(const String& string, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(const String& string, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     return constructTextRun(StringView(string), style, expansion, flags);
 }
 
-TextRun RenderBlock::constructTextRun(const AtomString& atomString, const Style::ComputedStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(const AtomString& atomString, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     return constructTextRun(StringView(atomString), style, expansion, flags);
 }
 
-TextRun RenderBlock::constructTextRun(const RenderText& text, const Style::ComputedStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(const RenderText& text, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRun(text.stringView(), style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, unsigned length, const Style::ComputedStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     unsigned stop = offset + length;
     ASSERT(stop <= text.text().length());
     return constructTextRun(text.stringView(offset, stop), style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(std::span<const Latin1Character> characters, const Style::ComputedStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(std::span<const Latin1Character> characters, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRun(StringView { characters }, style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(std::span<const char16_t> characters, const Style::ComputedStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(std::span<const char16_t> characters, const RenderStyle& style, ExpansionBehavior expansion)
 {
     return constructTextRun(StringView { characters }, style, expansion);
 }
@@ -3480,7 +3480,7 @@ bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request,
     return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
 }
 
-String RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& style, String&& string)
+String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, String&& string)
 {
 #if !PLATFORM(COCOA)
     UNUSED_PARAM(style);

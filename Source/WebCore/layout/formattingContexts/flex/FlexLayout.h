@@ -33,9 +33,7 @@
 
 namespace WebCore {
 
-namespace Style {
-class ComputedStyle;
-}
+class RenderStyle;
 
 namespace Layout {
 
@@ -80,7 +78,7 @@ private:
 
     bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
     const ElementBox& NODELETE flexContainer() const;
-    const Style::ComputedStyle& flexContainerStyle() const LIFETIME_BOUND { return flexContainer().style(); }
+    const RenderStyle& flexContainerStyle() const LIFETIME_BOUND { return flexContainer().style(); }
 
     const FlexFormattingContext& NODELETE formattingContext() const LIFETIME_BOUND;
     const FlexFormattingUtils& NODELETE formattingUtils() const LIFETIME_BOUND;

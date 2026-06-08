@@ -84,6 +84,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGViewportContainer.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -102,7 +103,6 @@
 #include "ScrollAnchoringController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleDifference.h"
 #include "StylePendingResources.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -130,12 +130,12 @@ struct SameSizeAsRenderElement : public RenderObject {
     unsigned bitfields1 : 12;
     SingleThreadPackedWeakPtr<RenderObject> lastChild;
     unsigned bitfields2 : 13;
-    Style::ComputedStyle style;
+    RenderStyle style;
 };
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderObject(type, elementOrDocument, flags, typeSpecificFlags)
     , m_firstChild(nullptr)
     , m_hasInitializedStyle(false)
@@ -158,12 +158,12 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     ASSERT(RenderObject::isRenderElement());
 }
 
-RenderElement::RenderElement(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, static_cast<ContainerNode&>(element), WTF::move(style), baseTypeFlags, typeSpecificFlags)
 {
 }
 
-RenderElement::RenderElement(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderElement(type, static_cast<ContainerNode&>(document), WTF::move(style), baseTypeFlags, typeSpecificFlags)
 {
 }
@@ -205,7 +205,7 @@ bool RenderElement::isContentDataSupported(const Style::Content& content)
     return minimallySupportedContentDataImage(content) != nullptr;
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::ComputedStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
 {
     if (!rendererTypeOverride) {
         if (RefPtr styleImage = minimallySupportedContentDataImage(style.content()); styleImage && !element.isPseudoElement()) {
@@ -286,7 +286,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::Compu
     return nullptr;
 }
 
-const Style::ComputedStyle& RenderElement::firstLineStyle() const
+const RenderStyle& RenderElement::firstLineStyle() const
 {
     // FIXME: It would be better to just set anonymous block first-line styles correctly.
     if (isAnonymousBlock()) {
@@ -469,7 +469,7 @@ void RenderElement::updateShapeImage(const Style::ShapeOutside* oldShapeValue, c
         updateImage(oldShapeValue ? oldShapeValue->image().get() : nullptr, newShapeValue ? newShapeValue->image().get() : nullptr);
 }
 
-bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     enum class RequiredRepaint { None, RendererOnly, RendererAndDescendantsRenderersWithLayers };
     auto shouldRepaintBeforeStyleChange = [&]() -> RequiredRepaint {
@@ -584,7 +584,7 @@ void RenderElement::initializeStyle()
 }
 
 #if !LOG_DISABLED
-static void logStyleDifference(const RenderElement& renderer, const Style::ComputedStyle& style1, const Style::ComputedStyle& style2, Style::Difference diff)
+static void logStyleDifference(const RenderElement& renderer, const RenderStyle& style1, const RenderStyle& style2, Style::Difference diff)
 {
     if (LogStyle.state != WTFLogChannelState::On)
         return;
@@ -597,7 +597,7 @@ static void logStyleDifference(const RenderElement& renderer, const Style::Compu
 }
 #endif
 
-void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResult minimalStyleDifference)
+void RenderElement::setStyle(RenderStyle&& style, Style::DifferenceResult minimalStyleDifference)
 {
     // FIXME: Should change RenderView so it can use initializeStyle too.
     // If we do that, we can assert m_hasInitializedStyle unconditionally,
@@ -897,7 +897,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
             auto display = elementChild->style().display();
             if (display == Style::DisplayType::RubyBase || display == Style::DisplayType::InlineRuby)
                 return createAnonymousStyleForRuby(style(), display);
-            return Style::ComputedStyle::createAnonymousStyleWithDisplay(style(), display);
+            return RenderStyle::createAnonymousStyleWithDisplay(style(), display);
         }();
 
         if (style().specifiesColumns()) {
@@ -918,7 +918,7 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
     return renderer && renderer->hasBackground();
 }
 
-void RenderElement::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderElement::styleWillChange(Style::Difference diff, const RenderStyle& newStyle)
 {
     ASSERT(settings().shouldAllowUserInstalledFonts() || newStyle.fontDescription().shouldAllowUserInstalledFonts() == AllowUserInstalledFonts::No);
 
@@ -1066,7 +1066,7 @@ void RenderElement::styleWillChange(Style::Difference diff, const Style::Compute
         view().frameView().updateExtendBackgroundIfNecessary();
 }
 
-inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle)
+inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     if ((!oldStyle || oldStyle->usedCounterDirectives().map.isEmpty()) && newStyle.usedCounterDirectives().map.isEmpty())
         return;
@@ -1074,7 +1074,7 @@ inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const S
     rendererStyleChangedSlowCase(renderer, oldStyle, newStyle);
 }
 
-void RenderElement::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RefPtr protectedElement = element();
     if (protectedElement && protectedElement->shouldNotifyTextManipulationControllerIfDisplayed() && !isSkippedContent()) {
@@ -1335,7 +1335,7 @@ void RenderElement::willBeDestroyed()
         ContentVisibilityDocumentState::unobserve(*protect(element()));
 }
 
-void RenderElement::setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* oldStyle)
+void RenderElement::setNeedsOutOfFlowMovementLayout(const RenderStyle* oldStyle)
 {
     ASSERT(!isSetNeedsLayoutForbidden());
     if (needsOutOfFlowMovementLayout())
@@ -1359,7 +1359,7 @@ void RenderElement::clearChildNeedsLayout()
     setOutOfFlowChildNeedsStaticPositionLayoutBit(false);
 }
 
-void RenderElement::setNeedsLayoutForStyleDifference(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderElement::setNeedsLayoutForStyleDifference(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (diff == Style::DifferenceResult::Layout)
         setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -1897,7 +1897,7 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
     return true;
 }
 
-const Style::ComputedStyle* RenderElement::lazyPseudoElementStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const Style::ComputedStyle* parentStyle) const
+const RenderStyle* RenderElement::lazyPseudoElementStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const RenderStyle* parentStyle) const
 {
     ASSERT(Style::isHighlightPseudoElement(pseudoElementIdentifier.type) || pseudoElementIdentifier.type == PseudoElementType::InternalWritingSuggestions);
 
@@ -1909,13 +1909,13 @@ const Style::ComputedStyle* RenderElement::lazyPseudoElementStyle(const Style::P
     if (cachedStyle)
         return cachedStyle;
 
-    std::unique_ptr<Style::ComputedStyle> result = resolvePseudoElementStyle(pseudoElementIdentifier, parentStyle);
+    std::unique_ptr<RenderStyle> result = resolvePseudoElementStyle(pseudoElementIdentifier, parentStyle);
     if (result)
-        return const_cast<Style::ComputedStyle&>(m_style).addPseudoElementStyle(WTF::move(result));
+        return const_cast<RenderStyle&>(m_style).addPseudoElementStyle(WTF::move(result));
     return nullptr;
 }
 
-std::unique_ptr<Style::ComputedStyle> RenderElement::resolvePseudoElementStyle(const Style::PseudoElementRequest& pseudoElementRequest, const Style::ComputedStyle* parentStyle, const Style::ComputedStyle* ownStyle) const
+std::unique_ptr<RenderStyle> RenderElement::resolvePseudoElementStyle(const Style::PseudoElementRequest& pseudoElementRequest, const RenderStyle* parentStyle, const RenderStyle* ownStyle) const
 {
     if (allPublicPseudoElementTypes.contains(pseudoElementRequest.type()) && !ownStyle && !style().hasPseudoStyle(pseudoElementRequest.type()))
         return nullptr;
@@ -1957,7 +1957,7 @@ RenderElement* RenderElement::rendererForPseudoStyleAcrossShadowBoundary() const
     return nullptr;
 }
 
-const Style::ComputedStyle* RenderElement::textSegmentPseudoStyle(PseudoElementType pseudoElementType) const
+const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoElementType pseudoElementType) const
 {
     if (isAnonymous())
         return nullptr;
@@ -1997,7 +1997,7 @@ Color RenderElement::selectionColor() const
     return theme().inactiveSelectionForegroundColor(styleColorOptions());
 }
 
-std::unique_ptr<Style::ComputedStyle> RenderElement::selectionPseudoStyle() const
+std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 {
     if (isAnonymous())
         return nullptr;
@@ -2048,17 +2048,17 @@ Color RenderElement::selectionBackgroundColor() const
     return theme().inactiveSelectionBackgroundColor(styleColorOptions());
 }
 
-const Style::ComputedStyle* RenderElement::spellingErrorPseudoStyle() const
+const RenderStyle* RenderElement::spellingErrorPseudoStyle() const
 {
     return textSegmentPseudoStyle(PseudoElementType::SpellingError);
 }
 
-const Style::ComputedStyle* RenderElement::grammarErrorPseudoStyle() const
+const RenderStyle* RenderElement::grammarErrorPseudoStyle() const
 {
     return textSegmentPseudoStyle(PseudoElementType::GrammarError);
 }
 
-const Style::ComputedStyle* RenderElement::targetTextPseudoStyle() const
+const RenderStyle* RenderElement::targetTextPseudoStyle() const
 {
     return textSegmentPseudoStyle(PseudoElementType::TargetText);
 }
@@ -2410,7 +2410,7 @@ ImageOrientation RenderElement::imageOrientation() const
         : Style::toPlatform(style().imageOrientation());
 }
 
-void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
@@ -2587,7 +2587,7 @@ void RenderElement::repaintOldAndNewPositionsForSVGRenderer() const
 #if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    const RenderStyle& style = renderer.style();
     if (auto fixedHeight = style.height().tryFixed()) {
         if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
@@ -2658,15 +2658,15 @@ void RenderElement::resetTextAutosizing()
 }
 #endif // ENABLE(TEXT_AUTOSIZING)
 
-std::unique_ptr<Style::ComputedStyle> RenderElement::animatedStyle()
+std::unique_ptr<RenderStyle> RenderElement::animatedStyle()
 {
-    std::unique_ptr<Style::ComputedStyle> result;
+    std::unique_ptr<RenderStyle> result;
 
     if (auto styleable = Styleable::fromRenderer(*this))
         result = styleable->computeAnimatedStyle();
 
     if (!result)
-        result = Style::ComputedStyle::clonePtr(style());
+        result = RenderStyle::clonePtr(style());
 
     return result;
 }

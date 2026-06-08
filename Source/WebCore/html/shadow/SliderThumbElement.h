@@ -76,7 +76,7 @@ private:
 #endif
     void willDetachRenderers() final;
 
-    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle*) final;
+    std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle*) final;
 
     void startDragging();
     void stopDragging();
@@ -116,7 +116,7 @@ public:
 
 private:
     explicit SliderContainerElement(Document&);
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool NODELETE isSliderContainerElement() const final { return true; }
 };
 

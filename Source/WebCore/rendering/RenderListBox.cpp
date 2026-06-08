@@ -90,7 +90,7 @@ const int optionsSpacingInlineStart = 2;
 // Default size when the multiple attribute is present but size attribute is absent.
 const int defaultSize = 4;
 
-RenderListBox::RenderListBox(HTMLSelectElement& element, Style::ComputedStyle&& style)
+RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
     : RenderBlockFlow(Type::ListBox, element, WTF::move(style))
 {
     view().frameView().addScrollableArea(this);
@@ -204,7 +204,7 @@ void RenderListBox::layout()
     }
 }
 
-void RenderListBox::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderListBox::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
@@ -438,7 +438,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
     scrollbar.paint(paintInfo.context(), snappedIntRect(paintInfo.rect));
 }
 
-static LayoutSize itemOffsetForAlignment(TextRun textRun, const Style::ComputedStyle& elementStyle, const Style::ComputedStyle* itemStyle, FontCascade itemFont, LayoutRect itemBoundingBox)
+static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle& elementStyle, const RenderStyle* itemStyle, FontCascade itemFont, LayoutRect itemBoundingBox)
 {
     Style::TextAlign actualAlignment = itemStyle->textAlign();
     // FIXME: Firefox doesn't respect Style::TextAlign::Justify. Should we?

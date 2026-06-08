@@ -49,7 +49,7 @@ public:
     void expandToEncompassFragmentedFlowContentsIfNeeded();
 
 protected:
-    RenderFragmentContainerSet(Type, Document&, Style::ComputedStyle&&, RenderFragmentedFlow&);
+    RenderFragmentContainerSet(Type, Document&, RenderStyle&&, RenderFragmentedFlow&);
     virtual ~RenderFragmentContainerSet();
 
 private:

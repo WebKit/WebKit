@@ -36,14 +36,14 @@ struct TextUnderlineOffset : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
 
-    float resolve(const Style::ComputedStyle&, float autoValue = 0.0f) const;
+    float resolve(const RenderStyle&, float autoValue = 0.0f) const;
 };
 
 // MARK: - Blending
 
 template<> struct Blending<TextUnderlineOffset> {
-    auto canBlend(const TextUnderlineOffset&, const TextUnderlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
-    auto blend(const TextUnderlineOffset&, const TextUnderlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextUnderlineOffset;
+    auto canBlend(const TextUnderlineOffset&, const TextUnderlineOffset&, const RenderStyle&, const RenderStyle&) -> bool;
+    auto blend(const TextUnderlineOffset&, const TextUnderlineOffset&, const RenderStyle&, const RenderStyle&, const BlendingContext&) -> TextUnderlineOffset;
 };
 
 } // namespace Style

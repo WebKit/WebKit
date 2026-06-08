@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
 
-LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
     : LegacyRenderSVGHiddenContainer(type, element, WTF::move(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
@@ -70,7 +70,7 @@ void LegacyRenderSVGResourceContainer::willBeDestroyed()
     LegacyRenderSVGHiddenContainer::willBeDestroyed();
 }
 
-void LegacyRenderSVGResourceContainer::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void LegacyRenderSVGResourceContainer::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 

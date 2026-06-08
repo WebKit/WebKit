@@ -42,8 +42,8 @@
 #include "RenderElement.h"
 #include "RenderIterator.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -53,12 +53,12 @@ using namespace MathMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLToken);
 
-RenderMathMLToken::RenderMathMLToken(Type type, MathMLTokenElement& element, Style::ComputedStyle&& style)
+RenderMathMLToken::RenderMathMLToken(Type type, MathMLTokenElement& element, RenderStyle&& style)
     : RenderMathMLBlock(type, element, WTF::move(style))
 {
 }
 
-RenderMathMLToken::RenderMathMLToken(Type type, Document& document, Style::ComputedStyle&& style)
+RenderMathMLToken::RenderMathMLToken(Type type, Document& document, RenderStyle&& style)
     : RenderMathMLBlock(type, document, WTF::move(style))
 {
 }
@@ -135,7 +135,7 @@ void RenderMathMLToken::setMathVariantGlyphDirty()
     setNeedsLayoutAndInvalidateContentLogicalWidths();
 }
 
-void RenderMathMLToken::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderMathMLToken::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     setMathVariantGlyphDirty();

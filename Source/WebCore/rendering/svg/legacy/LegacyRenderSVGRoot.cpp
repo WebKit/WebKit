@@ -60,7 +60,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGRoot);
 const int legacySVGRootDefaultWidth = 300;
 const int legacySVGRootDefaultHeight = 150;
 
-LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, Style::ComputedStyle&& style)
+LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     : RenderReplaced(Type::LegacySVGRoot, element, WTF::move(style), ReplacedFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGRoot());
@@ -386,7 +386,7 @@ void LegacyRenderSVGRoot::willBeRemovedFromTree()
     RenderReplaced::willBeRemovedFromTree();
 }
 
-void LegacyRenderSVGRoot::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void LegacyRenderSVGRoot::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (diff == Style::DifferenceResult::Layout)
         invalidateCachedBoundaries();

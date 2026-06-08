@@ -35,8 +35,8 @@
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SimpleRange.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "WindRule.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -52,7 +52,7 @@ EventRegionContext::EventRegionContext(EventRegion& eventRegion)
 
 EventRegionContext::~EventRegionContext() = default;
 
-void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
+void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
 {
     auto transformAndClipIfNeeded = [&](auto input, auto transform) {
         if (m_transformStack.isEmpty() && m_clipStack.isEmpty())
@@ -468,7 +468,7 @@ EventRegion::EventRegion(Region&& region
 {
 }
 
-void EventRegion::unite(const Region& region, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable)
+void EventRegion::unite(const Region& region, const RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
     if (renderer.usedPointerEvents() == PointerEvents::None)
         return;

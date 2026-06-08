@@ -308,7 +308,7 @@ HTMLElement* RangeInputType::sliderThumbElement() const
     return &typedSliderThumbElement();
 }
 
-RenderPtr<RenderElement> RangeInputType::createInputRenderer(Style::ComputedStyle&& style)
+RenderPtr<RenderElement> RangeInputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.

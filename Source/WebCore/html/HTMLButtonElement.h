@@ -57,7 +57,7 @@ private:
 
     const AtomString& formControlType() const final;
 
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     int defaultTabIndex() const final;
 

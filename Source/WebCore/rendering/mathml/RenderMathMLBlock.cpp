@@ -53,14 +53,14 @@ using namespace MathMLNames;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLBlock);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLTable);
 
-RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, Style::ComputedStyle&& style)
+RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, RenderStyle&& style)
     : RenderBlock(type, container, WTF::move(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, Style::ComputedStyle&& style)
+RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, RenderStyle&& style)
     : RenderBlock(type, document, WTF::move(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
@@ -69,12 +69,12 @@ RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, Style::Compu
 
 RenderMathMLBlock::~RenderMathMLBlock() = default;
 
-bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
+bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
     return is<Element>(child.node());
 }
 
-static LayoutUnit axisHeight(const Style::ComputedStyle& style)
+static LayoutUnit axisHeight(const RenderStyle& style)
 {
     // If we have a MATH table we just return the AxisHeight constant.
     Ref primaryFont = style.fontCascade().primaryFont();
@@ -99,7 +99,7 @@ LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, Layout
     return horizontalOffset;
 }
 
-LayoutUnit toUserUnits(const MathMLElement::Length& length, const Style::ComputedStyle& style, const LayoutUnit& referenceValue)
+LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& style, const LayoutUnit& referenceValue)
 {
     switch (length.type) {
     // Zoom for physical units needs to be accounted for.
@@ -230,7 +230,7 @@ void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
         child->computeAndSetBlockDirectionMargins(*this);
 }
 
-void RenderMathMLBlock::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderMathMLBlock::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 

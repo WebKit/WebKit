@@ -25,9 +25,9 @@
 #include "FontCascadeInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGInlineText.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGLengthContext.h"
 #include "SVGTextMetrics.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
@@ -37,7 +37,7 @@ SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const FontCascade& font
 {
 }
 
-float SVGTextLayoutEngineBaseline::calculateBaselineShift(const Style::ComputedStyle& style) const
+float SVGTextLayoutEngineBaseline::calculateBaselineShift(const RenderStyle& style) const
 {
     return WTF::switchOn(style.baselineShift(),
         [](const CSS::Keyword::Baseline&) -> float {
@@ -146,7 +146,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     return 0;
 }
 
-float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const Style::ComputedStyle& style, const char32_t& character) const
+float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const RenderStyle& style, const char32_t& character) const
 {
     if (isVerticalText) {
         return Style::valueRepresentation(style.glyphOrientationVertical(),

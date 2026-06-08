@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGInline);
     
-RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, Style::ComputedStyle&& style)
+RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, RenderStyle&& style)
     : RenderInline(type, element, WTF::move(style))
 {
     ASSERT(isRenderSVGInline());
@@ -55,7 +55,7 @@ std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()
     return box;
 }
 
-bool RenderSVGInline::isChildAllowed(const RenderObject& child, const Style::ComputedStyle& style) const
+bool RenderSVGInline::isChildAllowed(const RenderObject& child, const RenderStyle& style) const
 {
     auto isEmptySVGInlineText = [](const RenderObject* object) {
         const auto svgInlineText = dynamicDowncast<RenderSVGInlineText>(object);
@@ -171,7 +171,7 @@ void RenderSVGInline::willBeDestroyed()
     RenderInline::willBeDestroyed();
 }
 
-void RenderSVGInline::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderSVGInline::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
         RenderInline::styleDidChange(diff, oldStyle);

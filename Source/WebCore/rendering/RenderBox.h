@@ -196,7 +196,7 @@ public:
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromFloatBox(const FloatingObject&);
 
-    void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
     inline LayoutSize contentBoxSize() const;
     inline LayoutUnit contentBoxWidth() const;
@@ -620,7 +620,7 @@ public:
 
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
-    bool NODELETE computeHasTransformRelatedProperty(const Style::ComputedStyle&) const;
+    bool NODELETE computeHasTransformRelatedProperty(const RenderStyle&) const;
 
     ShapeOutsideInfo* shapeOutsideInfo() const LIFETIME_BOUND;
 
@@ -650,11 +650,11 @@ public:
     bool hasFullyConstrainedLogicalHeight() const;
 
 protected:
-    RenderBox(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
-    RenderBox(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
+    RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
+    RenderBox(Type, Document&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
 
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleWillChange(Style::Difference, const RenderStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void updateFromStyle() override;
 
     void willBeDestroyed() override;
@@ -727,9 +727,9 @@ private:
     void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
     void addMarginBoxOverflow(const RenderBox&, LayoutSize offsetFromThis, OptionSet<ComputeOverflowOptions>);
 
-    void updateShapeOutsideInfoAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle, Style::Difference);
+    void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle, Style::Difference);
 
-    void updateGridPositionAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle);
+    void updateGridPositionAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, unsigned stepCount, Element** stopElement);
 

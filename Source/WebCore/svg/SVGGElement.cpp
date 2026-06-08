@@ -29,10 +29,10 @@
 #include "NodeDocument.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGTransformableContainer.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGNames.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDisplay.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -57,7 +57,7 @@ Ref<SVGGElement> SVGGElement::create(Document& document)
     return create(SVGNames::gTag, document);
 }
 
-RenderPtr<RenderElement> SVGGElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     // FIXME: [LBSE] Support hidden containers
     if (document().settings().layerBasedSVGEngineEnabled()) {
@@ -77,7 +77,7 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(Style::ComputedStyle
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTF::move(style));
 }
 
-bool SVGGElement::rendererIsNeeded(const Style::ComputedStyle&)
+bool SVGGElement::rendererIsNeeded(const RenderStyle&)
 {
     // Unlike SVGElement::rendererIsNeeded(), we still create renderers, even if
     // display is set to 'none' - which is special to SVG <g> container elements.

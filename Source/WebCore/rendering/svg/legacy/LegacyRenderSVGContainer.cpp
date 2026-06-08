@@ -64,7 +64,7 @@ static bool shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& cont
     return numberOfChildren >= minimumRequiredChildren;
 }
 
-LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, Style::ComputedStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
+LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : LegacyRenderSVGModelObject(type, element, WTF::move(style), svgFlags | SVGModelObjectFlag::IsContainer | SVGModelObjectFlag::UsesBoundaryCaching)
 {
 }

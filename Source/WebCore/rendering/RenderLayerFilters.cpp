@@ -40,8 +40,8 @@
 #include "Logging.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGShape.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGTransformComputation.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 

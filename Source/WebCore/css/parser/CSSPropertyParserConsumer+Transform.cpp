@@ -44,8 +44,8 @@
 #include "CSSPropertyParsing.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "RenderStyle.h"
 #include "StyleBuilderState.h"
-#include "StyleComputedStyle.h"
 #include "StyleTransform.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 
@@ -429,7 +429,7 @@ std::optional<Style::Transform> parseTransformRaw(const String& string, const CS
     if (!range.atEnd())
         return { };
 
-    auto dummyStyle = Style::ComputedStyle::create();
+    auto dummyStyle = RenderStyle::create();
     auto dummyState = Style::BuilderState::create(dummyStyle);
 
     if (!parsedValue->canResolveDependenciesWithConversionData(dummyState->cssToLengthConversionData()))

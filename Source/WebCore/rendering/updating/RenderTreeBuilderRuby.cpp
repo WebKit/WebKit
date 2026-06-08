@@ -32,7 +32,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderInline.h"
-#include "StyleComputedStyle+SettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "UnicodeBidi.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -45,11 +45,11 @@ RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
 {
 }
 
-Style::ComputedStyle createAnonymousStyleForRuby(const Style::ComputedStyle& parentStyle, Style::Display display)
+RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, Style::Display display)
 {
     ASSERT(display == Style::DisplayType::InlineRuby || display == Style::DisplayType::RubyBase);
 
-    auto style = Style::ComputedStyle::createAnonymousStyleWithDisplay(parentStyle, display);
+    auto style = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, display);
     style.setUnicodeBidi(UnicodeBidi::Isolate);
     if (display == Style::DisplayType::RubyBase)
         style.setTextWrapMode(TextWrapMode::NoWrap);

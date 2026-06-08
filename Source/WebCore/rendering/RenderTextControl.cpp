@@ -46,7 +46,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControl);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
-RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, Style::ComputedStyle&& style)
+RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, RenderStyle&& style)
     : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsTextControl)
 {
     ASSERT(isRenderTextControl());
@@ -64,7 +64,7 @@ RefPtr<TextControlInnerTextElement> RenderTextControl::innerTextElement() const
     return textFormControlElement().innerTextElement();
 }
 
-void RenderTextControl::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderTextControl::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
     auto innerText = innerTextElement();
@@ -273,7 +273,7 @@ int RenderTextControl::innerLineHeight() const
 }
 #endif
 
-RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, Style::ComputedStyle&& style)
+RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, RenderStyle&& style)
     : RenderFlexibleBox(Type::TextControlInnerContainer, element, WTF::move(style))
 {
 

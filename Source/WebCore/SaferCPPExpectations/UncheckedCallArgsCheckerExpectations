@@ -483,6 +483,9 @@ rendering/mathml/RenderMathMLSpace.cpp
 rendering/mathml/RenderMathMLToken.cpp
 rendering/mathml/RenderMathMLUnderOver.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
+rendering/style/RenderStyle+GettersInlines.h
+rendering/style/RenderStyle+SettersInlines.h
+rendering/style/RenderStyle.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGImage.cpp
 rendering/svg/RenderSVGInline.cpp
@@ -558,12 +561,14 @@ style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
 style/StyleBuilderStateInlines.h
+style/StyleChangedAnimatableProperties.cpp
 style/StyleCustomPropertyRegistry.cpp
 style/StyleDocumentScope.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp
+style/StyleResolveForDocument.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleScopeRuleSets.cpp
@@ -571,7 +576,6 @@ style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
 style/Styleable.h
-style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/color/StyleColor.cpp
 style/values/content/StyleContent.cpp

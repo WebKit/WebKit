@@ -40,24 +40,21 @@ class GraphicsContext;
 class FloatRect;
 class FloatRoundedRect;
 class Path;
-
-namespace Style {
-class ComputedStyle;
-}
+class RenderStyle;
 
 // BorderShape is used to fill and clip to the shape formed by the border and padding boxes with border-radius.
 // In future, this may be a more complex shape than a rounded rect, so accessors that return rounded rects
 // are deprecated.
 class BorderShape {
 public:
-    static BorderShape shapeForBorderRect(const Style::ComputedStyle&, const LayoutRect& borderRect, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForBorderRect(const RenderStyle&, const LayoutRect& borderRect, RectEdges<bool> closedEdges = { true });
     // overrideBorderWidths describe custom insets from the border box, used instead of the border widths from the style.
-    static BorderShape shapeForBorderRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForBorderRect(const RenderStyle&, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, RectEdges<bool> closedEdges = { true });
 
     // Create a BorderShape suitable for rendering an outline or shadow. borderRect is provided to
     // allow for scaling the corner radii; radii expand outward or shrink inward based on the offset
     // between borderRect and offsetRect.
-    static BorderShape shapeForOffsetRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForOffsetRect(const RenderStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true });
 
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&);

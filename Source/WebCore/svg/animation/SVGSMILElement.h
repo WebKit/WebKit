@@ -115,7 +115,7 @@ protected:
     ActiveState activeState() const { return m_activeState; }
     void setInactive() { m_activeState = Inactive; }
 
-    bool rendererIsNeeded(const Style::ComputedStyle&) override { return false; }
+    bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     // Sub-classes may need to take action when the target is changed.
     virtual void setTargetElement(SVGElement*);

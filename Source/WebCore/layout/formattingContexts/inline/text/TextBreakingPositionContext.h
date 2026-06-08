@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/StyleComputedStyle.h>
+#include <WebCore/RenderStyle.h>
 #include <WebCore/StyleWebKitLocale.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
@@ -69,13 +69,13 @@ struct TextBreakingPositionContext {
 
     bool isHashTableDeletedValue { false };
 
-    TextBreakingPositionContext(const Style::ComputedStyle&);
+    TextBreakingPositionContext(const RenderStyle&);
     TextBreakingPositionContext() = default;
 
     friend bool operator==(const TextBreakingPositionContext&, const TextBreakingPositionContext&) = default;
 };
 
-inline TextBreakingPositionContext::TextBreakingPositionContext(const Style::ComputedStyle& style)
+inline TextBreakingPositionContext::TextBreakingPositionContext(const RenderStyle& style)
     : whitespaceCollapseBehavior(BehaviorForWhiteSpaceCollapse(style.whiteSpaceCollapse()))
     , overflowWrap(style.overflowWrap())
     , lineBreak(style.lineBreak())

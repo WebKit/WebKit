@@ -33,7 +33,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "NodeDocument.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleExtractor.h"
 #include "StylePropertyShorthand.h"

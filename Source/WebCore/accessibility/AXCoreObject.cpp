@@ -43,8 +43,8 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "RenderObjectStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "TextDecorationPainter.h"
 #include <wtf/Deque.h>
 #include <wtf/text/MakeString.h>

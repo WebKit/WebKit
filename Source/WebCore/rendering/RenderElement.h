@@ -25,7 +25,7 @@
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderPtr.h>
-#include <WebCore/StyleComputedStyle.h>
+#include <WebCore/RenderStyle.h>
 #include <WebCore/StyleDifference.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
@@ -38,6 +38,7 @@ class BlendingKeyframes;
 class GraphicsLayerAnimation;
 class ReferencedSVGResources;
 class RenderBlock;
+class RenderStyle;
 class RenderTreeBuilder;
 class SVGElement;
 struct ImageOrientation;
@@ -52,7 +53,6 @@ class ElementBox;
 }
 
 namespace Style {
-class ComputedStyle;
 class Image;
 struct Content;
 }
@@ -71,27 +71,27 @@ public:
         TableOrTablePart    = 1 << 2,
         DeprecatedFlexBox   = 1 << 3
     };
-    static RenderPtr<RenderElement> createFor(Element&, Style::ComputedStyle&&, OptionSet<ConstructBlockLevelRendererFor> = { });
+    static RenderPtr<RenderElement> createFor(Element&, RenderStyle&&, OptionSet<ConstructBlockLevelRendererFor> = { });
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
-    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
-    const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !m_parent ? nullptr : &m_parent->style(); }
-    const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
+    const RenderStyle& style() const LIFETIME_BOUND { return m_style; }
+    const RenderStyle* parentStyle() const LIFETIME_BOUND { return !m_parent ? nullptr : &m_parent->style(); }
+    const RenderStyle& firstLineStyle() const LIFETIME_BOUND;
 
     // FIXME: Style shouldn't be mutated.
-    Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return m_style; }
+    RenderStyle& mutableStyle() LIFETIME_BOUND { return m_style; }
 
     void initializeStyle();
 
     // Calling with minimalStyleDifference > Style::DifferenceResult::Equal indicates that
     // out-of-band state (e.g. animations) requires that styleDidChange processing
     // continue even if the style isn't different from the current style.
-    void setStyle(Style::ComputedStyle&&, Style::DifferenceResult minimalStyleDifference = Style::DifferenceResult::Equal);
+    void setStyle(RenderStyle&&, Style::DifferenceResult minimalStyleDifference = Style::DifferenceResult::Equal);
 
     // Resolves and caches the style for a lazily-resolved pseudo-element.
-    const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
-    std::unique_ptr<Style::ComputedStyle> resolvePseudoElementStyle(const Style::PseudoElementRequest&, const Style::ComputedStyle* parentStyle = nullptr, const Style::ComputedStyle* ownStyle = nullptr) const;
+    const RenderStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const LIFETIME_BOUND;
+    std::unique_ptr<RenderStyle> resolvePseudoElementStyle(const Style::PseudoElementRequest&, const RenderStyle* parentStyle = nullptr, const RenderStyle* ownStyle = nullptr) const;
 
     // This is null for anonymous renderers.
     inline Element* element() const; // Defined in RenderElementInlines.h
@@ -107,8 +107,8 @@ public:
     const Layout::ElementBox* NODELETE layoutBox() const;
 
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
-    inline bool canContainFixedPositionObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
-    inline bool canContainAbsolutelyPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
+    inline bool canContainFixedPositionObjects(const RenderStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
+    inline bool canContainAbsolutelyPositionedObjects(const RenderStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     bool canEstablishContainingBlockWithTransform() const;
 
     inline bool shouldApplyLayoutContainment() const; // Defined in RenderElementStyleInlines.h
@@ -121,18 +121,18 @@ public:
 
     bool hasEligibleContainmentForSizeQuery() const;
 
-    std::unique_ptr<Style::ComputedStyle> selectionPseudoStyle() const;
+    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
     // Obtains the selection colors that should be used when painting a selection.
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
 
-    const Style::ComputedStyle* spellingErrorPseudoStyle() const LIFETIME_BOUND;
-    const Style::ComputedStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
-    const Style::ComputedStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* spellingErrorPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* grammarErrorPseudoStyle() const LIFETIME_BOUND;
+    const RenderStyle* targetTextPseudoStyle() const LIFETIME_BOUND;
 
-    virtual bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get
@@ -155,8 +155,8 @@ public:
     void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
     void NODELETE setOutOfFlowChildNeedsStaticPositionLayout();
     void NODELETE clearChildNeedsLayout();
-    void setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* oldStyle);
-    void setNeedsLayoutForStyleDifference(Style::Difference, const Style::ComputedStyle* oldStyle);
+    void setNeedsOutOfFlowMovementLayout(const RenderStyle* oldStyle);
+    void setNeedsLayoutForStyleDifference(Style::Difference, const RenderStyle* oldStyle);
     void setNeedsLayoutForOverflowChange();
 
     // paintOffset is the offset from the origin of the GraphicsContext at which to paint the current object.
@@ -175,7 +175,7 @@ public:
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(Style::ComputedStyle&& style) { m_style = WTF::move(style); }
+    void setStyleInternal(RenderStyle&& style) { m_style = WTF::move(style); }
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, RequiresFullRepaint, const RepaintRects& oldRects, const RepaintRects& newRects);
@@ -191,7 +191,7 @@ public:
     virtual bool isInsideEntirelyHiddenLayer() const;
 
     // Returns true if this renderer requires a new stacking context.
-    static bool createsGroupForStyle(const Style::ComputedStyle&); // Defined in RenderElementStyleInlines.h.
+    static bool createsGroupForStyle(const RenderStyle&); // Defined in RenderElementStyleInlines.h.
     bool createsGroup() const { return createsGroupForStyle(style()); }
 
     inline bool isTransparent() const; // FIXME: This function is incorrectly named. It's isNotOpaque, sometimes called hasOpacity, not isEntirelyTransparent. Defined in RenderElementStyleInlines.h.
@@ -271,7 +271,7 @@ public:
 
     // Called before anonymousChild.setStyle(). Override to set custom styles for
     // the child.
-    virtual void updateAnonymousChildStyle(Style::ComputedStyle&) const { };
+    virtual void updateAnonymousChildStyle(RenderStyle&) const { };
 
     bool isFirstLetter() const { return m_isFirstLetter; }
     void setIsFirstLetter() { m_isFirstLetter = true; }
@@ -285,14 +285,14 @@ public:
     virtual void transformRelatedPropertyDidChange() { }
 
     // https://www.w3.org/TR/css-transforms-1/#transform-box
-    inline FloatRect transformReferenceBoxRect(const Style::ComputedStyle&) const; // Defined in RenderElementStyleInlines.h.
+    inline FloatRect transformReferenceBoxRect(const RenderStyle&) const; // Defined in RenderElementStyleInlines.h.
     inline FloatRect transformReferenceBoxRect() const; // Defined in RenderElementStyleInlines.h.
 
     // https://www.w3.org/TR/css-transforms-1/#reference-box
     virtual FloatRect referenceBoxRect(CSSBoxType) const;
 
     virtual void suspendAnimations(MonotonicTime = MonotonicTime()) { }
-    std::unique_ptr<Style::ComputedStyle> animatedStyle();
+    std::unique_ptr<RenderStyle> animatedStyle();
 
     SingleThreadWeakPtr<RenderBlockFlow> pseudoElementRenderer(PseudoElementType) const;
     void setPseudoElementRenderer(PseudoElementType, RenderBlockFlow&);
@@ -329,7 +329,7 @@ public:
     void setIsInPendingSVGTransformAttributeUpdates(bool b) { m_isInPendingSVGTransformAttributeUpdates = b; }
 
     bool isAnonymousBlock() const;
-    inline bool shouldSkipForPercentageResolution() const;
+    bool shouldSkipForPercentageResolution() const { return isAnonymous() && !isViewTransitionPseudo() && !isRenderView(); }
     inline bool isBlockBox() const;
     inline bool isBlockLevelBox() const;
     inline bool isBlockContainer() const;
@@ -342,8 +342,8 @@ public:
     inline bool isFixedPositioned() const;
     inline bool isAbsolutelyPositioned() const;
 
-    inline bool isViewTransitionContainer() const;
-    inline bool isViewTransitionPseudo() const;
+    bool isViewTransitionContainer() const { return style().pseudoElementType() == PseudoElementType::ViewTransition || style().pseudoElementType() == PseudoElementType::ViewTransitionGroup || style().pseudoElementType() == PseudoElementType::ViewTransitionImagePair; }
+    bool isViewTransitionPseudo() const { return isRenderViewTransitionCapture() || isViewTransitionContainer(); }
 
     inline bool hasPotentiallyScrollableOverflow() const;
 
@@ -359,8 +359,8 @@ public:
     bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
 
 protected:
-    RenderElement(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderElement(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     bool NODELETE layerCreationAllowedForSubtree() const;
 
@@ -370,10 +370,10 @@ protected:
     };
     void propagateStyleToAnonymousChildren(StylePropagationType);
 
-    bool repaintBeforeStyleChange(Style::Difference, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
+    bool repaintBeforeStyleChange(Style::Difference, const RenderStyle& oldStyle, const RenderStyle& newStyle);
 
-    virtual void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle);
-    virtual void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle);
+    virtual void styleWillChange(Style::Difference, const RenderStyle& newStyle);
+    virtual void styleDidChange(Style::Difference, const RenderStyle* oldStyle);
 
     void dirtyEnclosingLayerSVGChildrenIfNeeded();
 
@@ -400,7 +400,7 @@ protected:
     void updateOutlineAutoAncestor(bool hasOutlineAuto);
 
     void removeFromRenderFragmentedFlowIncludingDescendants(bool shouldUpdateState);
-    void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
+    void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle);
 
     bool isVisibleInViewport() const;
 
@@ -408,7 +408,7 @@ protected:
     inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
-    RenderElement(Type, ContainerNode&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void isRenderText() const = delete;
@@ -417,7 +417,7 @@ private:
     RenderObject* firstChildSlow() const final { return firstChild(); }
     RenderObject* lastChildSlow() const final { return lastChild(); }
 
-    inline bool mayContainOutOfFlowPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
+    inline bool mayContainOutOfFlowPositionedObjects(const RenderStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
 
     RenderElement* NODELETE rendererForPseudoStyleAcrossShadowBoundary() const;
 
@@ -453,7 +453,7 @@ private:
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
 
-    const Style::ComputedStyle* textSegmentPseudoStyle(PseudoElementType) const LIFETIME_BOUND;
+    const RenderStyle* textSegmentPseudoStyle(PseudoElementType) const LIFETIME_BOUND;
 
     template<typename> Color selectionColor() const;
 
@@ -485,7 +485,7 @@ private:
     unsigned m_isInPendingSVGTransformAttributeUpdates : 1 { false };
     // 10 bits free.
 
-    Style::ComputedStyle m_style;
+    RenderStyle m_style;
 };
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)

@@ -37,8 +37,8 @@ class RenderTableCol final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableCol);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCol);
 public:
-    RenderTableCol(Element&, Style::ComputedStyle&&);
-    RenderTableCol(Document&, Style::ComputedStyle&&);
+    RenderTableCol(Element&, RenderStyle&&);
+    RenderTableCol(Document&, RenderStyle&&);
     virtual ~RenderTableCol();
 
     void clearContentLogicalWidthsInvalidation();
@@ -76,7 +76,7 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+    bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     bool canHaveChildren() const override;
     bool requiresLayer() const override { return false; }
 
@@ -85,7 +85,7 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void paint(PaintInfo&, const LayoutPoint&) override { }
 
     RenderTable* NODELETE table() const;

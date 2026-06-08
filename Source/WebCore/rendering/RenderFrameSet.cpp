@@ -56,7 +56,7 @@ static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFrameSet);
 
-RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, Style::ComputedStyle&& style)
+RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
     : RenderBox(Type::FrameSet, frameSet, WTF::move(style))
     , m_isResizing(false)
 {
@@ -645,7 +645,7 @@ int RenderFrameSet::hitTestSplit(const GridAxis& axis, int position) const
     return noSplit;
 }
 
-bool RenderFrameSet::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
+bool RenderFrameSet::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
     return child.isRenderFrame() || child.isRenderFrameSet();
 }

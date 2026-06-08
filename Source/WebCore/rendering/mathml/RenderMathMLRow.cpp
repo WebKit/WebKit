@@ -45,7 +45,7 @@ using namespace MathMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLRow);
 
-RenderMathMLRow::RenderMathMLRow(Type type, MathMLRowElement& element, Style::ComputedStyle&& style)
+RenderMathMLRow::RenderMathMLRow(Type type, MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLBlock(type, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLRow());

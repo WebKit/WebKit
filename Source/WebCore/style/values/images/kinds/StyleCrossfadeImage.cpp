@@ -91,7 +91,7 @@ RefPtr<CrossfadeImage> CrossfadeImage::blend(const CrossfadeImage& from, const B
     return CrossfadeImage::create(m_from, m_to, newProgress, from.m_isPrefixed && m_isPrefixed);
 }
 
-Ref<CSSValue> CrossfadeImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> CrossfadeImage::computedStyleValue(const RenderStyle& style) const
 {
     auto fromComputedValue = m_from ? m_from->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone));
     auto toComputedValue = m_to ? m_to->computedStyleValue(style) : upcast<CSSValue>(CSSKeywordValue::create(CSSValueNone));
@@ -104,7 +104,7 @@ Ref<CSSValue> CrossfadeImage::computedStyleValue(const Style::ComputedStyle& sty
     );
 }
 
-Ref<DeprecatedCSSOMValue> CrossfadeImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
+Ref<DeprecatedCSSOMValue> CrossfadeImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const RenderStyle& style, CSSStyleDeclaration& owner) const
 {
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }
