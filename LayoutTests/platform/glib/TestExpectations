@@ -2531,7 +2531,7 @@ webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creat
 
 http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
 
-webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Failure ]
+webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Failure Timeout ]
 
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
