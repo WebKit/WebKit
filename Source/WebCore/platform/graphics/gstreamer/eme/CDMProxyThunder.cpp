@@ -56,8 +56,15 @@ BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& 
     auto keyID = mappedKeyID.createVector();
 
     auto keyHandle = getOrWaitForKeyHandle(keyID, WTF::move(in.cdmProxyDecryptionClient));
-    if (!keyHandle.has_value() || !keyHandle.value()->isStatusCurrentlyValid())
+    if (!keyHandle) {
+        GST_ERROR("No key handle");
         return nullptr;
+    }
+
+    if (!keyHandle.value()->isStatusCurrentlyValid()) {
+        GST_ERROR("Key handle has no usable key");
+        return nullptr;
+    }
 
     KeyHandleValueVariant keyData = keyHandle.value()->value();
     ASSERT(std::holds_alternative<BoxPtr<OpenCDMSession>>(keyData));

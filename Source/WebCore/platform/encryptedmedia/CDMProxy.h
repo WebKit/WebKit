@@ -174,6 +174,7 @@ public:
     }
 
     unsigned numKeys() const { return m_keys.size(); }
+    bool isEmpty() const { return m_keys.isEmpty(); }
     auto values() const { return m_keys.values(); }
     KeyStoreIDType id() const { return m_id; }
 
