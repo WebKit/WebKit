@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var mock;
+    var promise;
+    var capabilities = {};
+
+    function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.initializeMockMediaSource()');
+        run('mock = internals.registerMockCDM()');
+        run('mock.supportedDataTypes = ["mock"]');
+        run('mock.unsupportedVideoCodecs = ["bad"]');
+
+        next();
+    }
+
+    function next() {
+        if (!tests.length) {
+            mock.unregister();
+            endTest()
+            return;
+        }
+
+        var nextTest = tests.shift();
+        consoleWrite('');
+        nextTest();
+    }
+
+    function passingTestWithCapabilities(capabilities, success) {
+        shouldResolve(testWithCapabilities(capabilities)).then(success).then(next, next);
+    }
+
+    function failingTestWithCapabilities(capabilities, failure) {
+        shouldReject(testWithCapabilities(capabilities)).then(failure).then(next, next);
+    }
+
+    function testWithCapabilities(capabilities) {
+        window.capabilities = capabilities;
+        consoleWrite(`SET capabilities = '${ JSON.stringify(capabilities, null, 1) }'`);
+        run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities)');
+        return promise;
+    }
+
+    tests = [
+        // A "bad" codec that MediaPlayer accepts as a mock mime but the CDM rejects
+        // under supportsConfigurationWithRestrictions must be filtered out, while a
+        // supported sibling capability is retained.
+        function() {
+            passingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [
+                        { contentType: 'video/mock; codecs="mock"' },
+                        { contentType: 'video/mock; codecs="bad"' },
+                    ],
+                }],
+                mediaKeySystemAccess => {
+                    window.access = mediaKeySystemAccess;
+                    testExpected('access.getConfiguration().videoCapabilities.length', '1');
+                    testExpected('access.getConfiguration().videoCapabilities[0].contentType', 'video/mock; codecs="mock"');
+                });
+        },
+
+        // A single "bad" capability must cause the whole request to fail with
+        // NotSupportedError: this is the HBO Max / HEVC-on-unsupported-system case.
+        function() {
+            failingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [{ contentType: 'video/mock; codecs="bad"' }],
+                }],
+                exceptionCode => {
+                    window.exceptionCode = exceptionCode;
+                    testExpected('exceptionCode.name', 'NotSupportedError');
+                });
+        },
+
+        // Multiple "bad" codecs configured: filter all of them, keep the supported one.
+        function() {
+            run('mock.unsupportedVideoCodecs = ["bad", "worse"]');
+            passingTestWithCapabilities([{
+                    initDataTypes: ['mock'],
+                    videoCapabilities: [
+                        { contentType: 'video/mock; codecs="bad"' },
+                        { contentType: 'video/mock; codecs="mock"' },
+                        { contentType: 'video/mock; codecs="worse"' },
+                    ],
+                }],
+                mediaKeySystemAccess => {
+                    window.access = mediaKeySystemAccess;
+                    testExpected('access.getConfiguration().videoCapabilities.length', '1');
+                    testExpected('access.getConfiguration().videoCapabilities[0].contentType', 'video/mock; codecs="mock"');
+                });
+        },
+    ];
+    </script>
+</head>
+<body onload="doTest()">
+</body>
+</html>

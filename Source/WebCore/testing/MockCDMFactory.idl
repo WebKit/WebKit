@@ -37,6 +37,7 @@
     attribute boolean supportsServerCertificates;
     attribute boolean supportsSessions;
     attribute sequence<MediaKeyEncryptionScheme> supportedEncryptionSchemes;
+    attribute sequence<DOMString> unsupportedVideoCodecs;
 
     undefined unregister();
 };

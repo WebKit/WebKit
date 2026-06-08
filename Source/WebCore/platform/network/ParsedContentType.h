@@ -42,20 +42,20 @@ class ParsedContentType {
 public:
     WEBCORE_EXPORT static std::optional<ParsedContentType> create(const String&);
     ParsedContentType(ParsedContentType&&) = default;
+    ParsedContentType(const ParsedContentType&) = delete;
 
     String mimeType() const { return m_mimeType; }
     String charset() const;
     void setCharset(String&&);
 
     // Note that in the case of multiple values for the same name, the last value is returned.
-    String parameterValueForName(const String&) const;
+    WEBCORE_EXPORT String parameterValueForName(const String&) const;
     size_t parameterCount() const;
 
     WEBCORE_EXPORT String serialize() const;
 
 private:
     ParsedContentType(const String&);
-    ParsedContentType(const ParsedContentType&) = delete;
     ParsedContentType& operator=(const ParsedContentType&) = delete;
     bool parseContentType();
     void setContentType(String&&);
