@@ -66,7 +66,8 @@ messages -> GPUProcess : AuxiliaryProcess {
 #if PLATFORM(COCOA)
     SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result)
 #endif
-    SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
+    SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image, struct WebCore::Headroom headroom)
+
     ReleaseSnapshot(WebKit::RemoteSnapshotIdentifier identifier)
 
 #if HAVE(SCREEN_CAPTURE_KIT)

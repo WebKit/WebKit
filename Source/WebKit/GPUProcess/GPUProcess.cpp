@@ -397,7 +397,7 @@ void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier,
 
 #endif
 
-void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const FloatSize& size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifier, const FloatSize& size, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&, Headroom)>&& completionHandler)
 {
     RefPtr<RemoteSnapshot> snapshot;
     {
@@ -406,7 +406,7 @@ void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifi
     }
     if (!snapshot) {
         // Currently it's not possible to know if a snapshot exists, hence no ASSERT.
-        completionHandler({ });
+        completionHandler(std::nullopt, Headroom::None);
         return;
     }
     if (!snapshot->isComplete()) {
@@ -414,7 +414,10 @@ void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifi
         ASSERT_NOT_REACHED();
         return;
     }
-    completionHandler(snapshot->drawToBitmap(size, rootFrameIdentifier));
+    if (auto ret = snapshot->drawToBitmap(size, rootFrameIdentifier))
+        completionHandler(WTF::move(ret->first), ret->second);
+    else
+        completionHandler(std::nullopt, Headroom::None);
 }
 
 void GPUProcess::releaseSnapshot(RemoteSnapshotIdentifier identifier)
