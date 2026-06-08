@@ -797,7 +797,9 @@ private:
             if (timeStamp.isNaN())
                 m_frameRateStats = { now, 1 };
             else if (now - timeStamp >= 1_s) {
-                gst_structure_set(m_stats.get(), "frames-per-second", G_TYPE_UINT, totalFramesSinceLastMeasurement + 1, nullptr);
+                auto delta = now - timeStamp;
+                double frameRate = (totalFramesSinceLastMeasurement + 1) / delta.seconds();
+                gst_structure_set(m_stats.get(), "frames-per-second", G_TYPE_DOUBLE, frameRate, nullptr);
                 m_frameRateStats = { now, 0 };
             } else
                 m_frameRateStats = { timeStamp, totalFramesSinceLastMeasurement + 1 };
