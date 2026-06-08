@@ -1590,7 +1590,7 @@
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D125FE2B6D012E003EB7AA /* WebRTCVideoDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E476512B6CF8A700C30B11 /* WebRTCVideoDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D126022B6D0BD6003EB7AA /* AV1UtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1A225B2B075A6D0038923E /* AV1UtilitiesCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		41D126092B6D111D003EB7AA /* AV1Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1A22582B0759AD0038923E /* AV1Utilities.h */; };
+		41D126092B6D111D003EB7AA /* AV1Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CD1A22582B0759AD0038923E /* AV1Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129CE1F3D0EF600D15E47 /* WindowOrWorkerGlobalScopeCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278D1F34C28200795487 /* WindowOrWorkerGlobalScopeCaches.h */; };
 		41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB279B1F34CEF000795487 /* CacheQueryOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129D31F3D0F1600D15E47 /* CacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };

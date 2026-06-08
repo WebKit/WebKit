@@ -529,6 +529,7 @@
 		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WebCore/AV1Utilities.cpp,
 				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WebPage/EditingFontSizeTests.swift,
 				WebKit/WebPage/JavaScriptExpressionTests.swift,

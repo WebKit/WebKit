@@ -648,9 +648,10 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(st
     return record;
 }
 
-std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t> data)
+std::optional<AV1SequenceHeaderInfo> parseSequenceHeaderOBU(std::span<const uint8_t> data)
 {
-    AV1CodecConfigurationRecord record;
+    AV1SequenceHeaderInfo info;
+    auto& record = info.codecRecord;
     record.codecName = "av01"_s;
 
     BitReader bitReader(data);
@@ -680,6 +681,8 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
     // Per spec: reduced_still_picture_header requires still_picture to be 1
     if (reducedStillPictureHeader && !stillPicture)
         return std::nullopt;
+
+    info.reducedStillPictureHeader = reducedStillPictureHeader;
 
     bool timingInfoPresentFlag = false;
     bool decoderModelInfoPresentFlag = false;
@@ -727,6 +730,7 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
             if (!value)
                 return std::nullopt;
             bool equalPictureInterval = *value;
+            info.equalPictureInterval = equalPictureInterval;
             if (equalPictureInterval) {
                 // num_ticks_per_picture_minus_1 uvlc()
                 // Parse uvlc: count leading zeros, then read that many bits
@@ -769,6 +773,7 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
                 value = bitReader.read(5);
                 if (!value)
                     return std::nullopt;
+                info.bufferRemovalTimeLengthMinus1 = static_cast<uint8_t>(*value);
                 // frame_presentation_time_length_minus_1 f(5)
                 value = bitReader.read(5);
                 if (!value)
@@ -776,6 +781,8 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
             }
         } else
             decoderModelInfoPresentFlag = false;
+
+        info.decoderModelInfoPresentFlag = decoderModelInfoPresentFlag;
 
         // initial_display_delay_present_flag f(1)
         value = bitReader.read(1);
@@ -788,6 +795,7 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
         if (!value)
             return std::nullopt;
         operatingPointsCntMinus1 = *value;
+        info.operatingPointsCount = static_cast<uint8_t>(operatingPointsCntMinus1 + 1);
 
         // For each operating point
         for (size_t i = 0; i <= operatingPointsCntMinus1; i++) {
@@ -824,6 +832,7 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
                 if (!value)
                     return std::nullopt;
                 bool decoderModelPresentForThisOp = *value;
+                info.decoderModelPresentForThisOp[i] = decoderModelPresentForThisOp;
                 if (decoderModelPresentForThisOp) {
                     // operating_parameters_info(i)
                     // n = buffer_delay_length_minus_1 + 1
@@ -864,12 +873,14 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
     if (!value)
         return std::nullopt;
     size_t frameWidthBitsMinus1 = *value;
+    info.frameWidthBitsMinus1 = static_cast<uint8_t>(frameWidthBitsMinus1);
 
     // frame_height_bits_minus_1 f(4)
     value = bitReader.read(4);
     if (!value)
         return std::nullopt;
     size_t frameHeightBitsMinus1 = *value;
+    info.frameHeightBitsMinus1 = static_cast<uint8_t>(frameHeightBitsMinus1);
 
     // max_frame_width_minus_1 f(n) where n = frame_width_bits_minus_1 + 1
     value = bitReader.read(frameWidthBitsMinus1 + 1);
@@ -891,16 +902,20 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
             return std::nullopt;
         frameIdNumbersPresentFlag = *value;
     }
+    info.frameIdNumbersPresentFlag = frameIdNumbersPresentFlag;
 
     if (frameIdNumbersPresentFlag) {
         // delta_frame_id_length_minus_2 f(4)
         value = bitReader.read(4);
         if (!value)
             return std::nullopt;
+        uint32_t deltaFrameIdLengthMinus2 = static_cast<uint32_t>(*value);
         // additional_frame_id_length_minus_1 f(3)
         value = bitReader.read(3);
         if (!value)
             return std::nullopt;
+        uint32_t additionalFrameIdLengthMinus1 = static_cast<uint32_t>(*value);
+        info.idLen = additionalFrameIdLengthMinus1 + deltaFrameIdLengthMinus2 + 3;
     }
 
     // use_128x128_superblock f(1)
@@ -944,6 +959,7 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
         if (!value)
             return std::nullopt;
         bool enableOrderHint = *value;
+        info.enableOrderHint = enableOrderHint;
 
         if (enableOrderHint) {
             // enable_jnt_comp f(1)
@@ -971,7 +987,9 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
                 return std::nullopt;
             seqForceScreenContentTools = *value;
         }
+        info.seqForceScreenContentTools = static_cast<uint8_t>(seqForceScreenContentTools);
 
+        size_t seqForceIntegerMv = 2; // SELECT_INTEGER_MV
         if (seqForceScreenContentTools > 0) {
             // seq_choose_integer_mv f(1)
             value = bitReader.read(1);
@@ -984,14 +1002,18 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
                 value = bitReader.read(1);
                 if (!value)
                     return std::nullopt;
+                seqForceIntegerMv = *value;
             }
-        }
+        } else
+            seqForceIntegerMv = 0;
+        info.seqForceIntegerMv = static_cast<uint8_t>(seqForceIntegerMv);
 
         if (enableOrderHint) {
             // order_hint_bits_minus_1 f(3)
             value = bitReader.read(3);
             if (!value)
                 return std::nullopt;
+            info.orderHintBits = static_cast<uint8_t>(*value + 1);
         }
     }
 
@@ -1148,7 +1170,7 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
         chromaSubsamplingValue += chromaSamplePosition;
     record.chromaSubsampling = chromaSubsamplingValue;
 
-    return record;
+    return info;
 }
 
 PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record)
@@ -1322,52 +1344,256 @@ static size_t NODELETE readULEBSize(std::span<const uint8_t> data, size_t& index
     return value;
 }
 
-static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> NODELETE getSequenceHeaderOBU(std::span<const uint8_t> data)
+// AV1 OBU types per AV1 spec section 6.2.1.
+constexpr uint8_t OBU_SEQUENCE_HEADER = 1;
+constexpr uint8_t OBU_FRAME_HEADER = 3;
+constexpr uint8_t OBU_FRAME = 6;
+constexpr uint8_t OBU_REDUNDANT_FRAME_HEADER = 7;
+
+// AV1 frame types per AV1 spec section 6.8.2.
+constexpr uint8_t AV1_FRAME_TYPE_KEY = 0;
+constexpr uint8_t AV1_FRAME_TYPE_INTRA_ONLY = 2;
+constexpr uint8_t AV1_FRAME_TYPE_SWITCH = 3;
+
+struct AV1OBUInfo {
+    uint8_t type;
+    std::span<const uint8_t> fullOBU;
+    std::span<const uint8_t> payload;
+};
+
+static std::optional<AV1OBUInfo> findOBU(std::span<const uint8_t> data, std::initializer_list<uint8_t> wantedTypes)
 {
     size_t index = 0;
-    do {
-        if (index >= data.size())
-            return std::nullopt;
-
+    while (index < data.size()) {
         auto startIndex = index;
         auto value = data[index++];
         if (value >> 7)
             return std::nullopt;
-        auto headerType = value >> 3;
+        auto headerType = (value >> 3) & 0xF;
         bool hasPayloadSize = value & 0x02;
         if (!hasPayloadSize)
             return std::nullopt;
 
         bool hasExtension = value & 0x04;
-        if (hasExtension)
+        if (hasExtension) {
+            if (index >= data.size())
+                return std::nullopt;
             ++index;
+        }
 
         Checked<size_t> payloadSize = readULEBSize(data, index);
-        if (index + payloadSize >= data.size())
+        if (index + payloadSize > data.size())
             return std::nullopt;
 
-        if (headerType == 1) {
-            auto fullObu = data.subspan(startIndex, payloadSize + index - startIndex);
-            auto obuData = data.subspan(index, payloadSize);
-            return std::make_pair(fullObu, obuData);
+        for (auto wantedType : wantedTypes) {
+            if (headerType == wantedType) {
+                return AV1OBUInfo {
+                    static_cast<uint8_t>(headerType),
+                    data.subspan(startIndex, index + payloadSize - startIndex),
+                    data.subspan(index, payloadSize)
+                };
+            }
         }
 
         index += payloadSize;
-    } while (true);
+    }
     return std::nullopt;
+}
+
+// Parses the uncompressed_header() from a Frame Header OBU (or the header portion of a Frame OBU)
+// just far enough to read frame_size() per AV1 spec section 5.9.1. Returns the actual frame
+// dimensions when frame_size_override_flag is set; std::nullopt otherwise (caller should fall back
+// to the max dimensions from the sequence header).
+static std::optional<std::pair<uint32_t, uint32_t>> parseFrameSizeFromFrameHeaderOBU(std::span<const uint8_t> data, const AV1SequenceHeaderInfo& info)
+{
+    BitReader bitReader(data);
+    std::optional<size_t> value;
+
+    if (info.reducedStillPictureHeader) {
+        // Per spec: frame_size_override_flag is forced to 0; no per-frame size override is possible.
+        return std::nullopt;
+    }
+
+    // show_existing_frame f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    if (*value) {
+        // show_existing_frame returns early; no new frame size is signalled.
+        return std::nullopt;
+    }
+
+    // frame_type f(2)
+    value = bitReader.read(2);
+    if (!value)
+        return std::nullopt;
+    uint8_t frameType = static_cast<uint8_t>(*value);
+    bool frameIsIntra = frameType == AV1_FRAME_TYPE_KEY || frameType == AV1_FRAME_TYPE_INTRA_ONLY;
+
+    // show_frame f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool showFrame = *value;
+
+    if (showFrame && info.decoderModelInfoPresentFlag && !info.equalPictureInterval) {
+        // temporal_point_info() reads frame_presentation_time_length bits, which we don't track.
+        return std::nullopt;
+    }
+
+    if (!showFrame) {
+        // showable_frame f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+    }
+
+    bool errorResilientMode;
+    if (frameType == AV1_FRAME_TYPE_SWITCH || (frameType == AV1_FRAME_TYPE_KEY && showFrame))
+        errorResilientMode = true;
+    else {
+        // error_resilient_mode f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        errorResilientMode = *value;
+    }
+
+    // disable_cdf_update f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // allow_screen_content_tools
+    bool allowScreenContentTools = !!info.seqForceScreenContentTools;
+    if (info.seqForceScreenContentTools == 2) {
+        // SELECT_SCREEN_CONTENT_TOOLS
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        allowScreenContentTools = *value;
+    }
+    if (allowScreenContentTools && info.seqForceIntegerMv == 2) {
+        // SELECT_INTEGER_MV: force_integer_mv f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+    }
+
+    if (info.frameIdNumbersPresentFlag) {
+        // current_frame_id f(idLen)
+        value = bitReader.read(info.idLen);
+        if (!value)
+            return std::nullopt;
+    }
+
+    // frame_size_override_flag
+    bool frameSizeOverrideFlag;
+    if (frameType == AV1_FRAME_TYPE_SWITCH)
+        frameSizeOverrideFlag = true;
+    else {
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        frameSizeOverrideFlag = *value;
+    }
+
+    if (!frameSizeOverrideFlag)
+        return std::nullopt;
+
+    // FIXME: for now we can only resolve frame_size() for KEY_FRAME or INTRA_ONLY_FRAME;
+    // Inter frames may use frame_size_with_refs() which depends on reference-frame state.
+    if (frameType != AV1_FRAME_TYPE_KEY && frameType != AV1_FRAME_TYPE_INTRA_ONLY)
+        return std::nullopt;
+
+    // order_hint f(OrderHintBits)
+    if (info.orderHintBits) {
+        value = bitReader.read(info.orderHintBits);
+        if (!value)
+            return std::nullopt;
+    }
+
+    // primary_ref_frame f(3) only when !FrameIsIntra && !error_resilient_mode. Skipped here.
+
+    if (info.decoderModelInfoPresentFlag) {
+        // buffer_removal_time_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        bool bufferRemovalTimePresentFlag = *value;
+        if (bufferRemovalTimePresentFlag) {
+            // For each operating point, buffer_removal_time may be read; the conditional depends on temporal_id and spatial_id matching, which we don't have.
+            // If any op has decoder_model_present, conservatively bail.
+            for (uint8_t i = 0; i < info.operatingPointsCount; ++i) {
+                if (info.decoderModelPresentForThisOp[i])
+                    return std::nullopt;
+            }
+        }
+    }
+
+    // refresh_frame_flags
+    uint32_t refreshFrameFlags = 0xFF;
+    if (frameType != AV1_FRAME_TYPE_KEY || !showFrame) {
+        // KEY_FRAME with !showFrame, or INTRA_ONLY_FRAME (we filtered out other types above).
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        refreshFrameFlags = static_cast<uint32_t>(*value);
+    }
+
+    // ref_order_hint loop: runs when (!FrameIsIntra || refresh_frame_flags != allFrames)
+    // && error_resilient_mode && enable_order_hint. Each iteration reads OrderHintBits.
+    if ((!frameIsIntra || refreshFrameFlags != 0xFF) && errorResilientMode && info.enableOrderHint) {
+        constexpr int NUM_REF_FRAMES = 8;
+        for (int i = 0; i < NUM_REF_FRAMES; ++i) {
+            if (info.orderHintBits) {
+                value = bitReader.read(info.orderHintBits);
+                if (!value)
+                    return std::nullopt;
+            }
+        }
+    }
+
+    // frame_size()
+    size_t bitsCount = static_cast<size_t>(info.frameWidthBitsMinus1) + 1;
+    value = bitReader.read(bitsCount);
+    if (!value)
+        return std::nullopt;
+    uint32_t width = static_cast<uint32_t>(*value + 1);
+
+    bitsCount = static_cast<size_t>(info.frameHeightBitsMinus1) + 1;
+    value = bitReader.read(bitsCount);
+    if (!value)
+        return std::nullopt;
+    uint32_t height = static_cast<uint32_t>(*value + 1);
+
+    if (!width || !height)
+        return std::nullopt;
+    if (width > info.codecRecord.width || height > info.codecRecord.height)
+        return std::nullopt;
+
+    return std::make_pair(width, height);
 }
 
 RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t> data, std::optional<FloatSize> displaySize, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride)
 {
-    auto sequenceHeaderData = getSequenceHeaderOBU(data);
+    auto sequenceHeaderData = findOBU(data, { OBU_SEQUENCE_HEADER });
     if (!sequenceHeaderData)
         return { };
 
-    auto record = parseSequenceHeaderOBU(sequenceHeaderData->second);
-    if (!record)
+    auto info = parseSequenceHeaderOBU(sequenceHeaderData->payload);
+    if (!info)
         return { };
 
-    return createVideoInfoFromAV1CodecConfigurationRecord(*record, sequenceHeaderData->first, displaySize, colorSpaceOverride);
+    AV1CodecConfigurationRecord record = info->codecRecord;
+    if (auto frameOBU = findOBU(data, { OBU_FRAME_HEADER, OBU_FRAME, OBU_REDUNDANT_FRAME_HEADER })) {
+        if (auto frameSize = parseFrameSizeFromFrameHeaderOBU(frameOBU->payload, *info)) {
+            record.width = frameSize->first;
+            record.height = frameSize->second;
+        }
+    }
+
+    return createVideoInfoFromAV1CodecConfigurationRecord(record, sequenceHeaderData->fullOBU, displaySize, colorSpaceOverride);
 }
 
 }

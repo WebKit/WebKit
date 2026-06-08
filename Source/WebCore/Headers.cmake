@@ -2442,6 +2442,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/generic/ScrollbarsControllerGeneric.h
 
+    platform/graphics/AV1Utilities.h
     platform/graphics/AlphaPremultiplication.h
     platform/graphics/AnimationFrameRate.h
     platform/graphics/AudioTrackPrivate.h
