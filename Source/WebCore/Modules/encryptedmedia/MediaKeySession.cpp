@@ -805,6 +805,14 @@ void MediaKeySession::sessionClosed()
 
     // 5. Let promise be the closed attribute of the session.
     // 6. Resolve promise.
+    // Skip if the context is stopping (e.g. a back/forward-cached page being pruned); otherwise resolving the
+    // promise trips DeferredPromise's suspended-context assertion.
+    RefPtr context = scriptExecutionContext();
+    if (!context || context->activeDOMObjectsAreStopped()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Context is stopping; not resolving closed promise");
+        return;
+    }
+
     m_closedPromise->resolve();
 }
 
@@ -848,14 +856,10 @@ void MediaKeySession::stop()
         if (!protectedThis)
             return;
 
-        // closeSession() may invoke this callback synchronously (e.g. the Thunder backend), and stop() runs during
-        // document teardown while the event loop has already been marked ready-to-stop. Resolving the closed promise
-        // synchronously here would violate DeferredPromise's suspended-context invariant. Defer to the event loop,
-        // mirroring close(); the task is cleanly dropped if the event loop is already stopped.
-        queueTaskKeepingObjectAlive(*protectedThis, TaskSource::Networking, [logIdentifier](auto& session) {
-            ALWAYS_LOG_WITH_THIS(&session, logIdentifier, "::task, closed");
-            session.sessionClosed();
-        });
+        // Run Session Closed synchronously to avoid the CDM session outliving the page and leaking into the next
+        // navigation.
+        ALWAYS_LOG_WITH_THIS(protectedThis, logIdentifier, "::lambda, closed");
+        protectedThis->sessionClosed();
     });
 }
 
