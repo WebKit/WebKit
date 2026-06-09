@@ -590,7 +590,7 @@ TEST(WebAuthenticationPanel, PanelTwice)
     reset();
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
-    Util::run(&webAuthenticationPanelSucceded);
+    Util::run(&webAuthenticationPanelSucceded); // Did it fail here?
 }
 
 TEST(WebAuthenticationPanel, ReloadHidCancel)
