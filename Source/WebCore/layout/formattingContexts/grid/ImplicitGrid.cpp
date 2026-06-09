@@ -29,7 +29,6 @@
 #include "GridAreaLines.h"
 #include "GridLayout.h"
 #include "PlacedGridItem.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "UnplacedGridItem.h"
 #include <wtf/Assertions.h>
 #include <wtf/Range.h>
