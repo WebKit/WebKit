@@ -2002,6 +2002,8 @@ all : \
     StylePropertyShorthandFunctions.h \
     TagName.cpp \
     TagName.h \
+    UsedStyleProperties.h \
+    UsedStyleProperties.cpp \
     CSSStyleProperties+PropertyNames.idl \
     WebKitFontFamilyNames.cpp \
     WebKitFontFamilyNames.h \
@@ -2051,6 +2053,8 @@ CSS_PROPERTY_NAME_FILES = \
     StyleInterpolationWrapperMap.h \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
+    UsedStyleProperties.h \
+    UsedStyleProperties.cpp \
 #
 CSS_PROPERTY_NAME_FILES_PATTERNS = $(call to-pattern, $(CSS_PROPERTY_NAME_FILES))
 

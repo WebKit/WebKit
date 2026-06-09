@@ -491,6 +491,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'style-extractor-custom': self.validate_boolean,
             'top-priority-reason': self.validate_string,
             'top-priority': self.validate_boolean,
+            'used-style': self.validate_string,
             'visited-link-color-support': self.validate_boolean,
         }
 

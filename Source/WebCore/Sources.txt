@@ -3171,6 +3171,7 @@ rendering/style/PositionTryOrder.cpp
 rendering/style/RenderStyleConstants.cpp
 rendering/style/StyleContentAlignmentData.cpp
 rendering/style/StyleSelfAlignmentData.cpp
+rendering/style/UsedStyle.cpp
 rendering/svg/RenderSVGBlock.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGContainer.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGEllipse.cpp @header:RenderStyleGetters
@@ -3890,6 +3891,7 @@ StyleComputedStyleProperties.cpp @cost:6
 StyleExtractorGenerated.cpp @cost:17
 StyleInterpolationWrapperMap.cpp @cost:16
 StylePropertyShorthandFunctions.cpp
+UsedStyleProperties.cpp
 UserAgentStyleSheetsData.cpp
 WebCoreJSBuiltinInternals.cpp @cost:4
 WebCoreJSBuiltins.cpp @cost:4

@@ -63,6 +63,7 @@
 #include "RenderChildIterator.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentedFlow.h"
@@ -858,19 +859,12 @@ void RenderBlock::markFixedPositionBoxForLayoutIfNeeded(RenderBox& positionedChi
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlock::intrinsicLogicalMarginStartAndEnd(const RenderBox& child) const
 {
-    // A margin has three types: fixed, percentage, and auto (variable).
-    // Auto and percentage margins become 0 when computing min/max width.
-    // Fixed margins can be added in as is.
-    // For calc() expressions like calc(10% + 100px), the percentage resolves to 0
-    // and only the fixed part contributes.
-    auto& marginStart = child.style().marginStart(writingMode());
-    auto& marginEnd = child.style().marginEnd(writingMode());
-    auto startValue = LayoutUnit { };
-    auto endValue = LayoutUnit { };
-    if (!marginStart.isAuto() && !shouldTrimChildMargin(Style::MarginTrimSide::InlineStart, child))
-        startValue = Style::evaluateMinimum<LayoutUnit>(marginStart, 0_lu, child.style().usedZoomForLength());
-    if (!marginEnd.isAuto() && !shouldTrimChildMargin(Style::MarginTrimSide::InlineEnd, child))
-        endValue = Style::evaluateMinimum<LayoutUnit>(marginEnd, 0_lu, child.style().usedZoomForLength());
+    // Resolving against a zero reference makes auto and percentage margins 0 (only the fixed
+    // part of a calc() contributes), as required when computing min/max width. Margin-trim
+    // zeroes the edge entirely.
+    auto usedStyle = child.usedStyle();
+    auto startValue = shouldTrimChildMargin(Style::MarginTrimSide::InlineStart, child) ? 0_lu : usedStyle.marginStart(writingMode(), 0_lu).value_or(0_lu);
+    auto endValue = shouldTrimChildMargin(Style::MarginTrimSide::InlineEnd, child) ? 0_lu : usedStyle.marginEnd(writingMode(), 0_lu).value_or(0_lu);
     return { startValue, endValue };
 }
 
@@ -2359,7 +2353,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         auto childAvoidsFloats = childBox.avoidsFloats() || (childBox.isAnonymousBlock() && childBox.childrenInline());
         if (childBox.isFloating() || childAvoidsFloats) {
             LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
-            auto childUsedClear = Style::ComputedStyle::usedClear(childBox);
+            auto childUsedClear = childBox.usedStyle().clear();
             if (childUsedClear == UsedClear::Left || childUsedClear == UsedClear::Both) {
                 maxLogicalWidth = std::max(floatTotalWidth, maxLogicalWidth);
                 floatLeftWidth = 0.f;
@@ -2411,7 +2405,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeBlockIntrinsicLogicalWidth
         }
 
         if (childBox.isFloating()) {
-            if (Style::ComputedStyle::usedFloat(childBox) == UsedFloat::Left)
+            if (childBox.usedStyle().floating() == UsedFloat::Left)
                 floatLeftWidth += logicalWidth;
             else
                 floatRightWidth += logicalWidth;

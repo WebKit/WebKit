@@ -41,6 +41,7 @@ class ReferencedSVGResources;
 class RenderBlock;
 class RenderTreeBuilder;
 class SVGElement;
+class UsedStyle;
 struct ImageOrientation;
 
 struct MarginRect {
@@ -77,6 +78,7 @@ public:
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
     const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
+    inline UsedStyle usedStyle() const LIFETIME_BOUND;
     const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !m_parent ? nullptr : &m_parent->style(); }
     const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
 
