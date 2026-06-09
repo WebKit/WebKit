@@ -149,6 +149,7 @@ static bool laContextRequested = false;
         return;
     }
     if (result == _WKWebAuthenticationResultSucceeded) {
+        WTFLogAlways("jessicadebug _WKWebAuthenticationPanel::dismissWebAuthenticationPanelWithResult webAuthenticationPanelSucceded = true");
         webAuthenticationPanelSucceded = true;
         return;
     }
@@ -250,6 +251,7 @@ static bool laContextRequested = false;
 
 - (void)_webView:(WKWebView *)webView runWebAuthenticationPanel:(_WKWebAuthenticationPanel *)panel initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(_WKWebAuthenticationPanelResult))completionHandler
 {
+    WTFLogAlways("jessicadebug _WKWebAuthenticationPanel::runWebAuthenticationPanel webAuthenticationPanelRan = true");
     webAuthenticationPanelRan = true;
     _frameInfo = frame;
 
@@ -579,18 +581,23 @@ TEST(WebAuthenticationPanel, PanelTwice)
     RetainPtr delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 #if PLATFORM(IOS_FAMILY)
+    WTFLogAlways("jessicadebug TEST(WebAuthenticationPanel, PanelTwice) focusInWindow1");
     [webView focusInWindow];
 #endif
+    WTFLogAlways("jessicadebug TEST(WebAuthenticationPanel, PanelTwice) focus");
     [webView focus];
 
+    WTFLogAlways("jessicadebug TEST(WebAuthenticationPanel, PanelTwice) loadRequest1");
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
     Util::run(&webAuthenticationPanelSucceded);
 
     reset();
 #if PLATFORM(IOS_FAMILY)
+    WTFLogAlways("jessicadebug TEST(WebAuthenticationPanel, PanelTwice) focusInWindow2");
     [webView focusInWindow];
 #endif
+    WTFLogAlways("jessicadebug TEST(WebAuthenticationPanel, PanelTwice) loadRequest2");
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
     Util::run(&webAuthenticationPanelSucceded);
