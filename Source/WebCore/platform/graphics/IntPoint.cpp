@@ -33,8 +33,8 @@
 namespace WebCore {
 
 IntPoint::IntPoint(const FloatPoint& p)
-    : m_x(clampToInteger(p.x()))
-    , m_y(clampToInteger(p.y()))
+    : m_x(clampTo<int>(p.x()))
+    , m_y(clampTo<int>(p.y()))
 {
 }
 

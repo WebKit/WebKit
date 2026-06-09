@@ -82,7 +82,7 @@ public:
     }
     explicit LayoutUnit(double value)
     {
-        m_value = clampToInteger(value * kFixedPointDenominator);
+        m_value = clampTo<int>(value * kFixedPointDenominator);
     }
 
     LayoutUnit& operator=(const LayoutUnit&) = default;
@@ -92,12 +92,12 @@ public:
 
     static LayoutUnit fromFloatCeil(float value)
     {
-        return fromRawValue(clampToInteger(ceilf(value * kFixedPointDenominator)));
+        return fromRawValue(clampTo<int>(ceilf(value * kFixedPointDenominator)));
     }
 
     static LayoutUnit fromFloatFloor(float value)
     {
-        return fromRawValue(clampToInteger(floorf(value * kFixedPointDenominator)));
+        return fromRawValue(clampTo<int>(floorf(value * kFixedPointDenominator)));
     }
 
     static LayoutUnit fromFloatRound(float value)

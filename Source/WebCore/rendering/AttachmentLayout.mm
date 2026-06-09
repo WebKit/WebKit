@@ -174,7 +174,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
         attachmentRect.unite(line.backgroundRect);
     if (!subtitleTextRect.isEmpty()) {
         FloatRect roundedSubtitleTextRect = subtitleTextRect;
-        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampToInteger(ceilf(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
+        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampTo<int>(ceilf(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
         attachmentRect.unite(roundedSubtitleTextRect);
     }
     attachmentRect.inflate(attachmentMargin);
