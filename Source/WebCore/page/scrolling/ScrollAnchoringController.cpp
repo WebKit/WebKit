@@ -613,6 +613,13 @@ void ScrollAnchoringController::updateBeforeLayout()
 // https://drafts.csswg.org/css-scroll-anchoring/#scroll-adjustment
 void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 {
+    // We have already been removed from the frame view's pending-update set by the time we get here
+    // (adjustScrollAnchoringPositionForScrollableAreas() drains it before calling us), so always
+    // consume the queued flag to keep the two in sync regardless of which early-return we take below.
+    // Otherwise m_isQueuedForScrollPositionUpdate gets stuck true and updateBeforeLayout() stops
+    // re-selecting an anchor.
+    auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
+
     LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController " << this << " adjustScrollPositionForAnchoring() - anchor " << m_anchorObject << " offset " << m_lastAnchorOffset << " suppressedByStyleChange  " << m_anchoringSuppressedByStyleChange << " in scroll event " << !!m_inScrollEventCount << " in suppression scope " << !!m_suppressionCount);
 
     // FIXME: Test for running animated scrolls?
@@ -622,7 +629,6 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
         return;
     }
 
-    auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
     if (!m_anchorObject || !queued)
         return;
 
