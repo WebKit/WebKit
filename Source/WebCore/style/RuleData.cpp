@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -98,6 +98,10 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& se
                 return PropertyAllowlist::Highlight;
             case CSSSelector::PseudoElement::Marker:
                 return PropertyAllowlist::Marker;
+            case CSSSelector::PseudoElement::FirstLetter:
+                return PropertyAllowlist::FirstLetter;
+            case CSSSelector::PseudoElement::FirstLine:
+                return PropertyAllowlist::FirstLine;
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElement::UserAgentPart:
                 if (component->value() == UserAgentParts::cue())

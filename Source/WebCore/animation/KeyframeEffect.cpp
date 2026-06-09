@@ -1686,6 +1686,23 @@ bool KeyframeEffect::isAboutToRunAccelerated() const
     return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop;
 }
 
+static bool isPropertyValidForPseudoElement(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID property)
+{
+    if (!pseudoElementIdentifier)
+        return true;
+
+    switch (pseudoElementIdentifier->type) {
+    case PseudoElementType::Marker:
+        return Style::isValidMarkerStyleProperty(property);
+    case PseudoElementType::FirstLetter:
+        return Style::isValidFirstLetterStyleProperty(property);
+    case PseudoElementType::FirstLine:
+        return Style::isValidFirstLineStyleProperty(property);
+    default:
+        return true;
+    }
+}
+
 bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accelerated accelerated) const
 {
     if (accelerated == Accelerated::Yes && !isRunningAccelerated() && !isAboutToRunAccelerated())
@@ -1694,7 +1711,7 @@ bool KeyframeEffect::isCurrentlyAffectingProperty(CSSPropertyID property, Accele
     if (!m_blendingKeyframes.properties().contains(property))
         return false;
 
-    if (m_pseudoElementIdentifier && m_pseudoElementIdentifier->type == PseudoElementType::Marker && !Style::isValidMarkerStyleProperty(property))
+    if (!isPropertyValidForPseudoElement(m_pseudoElementIdentifier, property))
         return false;
 
     return m_phaseAtLastApplication == AnimationEffectPhase::Active;
@@ -1727,10 +1744,9 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
 
     if (RefPtr document = this->document()) {
         auto& settings = document->settings();
-        auto isMarker = m_pseudoElementIdentifier && m_pseudoElementIdentifier->type == PseudoElementType::Marker;
 
         auto isAcceleratedProperty = [&](AnimatableCSSProperty property) {
-            if (isMarker && std::holds_alternative<CSSPropertyID>(property) && !Style::isValidMarkerStyleProperty(std::get<CSSPropertyID>(property)))
+            if (std::holds_alternative<CSSPropertyID>(property) && !isPropertyValidForPseudoElement(m_pseudoElementIdentifier, std::get<CSSPropertyID>(property)))
                 return false;
             return Style::Interpolation::isAccelerated(property, settings);
         };

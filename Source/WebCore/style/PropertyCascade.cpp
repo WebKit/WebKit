@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -303,6 +303,12 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
             if (propertyAllowlist == PropertyAllowlist::Marker && !isValidMarkerStyleProperty(propertyID))
                 return false;
             if (propertyAllowlist == PropertyAllowlist::Highlight && !isValidHighlightStyleProperty(propertyID))
+                return false;
+
+            if (propertyAllowlist == PropertyAllowlist::FirstLetter && !isValidFirstLetterStyleProperty(propertyID))
+                return false;
+
+            if (propertyAllowlist == PropertyAllowlist::FirstLine && !isValidFirstLineStyleProperty(propertyID))
                 return false;
 
             if (m_includedProperties.types.containsAll(normalPropertyTypes()))
