@@ -72,15 +72,19 @@ WebCodecsVideoEncoder::WebCodecsVideoEncoder(ScriptExecutionContext& context, In
 
 WebCodecsVideoEncoder::~WebCodecsVideoEncoder() = default;
 
-static bool isSupportedEncoderCodec(const String& codec, const SettingsValues& settings)
+static bool isSupportedEncoderCodec(const WebCodecsVideoEncoderConfig& config, const SettingsValues& settings)
 {
-    return codec.startsWith("vp8"_s) || codec.startsWith("vp09.00"_s) || codec.startsWith("avc1."_s)
+    constexpr size_t maxFrameDimension = 32767;
+    if (config.width > maxFrameDimension || config.height > maxFrameDimension)
+        return false;
+
+    return config.codec.startsWith("vp8"_s) || config.codec.startsWith("vp09.00"_s) || config.codec.startsWith("avc1."_s)
 #if ENABLE(WEB_RTC)
-        || (codec.startsWith("vp09.02"_s) && settings.webRTCVP9Profile2CodecEnabled)
+        || (config.codec.startsWith("vp09.02"_s) && settings.webRTCVP9Profile2CodecEnabled)
 #endif
-        || (codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
-        || (codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
-        || (codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
+        || (config.codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
+        || (config.codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
+        || (config.codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
 }
 
 static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
@@ -173,7 +177,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
         } });
     }
 
-    bool isSupportedCodec = isSupportedEncoderCodec(config.codec, context.settingsValues());
+    bool isSupportedCodec = isSupportedEncoderCodec(config, context.settingsValues());
     queueControlMessageAndProcess({ *this, [this, config = WTF::move(config), isSupportedCodec]() mutable {
         if (isSupportedCodec && m_internalEncoder && isSameConfigurationExceptBitrateAndFramerate(m_baseConfiguration, config)) {
             updateRates(config);
@@ -347,7 +351,7 @@ void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    if (!isSupportedEncoderCodec(config.codec, context.settingsValues())) {
+    if (!isSupportedEncoderCodec(config, context.settingsValues())) {
         promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { false, WTF::move(config) });
         return;
     }
