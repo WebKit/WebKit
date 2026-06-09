@@ -584,13 +584,21 @@ TEST(WebAuthenticationPanel, PanelTwice)
     [webView focus];
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::run(&webAuthenticationPanelRan);
-    Util::run(&webAuthenticationPanelSucceded);
+    TestWebKitAPI::Util::waitForConditionWithLogging([&]-> bool {
+        return webAuthenticationPanelRan;
+    }, 5, @"webAuthenticationPanelRan1 stalled");
+    TestWebKitAPI::Util::waitForConditionWithLogging([&]-> bool {
+        return webAuthenticationPanelSucceded;
+    }, 5, @"webAuthenticationPanelSucceded1 stalled");
 
     reset();
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    Util::run(&webAuthenticationPanelRan);
-    Util::run(&webAuthenticationPanelSucceded);
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] -> bool {
+        return webAuthenticationPanelRan;
+    }, 5, @"webAuthenticationPanelRan2 stalled");
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] -> bool {
+        return webAuthenticationPanelSucceded;
+    }, 5,  @"webAuthenticationPanelSucceded2 stalled");
 }
 
 TEST(WebAuthenticationPanel, ReloadHidCancel)
