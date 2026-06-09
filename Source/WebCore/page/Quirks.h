@@ -85,6 +85,7 @@ public:
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
     bool shouldComputeSimulatedMouseEventMovementDelta() const;
     bool shouldPreventDispatchOfTouchEvent(const AtomString&, EventTarget*) const;
+    bool shouldTreatMediaElementsAsRespondingToClicks() const;
 #endif
     bool NODELETE shouldDisablePointerEventsQuirk() const;
     bool NODELETE needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
@@ -351,6 +352,10 @@ public:
     void clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, int httpStatusCode);
 
     void determineRelevantQuirks();
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
+    WEBCORE_EXPORT bool shouldAllowNativeTapsOnMediaElements() const;
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     bool NODELETE shouldSendFakeTouchForceChangeEvent() const;
