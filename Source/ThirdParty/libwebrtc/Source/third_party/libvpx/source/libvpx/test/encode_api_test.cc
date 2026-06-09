@@ -795,6 +795,74 @@ TEST(EncodeAPI, MultiResEncode) {
   }
 }
 
+#if CONFIG_VP8_ENCODER && CONFIG_MULTI_RES_ENCODING
+// Regression test for an off-by-one in vpx_codec_encode()'s multi-resolution
+// loop: when the *first* iteration (highest-index encoder, smallest stream)
+// returns non-OK, `break` skips `ctx--`, the post-loop `ctx++` advances ctx to
+// one past the caller's array, and SAVE_STATUS(ctx, res) writes ctx->err out of
+// bounds. With a heap-allocated 3-element array (matching WebRTC's
+// std::vector<vpx_codec_ctx_t> encoders_), ASan reports a 4-byte
+// heap-buffer-overflow WRITE at +16 past a 168-byte region.
+// Bug: 513405023.
+TEST(EncodeAPI, MultiResEncodeFirstIterFailOOB) {
+  constexpr int kNumEnc = 3;
+  // Heap-allocate exactly kNumEnc contexts, mirroring WebRTC's
+  // encoders_.reserve(3); encoders_.resize(3);
+  std::vector<vpx_codec_ctx_t> enc;
+  enc.reserve(kNumEnc);
+  enc.resize(kNumEnc);
+  memset(enc.data(), 0, sizeof(vpx_codec_ctx_t) * kNumEnc);
+
+  vpx_codec_enc_cfg_t cfg[kNumEnc];
+  vpx_rational_t dsf[kNumEnc] = { { 2, 1 }, { 2, 1 }, { 1, 1 } };
+  const int w[kNumEnc] = { 320, 160, 80 };
+  const int h[kNumEnc] = { 240, 120, 60 };
+
+  for (int i = 0; i < kNumEnc; ++i) {
+    ASSERT_EQ(vpx_codec_enc_config_default(&vpx_codec_vp8_cx_algo, &cfg[i], 0),
+              VPX_CODEC_OK);
+    cfg[i].g_w = w[i];
+    cfg[i].g_h = h[i];
+    cfg[i].g_lag_in_frames = 0;
+    cfg[i].rc_end_usage = VPX_CBR;
+    cfg[i].rc_resize_allowed = 0;
+    cfg[i].rc_target_bitrate = 300 >> i;
+    cfg[i].g_timebase.num = 1;
+    cfg[i].g_timebase.den = 30;
+  }
+
+  ASSERT_EQ(vpx_codec_enc_init_multi(enc.data(), &vpx_codec_vp8_cx_algo, cfg,
+                                     kNumEnc, 0, dsf),
+            VPX_CODEC_OK);
+
+  // Contiguous image array; vpx_codec_encode walks img += num_enc-1.
+  vpx_image_t imgs[kNumEnc];
+  for (int i = 0; i < kNumEnc; ++i) {
+    ASSERT_NE(vpx_img_alloc(&imgs[i], VPX_IMG_FMT_I420, w[i], h[i], 1),
+              nullptr);
+    memset(imgs[i].img_data, 128, imgs[i].stride[0] * h[i] * 3 / 2);
+  }
+
+  // Force the FIRST loop iteration (i = num_enc-1, ctx = &enc[2]) to fail in
+  // validate_img() before any ctx-- runs: set an unsupported format on the
+  // highest-index image. validate_img returns VPX_CODEC_INVALID_PARAM, the
+  // loop breaks, ctx++ advances to &enc[3], and SAVE_STATUS writes
+  // (&enc[3])->err — a 4-byte heap OOB write at offset 16 past the vector's
+  // 168-byte backing store.
+  imgs[kNumEnc - 1].fmt = VPX_IMG_FMT_I444;
+
+  // Under ASan this line reports:
+  //   heap-buffer-overflow WRITE of size 4 ... in vpx_codec_encode
+  //   0 bytes to the right of (or 16 past) 168-byte region.
+  EXPECT_EQ(vpx_codec_encode(enc.data(), imgs, /*pts=*/0, /*duration=*/1,
+                             /*flags=*/0, VPX_DL_REALTIME),
+            VPX_CODEC_INVALID_PARAM);
+
+  for (int i = 0; i < kNumEnc; ++i) vpx_img_free(&imgs[i]);
+  for (int i = kNumEnc - 1; i >= 0; --i) vpx_codec_destroy(&enc[i]);
+}
+#endif  // CONFIG_VP8_ENCODER && CONFIG_MULTI_RES_ENCODING
+
 TEST(EncodeAPI, SetRoi) {
   static struct {
     vpx_codec_iface_t *iface;
