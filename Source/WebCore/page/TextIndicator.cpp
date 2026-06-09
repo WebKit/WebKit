@@ -52,7 +52,6 @@
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderText.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "TextIterator.h"
 #include "TextPaintStyle.h"
 #include "FrameDestructionObserverInlines.h"

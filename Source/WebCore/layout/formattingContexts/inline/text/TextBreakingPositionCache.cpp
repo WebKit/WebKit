@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TextBreakingPositionCache.h"
 
-#include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

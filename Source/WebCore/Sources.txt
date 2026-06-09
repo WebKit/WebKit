@@ -1563,7 +1563,7 @@ fileapi/ThreadableBlobRegistry.cpp
 fileapi/URLKeepingBlobAlive.cpp
 history/BackForwardCache.cpp
 history/BackForwardController.cpp
-history/CachedFrame.cpp @header:RenderStyleGetters
+history/CachedFrame.cpp
 history/CachedPage.cpp
 history/HistoryItem.cpp
 html/AttachmentAssociatedElement.cpp
@@ -2006,9 +2006,9 @@ layout/formattingContexts/flex/FlexFormattingContext.cpp @header:RenderStyleGett
 layout/formattingContexts/flex/FlexFormattingUtils.cpp @header:RenderStyleGetters
 layout/formattingContexts/flex/FlexLayout.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridFormattingContext.cpp @header:RenderStyleGetters
-layout/formattingContexts/grid/GridLayout.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridLayout.cpp
 layout/formattingContexts/grid/GridLayoutUtils.cpp @header:RenderStyleGetters
-layout/formattingContexts/grid/ImplicitGrid.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/ImplicitGrid.cpp
 layout/formattingContexts/grid/PlacedGridItem.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/TrackSizingAlgorithm.cpp
 layout/formattingContexts/grid/UnplacedGridItem.cpp
@@ -2035,7 +2035,7 @@ layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp @header
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp @header:RenderStyleGetters
 layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp @header:RenderStyleGetters
 layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp @header:RenderStyleGetters
-layout/formattingContexts/inline/text/TextBreakingPositionCache.cpp @header:RenderStyleGetters
+layout/formattingContexts/inline/text/TextBreakingPositionCache.cpp
 layout/formattingContexts/inline/text/TextUtil.cpp @header:RenderStyleGetters
 layout/formattingContexts/table/TableFormattingContext.cpp @header:RenderStyleGetters
 layout/formattingContexts/table/TableFormattingGeometry.cpp @header:RenderStyleGetters
@@ -2304,7 +2304,7 @@ page/SettingsBase.cpp @header:RenderStyleGetters @cost:6
 page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
 page/SpatialNavigation.cpp @header:RenderStyleGetters @cost:6
-page/TextIndicator.cpp @header:RenderStyleGetters @cost:6
+page/TextIndicator.cpp @cost:6
 page/UndoItem.cpp
 page/UndoManager.cpp
 page/UserContentController.cpp
@@ -2910,7 +2910,7 @@ plugins/DOMPlugin.cpp
 plugins/DOMPluginArray.cpp
 plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
-rendering/AccessibilityRegionContext.cpp @header:RenderStyleGetters @cost:6
+rendering/AccessibilityRegionContext.cpp @cost:6
 rendering/AncestorSubgridIterator.cpp @header:RenderStyleGetters @cost:5
 rendering/AutoTableLayout.cpp @header:RenderStyleGetters @cost:6
 rendering/BackgroundPainter.cpp @header:RenderStyleGetters @cost:7
@@ -2951,7 +2951,7 @@ rendering/RelayoutScopeForScrollbarChange.cpp @header:RenderStyleGetters @cost:5
 rendering/ScrollbarUpdateScope.cpp @header:RenderStyleGetters
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
-rendering/LegacyInlineBox.cpp @header:RenderStyleGetters @cost:5
+rendering/LegacyInlineBox.cpp @cost:5
 rendering/LegacyInlineFlowBox.cpp @header:RenderStyleGetters @cost:6
 rendering/LegacyInlineIterator.cpp @header:RenderStyleGetters @cost:4
 rendering/LegacyInlineTextBox.cpp @header:RenderStyleGetters @cost:7
@@ -2986,7 +2986,7 @@ rendering/RenderFragmentedFlow.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderFrame.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderFrameBase.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderFrameSet.cpp @header:RenderStyleGetters @cost:6
-rendering/RenderGeometryMap.cpp @header:RenderStyleGetters @cost:5
+rendering/RenderGeometryMap.cpp @cost:5
 rendering/RenderGrid.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderHTMLCanvas.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderHighlight.cpp
@@ -3316,7 +3316,7 @@ style/values/backgrounds/StyleBorderImage.cpp @cost:5
 style/values/backgrounds/StyleLineWidth.cpp @header:RenderStyleGetters @cost:5
 style/values/backgrounds/StyleRepeatStyle.cpp
 style/values/borders/StyleBorderRadius.cpp
-style/values/borders/StyleBoxShadow.cpp @header:RenderStyleGetters @cost:5
+style/values/borders/StyleBoxShadow.cpp @cost:5
 style/values/borders/StyleCornerShapeValue.cpp
 style/values/box/StyleMarginTrim.cpp
 style/values/break/StyleOrphans.cpp
@@ -3383,7 +3383,7 @@ style/values/grid/StyleGridNamedLinesMap.cpp
 style/values/grid/StyleGridPosition.cpp
 style/values/grid/StyleGridPositionsResolver.cpp @header:RenderStyleGetters @cost:5
 style/values/grid/StyleGridTemplateAreas.cpp
-style/values/grid/StyleGridTemplateList.cpp @header:RenderStyleGetters @cost:6
+style/values/grid/StyleGridTemplateList.cpp @cost:6
 style/values/grid/StyleGridTrackBreadth.cpp
 style/values/grid/StyleGridTrackSize.cpp
 style/values/grid/StyleGridTrackSizes.cpp
@@ -3487,7 +3487,7 @@ style/values/text-decoration/StyleTextDecorationLine.cpp
 style/values/text-decoration/StyleTextDecorationThickness.cpp @header:RenderStyleGetters @cost:5
 style/values/text-decoration/StyleTextEmphasisPosition.cpp
 style/values/text-decoration/StyleTextEmphasisStyle.cpp
-style/values/text-decoration/StyleTextShadow.cpp @header:RenderStyleGetters @cost:5
+style/values/text-decoration/StyleTextShadow.cpp @cost:5
 style/values/text-decoration/StyleTextUnderlineOffset.cpp @header:RenderStyleGetters @cost:5
 style/values/text-decoration/StyleTextUnderlinePosition.cpp
 style/values/text/StyleHangingPunctuation.cpp

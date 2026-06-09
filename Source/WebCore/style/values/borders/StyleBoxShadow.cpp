@@ -29,7 +29,7 @@
 #include "CSSKeywordValue.h"
 #include "ColorBlending.h"
 #include "StyleBuilderChecking.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleColorResolver.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"

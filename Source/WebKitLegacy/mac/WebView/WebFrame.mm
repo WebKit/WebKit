@@ -123,7 +123,6 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SimpleRange.h>
 #import <WebCore/SmartReplace.h>
-#import <WebCore/StyleComputedStyle+GettersInlines.h>
 #import <WebCore/SubframeLoader.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>

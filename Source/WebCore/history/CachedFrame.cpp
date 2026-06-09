@@ -49,7 +49,6 @@
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 #include "WindowEventLoop.h"
 #include <wtf/TZoneMallocInlines.h>

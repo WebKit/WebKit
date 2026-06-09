@@ -27,7 +27,7 @@
 
 #include "CSSGridTemplateListValue.h"
 #include "CSSKeywordValue.h"
-#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleGridPosition.h"
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
