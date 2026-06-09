@@ -676,6 +676,22 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
     return false;
 }
 
+bool Quirks::shouldTreatMediaElementsAsRespondingToClicks() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.isLinkedIn;
+}
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
+bool Quirks::shouldAllowNativeTapsOnMediaElements() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.isLinkedIn;
+}
+#endif
+
 #endif
 
 // live.com rdar://52116170
@@ -3487,6 +3503,13 @@ static void handleIMDBQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
 
 }
 
+static void handleLinkedInQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
+{
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("linkedin.com"_s);
+
+    quirksData.isLinkedIn = true;
+}
+
 static void handleLiveQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& /* documentURL */)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("live.com"_s);
@@ -4031,6 +4054,7 @@ void Quirks::determineRelevantQuirks()
         { "imdb"_s, &handleIMDBQuirks },
         { "instagram"_s, &handleInstagramQuirks },
         { "invideo"_s, &handleInVideoQuirks },
+        { "linkedin"_s, &handleLinkedInQuirks },
         { "live"_s, &handleLiveQuirks },
 #if PLATFORM(MAC)
         { "madisoncityk12"_s, &handleMadisonCityK12Quirks },
