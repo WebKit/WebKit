@@ -33,8 +33,8 @@
 namespace WebCore {
 
 IntSize::IntSize(const FloatSize& s)
-    : m_width(clampToInteger(s.width()))
-    , m_height(clampToInteger(s.height()))
+    : m_width(clampTo<int>(s.width()))
+    , m_height(clampTo<int>(s.height()))
 {
 }
 

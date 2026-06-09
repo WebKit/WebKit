@@ -111,7 +111,7 @@ Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, con
 static void addIntrinsicMargins(RenderStyle& style)
 {
     // Intrinsic margin value.
-    const auto intrinsicMargin = Style::MarginEdge::Fixed { static_cast<float>(clampToInteger(2 * style.usedZoom())) };
+    const auto intrinsicMargin = Style::MarginEdge::Fixed { static_cast<float>(clampTo<int>(2 * style.usedZoom())) };
 
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
