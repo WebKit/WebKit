@@ -9,7 +9,5 @@ layer at (0,0) size 800x600
           text run at (0,0) width 439: "You should see a solid 5px black border around a 100x100 blue rect."
 layer at (13,13) size 100x100
   RenderSVGRoot {svg} at (5,5) size 100x100
-layer at (13,13) size 100x100
-  RenderSVGViewportContainer at (0,0) size 100x100
-layer at (13,13) size 100x100
-  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGViewportContainer at (0,0) size 100x100
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

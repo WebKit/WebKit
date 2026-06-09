@@ -2,8 +2,20 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGViewportContainer at (0,0) size 800x600
+    RenderSVGViewportContainer at (0,0) size 800x600
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feFlood} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feFlood} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feMerge} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feFlood} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feFlood} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feMerge} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feFlood} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feFlood} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feMerge} at (0,0) size 0x0
 layer at (10,10) size 150x150
   RenderSVGRect {rect} at (10,10) size 150x150 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=150.00] [height=150.00]
 layer at (210,10) size 150x150

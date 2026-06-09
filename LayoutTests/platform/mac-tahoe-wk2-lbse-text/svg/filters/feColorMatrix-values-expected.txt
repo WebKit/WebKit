@@ -2,52 +2,60 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (0,0) size 400x400
+    RenderSVGViewportContainer at (0,0) size 800x600
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+      RenderSVGTransformableContainer {g} at (0,0) size 400x400
+        RenderSVGRect {rect} at (2,2) size 196x396 [fill={[type=SOLID] [color=#FF0000]}] [x=2.00] [y=2.00] [width=196.00] [height=396.00]
+        RenderSVGText {text} at (10,18) size 170x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 170x28
+            chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
+        RenderSVGText {text} at (10,48) size 69x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 69x28
+            chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 7 width 68.65: "matrix."
+        RenderSVGText {text} at (10,118) size 170x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 170x28
+            chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
+        RenderSVGText {text} at (10,148) size 81x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 81x28
+            chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 9 width 80.63: "saturate."
+        RenderSVGText {text} at (10,218) size 170x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 170x28
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
+        RenderSVGText {text} at (10,248) size 104x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 104x28
+            chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 10 width 103.30: "hueRotate."
+        RenderSVGText {text} at (10,318) size 151x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 151x28
+            chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 15 width 150.66: "Should be valid"
+        RenderSVGText {text} at (10,348) size 104x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 104x28
+            chunk 1 text run 1 at (10.00,370.00) startOffset 0 endOffset 10 width 103.30: "hueRotate."
 layer at (0,0) size 400x400
   RenderSVGRect {rect} at (0,0) size 400x400 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
-layer at (2,2) size 196x396
-  RenderSVGRect {rect} at (2,2) size 196x396 [fill={[type=SOLID] [color=#FF0000]}] [x=2.00] [y=2.00] [width=196.00] [height=396.00]
-layer at (10,18) size 169x28
-  RenderSVGText {text} at (10,18) size 170x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 170x28
-      chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
-layer at (10,48) size 69x28
-  RenderSVGText {text} at (10,48) size 69x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 69x28
-      chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 7 width 68.65: "matrix."
 layer at (0,0) size 200x104
   RenderSVGRect {rect} at (0,0) size 200x104 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=200.00] [height=104.00]
-layer at (10,118) size 169x28
-  RenderSVGText {text} at (10,118) size 170x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 170x28
-      chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
-layer at (10,148) size 81x28
-  RenderSVGText {text} at (10,148) size 81x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 81x28
-      chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 9 width 80.63: "saturate."
 layer at (0,100) size 200x104
   RenderSVGRect {rect} at (0,100) size 200x104 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=100.00] [width=200.00] [height=104.00]
-layer at (10,218) size 169x28
-  RenderSVGText {text} at (10,218) size 170x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 170x28
-      chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
-layer at (10,248) size 103x28
-  RenderSVGText {text} at (10,248) size 104x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 104x28
-      chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 10 width 103.30: "hueRotate."
 layer at (0,200) size 200x104
   RenderSVGRect {rect} at (0,200) size 200x104 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=200.00] [width=200.00] [height=104.00]
-layer at (10,318) size 151x28
-  RenderSVGText {text} at (10,318) size 151x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 151x28
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 15 width 150.66: "Should be valid"
-layer at (10,348) size 103x28
-  RenderSVGText {text} at (10,348) size 104x28 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 104x28
-      chunk 1 text run 1 at (10.00,370.00) startOffset 0 endOffset 10 width 103.30: "hueRotate."
 layer at (0,300) size 200x99
   RenderSVGRect {rect} at (0,300) size 200x99 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=300.00] [width=200.00] [height=99.00]
 layer at (202,2) size 196x96

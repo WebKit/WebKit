@@ -195,6 +195,23 @@ bool RenderLayer::shouldSkipRepaintAfterLayoutForSVG() const
     return is<RenderSVGContainer>(renderer()) && !shouldPaintWithFilters();
 }
 
+bool RenderLayer::requiresLayerForSVGIntrinsicReasons(const RenderLayerModelObject& renderer)
+{
+    // Plain 2D transforms need no layer, paintRendererByApplyingTransformForSVG() handles them.
+    // 3D transforms require compositing, hence a layer, as do grouping effects, z-index, etc.
+    return renderer.createsGroup()
+        || renderer.style().transform().has3DOperation()
+        || renderer.style().translate().is3DOperation()
+        || renderer.style().scale().is3DOperation()
+        || renderer.style().rotate().is3DOperation()
+        || renderer.style().transformStyle3D() == TransformStyle3D::Preserve3D
+        || !renderer.style().perspective().isNone()
+        || renderer.hasHiddenBackface()
+        || renderer.hasReflection()
+        || !renderer.style().specifiedZIndex().isAuto()
+        || renderer.style().isolation() != Isolation::Auto;
+}
+
 bool RenderLayer::shouldSkipHitTestForSVG() const
 {
     ASSERT(m_svgData);

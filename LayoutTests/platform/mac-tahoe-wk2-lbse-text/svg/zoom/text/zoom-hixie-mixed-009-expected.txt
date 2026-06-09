@@ -13,10 +13,8 @@ layer at (0,0) size 800x312
           text run at (0,0) width 344: "TEST"
 layer at (8,46) size 400x120
   RenderSVGRoot {svg} at (0,0) size 400x120
-layer at (8,46) size 400x120
-  RenderSVGViewportContainer at (0,0) size 400x120
-layer at (8,46) size 60x12
-  RenderSVGRect {rect} at (0,0) size 60x12 [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
+    RenderSVGViewportContainer at (0,0) size 400x120
+      RenderSVGRect {rect} at (0,0) size 60x12 [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
 layer at (8,46) size 60x10 scrollHeight 13
   RenderSVGForeignObject {foreignObject} at (0,0) size 60x10
     RenderBlock {div} at (0,0) size 60x13 [color=#000080]

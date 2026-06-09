@@ -2,8 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGViewportContainer at (0,0) size 800x600
+    RenderSVGViewportContainer at (0,0) size 800x600
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feGaussianBlur} at (0,0) size 0x0
 layer at (4,10.75) size 564x63
   RenderSVGText {text} at (4,10) size 564x64 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 564x63

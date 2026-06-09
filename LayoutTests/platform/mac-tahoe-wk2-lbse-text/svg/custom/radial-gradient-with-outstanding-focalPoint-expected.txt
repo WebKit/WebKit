@@ -2,13 +2,21 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,0) size 100x100
-  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-layer at (120,0) size 100x100
-  RenderSVGRect {rect} at (120,0) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=120.00] [y=0.00] [width=100.00] [height=100.00]
-layer at (0,120) size 100x100
-  RenderSVGRect {rect} at (0,120) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=120.00] [width=100.00] [height=100.00]
-layer at (120,120) size 100x100
-  RenderSVGRect {rect} at (120,120) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=120.00] [y=120.00] [width=100.00] [height=100.00]
+    RenderSVGViewportContainer at (0,0) size 800x600
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (120,0) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=120.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,120) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=120.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (120,120) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=120.00] [y=120.00] [width=100.00] [height=100.00]

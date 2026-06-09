@@ -2,8 +2,23 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGViewportContainer at (0,0) size 800x600
+    RenderSVGViewportContainer at (0,0) size 800x600
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGHiddenContainer {filter} at (0,0) size 0x0
+          RenderSVGHiddenContainer {feColorMatrix} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#EE82EE]
+          RenderSVGGradientStop {stop} [offset=0.20] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.40] [color=#00FF00]
+          RenderSVGGradientStop {stop} [offset=0.60] [color=#FFFF00]
+          RenderSVGGradientStop {stop} [offset=0.80] [color=#FFA500]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
 layer at (10,10) size 100x100
   RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#00000000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
 layer at (140,10) size 100x100

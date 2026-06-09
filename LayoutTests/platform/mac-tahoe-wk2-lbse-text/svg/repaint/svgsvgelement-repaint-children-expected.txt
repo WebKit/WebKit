@@ -6,9 +6,7 @@ layer at (0,0) size 800x420
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
-layer at (8,8) size 400x400
-  RenderSVGViewportContainer at (0,0) size 400x400
-layer at (8,8) size 400x400
-  RenderSVGViewportContainer {svg} at (0,0) size 400x400
-layer at (8,8) size 100x100
-  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGViewportContainer at (0,0) size 400x400
+      RenderSVGViewportContainer {svg} at (0,0) size 400x400
+        RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 Z"]

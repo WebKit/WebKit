@@ -33,26 +33,24 @@ layer at (20,50) size 717x58
       text run at (519,1) width 198: "shadows"
 layer at (0,100) size 800x100
   RenderSVGRoot {svg} at (0,50) size 800x100
-layer at (0,100) size 800x100
-  RenderSVGViewportContainer at (0,0) size 800x100
-layer at (20,120.94) size 717x56
-  RenderSVGText {text} at (20,20) size 717x57 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 95x56
-      RenderSVGInlineText {#text} at (0,0) size 95x56
-        chunk 1 text run 1 at (20.00,66.21) startOffset 0 endOffset 4 width 94.46: "This"
-    RenderSVGInlineText {#text} at (94,0) size 14x56
-      chunk 1 text run 1 at (114.46,66.21) startOffset 0 endOffset 1 width 13.89: " "
-    RenderSVGTSpan {tspan} at (108,0) size 81x56
-      RenderSVGInlineText {#text} at (108,0) size 81x56
-        chunk 1 text run 1 at (128.35,66.21) startOffset 0 endOffset 4 width 80.59: "text"
-    RenderSVGInlineText {#text} at (188,0) size 14x56
-      chunk 1 text run 1 at (208.94,66.21) startOffset 0 endOffset 1 width 13.89: " "
-    RenderSVGTSpan {tspan} at (202,0) size 304x56
-      RenderSVGInlineText {#text} at (202,0) size 303x56
-        chunk 1 text run 1 at (222.83,66.21) startOffset 0 endOffset 14 width 302.88: "casts multiple"
-    RenderSVGInlineText {#text} at (505,0) size 212x56
-      chunk 1 text run 1 at (525.71,66.21) startOffset 0 endOffset 1 width 13.89: " "
-      chunk 1 text run 1 at (539.60,66.21) startOffset 0 endOffset 7 width 197.34: "shadows"
+    RenderSVGViewportContainer at (0,0) size 800x100
+      RenderSVGText {text} at (20,20) size 717x57 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x56
+          RenderSVGInlineText {#text} at (0,0) size 95x56
+            chunk 1 text run 1 at (20.00,66.21) startOffset 0 endOffset 4 width 94.46: "This"
+        RenderSVGInlineText {#text} at (94,0) size 14x56
+          chunk 1 text run 1 at (114.46,66.21) startOffset 0 endOffset 1 width 13.89: " "
+        RenderSVGTSpan {tspan} at (108,0) size 81x56
+          RenderSVGInlineText {#text} at (108,0) size 81x56
+            chunk 1 text run 1 at (128.35,66.21) startOffset 0 endOffset 4 width 80.59: "text"
+        RenderSVGInlineText {#text} at (188,0) size 14x56
+          chunk 1 text run 1 at (208.94,66.21) startOffset 0 endOffset 1 width 13.89: " "
+        RenderSVGTSpan {tspan} at (202,0) size 304x56
+          RenderSVGInlineText {#text} at (202,0) size 303x56
+            chunk 1 text run 1 at (222.83,66.21) startOffset 0 endOffset 14 width 302.88: "casts multiple"
+        RenderSVGInlineText {#text} at (505,0) size 212x56
+          chunk 1 text run 1 at (525.71,66.21) startOffset 0 endOffset 1 width 13.89: " "
+          chunk 1 text run 1 at (539.60,66.21) startOffset 0 endOffset 7 width 197.34: "shadows"
 layer at (20,254) size 717x58
   RenderBlock (positioned) {div} at (20,254) size 716.95x58
     RenderInline {span} at (0,1) size 95x56 [textStrokeWidth=1.00]
@@ -73,23 +71,21 @@ layer at (20,254) size 717x58
       text run at (519,1) width 198: "shadows"
 layer at (0,304) size 800x100
   RenderSVGRoot {svg} at (0,50) size 800x100
-layer at (0,304) size 800x100
-  RenderSVGViewportContainer at (0,0) size 800x100
-layer at (20,324.94) size 717x56
-  RenderSVGText {text} at (20,20) size 717x57 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 95x56
-      RenderSVGInlineText {#text} at (0,0) size 95x56
-        chunk 1 text run 1 at (20.00,66.21) startOffset 0 endOffset 4 width 94.46: "This"
-    RenderSVGInlineText {#text} at (94,0) size 14x56
-      chunk 1 text run 1 at (114.46,66.21) startOffset 0 endOffset 1 width 13.89: " "
-    RenderSVGTSpan {tspan} at (108,0) size 81x56
-      RenderSVGInlineText {#text} at (108,0) size 81x56
-        chunk 1 text run 1 at (128.35,66.21) startOffset 0 endOffset 4 width 80.59: "text"
-    RenderSVGInlineText {#text} at (188,0) size 14x56
-      chunk 1 text run 1 at (208.94,66.21) startOffset 0 endOffset 1 width 13.89: " "
-    RenderSVGTSpan {tspan} at (202,0) size 304x56
-      RenderSVGInlineText {#text} at (202,0) size 303x56
-        chunk 1 text run 1 at (222.83,66.21) startOffset 0 endOffset 14 width 302.88: "casts multiple"
-    RenderSVGInlineText {#text} at (505,0) size 212x56
-      chunk 1 text run 1 at (525.71,66.21) startOffset 0 endOffset 1 width 13.89: " "
-      chunk 1 text run 1 at (539.60,66.21) startOffset 0 endOffset 7 width 197.34: "shadows"
+    RenderSVGViewportContainer at (0,0) size 800x100
+      RenderSVGText {text} at (20,20) size 717x57 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x56
+          RenderSVGInlineText {#text} at (0,0) size 95x56
+            chunk 1 text run 1 at (20.00,66.21) startOffset 0 endOffset 4 width 94.46: "This"
+        RenderSVGInlineText {#text} at (94,0) size 14x56
+          chunk 1 text run 1 at (114.46,66.21) startOffset 0 endOffset 1 width 13.89: " "
+        RenderSVGTSpan {tspan} at (108,0) size 81x56
+          RenderSVGInlineText {#text} at (108,0) size 81x56
+            chunk 1 text run 1 at (128.35,66.21) startOffset 0 endOffset 4 width 80.59: "text"
+        RenderSVGInlineText {#text} at (188,0) size 14x56
+          chunk 1 text run 1 at (208.94,66.21) startOffset 0 endOffset 1 width 13.89: " "
+        RenderSVGTSpan {tspan} at (202,0) size 304x56
+          RenderSVGInlineText {#text} at (202,0) size 303x56
+            chunk 1 text run 1 at (222.83,66.21) startOffset 0 endOffset 14 width 302.88: "casts multiple"
+        RenderSVGInlineText {#text} at (505,0) size 212x56
+          chunk 1 text run 1 at (525.71,66.21) startOffset 0 endOffset 1 width 13.89: " "
+          chunk 1 text run 1 at (539.60,66.21) startOffset 0 endOffset 7 width 197.34: "shadows"

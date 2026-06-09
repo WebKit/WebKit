@@ -50,6 +50,7 @@
 #include "RenderSVGBlockInlines.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElementTypeHelpers.h"
@@ -821,8 +822,16 @@ PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInC
 
 bool RenderSVGText::requiresLayer() const
 {
-    if (document().settings().layerBasedSVGEngineEnabled())
-        return true;
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (RenderSVGModelObject::shouldCreateLayersForAllSVGRenderers())
+            return true;
+        // Conditional layer creation, mirroring RenderSVGModelObject: a plain 2D transform paints
+        // via paintRendererByApplyingTransformForSVG and needs no layer. Take a layer only for
+        // intrinsic reasons (grouping, 3D, z-index, ...) or sandwich promotion.
+        if (RenderLayer::requiresLayerForSVGIntrinsicReasons(*this))
+            return true;
+        return false; // FIXME: Depends on PR #64301 - return m_isSandwichedBetweenLayeredSiblings;
+    }
     return false;
 }
 

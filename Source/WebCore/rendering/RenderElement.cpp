@@ -1215,7 +1215,7 @@ void RenderElement::dirtyEnclosingLayerSVGChildrenIfNeeded()
 {
     ASSERT(isSVGLayerAwareRenderer());
     if (!hasLayer() && document().settings().layerBasedSVGEngineEnabled()) {
-        if (CheckedPtr layer = enclosingLayer())
+        if (CheckedPtr layer = enclosingLayer(); layer && layer->isSVGLayer())
             layer->dirtyChildrenInDOMOrderForSVG();
     }
 }

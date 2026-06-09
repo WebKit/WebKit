@@ -12,8 +12,6 @@ layer at (0,0) size 800x95
         RenderText {#text} at (0,0) size 0x0
 layer at (8,68) size 720x15
   RenderSVGRoot {svg} at (0,18) size 720x15
-layer at (8,68) size 720x15
-  RenderSVGViewportContainer at (0,0) size 720x15
-layer at (8,68) size 720x15
-  RenderSVGRect {rect} at (0,0) size 720x15 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=720.00] [height=15.00]
+    RenderSVGViewportContainer at (0,0) size 720x15
+      RenderSVGRect {rect} at (0,0) size 720x15 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=720.00] [height=15.00]
 caret: position 0 of child 3 {br} of body

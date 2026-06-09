@@ -625,7 +625,8 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.shouldApplyPaintContainment()
         || !renderer.style().usedZIndex().isAuto()
         || renderer.style().willChange().canCreateStackingContext()
-        || layer.establishesTopLayer();
+        || layer.establishesTopLayer()
+        || (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled());
 }
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
@@ -1320,7 +1321,9 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         }
 
         // Only the outermost <svg> and / <foreignObject> are potentially scrollable.
-        ASSERT_IMPLIES(is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer()), !m_scrollableArea);
+        // An SVG renderer reused as the document element (e.g. after replaceChild) can
+        // scroll via normal block layout, so exclude that case.
+        ASSERT_IMPLIES((is<RenderSVGModelObject>(renderer()) || is<RenderSVGText>(renderer()) || is<RenderSVGInline>(renderer())) && !renderer().isDocumentElementRenderer(), !m_scrollableArea);
     }
 
     auto repaintIfNecessary = [&](bool checkForRepaint) {
@@ -2172,6 +2175,8 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
         while (ancestor && !ancestor->hasLayer()) {
             if (auto* boxRenderer = dynamicDowncast<RenderBox>(ancestor))
                 localPoint += boxRenderer->topLeftLocationOffset();
+            else if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(ancestor))
+                localPoint += svgModelObject->locationOffsetEquivalent();
             ancestor = ancestor->parent();
         }
     }

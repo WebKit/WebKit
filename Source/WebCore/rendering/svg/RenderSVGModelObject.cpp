@@ -48,6 +48,7 @@
 #include "SVGUseElement.h"
 #include "StyleTransformResolver.h"
 #include "TransformState.h"
+#include <mutex>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -69,6 +70,36 @@ RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, Style
 }
 
 RenderSVGModelObject::~RenderSVGModelObject() = default;
+
+bool RenderSVGModelObject::shouldCreateLayersForAllSVGRenderers()
+{
+    static std::once_flag onceFlag;
+    static bool shouldCreateLayers = false;
+
+    std::call_once(onceFlag, [] {
+        if (const char* envString = getenv("WEBKIT_LBSE_FORCE_CREATE_LAYERS")) {
+            auto envStringView = StringView::fromLatin1(envString);
+            if (envStringView == "1"_s)
+                shouldCreateLayers = true;
+        }
+    });
+
+    return shouldCreateLayers;
+}
+
+bool RenderSVGModelObject::requiresLayerForIntrinsicReasons() const
+{
+    return RenderLayer::requiresLayerForSVGIntrinsicReasons(*this);
+}
+
+bool RenderSVGModelObject::requiresLayer() const
+{
+    if (shouldCreateLayersForAllSVGRenderers())
+        return true;
+    if (requiresLayerForIntrinsicReasons())
+        return true;
+    return false; // FIXME: Depends on PR #64301 - return m_isSandwichedBetweenLayeredSiblings;
+}
 
 void RenderSVGModelObject::updateFromStyle()
 {
