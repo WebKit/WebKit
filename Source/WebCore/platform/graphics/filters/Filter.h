@@ -44,6 +44,7 @@ struct FilterGeometry {
 enum class FilterRenderingOption : uint8_t {
     ShowDebugOverlay    = 1 << 0,
     FastAndLowQuality   = 1 << 1,
+    ApplyToSVGRenderer  = 1 << 2,
 };
 
 class Filter : public FilterFunction {

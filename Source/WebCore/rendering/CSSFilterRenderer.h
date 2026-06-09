@@ -69,6 +69,7 @@ private:
     bool buildFilterFunctions(RenderElement&, const Style::Filter&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext);
 
     void computeEnclosingFilterRegion();
+    void expandFilterRegionForSVGReferences();
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
 

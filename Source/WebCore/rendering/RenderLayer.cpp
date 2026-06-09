@@ -3855,7 +3855,35 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         LayerPaintingInfo localPaintingInfo(paintingInfo);
-        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, columnAwareOffsetFromRoot, backgroundRect);
+
+        // SVG filter buffers live in SVG coordinate space (objectBoundingBox), so filter setup
+        // and painting inside the buffer must use the element's nominalSVGLayoutLocation, not
+        // offsetFromRoot, which intermediate force-layers can perturb.
+        auto svgFilterOffset = columnAwareOffsetFromRoot;
+        if (renderer().isSVGLayerAwareRenderer() && shouldHaveFiltersForPainting(context, paintFlags, paintBehavior)) {
+            if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(renderer()))
+                svgFilterOffset = toLayoutSize(svgModel->nominalSVGLayoutLocation());
+            else if (auto* svgBlock = dynamicDowncast<RenderSVGBlock>(renderer()))
+                svgFilterOffset = toLayoutSize(svgBlock->nominalSVGLayoutLocation());
+        }
+
+        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, svgFilterOffset, backgroundRect);
+
+        // When rootLayer == this (transform set us as our own root via TransformPaintScope),
+        // non-layer children get an extra containerBaseOffset (= currentSVGLayoutLocation) that
+        // layer children miss, since the latter use offsetFromAncestor(rootLayer == this). Pass
+        // svgFilterOffset to paintChildrenInDOMOrderForSVG to translate those layer children to
+        // match. With an ancestor rootLayer their offsetFromAncestor already includes our position,
+        // so no correction is needed.
+        if (filterContext && renderer().isSVGLayerAwareRenderer() && localPaintingInfo.rootLayer == this)
+            localPaintingInfo.svgResourceLayerCorrection = svgFilterOffset;
+
+        // Per the SVG spec a referenced but unappliable filter (missing reference, empty filter)
+        // produces transparent black, so the element is not rendered. CSS Filter Effects instead
+        // treats a failed filter as no effect (painted normally), so SVG renderers follow the SVG
+        // rule here.
+        bool hasFailedFilter = shouldFailedFilterProduceTransparentBlackForSVG() && !filterContext && shouldHaveFiltersForPainting(context, localPaintFlags, localPaintingInfo.paintBehavior);
+
         GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
         if (filterContext)
@@ -3904,14 +3932,18 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             auto clipRectOptions = isPaintingOverflowContents ? clipRectOptionsForPaintingOverflowContents : clipRectDefaultOptions;
             if (localPaintFlags & PaintLayerFlag::TemporaryClipRects)
                 clipRectOptions.add(ClipRectsOption::Temporary);
-            collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, offsetFromRoot);
-            updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
+            // Inside a filter buffer, collect fragments at the SVG nominal offset to match the
+            // buffer's coordinate system.
+            auto fragmentOffset = filterContext ? svgFilterOffset : offsetFromRoot;
+            collectFragments(layerFragments, localPaintingInfo.rootLayer, paintDirtyRect, ExcludeCompositedPaginatedLayers, PaintingClipRects, clipRectOptions, fragmentOffset);
 
             // When non-layer SVG ancestors (e.g. a transformed <g> without its own layer) have
             // applied transforms to the graphics context, our fragment clip rects — computed in
             // rootLayer coordinate space — must be inverse-mapped through the accumulated
             // nonLayerSVGTransform so they end up in our local post-transform space, where the
-            // context is now drawing.
+            // context is now drawing. Must run before updatePaintingInfoForFragments, whose damage
+            // cull intersects the clip rect with paintDirtyRect and layerBounds (both local). A
+            // root-space clip rect here would mix spaces and cull on-screen content.
             //
             // Skip inverse mapping when rootLayer == this: a prior paintLayerByApplyingTransform
             // promoted us to be our own rootLayer, so our clip rects (at offsetFromRoot=0 relative
@@ -3940,6 +3972,8 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
                 // through a stale transform.
                 localPaintingInfo.nonLayerSVGTransform = std::nullopt;
             }
+
+            updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, fragmentOffset);
         }
         
         if (isPaintingCompositedBackground) {
@@ -3959,7 +3993,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             }
         }
 
-        if (isPaintingCompositedForeground && shouldPaintContent)
+        if (isPaintingCompositedForeground && shouldPaintContent && !hasFailedFilter)
             paintForegroundForFragments(layerFragments, currentContext, context, paintingInfo.paintDirtyRect, haveTransparency, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
         if (isCollectingEventRegion && !isInsideSkippedSubtree)
@@ -3968,10 +4002,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         if (isCollectingAccessibilityRegion)
             collectAccessibilityRegionsForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
 
-        if (shouldPaintOutline)
+        if (shouldPaintOutline && !hasFailedFilter)
             paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
 
-        if (isPaintingCompositedForeground) {
+        if (isPaintingCompositedForeground && !hasFailedFilter) {
             if (m_svgData)
                 paintForegroundChildrenForSVG(currentContext, paintingInfo, localPaintingInfo, localPaintFlags, layerFragments, paintBehavior, subtreePaintRootForRenderer);
             else {
@@ -3989,7 +4023,30 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         if (filterContext) {
-            applyFilters(context, paintingInfo, paintBehavior, backgroundRect);
+            // With rootLayer == this the CTM holds an extra positional offset from
+            // paintLayerByApplyingTransform, but the filter buffer sits at the nominal SVG position,
+            // so compensate. Only when rootLayer == this, under a transformed ancestor the offset is
+            // already in the CTM and this delta would double-count.
+            GraphicsContextStateSaver filterCompensationSaver(context, false);
+            if (renderer().isSVGLayerAwareRenderer() && paintingInfo.rootLayer == this) {
+                auto svgFilterCompensation = columnAwareOffsetFromRoot - svgFilterOffset;
+                if (!svgFilterCompensation.isZero()) {
+                    filterCompensationSaver.save();
+                    context.translate(svgFilterCompensation);
+                }
+            }
+            // backgroundRect is in rootLayer space, but applyFilters clips with it via
+            // context.clip(), which applies in the current CTM space. For SVG content under
+            // non-layered transformed ancestors the CTM is this layer's local space, so inverse-map
+            // the clip the same way paintLayerContents maps the fragment clip rects (same guard).
+            ClipRect filterClipRect = backgroundRect;
+            if (paintingInfo.nonLayerSVGTransform && paintingInfo.rootLayer != this && !filterClipRect.isInfinite()) {
+                if (auto inverse = paintingInfo.nonLayerSVGTransform->inverse()) {
+                    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+                    filterClipRect = ClipRect(LayoutRect(encloseRectToDevicePixels(inverse->mapRect(FloatRect(backgroundRect.rect())), deviceScaleFactor)));
+                }
+            }
+            applyFilters(context, paintingInfo, paintBehavior, filterClipRect);
             // Painting a snapshot might have temporarily overriden the filter painting strategy,
             // make sure it gets reset.
             updateFilterPaintingStrategy();
@@ -4239,6 +4296,9 @@ void RenderLayer::updatePaintingInfoForFragments(LayerFragments& fragments, cons
         fragment.shouldPaintContent = shouldPaintContent;
         if (this != localPaintingInfo.rootLayer || !(localPaintFlags & PaintLayerFlag::PaintingOverflowContents)) {
             LayoutSize newOffsetFromRoot = offsetFromRoot + fragment.paginationOffset;
+            // For SVG under non-layered transformed ancestors the caller already inverse-mapped the
+            // fragment clip rects into this layer's local CTM space, where paintDirtyRect and
+            // layerBounds also live, keeping this comparison space-consistent.
             fragment.shouldPaintContent &= intersectsDamageRect(fragment.layerBounds(), fragment.dirtyBackgroundRect().rect(), localPaintingInfo.rootLayer, newOffsetFromRoot, fragment.boundingBox());
         }
     }

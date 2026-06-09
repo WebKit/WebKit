@@ -79,6 +79,15 @@ bool RenderLayer::hasVisibleContentForPaintingForSVG() const
     return hasVisibleContent();
 }
 
+bool RenderLayer::shouldFailedFilterProduceTransparentBlackForSVG() const
+{
+    if (!m_svgData)
+        return false;
+    // Per the SVG spec, a referenced filter that cannot be applied produces transparent
+    // black, so the element must not be rendered.
+    return true;
+}
+
 void RenderLayer::paintResourceLayerForSVG(GraphicsContext& context, const AffineTransform& layerContentTransform)
 {
     ASSERT(m_svgData);
@@ -207,11 +216,8 @@ bool RenderLayer::hasFailedFilterForSVG() const
     ASSERT(m_svgData);
     ASSERT(renderer().document().settings().layerBasedSVGEngineEnabled());
 
-    // Per the SVG spec, if a filter is referenced but cannot be applied (non-existent
-    // reference, empty filter, etc.), the element must not be rendered — the filter
-    // produces transparent black, making the element invisible. The CSS Filter Effects
-    // spec differs — a failed filter means "no effect" (painted normally). Therefore
-    // treat SVG renderers differently, obeying to the SVG rules.
+    // Per the SVG spec, a referenced filter that cannot be applied (missing reference,
+    // empty filter) means the element must not be rendered.
     if (!m_filters || m_filters->filter() || !renderer().style().filter().isReferenceFilter())
         return false;
     return WTF::switchOn(renderer().style().filter().first(),
@@ -389,6 +395,25 @@ void RenderLayer::paintNonLayerChildForFragmentsForSVG(RenderElement& childRende
     }
 }
 
+void RenderLayer::paintResourceCorrectedChildLayerForSVG(GraphicsContext& context, RenderLayer& childLayer,
+    const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, LayoutSize correction) const
+{
+    // A child layer painted inside an SVG resource/filter buffer (mask, clipPath, filter) computes
+    // its position relative to the buffer root and so misses the buffer's nominalSVGLayoutLocation
+    // offset. Translate by 'correction' to compensate, then clear it so deeper layers, which inherit
+    // the corrected space, do not apply it again.
+    if (correction.isZero()) {
+        childLayer.paintLayer(context, paintingInfo, paintFlags);
+        return;
+    }
+
+    GraphicsContextStateSaver stateSaver(context);
+    context.translate(correction.width(), correction.height());
+    LayerPaintingInfo childPaintingInfo(paintingInfo);
+    childPaintingInfo.svgResourceLayerCorrection = { };
+    childLayer.paintLayer(context, childPaintingInfo, paintFlags);
+}
+
 void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags,
     const LayerFragments& layerFragments, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRootForRenderer)
 {
@@ -416,12 +441,14 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
             if (childLayer->isComposited())
                 continue;
 
-            if (isPaintingResourceLayerForSVG() && !layerResourceOffset.isZero()) {
-                GraphicsContextStateSaver stateSaver(context);
-                context.translate(layerResourceOffset.x(), layerResourceOffset.y());
-                childLayer->paintLayer(context, paintingInfo, paintFlags);
-            } else
-                childLayer->paintLayer(context, paintingInfo, paintFlags);
+            // mask/clipPath buffers supply the correction locally as layerResourceOffset, filters
+            // carry it via svgResourceLayerCorrection. These are mutually exclusive per child, with
+            // the resource path taking precedence.
+            auto correction = (isPaintingResourceLayerForSVG() && !layerResourceOffset.isZero())
+                ? toLayoutSize(layerResourceOffset) : paintingInfo.svgResourceLayerCorrection;
+
+            // See above: resource buffers correct locally, filters via svgResourceLayerCorrection.
+            paintResourceCorrectedChildLayerForSVG(context, *childLayer, paintingInfo, paintFlags, correction);
             continue;
         }
 
@@ -625,12 +652,10 @@ void RenderLayer::paintSubtreeWithinTransformScopeForSVG(GraphicsContext& contex
             if (!accumulatedTransform.isIdentity())
                 childPaintingInfo.nonLayerSVGTransform = accumulatedTransform;
 
-            if (isPaintingResourceLayerForSVG() && !paintOffset.isZero()) {
-                GraphicsContextStateSaver stateSaver(context);
-                context.translate(paintOffset.x(), paintOffset.y());
-                childLayer->paintLayer(context, childPaintingInfo, adjustedFlags);
-            } else
-                childLayer->paintLayer(context, childPaintingInfo, adjustedFlags);
+            // Inside a resource buffer the transform-scope paint offset is this child's resource-layer
+            // correction (see paintResourceCorrectedChildLayerForSVG).
+            auto correction = isPaintingResourceLayerForSVG() ? toLayoutSize(paintOffset) : LayoutSize();
+            paintResourceCorrectedChildLayerForSVG(context, *childLayer, childPaintingInfo, adjustedFlags, correction);
             continue;
         }
 

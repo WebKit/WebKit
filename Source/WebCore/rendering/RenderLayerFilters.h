@@ -93,6 +93,7 @@ private:
     LayoutRect m_repaintRect;
 
     FloatSize m_filterScale { 1, 1 };
+    FloatSize m_lastUnclampedFilterScale;
 
     OptionSet<FilterRenderingMode> m_preferredFilterRenderingModes { FilterRenderingMode::Software };
 

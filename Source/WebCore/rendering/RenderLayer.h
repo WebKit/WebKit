@@ -288,7 +288,10 @@ private:
             return true;
         return hasVisibleContentForPaintingForSVG();
     }
-    bool hasVisibleContentForPaintingForSVG() const; // Defined in RenderLayerSVGAdditions.cpp.
+
+    // Defined in RenderLayerSVGAdditions.cpp.
+    bool hasVisibleContentForPaintingForSVG() const;
+    bool shouldFailedFilterProduceTransparentBlackForSVG() const;
 
     // These flags propagate in paint order (z-order tree).
     enum class Compositing {
@@ -1020,7 +1023,17 @@ public:
         bool requireSecurityOriginAccessForWidgets { false };
         CheckedPtr<RegionContext> regionContext;
         std::optional<AffineTransform> nonLayerSVGTransform;
+        // Translation for a self-painting child layer inside an SVG resource/filter buffer (mask,
+        // clipPath, filter) whose space starts at the host's nominalSVGLayoutLocation. Such a child
+        // positions via offsetFromAncestor(rootLayer == buffer root) and so misses the buffer offset
+        // that non-layer children get through containerBaseOffset. Applied to the first child-layer
+        // level, then cleared. The mask/clipPath path supplies its offset locally (see
+        // paintResourceCorrectedChildLayerForSVG), the filter path carries it here because it is set
+        // in paintLayerContents but consumed in paintChildrenInDOMOrderForSVG.
+        LayoutSize svgResourceLayerCorrection;
     };
+
+    void computeRepaintRectsIncludingDescendants();
 
 private:
 
@@ -1033,6 +1046,7 @@ private:
 
     // SVG-specific methods -- defined in RenderLayerSVGAdditions.cpp.
     bool setupClipPathIfNeededForSVG(OptionSet<PaintLayerFlag>&);
+    void paintResourceCorrectedChildLayerForSVG(GraphicsContext&, RenderLayer& childLayer, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, LayoutSize correction) const;
     bool paintForegroundForFragmentsForSVG(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject*);
     void paintNegativeZOrderChildrenForSVG(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
     void paintForegroundChildrenForSVG(GraphicsContext&, const LayerPaintingInfo&, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintLayerFlag>, const LayerFragments&, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot);
@@ -1109,7 +1123,6 @@ private:
     }
 
     void computeRepaintRects(const RenderLayerModelObject* repaintContainer);
-    void computeRepaintRectsIncludingDescendants();
 
     void compositingStatusChanged(LayoutUpToDate);
 
