@@ -20755,24 +20755,26 @@
 		7B7A089228B738D800FF1239 /* Copy Profiling Data */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
+			dependencyFile = "$(DERIVED_FILES_DIR)/copy-profiling-data.d";
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(WK_COMPRESSED_OPTIMIZATION_PROFILE_FILE)",
+				"$(WK_COMPRESSED_OPTIMIZATION_PROFILE_FOLDER)",
 				"$(SRCROOT)/../../Tools/Profiling/Empty.profdata",
-				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/copy-profiling-data.sh",
+				"$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/copy-profiling-data.py",
 			);
 			name = "Copy Profiling Data";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.profdata",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/Profiling/arm64e.profdata",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/Profiling/x86_64.profdata",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\"${SCRIPT_INPUT_FILE_2}\"\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    echo \"dependencies: \" > \"${DERIVED_FILES_DIR}/copy-profiling-data.d\"\n    exit 0;\nfi\n\"${SCRIPT_INPUT_FILE_2}\"\n";
 		};
 		933170072234674500B32554 /* Create symlinks to XPC services and dylibs */ = {
 			isa = PBXShellScriptBuildPhase;
