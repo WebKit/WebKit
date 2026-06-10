@@ -121,7 +121,6 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote)
     DidDeliverMessagePortMessages(WebKit::MessageBatchIdentifier messageBatchIdentifier)
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
-    SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
 #if PLATFORM(MAC)
     GetProcessDisplayName(struct WebKit::CoreIPCAuditToken auditToken) -> (String displayName)
     UpdateActivePages(String name, Vector<String> activePagesOrigins, struct WebKit::CoreIPCAuditToken auditToken)

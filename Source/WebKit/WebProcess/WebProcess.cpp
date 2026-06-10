@@ -1390,9 +1390,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #endif
         // This can be called during a WebPage's constructor, so wait until after the constructor returns to touch the WebPage.
         RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
-            for (auto& webPage : m_pageMap.values())
-                webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
-
             if (std::exchange(m_needsIDBConnectionRefreshForWorkers, false))
                 refreshIDBConnectionForWorkers();
         });

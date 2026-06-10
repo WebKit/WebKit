@@ -27,6 +27,8 @@
 
 #include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/PageIdentifier.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -36,6 +38,7 @@ struct NetworkProcessConnectionParameters {
     bool ignoreInvalidMessageForTesting { false };
 #endif
     Vector<WebPageProxyIdentifier> pagesWithRelaxedThirdPartyCookieBlocking;
+    HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
 };
 
 } // namespace WebKit

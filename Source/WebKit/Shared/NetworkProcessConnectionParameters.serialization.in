@@ -26,4 +26,5 @@ struct WebKit::NetworkProcessConnectionParameters {
     bool ignoreInvalidMessageForTesting;
 #endif
     Vector<WebKit::WebPageProxyIdentifier> pagesWithRelaxedThirdPartyCookieBlocking;
+    HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
 };
