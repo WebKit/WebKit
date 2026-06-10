@@ -321,8 +321,6 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     if (!frame->page() || frame->protectedPage()->subframeCount() >= Page::maxNumberOfFrames)
         return nullptr;
 
-    if (frame->tree().depth() >= Page::maxFrameDepth)
-
     if (!canCreateSubFrame())
         return nullptr;
 
