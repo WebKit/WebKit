@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,6 +86,18 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
     return lengthOfViewportPhysicalAxisForLogicalAxis(logicalAxis, size, rootElement->renderStyle());
 }
 
+// Raw font metrics include the usedZoomFactor. In evaluation-time zoom mode with the Unzoomed
+// range option, normalize by usedZoomFactor so that font-relative units (ex, cap, ch, ic) scale
+// consistently with em.
+static double unzoomFontMetricIfNeeded(double metric, const FontDescription& fontDescription, CSS::RangeZoomOptions rangeZoomOption)
+{
+    if (fontDescription.evaluationTimeZoomEnabled() && rangeZoomOption == CSS::RangeZoomOptions::Unzoomed) {
+        if (auto usedZoomFactor = fontDescription.usedZoomFactor(); usedZoomFactor > 0)
+            return metric / usedZoomFactor;
+    }
+    return metric;
+}
+
 double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade* fontCascadeForUnit, CSS::RangeZoomOptions rangeZoomOption, const RenderView* renderView)
 {
     using enum CSS::LengthUnit;
@@ -117,28 +130,36 @@ double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit lengthUn
     case Ex:
     case Rex: {
         ASSERT(fontCascadeForUnit);
+        auto& fontDescription = fontCascadeForUnit->fontDescription();
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
         if (fontMetrics.xHeight())
-            return fontMetrics.xHeight().value() * value;
-        auto& fontDescription = fontCascadeForUnit->fontDescription();
+            return unzoomFontMetricIfNeeded(fontMetrics.xHeight().value(), fontDescription, rangeZoomOption) * value;
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSizeForRangeZoomOption(rangeZoomOption)) / 2.0 * value;
     }
     case Cap:
     case Rcap: {
         ASSERT(fontCascadeForUnit);
+        auto& fontDescription = fontCascadeForUnit->fontDescription();
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
         if (fontMetrics.capHeight())
-            return fontMetrics.capHeight().value() * value;
-        return fontMetrics.intAscent() * value;
+            return unzoomFontMetricIfNeeded(fontMetrics.capHeight().value(), fontDescription, rangeZoomOption) * value;
+        return unzoomFontMetricIfNeeded(fontMetrics.intAscent(), fontDescription, rangeZoomOption) * value;
     }
     case Ch:
-    case Rch:
+    case Rch: {
         ASSERT(fontCascadeForUnit);
-        return fontCascadeForUnit->zeroWidth() * value;
+        auto& fontDescription = fontCascadeForUnit->fontDescription();
+        return unzoomFontMetricIfNeeded(fontCascadeForUnit->zeroWidth(), fontDescription, rangeZoomOption) * value;
+    }
     case Ic:
-    case Ric:
+    case Ric: {
         ASSERT(fontCascadeForUnit);
-        return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth().value_or(0) * value;
+        auto& fontDescription = fontCascadeForUnit->fontDescription();
+        auto ideogramWidth = fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth();
+        if (!ideogramWidth)
+            return fontDescription.computedSizeForRangeZoomOption(rangeZoomOption) * value;
+        return unzoomFontMetricIfNeeded(ideogramWidth.value(), fontDescription, rangeZoomOption) * value;
+    }
 
     // MARK: "viewport percentage" resolution
 
@@ -299,9 +320,6 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     case Cap:
     case Ch:
     case Ic:
-        // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
-        // We really need to compute EX using fontMetrics for the original specifiedSize and not use
-        // our actual constructed rendering font.
         value = computeUnzoomedNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits(), conversionData.rangeZoomOption());
         value = adjustZoomStateForFontRelativeUnitsIfNeeded(value, conversionData);
         break;

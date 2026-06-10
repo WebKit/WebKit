@@ -1,0 +1,11 @@
+ic letter-spacing with zoom 1.5
+em letter-spacing with zoom 1.5
+ic letter-spacing with zoom 2
+em letter-spacing with zoom 2
+ic line-height with zoom 1.5
+em line-height with zoom 1.5
+
+PASS ic equals em for letter-spacing under CSS zoom 1.5
+PASS ic equals em for letter-spacing under CSS zoom 2
+PASS ic equals em for line-height under CSS zoom 1.5
+
