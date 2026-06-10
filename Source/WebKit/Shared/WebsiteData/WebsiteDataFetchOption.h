@@ -30,6 +30,7 @@ namespace WebKit {
 enum class WebsiteDataFetchOption : uint8_t {
     ComputeSizes = 1 << 0,
     DoNotCreateProcesses = 1 << 1,
+    IncludeAllOrigins = 1 << 2,
 };
 
 } // namespace WebKit

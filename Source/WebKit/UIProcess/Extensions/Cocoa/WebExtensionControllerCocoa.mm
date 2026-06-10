@@ -586,6 +586,26 @@ String WebExtensionController::storageDirectory(const String& uniqueIdentifier) 
     return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), uniqueIdentifier);
 }
 
+HashSet<String> WebExtensionController::activeExtensionURLs() const
+{
+    HashSet<String> origins;
+
+    for (auto& context : m_extensionContexts)
+        origins.add(context->baseURL().protocolHostAndPort().convertToASCIILowercase());
+
+    if (m_configuration->storageIsPersistent()) {
+        for (auto& uniqueIdentifier : FileSystem::listDirectory(m_configuration->storageDirectory())) {
+            if (uniqueIdentifier == "StaleExtensionOriginsCleared"_s)
+                continue;
+            URL lastSeenBaseURL;
+            if (WebExtensionContext::readLastBaseURLFromState(stateFilePath(uniqueIdentifier), lastSeenBaseURL))
+                origins.add(lastSeenBaseURL.protocolHostAndPort().convertToASCIILowercase());
+        }
+    }
+
+    return origins;
+}
+
 RefPtr<WebExtensionStorageSQLiteStore> WebExtensionController::sqliteStore(const String& storageDirectory, WebExtensionDataType type, RefPtr<WebExtensionContext> extensionContext)
 {
     if (type == WebExtensionDataType::Session) {

@@ -110,6 +110,15 @@ WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses(
     return result;
 }
 
+bool WebExtensionController::markDidRemoveStaleExtensionWebsiteData()
+{
+    if (m_didRemoveStaleExtensionWebsiteData)
+        return false;
+
+    m_didRemoveStaleExtensionWebsiteData = true;
+    return true;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
