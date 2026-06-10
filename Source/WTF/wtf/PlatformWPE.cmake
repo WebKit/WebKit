@@ -104,6 +104,10 @@ if (USE_LIBBACKTRACE)
     )
 endif ()
 
+if (TARGET Execinfo::Execinfo)
+    list(APPEND WTF_PRIVATE_LIBRARIES Execinfo::Execinfo)
+endif ()
+
 if (USE_SYSPROF_CAPTURE)
     list(APPEND WTF_LIBRARIES
         SysProfCapture::SysProfCapture

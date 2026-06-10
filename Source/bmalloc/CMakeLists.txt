@@ -630,6 +630,13 @@ set(bmalloc_LIBRARIES
     ${CMAKE_DL_LIBS}
 )
 
+if (HAVE_BACKTRACE)
+    list(APPEND bmalloc_DEFINITIONS PAS_HAVE_BACKTRACE)
+    if (TARGET Execinfo::Execinfo)
+        list(APPEND bmalloc_PRIVATE_LIBRARIES Execinfo::Execinfo)
+    endif ()
+endif ()
+
 if (ENABLE_MALLOC_HEAP_BREAKDOWN)
     list(APPEND bmalloc_DEFINITIONS BENABLE_MALLOC_HEAP_BREAKDOWN=1)
     list(APPEND bmalloc_LIBRARIES ${MALLOC_HEAP_BREAKDOWN_LIBRARIES})

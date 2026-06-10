@@ -233,9 +233,13 @@
 #define HAVE_MACHINE_CONTEXT 1
 #endif
 
-#if OS(DARWIN) || OS(HAIKU) || ((OS(LINUX) || OS(HURD)) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
+#if OS(DARWIN)
+#ifndef HAVE_BACKTRACE
 #define HAVE_BACKTRACE 1
+#endif
+#ifndef HAVE_BACKTRACE_SYMBOLS
 #define HAVE_BACKTRACE_SYMBOLS 1
+#endif
 #endif
 
 #if OS(DARWIN) || OS(HAIKU) || OS(LINUX) || OS(HURD)
