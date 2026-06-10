@@ -11932,10 +11932,9 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         auto prediction = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
 
         {
-           // len >= 0, so -1 > (unsigned) length
+            // len >= 0, so -1 > (unsigned) length
             static_assert(JSArrayIterator::doneIndex == -1);
             Node* iterator = get(bytecode.m_iterator);
-            Node* doneIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
             Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
 
             Node* iteratedObject = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), iterator);

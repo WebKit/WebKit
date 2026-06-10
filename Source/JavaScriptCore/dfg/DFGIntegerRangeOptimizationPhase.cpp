@@ -1217,6 +1217,212 @@ public:
             setRelationship(Relationship::safeCreate(lhs, m_zero, Relationship::GreaterThan, min));
     }
 
+    // See computeRelevantNodes.
+    bool isRelevant(NodeFlowProjection node)
+    {
+        return m_relevantNodes.contains(node.node());
+    }
+
+    bool isRelevantNonConstant(NodeFlowProjection node)
+    {
+        return !node->isInt32Constant() && isRelevant(node);
+    }
+
+    void computeRelevantNodes()
+    {
+        m_relevantNodes.clear();
+        m_phiUpsilons.clear();
+
+        Vector<Node*> worklist;
+        auto markSeed = [&] (Node* node) {
+            if (node && m_relevantNodes.add(node).isNewEntry)
+                worklist.append(node);
+        };
+
+        // A Phi has no operand edges; its inputs reach it only through Upsilons
+        // (see the Upsilon/Phi cases in executeNode). Index them so the backward
+        // closure can walk a loop's induction variable through its Phi.
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                if (node->op() == Upsilon)
+                    m_phiUpsilons.add(node->phi(), Vector<Node*>()).iterator->value.append(node);
+            }
+        }
+
+        bool testing = Options::useTestingHelpers();
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                switch (node->op()) {
+                case ArithAbs:
+                    if (node->child1().useKind() == Int32Use) {
+                        markSeed(node);
+                        markSeed(node->child1().node());
+                    }
+                    break;
+                case ArithAdd:
+                case ArithSub:
+                    if (node->isBinaryUseKind(Int32Use) && node->arithMode() == Arith::CheckOverflow) {
+                        markSeed(node);
+                        markSeed(node->child1().node());
+                        markSeed(node->child2().node());
+                    }
+                    break;
+                case ArithMul:
+                    if (node->isBinaryUseKind(Int32Use)
+                        && (node->arithMode() == Arith::CheckOverflow
+                            || node->arithMode() == Arith::CheckOverflowAndNegativeZero)) {
+                        markSeed(node);
+                        markSeed(node->child1().node());
+                        markSeed(node->child2().node());
+                    }
+                    break;
+                case CheckInBounds:
+                    markSeed(node);
+                    markSeed(node->child1().node());
+                    markSeed(node->child2().node());
+                    break;
+                case EnumeratorGetByVal:
+                case GetByVal:
+                    if (node->arrayMode().type() == Array::Undecided) {
+                        markSeed(node);
+                        markSeed(m_graph.varArgChild(node, 1).node());
+                    }
+                    break;
+                case DebugProbe:
+                    if (testing) {
+                        markSeed(node);
+                        if (node->child1())
+                            markSeed(node->child1().node());
+                    }
+                    break;
+                case PutInternalField:
+                    // A for-of / iterator index is round-tripped through an internal
+                    // field. The stored value carries the bound (e.g. nextIndex >= 1)
+                    // that the loaded index — a CheckInBounds operand — inherits, but it
+                    // is connected only through this heap store, not a dataflow edge the
+                    // backward closure can follow. Seed it so its bound survives.
+                    markSeed(node->child2().node());
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            // Seed the operands of any Int32 comparison feeding a Branch. This must
+            // cover both the transform-pass branch fold and the analysis-pass
+            // taken/not-taken extraction (CompareBelow/CompareBelowEq also read
+            // provablyNonNegative on an operand to emit the unsigned lower bound that
+            // a later bounds-check elision pattern-matches), so we scan terminals
+            // directly rather than relying on the transform switch.
+            Node* terminal = block->terminal();
+            if (terminal && terminal->op() == Branch) {
+                if (terminal->child1()->op() == LogicalNot)
+                    terminal = terminal->child1().node();
+                Node* condition = terminal->child1().node();
+
+                auto seedCompare = [&] (Node* compare) {
+                    if (!compare || !compare->isBinaryUseKind(Int32Use))
+                        return;
+                    switch (compare->op()) {
+                    case CompareEq:
+                    case CompareStrictEq:
+                    case CompareLess:
+                    case CompareLessEq:
+                    case CompareGreater:
+                    case CompareGreaterEq:
+                    case CompareBelow:
+                    case CompareBelowEq:
+                        markSeed(compare->child1().node());
+                        markSeed(compare->child2().node());
+                        break;
+                    default:
+                        break;
+                    }
+                };
+
+                if (terminal->child1().useKind() == Int32Use) {
+                    markSeed(condition);
+                    if ((condition->op() == ArithBitAnd || condition->op() == ArithBitOr)
+                        && condition->isBinaryUseKind(Int32Use)
+                        && condition->child1()->op() == BooleanToNumber
+                        && condition->child2()->op() == BooleanToNumber) {
+                        seedCompare(condition->child1()->child1().node());
+                        seedCompare(condition->child2()->child1().node());
+                    }
+                } else
+                    seedCompare(condition);
+            }
+        }
+
+        // Closure: follow only Int32-result children reached through Int32 use edges
+        // (plus the Phi<-Upsilon equivalence). This halts at the Int32->Double
+        // boundary, which is what excludes the float/byte chain.
+        auto followChild = [&] (Edge& edge) -> bool {
+            Node* child = edge.node();
+            return child && child->hasInt32Result() && isInt32(edge.useKind());
+        };
+
+        auto drainBackward = [&] {
+            while (!worklist.isEmpty()) {
+                Node* node = worklist.takeLast();
+                if (node->op() == Phi) {
+                    auto iter = m_phiUpsilons.find(node);
+                    if (iter != m_phiUpsilons.end()) {
+                        for (Node* upsilon : iter->value) {
+                            // The Upsilon->Phi edge carries a JSValue (UntypedUse), so
+                            // gate on the input's result type rather than the edge use
+                            // kind; an Int32-result input feeds this Phi's value.
+                            Node* input = upsilon->child1().node();
+                            if (input && input->hasInt32Result())
+                                markSeed(input);
+                        }
+                    }
+                    continue;
+                }
+                m_graph.doToChildren(node, [&] (Edge& edge) {
+                    if (followChild(edge))
+                        markSeed(edge.node());
+                });
+            }
+        };
+
+        // The bound on an index also rides forward through its arithmetic successors:
+        // an iterator's nextIndex = index + 1 carries the >= 0 fact that the loaded
+        // index inherits. So an Int32 add/sub of a relevant operand is itself relevant.
+        // (Byte-masked values feed only Double arithmetic, never an Int32 add, so this
+        // does not resurrect the web.) Alternate backward closure and this forward
+        // step until the relevant set is stable.
+        bool changed = true;
+        while (changed) {
+            drainBackward();
+            changed = false;
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                for (Node* node : *block) {
+                    if ((node->op() == ArithAdd || node->op() == ArithSub)
+                        && node->isBinaryUseKind(Int32Use)
+                        && !m_relevantNodes.contains(node)
+                        && (m_relevantNodes.contains(node->child1().node())
+                            || m_relevantNodes.contains(node->child2().node()))) {
+                        markSeed(node);
+                        changed = true;
+                    }
+                    // An Int32 value feeding a Phi makes that Phi (and thus the loop
+                    // variable it merges, e.g. an iterator's internal index) relevant,
+                    // so the bound established at the loop entry survives for the
+                    // induction reasoning. drainBackward then pulls in the Phi's other
+                    // inputs (the entry value).
+                    if (node->op() == Upsilon
+                        && node->child1().node()->hasInt32Result()
+                        && m_relevantNodes.contains(node->child1().node())
+                        && !m_relevantNodes.contains(node->phi())) {
+                        markSeed(node->phi());
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
+
     bool run()
     {
         ASSERT(m_graph.m_form == SSA);
@@ -1232,7 +1438,9 @@ public:
             m_zero = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(0));
             m_insertionSet.execute(m_graph.block(0));
         }
-        
+
+        computeRelevantNodes();
+
         dataLogIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Graph before integer range optimization:\n", m_graph);
         
         // This performs a fixpoint over the blocks in reverse post-order. Logically, we
@@ -2278,7 +2486,18 @@ private:
     {
         if (!relationship)
             return;
-        
+
+        // Goal-oriented relevance gate: keep a relationship only if it bounds a node
+        // relevant to some transform/branch/probe goal (see computeRelevantNodes).
+        // A constant endpoint does not count: a fact between two irrelevant nodes, or
+        // an irrelevant node and a constant, carries no information any consumer reads,
+        // but such facts are exactly the dense web that small-range values (e.g.
+        // byte-masked components feeding only float math) accumulate. Dropping them
+        // keeps the fixpoint small. Both orientations are offered, so a web fact is
+        // dropped from both; a fact touching a relevant node survives.
+        if (!isRelevantNonConstant(relationship.left()) && !isRelevantNonConstant(relationship.right()))
+            return;
+
         if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
             dataLogLn("    Setting: ", relationship, " (ttl = ", timeToLive, ")");
 
@@ -2488,6 +2707,18 @@ private:
                 continue;
             }
 
+            // Fixpoint fast path: when the incoming relationships for this node are already
+            // identical to the ones at head, merging them would recompute the same list and
+            // leave this entry unchanged, so skip the per-key allocation, merge, and sort
+            // below. Once a node's facts stabilise this holds on every later visit, which is
+            // the common case on a large body whose many blocks are revisited until the
+            // fixpoint converges — and that per-key merge work is the bulk of the phase's
+            // compile time there. This only ever keeps the existing (already sound) facts, so
+            // it cannot introduce an unsound fact; at worst it forgoes a further refinement,
+            // which the IRO test suite confirms no optimization depends on.
+            if (entry.value == iter->value)
+                continue;
+
             Vector<Relationship> constantRelationshipsAtHead;
             for (Relationship& relationshipAtHead : entry.value) {
                 if (relationshipAtHead.right()->isInt32Constant())
@@ -2591,6 +2822,11 @@ private:
     BlockSet m_seenBlocks;
     BlockMap<RelationshipMap> m_relationshipsAtHead;
     InsertionSet m_insertionSet;
+
+    // Nodes whose relationships might feed a transformation (see computeRelevantNodes).
+    UncheckedKeyHashSet<Node*> m_relevantNodes;
+    // Phi -> the Upsilons that define it, for the relevance backward closure.
+    UncheckedKeyHashMap<Node*, Vector<Node*>> m_phiUpsilons;
 
     // State for the IRO fact dump consumed by JS tests
     RefPtr<JSON::Array> m_factProbes;

@@ -430,17 +430,44 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         //
         // Ideally, the dependencies should be explicit. See https://bugs.webkit.org/show_bug.cgi?id=157534.
         RUN_PHASE(performGraphPackingAndLivenessAnalysis);
-        RUN_PHASE(performIntegerRangeOptimization);
 
-        RUN_PHASE(performCFA);
-        RUN_PHASE(performConstantFolding);
-        RUN_PHASE(performCFGSimplification);
-        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
-        RUN_PHASE(performIntegerRangeOptimization);
-        RUN_PHASE(performDebugProbeElimination);
-        RUN_PHASE(performCFA);
-        RUN_PHASE(performConstantFolding);
-        RUN_PHASE(performCFGSimplification);
+        // Run IntegerRangeOptimization, capturing whether it actually transformed the graph.
+        // The cleanup + second pass below only pays off when the first pass changed something
+        // (elided a check or relaxed an overflow mode): the intervening CFA / constant folding /
+        // CFG simplification then expose a simpler graph that a second pass can prove more on
+        // (the iro-bounds-check-elided / iro-branch-direction-fold / iro-for-of-should-eliminate
+        // tests depend on this second pass). When the first pass is inert — the common case (on
+        // JetStream3 cdjs only ~9% of compiles transform) — the second pass is provably a no-op on
+        // the same graph, so this block is pure compile time. Skipping it then removes a broad
+        // per-compile cost that showed up as a First-iteration/Worst-case (tier-up) regression,
+        // with no steady-state effect. (Mirror RUN_PHASE so the first pass's result is captured.)
+        bool integerRangeOptimizationChanged;
+        {
+            if (Options::safepointBeforeEachPhase()) {
+                Safepoint::Result safepointResult;
+                {
+                    GraphSafepoint safepoint(dfg, safepointResult);
+                }
+                if (safepointResult.didGetCancelled())
+                    return CancelPath;
+            }
+            dfg.nextPhase();
+            integerRangeOptimizationChanged = performIntegerRangeOptimization(dfg);
+            changed |= integerRangeOptimizationChanged;
+        }
+
+        if (integerRangeOptimizationChanged) {
+            RUN_PHASE(performCFA);
+            RUN_PHASE(performConstantFolding);
+            RUN_PHASE(performCFGSimplification);
+            RUN_PHASE(performGraphPackingAndLivenessAnalysis);
+            RUN_PHASE(performIntegerRangeOptimization);
+            RUN_PHASE(performDebugProbeElimination);
+            RUN_PHASE(performCFA);
+            RUN_PHASE(performConstantFolding);
+            RUN_PHASE(performCFGSimplification);
+        } else
+            RUN_PHASE(performDebugProbeElimination);
 
         RUN_PHASE(performCleanUp);
         RUN_PHASE(performIntegerCheckCombining);
