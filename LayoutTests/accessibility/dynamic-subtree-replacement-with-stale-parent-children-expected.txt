@@ -1,0 +1,13 @@
+Tests that all newly-added children of a container are reachable in the AX tree after the contents are dynamically replaced.
+
+Initial state:
+PASS: container.childrenCount === 2
+
+After swap:
+PASS: container.childrenCount === 13
+PASS: reachableButtons === buttonCount
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Q1Q2Q3Q4Q5Q6Q7Q8Q9Q10Q11Q12Next

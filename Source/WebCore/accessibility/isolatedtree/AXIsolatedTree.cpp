@@ -333,7 +333,16 @@ std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Re
     ASSERT(axObject->wrapper());
     auto data = createIsolatedObjectData(axObject, *this);
     Markable parentID = data.parentID;
-    m_nodeMap.set(axObject->objectID(), ParentChildrenIDs { parentID, data.childrenIDs });
+    auto iterator = m_nodeMap.find(axObject->objectID());
+    if (iterator == m_nodeMap.end())
+        m_nodeMap.set(axObject->objectID(), ParentChildrenIDs { parentID, data.childrenIDs });
+    else {
+        // We don't want to update the childrenIDs for an existing object, as |updateChildren| relies on
+        // knowing what children have changed (which are new, which are old) to decide what objects to create
+        // and destroy. If we were to update childrenIDs here, |updateChildren| would either fail to create
+        // objects for new children, and / or leak old ones. |collectNodeChangesForSubtree| has the same behavior.
+        iterator->value.parentID = parentID;
+    }
     NodeChange nodeChange { WTF::move(data), axObject->wrapper() };
 
     if (axObject->isRoot())
