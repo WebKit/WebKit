@@ -56,8 +56,11 @@ bool ScrollingTreeFixedNodeCoordinated::commitStateBeforeChildren(const Scrollin
         return false;
 
     auto& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
-    if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
+    if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
+        if (m_layer)
+            m_layer->resetScrollingTreeOwnership();
         m_layer = static_cast<CoordinatedPlatformLayer*>(fixedStateNode.layer());
+    }
 
     return ScrollingTreeFixedNode::commitStateBeforeChildren(stateNode);
 }

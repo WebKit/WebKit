@@ -366,6 +366,16 @@ RunLoop* LayerTreeHost::compositingRunLoop() const
     return m_compositor->runLoop();
 }
 
+void LayerTreeHost::willSetPositionsForScrolling()
+{
+    m_sceneState->stateLock().lock();
+}
+
+void LayerTreeHost::didSetPositionsForScrolling()
+{
+    m_sceneState->stateLock().unlock();
+}
+
 int LayerTreeHost::maxTextureSize() const
 {
     return m_compositor->maxTextureSize();

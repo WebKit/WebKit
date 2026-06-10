@@ -85,7 +85,13 @@ void ScrollingTreeCoordinated::applyLayerPositionsInternal()
     if (!rootScrollingNode)
         return;
 
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
+    if (!rootContentsLayer)
+        return;
+
+    rootContentsLayer->willSetPositionsForScrolling();
     ThreadedScrollingTree::applyLayerPositionsInternal();
+    rootContentsLayer->didSetPositionsForScrolling();
 
     if (ScrollingThread::isCurrentThread()) {
         auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();

@@ -40,6 +40,12 @@
 
 namespace WebCore {
 
+static void resetScrollingTreeOwnership(CoordinatedPlatformLayer* layer)
+{
+    if (layer)
+        layer->resetScrollingTreeOwnership();
+}
+
 Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeCoordinated::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     return adoptRef(*new ScrollingTreeFrameScrollingNodeCoordinated(scrollingTree, nodeType, nodeID));
@@ -60,26 +66,47 @@ ScrollingTreeScrollingNodeDelegateCoordinated& ScrollingTreeFrameScrollingNodeCo
 
 bool ScrollingTreeFrameScrollingNodeCoordinated::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
+    RefPtr<CoordinatedPlatformLayer> previousScrolledContentsLayer;
+    if (auto* frameStateNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNode)) {
+        if (frameStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer) && scrolledContentsLayer())
+            previousScrolledContentsLayer = static_cast<CoordinatedPlatformLayer*>(scrolledContentsLayer());
+    }
+
     if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
+
+    if (previousScrolledContentsLayer)
+        previousScrolledContentsLayer->resetScrollingTreeOwnership();
 
     if (!is<ScrollingStateFrameScrollingNode>(stateNode))
         return false;
 
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer)) {
+        resetScrollingTreeOwnership(m_rootContentsLayer.get());
         m_rootContentsLayer = static_cast<CoordinatedPlatformLayer*>(scrollingStateNode.rootContentsLayer());
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer)) {
+        resetScrollingTreeOwnership(m_counterScrollingLayer.get());
         m_counterScrollingLayer = static_cast<CoordinatedPlatformLayer*>(scrollingStateNode.counterScrollingLayer());
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer)) {
+        resetScrollingTreeOwnership(m_insetClipLayer.get());
         m_insetClipLayer = static_cast<CoordinatedPlatformLayer*>(scrollingStateNode.insetClipLayer());
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer)) {
+        resetScrollingTreeOwnership(m_contentShadowLayer.get());
         m_contentShadowLayer = static_cast<CoordinatedPlatformLayer*>(scrollingStateNode.contentShadowLayer());
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer)) {
+        resetScrollingTreeOwnership(m_headerLayer.get());
         m_headerLayer = static_cast<CoordinatedPlatformLayer*>(scrollingStateNode.headerLayer());
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
+    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::FooterLayer)) {
+        resetScrollingTreeOwnership(m_footerLayer.get());
         m_footerLayer = static_cast<CoordinatedPlatformLayer*>(scrollingStateNode.footerLayer());
+    }
 
     m_delegate->updateFromStateNode(scrollingStateNode);
     return true;

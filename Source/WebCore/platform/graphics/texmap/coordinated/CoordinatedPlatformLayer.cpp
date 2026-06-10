@@ -176,6 +176,8 @@ void CoordinatedPlatformLayer::notifyCompositionRequired()
 void CoordinatedPlatformLayer::setPosition(FloatPoint&& position)
 {
     ASSERT(m_lock.isHeld());
+    if (m_ownedByScrollingTree)
+        return;
     if (m_position == position)
         return;
 
@@ -187,12 +189,19 @@ void CoordinatedPlatformLayer::setPosition(FloatPoint&& position)
 void CoordinatedPlatformLayer::setPositionForScrolling(const FloatPoint& position, ForcePositionSync forceSync)
 {
     Locker locker { m_lock };
+    m_ownedByScrollingTree = true;
     if (m_position == position && forceSync == ForcePositionSync::No)
         return;
 
     m_position = position;
     m_pendingChanges.add(Change::Position);
     notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::resetScrollingTreeOwnership()
+{
+    Locker locker { m_lock };
+    m_ownedByScrollingTree = false;
 }
 
 const FloatPoint& CoordinatedPlatformLayer::position() const
@@ -900,6 +909,18 @@ void CoordinatedPlatformLayer::requestComposition(CompositionReason reason)
 {
     if (m_client)
         m_client->requestComposition(reason);
+}
+
+void CoordinatedPlatformLayer::willSetPositionsForScrolling()
+{
+    if (m_client)
+        m_client->willSetPositionsForScrolling();
+}
+
+void CoordinatedPlatformLayer::didSetPositionsForScrolling()
+{
+    if (m_client)
+        m_client->didSetPositionsForScrolling();
 }
 
 RunLoop* CoordinatedPlatformLayer::compositingRunLoop() const

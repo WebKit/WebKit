@@ -293,6 +293,7 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
     }
 #endif
 
+    Locker locker { m_sceneState->stateLock() };
     m_sceneState->rootLayer().flushCompositingState(reasons, m_useSkia);
     for (auto& layer : m_sceneState->committedLayers())
         layer->flushCompositingState(reasons, m_useSkia);

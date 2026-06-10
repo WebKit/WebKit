@@ -78,6 +78,8 @@ public:
         virtual bool isCompositionRequiredOrOngoing() const = 0;
         virtual void requestComposition(CompositionReason) = 0;
         virtual RunLoop* compositingRunLoop() const = 0;
+        virtual void willSetPositionsForScrolling() = 0;
+        virtual void didSetPositionsForScrolling() = 0;
         virtual int maxTextureSize() const = 0;
         virtual void willPaintTile() = 0;
         virtual void didPaintTile() = 0;
@@ -111,9 +113,12 @@ public:
     void setPosition(FloatPoint&&);
     enum class ForcePositionSync : bool { No, Yes };
     void setPositionForScrolling(const FloatPoint&, ForcePositionSync = ForcePositionSync::No);
+    void resetScrollingTreeOwnership();
     const FloatPoint& position() const;
     void setTopLeftPositionForScrolling(const FloatPoint&, ForcePositionSync = ForcePositionSync::No);
     FloatPoint topLeftPositionForScrolling();
+    void willSetPositionsForScrolling();
+    void didSetPositionsForScrolling();
     void setBoundsOrigin(const FloatPoint&);
     void setBoundsOriginForScrolling(const FloatPoint&);
     const FloatPoint& boundsOrigin() const;
@@ -287,6 +292,7 @@ private:
     Lock m_lock;
     EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_position WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_ownedByScrollingTree WTF_GUARDED_BY_LOCK(m_lock) { false };
     FloatPoint3D m_anchorPoint WTF_GUARDED_BY_LOCK(m_lock) { 0.5f, 0.5f, 0 };
     FloatSize m_size WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_boundsOrigin WTF_GUARDED_BY_LOCK(m_lock);

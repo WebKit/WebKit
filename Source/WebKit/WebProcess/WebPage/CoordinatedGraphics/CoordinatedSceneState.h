@@ -48,6 +48,8 @@ public:
 
     WebCore::CoordinatedPlatformLayer& rootLayer() const { return m_rootLayer.get(); }
 
+    Lock& stateLock() LIFETIME_BOUND { return m_stateLock; }
+
     void setRootLayerChildren(Vector<Ref<WebCore::CoordinatedPlatformLayer>>&&);
     void addLayer(WebCore::CoordinatedPlatformLayer&);
     void removeLayer(WebCore::CoordinatedPlatformLayer&);
@@ -74,6 +76,7 @@ private:
     const Ref<WebCore::CoordinatedPlatformLayer> m_rootLayer;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layers;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersToRemove;
+    Lock m_stateLock;
     Lock m_pendingLayersLock;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayers WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayersToRemove WTF_GUARDED_BY_LOCK(m_pendingLayersLock);

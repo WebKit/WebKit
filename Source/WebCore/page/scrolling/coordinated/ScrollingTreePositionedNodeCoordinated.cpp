@@ -52,8 +52,11 @@ ScrollingTreePositionedNodeCoordinated::~ScrollingTreePositionedNodeCoordinated(
 
 bool ScrollingTreePositionedNodeCoordinated::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
+        if (m_layer)
+            m_layer->resetScrollingTreeOwnership();
         m_layer = static_cast<CoordinatedPlatformLayer*>(stateNode.layer());
+    }
 
     return ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
 }

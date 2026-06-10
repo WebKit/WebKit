@@ -153,6 +153,8 @@ private:
     bool isCompositionRequiredOrOngoing() const override;
     void requestComposition(WebCore::CompositionReason) override;
     RunLoop* compositingRunLoop() const override;
+    void willSetPositionsForScrolling() override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
+    void didSetPositionsForScrolling() override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
     int maxTextureSize() const override;
     void willPaintTile() override { };
     void didPaintTile() override { };
