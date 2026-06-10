@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing H264 encoder race condition fix</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay playsInline width="320" height="240"></video>
+        <video id="video2" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas" width="320" height="240"></canvas>
+        <script src="routines.js"></script>
+        <script>
+async function getCodecFromStats(connection) {
+    const stats = await connection.getStats();
+    let codecName = null;
+    stats.forEach((stat) => {
+        if (stat.type === 'inbound-rtp' && stat.kind === 'video') {
+            const codecId = stat.codecId;
+            stats.forEach((codecStat) => {
+                if (codecStat.id === codecId) {
+                    codecName = codecStat.mimeType;
+                }
+            });
+        }
+    });
+    return codecName;
+}
+
+function setupTransceiver(transceiver)
+{
+    // Set codec preferences: H264 first, VP8 as fallback
+    const capabilities = RTCRtpSender.getCapabilities('video');
+    const h264Codecs = capabilities.codecs.filter(codec => codec.mimeType === 'video/H264');
+    const vp8Codecs = capabilities.codecs.filter(codec => codec.mimeType === 'video/VP8');
+    transceiver.setCodecPreferences([...h264Codecs, ...vp8Codecs]);
+}
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.clearWebRTCCodecsConnection();
+
+    const localStream1 = await navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}});
+    const localStream2 = await navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}});
+
+    const receivingConnection = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(localStream1.getVideoTracks()[0], localStream1);
+            firstConnection.addTrack(localStream2.getVideoTracks()[0], localStream2);
+            for (const transceiver of firstConnection.getTransceivers())
+                setupTransceiver(transceiver);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                if (!video1.srcObject) {
+                    video1.srcObject = trackEvent.streams[0];
+                    return;
+                }
+                video2.srcObject = trackEvent.streams[0];
+                resolve(secondConnection);
+            };
+        });
+        setTimeout(() => reject("Test timed out for setting up connections"), 5000);
+    });
+
+    await video1.play();
+    await video2.play();
+
+    const codec = await getCodecFromStats(receivingConnection);
+    assert_true(codec.includes('H264'), 'First connection should be using H264 codec, not VP8 fallback');
+
+    localStream1.getTracks().forEach(track => track.stop());
+    localStream2.getTracks().forEach(track => track.stop());
+}, "Multiple tracks H264 encoding");
+        </script>
+    </body>
+</html>

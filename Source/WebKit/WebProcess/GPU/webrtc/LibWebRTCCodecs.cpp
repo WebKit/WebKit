@@ -48,6 +48,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
@@ -571,7 +572,16 @@ static inline webrtc::VideoCodecType toWebRTCCodecType(WebCore::VideoCodecType t
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(WebCore::VideoCodecType type, const std::map<std::string, std::string>& parameters)
 {
-    return createEncoderInternal(type, { }, parameters, true, true, VideoEncoderScalabilityMode::L1T1, [](auto*) { });
+    // Should be called from libwebrtc encoding thread.
+    ASSERT(!isMainRunLoop());
+    ASSERT(!workQueue().isCurrent());
+
+    BinarySemaphore semaphore;
+    auto* encoder = createEncoderInternal(type, { }, parameters, true, true, VideoEncoderScalabilityMode::L1T1, [&semaphore](auto*) {
+        semaphore.signal();
+    });
+    semaphore.wait();
+    return encoder;
 }
 
 #if ENABLE(WEB_CODECS)
@@ -857,12 +867,15 @@ CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t heigh
     return m_pixelBufferPool.get();
 }
 
-void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void LibWebRTCCodecs::clearConnection()
 {
     ASSERT(isMainRunLoop());
 
     Locker locker { m_connectionLock };
     RefPtr connection = std::exchange(m_connection, nullptr);
+    if (!connection)
+        return;
+
     connection->removeWorkQueueMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName());
     if (!m_needsGPUProcessConnection)
         return;

@@ -119,6 +119,8 @@ public:
     };
     virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&);
 
+    virtual void clearCodecsConnectionForTesting() { }
+
 protected:
     LibWebRTCProvider();
 
