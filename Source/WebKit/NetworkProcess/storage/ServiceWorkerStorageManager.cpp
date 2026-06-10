@@ -75,4 +75,12 @@ std::optional<Vector<WebCore::ServiceWorkerScripts>> ServiceWorkerStorageManager
     return std::nullopt;
 }
 
+std::optional<WebCore::ServiceWorkerScripts> ServiceWorkerStorageManager::retrieveWorkerScripts(WebCore::ServiceWorkerIdentifier identifier, const WebCore::ServiceWorkerRegistrationKey& registrationKey, const URL& mainScriptURL, const Vector<URL>& importedScriptURLs)
+{
+    if (auto database = ensureDatabase())
+        return database->retrieveWorkerScripts(identifier, registrationKey, mainScriptURL, importedScriptURLs);
+
+    return std::nullopt;
+}
+
 } // namespace WebKit

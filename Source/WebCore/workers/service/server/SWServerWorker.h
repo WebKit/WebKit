@@ -88,7 +88,7 @@ public:
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
     RegistrableDomain firstPartyForCookies() const { return m_registrationKey.firstPartyForCookies(); }
     const URL& scriptURL() const { return m_data.scriptURL; }
-    const ScriptBuffer& script() const { return m_script; }
+    const ScriptBuffer& script() const { ASSERT(!m_needsScriptLoading); return m_script; }
     const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
     WorkerType type() const { return m_data.type; }
 
@@ -112,6 +112,11 @@ public:
     void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
     void didSaveScriptsToDisk(ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
+    void setWorkerScripts(ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
+
+    bool needsScriptLoading() const { return m_needsScriptLoading; }
+    void setNeedsScriptLoading() { m_needsScriptLoading = true; }
+    void didFailToLoadWorkerScripts() { m_needsScriptLoading = false; }
 
     WEBCORE_EXPORT void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
@@ -206,6 +211,7 @@ private:
     bool m_isActivateEventFired { false };
     ApproximateTime m_lastNeedRunningTime;
     Vector<ServiceWorkerRoute> m_routes;
+    bool m_needsScriptLoading { false };
 };
 
 } // namespace WebCore

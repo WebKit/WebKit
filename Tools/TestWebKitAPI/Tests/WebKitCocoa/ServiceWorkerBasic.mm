@@ -411,6 +411,76 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 </script>
 )SWRESOURCE"_s;
 
+static constexpr auto mainRegisteringWorkerInScopeBytes = R"SWRESOURCE(
+<script>
+try {
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.register('/scope/sw.js').then(function(reg) {
+    if (reg.active) {
+        log("FAIL: Registration already has an active worker");
+        return;
+    }
+    worker = reg.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            log("PASS: Registration was successful and service worker was activated");
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+</script>
+)SWRESOURCE"_s;
+
+// This page is loaded at a path OUTSIDE the service worker's scope so that the navigation does
+// not trigger runServiceWorkerIfNecessary (which would load scripts before the update check).
+// It finds the existing registration via getRegistrations(), calls update() to force an update
+// check, and verifies no new worker is installed (meaning scripts were lazy-loaded from disk and
+// matched the fetched script).
+static constexpr auto mainUpdatingRestoredWorkerBytes = R"SWRESOURCE(
+<script>
+try {
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    if (registrations.length === 0) {
+        log("FAIL: No registrations found");
+        return;
+    }
+    var reg = registrations[0];
+    if (!reg.active) {
+        log("FAIL: Registration has no active worker");
+        return;
+    }
+    reg.update().then(function() {
+        if (reg.installing) {
+            log("FAIL: Update installed a new worker, scripts should have matched");
+        } else if (reg.active) {
+            log("PASS: Update completed without installing a new worker");
+        } else {
+            log("FAIL: No active worker after update");
+        }
+    }).catch(function(error) {
+        log("FAIL: Update failed: " + error);
+    });
+}).catch(function(error) {
+    log("FAIL: getRegistrations failed: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+</script>
+)SWRESOURCE"_s;
+
 static constexpr auto mainBytesForSessionIDTest = R"SWRESOURCE(
 <script>
 
@@ -668,6 +738,83 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration already has an active worker"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request("/second.html"_s)];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+// This test verifies that the lazy script loading path in SWServerJobQueue::scriptFetchFinished()
+// works correctly. When service worker registrations are restored from disk, scripts are not loaded
+// during import. When an update check triggers scriptFetchFinished(), the existing worker's scripts
+// must be loaded from disk before the byte-for-byte comparison can happen. After scripts are loaded
+// and the comparison succeeds (same script), no new worker should be installed.
+//
+// Key details:
+// - The network process is terminated between phases to force a fresh import from disk
+//   (otherwise the SWServer retains registrations in memory with scripts already loaded).
+// - The SW is registered under /scope/ so the phase 2 page (at /second.html) is outside the scope,
+//   preventing the navigation from triggering runServiceWorkerIfNecessary (which would load scripts
+//   before the update check).
+// - Phase 2 uses registration.update() instead of register() to force an actual update check
+//   (register() with the same script URL takes a "directly reusable" fast path that skips the
+//   update check entirely).
+TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/scope/first.html"_s, { mainRegisteringWorkerInScopeBytes } },
+        { "/second.html"_s, { mainUpdatingRestoredWorkerBytes } },
+        { "/scope/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+    });
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    // Phase 1: Register a service worker under /scope/ and wait for it to activate.
+    [webView loadRequest:server.request("/scope/first.html"_s)];
+
+    TestWebKitAPI::Util::run(&done);
+
+    // Flush registrations to disk and terminate the network process so that Phase 2 will
+    // import registrations from disk (with lazy script loading) in a fresh network process.
+    [[WKWebsiteDataStore defaultDataStore] _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    done = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+
+    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+
+    // Phase 2: Create a new web view, restoring registrations from disk with lazy script loading.
+    // Navigate to /second.html which is OUTSIDE the SW scope (/scope/) so the navigation does not
+    // start the worker. The page calls registration.update() to trigger an update check which calls
+    // scriptFetchFinished(). Since the worker was restored with lazy scripts (needsScriptLoading()
+    // is true), scripts are loaded from disk before the comparison. After comparison succeeds (same
+    // script), no new worker is installed.
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Update completed without installing a new worker"]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

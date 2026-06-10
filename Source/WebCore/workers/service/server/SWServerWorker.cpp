@@ -96,7 +96,7 @@ ServiceWorkerContextData SWServerWorker::contextData() const
     RefPtr registration = m_registration.get();
     ASSERT(registration);
 
-    return { std::nullopt, registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap, registration->serviceWorkerPageIdentifier(), registration->navigationPreloadState() };
+    return { std::nullopt, registration->data(), m_data.identifier, script(), m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap, registration->serviceWorkerPageIdentifier(), registration->navigationPreloadState() };
 }
 
 void SWServerWorker::updateAppInitiatedValue(LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
@@ -297,6 +297,18 @@ void SWServerWorker::didSaveScriptsToDisk(ScriptBuffer&& mainScript, MemoryCompa
         ASSERT(it->value.script == pair.value); // Do a memcmp to make sure the scripts are identical.
         it->value.script = WTF::move(pair.value);
     }
+}
+
+void SWServerWorker::setWorkerScripts(ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts)
+{
+    ASSERT(m_needsScriptLoading);
+    m_script = WTF::move(mainScript);
+    for (auto& [url, script] : importedScripts) {
+        auto it = m_scriptResourceMap.find(url);
+        if (it != m_scriptResourceMap.end())
+            it->value.script = WTF::move(script);
+    }
+    m_needsScriptLoading = false;
 }
 
 void SWServerWorker::skipWaiting()

@@ -39,7 +39,7 @@ class SWServerWorker;
 class ServiceWorkerJob;
 struct WorkerFetchResult;
 
-class SWServerJobQueue final : public CanMakeCheckedPtr<SWServerJobQueue> {
+class SWServerJobQueue final : public CanMakeCheckedPtr<SWServerJobQueue>, public CanMakeWeakPtr<SWServerJobQueue> {
     WTF_MAKE_TZONE_ALLOCATED(SWServerJobQueue);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SWServerJobQueue);
 public:

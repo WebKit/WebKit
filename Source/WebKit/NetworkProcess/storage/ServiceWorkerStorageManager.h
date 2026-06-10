@@ -40,6 +40,7 @@ public:
     void clearAllRegistrations();
     std::optional<Vector<WebCore::ServiceWorkerContextData>> importRegistrations();
     std::optional<Vector<WebCore::ServiceWorkerScripts>> updateRegistrations(const Vector<WebCore::ServiceWorkerContextData>&, const Vector<WebCore::ServiceWorkerRegistrationKey>&);
+    std::optional<WebCore::ServiceWorkerScripts> retrieveWorkerScripts(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const URL& mainScriptURL, const Vector<URL>& importedScriptURLs);
 
 private:
     WebCore::SWRegistrationDatabase* ensureDatabase();

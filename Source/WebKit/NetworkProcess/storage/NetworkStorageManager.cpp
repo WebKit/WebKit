@@ -2274,6 +2274,28 @@ void NetworkStorageManager::updateServiceWorkerRegistrations(Vector<WebCore::Ser
     });
 }
 
+void NetworkStorageManager::retrieveServiceWorkerScripts(WebCore::ServiceWorkerIdentifier identifier, const WebCore::ServiceWorkerRegistrationKey& registrationKey, const URL& mainScriptURL, Vector<URL>&& importedScriptURLs, CompletionHandler<void(std::optional<WebCore::ServiceWorkerScripts>&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_closed)
+        return completionHandler(std::nullopt);
+
+    workQueue().dispatchWithQOS([this, protectedThis = Ref { *this }, identifier, registrationKey = crossThreadCopy(registrationKey), mainScriptURL = crossThreadCopy(mainScriptURL), importedScriptURLs = crossThreadCopy(WTF::move(importedScriptURLs)), completionHandler = WTF::move(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
+        std::optional<WebCore::ServiceWorkerScripts> result;
+        if (m_sharedServiceWorkerStorageManager)
+            result = m_sharedServiceWorkerStorageManager->retrieveWorkerScripts(identifier, registrationKey, mainScriptURL, importedScriptURLs);
+        else
+            result = originStorageManager(registrationKey.clientOrigin()).serviceWorkerStorageManager().retrieveWorkerScripts(identifier, registrationKey, mainScriptURL, importedScriptURLs);
+
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), result = crossThreadCopy(WTF::move(result)), completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(WTF::move(result));
+        });
+    }, WorkQueue::QOS::UserInitiated);
+}
+
 void NetworkStorageManager::migrateServiceWorkerRegistrationsToOrigins()
 {
     ASSERT(!RunLoop::isMain());
