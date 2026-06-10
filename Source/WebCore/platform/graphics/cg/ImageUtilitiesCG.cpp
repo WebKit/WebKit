@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageUtilities.h"
 
+#include "BitmapImage.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -167,6 +168,34 @@ Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailable
         sizes.append(imageDecoder->frameSizeAtIndex(index));
 
     return std::make_pair(WTF::move(uti), WTF::move(sizes));
+}
+
+Expected<Vector<std::pair<String, float>>, ImageDecodingError> imageMetadataFromImageData(std::span<const uint8_t> data)
+{
+    Ref buffer = SharedBuffer::create(data);
+    Ref bitmapImage = BitmapImage::create();
+    auto encodedDataStatus = bitmapImage->setData(buffer.get(), true);
+    if (encodedDataStatus == EncodedDataStatus::Error)
+        return makeUnexpected(ImageDecodingError::BadData);
+
+    auto uti = bitmapImage->uti();
+    if (!isSupportedImageType(uti))
+        return makeUnexpected(ImageDecodingError::UnsupportedType);
+
+    Vector<std::pair<String, float>> metadata;
+
+    auto size = bitmapImage->size();
+    metadata.append({ kCGImagePropertyPixelWidth, size.width() });
+    metadata.append({ kCGImagePropertyPixelHeight, size.height() });
+
+    auto density = bitmapImage->density();
+    metadata.append({ kCGImagePropertyDPIWidth, density.width() });
+    metadata.append({ kCGImagePropertyDPIHeight, density.height() });
+
+    auto frameCount = bitmapImage->frameCount();
+    metadata.append({ kCGImagePropertyImageCount, frameCount });
+
+    return WTF::move(metadata);
 }
 
 static RefPtr<NativeImage> tryCreateNativeImageFromBitmapImageData(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize)

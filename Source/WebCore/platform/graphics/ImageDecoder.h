@@ -27,6 +27,7 @@
 
 #include <WebCore/DecodingOptions.h>
 #include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageResolution.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
@@ -108,6 +109,7 @@ public:
 #endif
 
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
+    virtual FloatSize frameDensityAtIndex(size_t) const { return { ImageResolution::DefaultResolution, ImageResolution::DefaultResolution }; }
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
     virtual ImageOrientation frameOrientationAtIndex(size_t) const { return ImageOrientation::Orientation::None; }
     virtual std::optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const { return std::nullopt; }

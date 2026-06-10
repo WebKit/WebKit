@@ -272,6 +272,7 @@
     [Legacy] StructureParam WebCore::CustomFontCreationData.fontFaceData
 
     [NotSentFromWebContent] MessageParam WebPage.GetInformationFromImageData imageData
+    [NotSentFromWebContent] MessageParam WebPage.GetImageMetadata imageData
     [NotSentFromWebContent] MessageParam WebPage.BindRemoteAccessibilityFrames dataToken
     [NotSentFromWebContent] MessageParamReply WebPageProxy.BindRemoteAccessibilityFrames token
     [NotSentFromWebContent] MessageParamReply WebPageProxy.LoadSynchronousURLSchemeTask data

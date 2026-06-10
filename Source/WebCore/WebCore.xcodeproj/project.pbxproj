@@ -5634,7 +5634,7 @@
 		C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902514327D4F00685849 /* JSMutationObserver.h */; };
 		C9D467051E60C465008195FB /* AutoplayEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C9D467041E60C3EB008195FB /* AutoplayEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA3344082D16174C007473A1 /* SpatialBackdropSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3344072D16174C007473A1 /* SpatialBackdropSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CA3A4AAF25416E40006CDAE2 /* ImageResolution.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3A4AAD25416E3E006CDAE2 /* ImageResolution.h */; };
+		CA3A4AAF25416E40006CDAE2 /* ImageResolution.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3A4AAD25416E3E006CDAE2 /* ImageResolution.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA6C1530220B98CC0055CBFC /* JSValueInWrappedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA7E9B4924361DC5004E89F6 /* ContentfulPaintChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = CA7E9B4724361DC5004E89F6 /* ContentfulPaintChecker.h */; };

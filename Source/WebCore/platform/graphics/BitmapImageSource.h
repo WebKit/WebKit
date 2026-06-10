@@ -156,6 +156,7 @@ private:
     EncodedDataStatus encodedDataStatus() const { return m_descriptor.encodedDataStatus(); }
     IntSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_descriptor.size(orientation); }
     IntSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_descriptor.sourceSize(orientation); }
+    FloatSize density() const final { return m_descriptor.density(); }
     std::optional<IntSize> densityCorrectedSize() const { return m_descriptor.densityCorrectedSize(); }
     bool hasDensityCorrectedSize() const final { return densityCorrectedSize().has_value(); }
     ImageOrientation orientation() const final { return m_descriptor.orientation(); }

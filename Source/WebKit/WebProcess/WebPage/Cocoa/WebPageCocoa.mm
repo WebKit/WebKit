@@ -1933,6 +1933,14 @@ void WebPage::getInformationFromImageData(const Vector<uint8_t>& data, Completio
     completionHandler(utiAndAvailableSizesFromImageData(data.span()));
 }
 
+void WebPage::getImageMetadata(const Vector<uint8_t>& data, CompletionHandler<void(Expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+{
+    if (m_isClosed)
+        return completionHandler(makeUnexpected(ImageDecodingError::Internal));
+
+    completionHandler(imageMetadataFromImageData(data.span()));
+}
+
 void WebPage::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(const std::optional<WebCore::ElementContext>&)>&& completionHandler)
 {
     // Inserting the placeholder may run JavaScript, which can do anything, including frame destruction.

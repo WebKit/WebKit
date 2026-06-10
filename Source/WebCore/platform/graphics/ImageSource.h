@@ -27,6 +27,7 @@
 
 #include <WebCore/ImageFrame.h>
 #include <WebCore/ImageOrientation.h>
+#include <WebCore/ImageResolution.h>
 #include <WebCore/ImageTypes.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -78,6 +79,7 @@ public:
     // Image Metadata
     virtual IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
     virtual IntSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return size(orientation); }
+    virtual FloatSize density() const { return { ImageResolution::DefaultResolution, ImageResolution::DefaultResolution }; }
     virtual bool hasDensityCorrectedSize() const { return false; }
     virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::None; }
     virtual unsigned primaryFrameIndex() const { return 0; }

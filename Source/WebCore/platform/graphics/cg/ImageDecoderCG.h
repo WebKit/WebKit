@@ -62,6 +62,7 @@ public:
     std::optional<IntPoint> hotSpot() const final;
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
+    FloatSize frameDensityAtIndex(size_t) const final;
     bool frameIsCompleteAtIndex(size_t) const final;
     ImageOrientation frameOrientationAtIndex(size_t) const final;
     std::optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const final;

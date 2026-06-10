@@ -138,6 +138,11 @@ IntSize BitmapImageDescriptor::sourceSize(ImageOrientation orientation) const
     return orientation.usesWidthAsHeight() ? size.transposedSize() : size;
 }
 
+FloatSize BitmapImageDescriptor::density() const
+{
+    return primaryImageFrameMetadata(m_density, CachedFlag::Density, &ImageFrame::density);
+}
+
 std::optional<IntSize> BitmapImageDescriptor::densityCorrectedSize() const
 {
     return primaryImageFrameMetadata(m_densityCorrectedSize, CachedFlag::DensityCorrectedSize, &ImageFrame::densityCorrectedSize, SubsamplingLevel::Default);

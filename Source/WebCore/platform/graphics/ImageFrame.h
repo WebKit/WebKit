@@ -68,6 +68,9 @@ public:
 
     unsigned sizeInBytes() const { return (size().area() * sizeof(uint32_t)).value(); }
 
+    void setDensity(const FloatSize& density) { m_density = density; }
+    FloatSize density() const { return m_density; }
+
     void setDensityCorrectedSize(const IntSize& size) { m_densityCorrectedSize = size; }
     std::optional<IntSize> densityCorrectedSize() const { return m_densityCorrectedSize; }
 
@@ -144,6 +147,7 @@ private:
     DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
 
     IntSize m_size;
+    FloatSize m_density;
     std::optional<IntSize> m_densityCorrectedSize;
 
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };

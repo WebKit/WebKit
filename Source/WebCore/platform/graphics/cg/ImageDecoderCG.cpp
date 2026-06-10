@@ -30,10 +30,6 @@
 
 #include "FourCC.h"
 #include "ImageFrame.h"
-#include "ImageOrientation.h"
-#include "ImageResolution.h"
-#include "IntPoint.h"
-#include "IntSize.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "ProcessCapabilities.h"
@@ -237,18 +233,26 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     return ImageOrientation::fromEXIFValue(exifValue);
 }
 
-static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
+static FloatSize frameDensityFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
     auto resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIWidth);
     auto resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIHeight);
     if (!resolutionXProperty || !resolutionYProperty)
-        return false;
+        return { ImageResolution::DefaultResolution, ImageResolution::DefaultResolution };
 
-    float resolutionX, resolutionY;
-    return CFNumberGetValue(resolutionXProperty, kCFNumberFloat32Type, &resolutionX)
-        && CFNumberGetValue(resolutionYProperty, kCFNumberFloat32Type, &resolutionY)
-        && (resolutionX != ImageResolution::DefaultResolution || resolutionY != ImageResolution::DefaultResolution);
+    float resolutionX = 0;
+    float resolutionY = 0;
+    CFNumberGetValue(resolutionXProperty, kCFNumberFloat32Type, &resolutionX);
+    CFNumberGetValue(resolutionYProperty, kCFNumberFloat32Type, &resolutionY);
+
+    return { resolutionX, resolutionY };
+}
+
+static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
+{
+    auto density = frameDensityFromProperties(imageProperties);
+    return density.width() != ImageResolution::DefaultResolution || density.height() != ImageResolution::DefaultResolution;
 }
 
 static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
@@ -513,6 +517,12 @@ IntSize ImageDecoderCG::frameSizeAtIndex(size_t index, SubsamplingLevel subsampl
     return frameSizeFromProperties(properties.get());
 }
 
+FloatSize ImageDecoderCG::frameDensityAtIndex(size_t index) const
+{
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
+    return frameDensityFromProperties(properties.get());
+}
+
 bool ImageDecoderCG::frameIsCompleteAtIndex(size_t index) const
 {
     ASSERT(frameCount());
@@ -599,6 +609,8 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
         frame.m_size = frame.nativeImage(options.shouldDecodeToHDR())->size();
     } else
         frame.m_size = frameSizeFromProperties(properties.get());
+
+    frame.m_density = frameDensityFromProperties(properties.get());
 
     if (!mayHaveDensityCorrectedSize(properties.get()))
         frame.m_densityCorrectedSize = std::nullopt;
