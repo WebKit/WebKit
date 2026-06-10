@@ -544,4 +544,10 @@ RouterSource SWServerWorker::getRouterSource(const FetchOptions& options, const 
     return RouterSourceEnum::FetchEvent;
 }
 
+bool SWServerWorker::shouldPersistToDisk() const
+{
+    // Do not persist service workers backing browser extensions to disk.
+    return m_registration && !m_registration->serviceWorkerPageIdentifier();
+}
+
 } // namespace WebCore

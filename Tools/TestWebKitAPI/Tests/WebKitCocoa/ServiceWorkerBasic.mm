@@ -3584,6 +3584,65 @@ TEST(ServiceWorker, ExtensionServiceWorkerWithModules)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(ServiceWorker, ExtensionServiceWorkerNotPersistedToDisk)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    RetainPtr swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ExtensionSWNotPersisted/" stringByExpandingTildeInPath]];
+    [[NSFileManager defaultManager] removeItemAtURL:swPath.get() error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtURL:swPath.get() withIntermediateDirectories:YES attributes:nil error:nil];
+
+    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
+    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath.get();
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    RetainPtr schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/other.html" toData:"foo"];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:"// Extension service worker"];
+
+    WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
+
+    RetainPtr otherViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    otherViewConfiguration.get().processPool = webViewConfiguration.processPool;
+    [otherViewConfiguration setWebsiteDataStore:dataStore.get()];
+    [otherViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
+    RetainPtr otherWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:otherViewConfiguration.get()]);
+    [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"sw-ext://ABC/other.html"]]];
+    [otherWebView _test_waitForDidFinishNavigation];
+
+    webViewConfiguration.websiteDataStore = dataStore.get();
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    webViewConfiguration._relatedWebView = otherWebView.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+
+    done = false;
+    didStartURLSchemeTask = false;
+    [webView _loadServiceWorker:[NSURL URLWithString:@"sw-ext://ABC/sw.js"] usingModules:NO completionHandler:^(BOOL success) {
+        EXPECT_TRUE(success);
+        EXPECT_TRUE(didStartURLSchemeTask);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Wait for the service worker to finish activating.
+    while (!webViewConfiguration.processPool._serviceWorkerProcessCount)
+        TestWebKitAPI::Util::spinRunLoop(10);
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    // Flush service worker registrations to disk.
+    done = false;
+    [dataStore _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Extension service workers should not be persisted to disk.
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:[swPath URLByAppendingPathComponent:serviceWorkerRegistrationFilename].path]);
+}
+
 TEST(ServiceWorker, ExtensionServiceWorkerFailureBadScript)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];

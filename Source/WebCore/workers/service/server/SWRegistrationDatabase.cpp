@@ -465,6 +465,8 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
         }
         CheckedPtr statement = sqlStatement.get();
 
+        ASSERT_WITH_MESSAGE(!data.serviceWorkerPageIdentifier, "We should not be saving extensions service workers to disk");
+
         WTF::Persistence::Encoder cspEncoder;
         cspEncoder << data.contentSecurityPolicy;
         WTF::Persistence::Encoder coepEncoder;

@@ -236,7 +236,7 @@ public:
     WEBCORE_EXPORT void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
     void registrationStoreImportComplete();
     void registrationStoreDatabaseFailedToOpen();
-    void storeRegistrationForWorker(SWServerWorker&);
+    void storeRegistrationForWorkerIfNecessary(SWServerWorker&);
     void loadWorkerScripts(const SWServerWorker&, CompletionHandler<void(bool)>&&);
 
     WEBCORE_EXPORT void getOriginsWithRegistrations(Function<void(const HashSet<SecurityOriginData>&)>&&);

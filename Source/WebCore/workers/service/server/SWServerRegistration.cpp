@@ -398,7 +398,7 @@ std::optional<ExceptionData> SWServerRegistration::enableNavigationPreload()
         return ExceptionData { ExceptionCode::InvalidStateError, "No active worker"_s };
 
     m_preloadState.enabled = true;
-    protectedServer()->storeRegistrationForWorker(*activeWorker);
+    protectedServer()->storeRegistrationForWorkerIfNecessary(*activeWorker);
     return { };
 }
 
@@ -410,7 +410,7 @@ std::optional<ExceptionData> SWServerRegistration::disableNavigationPreload()
         return ExceptionData { ExceptionCode::InvalidStateError, "No active worker"_s };
 
     m_preloadState.enabled = false;
-    protectedServer()->storeRegistrationForWorker(*activeWorker);
+    protectedServer()->storeRegistrationForWorkerIfNecessary(*activeWorker);
     return { };
 }
 
@@ -425,7 +425,7 @@ std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderVal
         return ExceptionData { ExceptionCode::InvalidStateError, "No active worker"_s };
 
     m_preloadState.headerValue = WTF::move(headerValue);
-    protectedServer()->storeRegistrationForWorker(*activeWorker);
+    protectedServer()->storeRegistrationForWorkerIfNecessary(*activeWorker);
     return { };
 }
 
