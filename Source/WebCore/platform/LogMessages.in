@@ -24,6 +24,7 @@
 #
 # Identifier, Format string, Parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc) 
 
+CachedRawResourceRedirectReceived, "CachedRawResource::redirectReceived", (), DEFAULT, Network
 DocumentLoaderAttachToFrame, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::attachToFrame", (uint64_t, uint64_t, int), DEFAULT, Network
 DocumentLoaderDetachFromFrame, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::detachFromFrame", (uint64_t, uint64_t, int), DEFAULT, Network
 DocumentLoaderStartLoadingMainResourceEmptyDocument, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::startLoadingMainResource: Returning empty document", (uint64_t, uint64_t, int), DEFAULT, Network

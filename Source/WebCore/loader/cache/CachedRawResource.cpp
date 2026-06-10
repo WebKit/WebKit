@@ -38,7 +38,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringView.h>
 
-#define RELEASE_LOG_ALWAYS(fmt, ...) RELEASE_LOG(Network, "%p - CachedRawResource::" fmt, this, ##__VA_ARGS__)
+#define CACHEDRAWRESOURCE_RELEASE_LOG(formatString, ...) RELEASE_LOG_FORWARDABLE(Network, CachedRawResource##formatString, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -218,7 +218,7 @@ static void iterateClients(CachedResourceClientWalker<CachedRawResourceClient>&&
 
 void CachedRawResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    RELEASE_LOG_ALWAYS("redirectReceived:");
+    CACHEDRAWRESOURCE_RELEASE_LOG(RedirectReceived);
     if (response.isNull())
         CachedResource::redirectReceived(WTF::move(request), response, WTF::move(completionHandler));
     else {
