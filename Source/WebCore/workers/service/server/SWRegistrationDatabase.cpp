@@ -560,10 +560,12 @@ std::optional<ServiceWorkerScripts> SWRegistrationDatabase::retrieveWorkerScript
 
     MemoryCompactRobinHoodHashMap<URL, ScriptBuffer> importedScripts;
     for (auto& scriptURL : importedScriptURLs) {
-        if (auto script = scriptStorage().retrieve(registrationKey, scriptURL))
-            importedScripts.add(scriptURL, WTF::move(script));
-        else
+        auto script = scriptStorage().retrieve(registrationKey, scriptURL);
+        if (!script) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::retrieveWorkerScripts failed to retrieve imported script from disk for service worker %" PRIu64, identifier.toUInt64());
+            return std::nullopt;
+        }
+        importedScripts.add(scriptURL, WTF::move(script));
     }
 
     return ServiceWorkerScripts { identifier, WTF::move(mainScript), WTF::move(importedScripts) };
