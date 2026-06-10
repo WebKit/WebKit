@@ -35,7 +35,6 @@
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTaskHandler.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -54,7 +53,7 @@ class IDBServer final : public UniqueIDBDatabaseManager {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBServer);
 public:
     using SpaceRequester = Function<bool(const ClientOrigin&, uint64_t spaceRequested)>;
-    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, SpaceRequester&&, Lock&);
+    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, SpaceRequester&&);
     WEBCORE_EXPORT ~IDBServer();
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
@@ -127,8 +126,6 @@ private:
     String m_databaseDirectoryPath;
 
     SpaceRequester m_spaceRequester;
-
-    Lock& m_lock;
 };
 
 } // namespace IDBServer

@@ -66,7 +66,6 @@ public:
 
     WebCore::IDBClient::IDBConnectionToServer& connectionToServer() const;
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient() const;
-    WebCore::IDBServer::IDBServer& server() { return *m_server; }
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
@@ -135,8 +134,7 @@ public:
 private:
     InProcessIDBServer(PAL::SessionID, const String& databaseDirectoryPath = nullString());
 
-    Lock m_serverLock;
-    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
+    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
     RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
     const Ref<WTF::WorkQueue> m_queue;
