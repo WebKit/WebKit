@@ -1226,7 +1226,7 @@ TEST(WKHTTPCookieStore, SetCookies)
 }
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
+TEST(WKHTTPCookieStore, PartitionedCookieShouldHavePartitionProperty)
 {
     using namespace TestWebKitAPI;
 
@@ -1236,8 +1236,10 @@ TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
     [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
-    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
 
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
@@ -1255,12 +1257,49 @@ TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
         EXPECT_WK_STREQ(cookies[0].value, @"value");
         EXPECT_WK_STREQ(cookies[0].properties[NSHTTPCookieName], @"test");
         EXPECT_WK_STREQ(cookies[0].properties[NSHTTPCookieValue], @"value");
-        EXPECT_NULL(cookies[0].properties[@"StoragePartition"]);
+        EXPECT_WK_STREQ(cookies[0].properties[@"StoragePartition"], @"https://example.com");
         gotCookieCallback = true;
     }];
     Util::run(&gotCookieCallback);
 }
-#endif
+
+TEST(WKHTTPCookieStore, DeletePartitionedCookie)
+{
+    using namespace TestWebKitAPI;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s }, { "Set-Cookie"_s, "test=value;Secure;SameSite=None;Partitioned"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    [delegate waitForDidFinishNavigation];
+
+    __block bool done { false };
+    [viewConfiguration.get().websiteDataStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ(cookies.count, 1u);
+        [viewConfiguration.get().websiteDataStore.httpCookieStore deleteCookie:cookies[0] completionHandler:^{
+            [viewConfiguration.get().websiteDataStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+                EXPECT_EQ(cookies.count, 0u);
+                done = true;
+            }];
+        }];
+    }];
+    Util::run(&done);
+}
+#endif // ENABLE(OPT_IN_PARTITIONED_COOKIES)
 
 TEST(WKHTTPCookieStore, SameSiteStrictCookieNotSentOnCrossSiteNavigation)
 {

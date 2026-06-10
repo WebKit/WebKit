@@ -640,6 +640,12 @@ bool IOSApplication::isHimalaya()
     return isHimalayaApp;
 }
 
+bool IOSApplication::isTableau()
+{
+    static bool isTableau = applicationBundleIdentifier().startsWith("com.tableausoftware"_s);
+    return isTableau;
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WTF

@@ -37,8 +37,10 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if PLATFORM(IOS_FAMILY)
 static NSHTTPCookie *clearCookiePartitionPropertyIfNeeded(NSHTTPCookie *cookie, bool isCookiePartitioningEnabled)
 {
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
@@ -59,11 +61,19 @@ static NSHTTPCookie *clearCookiePartitionPropertyIfNeeded(NSHTTPCookie *cookie, 
     return cookie;
 #endif
 }
+#endif
 
 static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Cookie>& coreCookies, bool isCookiePartitioningEnabled)
 {
     return createNSArray(coreCookies, [isCookiePartitioningEnabled] (auto& cookie) -> NSHTTPCookie * {
-        return clearCookiePartitionPropertyIfNeeded(cookie.createNSHTTPCookie().autorelease(), isCookiePartitioningEnabled);
+#if PLATFORM(IOS_FAMILY)
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExposePartitionFromWKHTTPCookieStoreAPI) && WTF::IOSApplication::isTableau())
+            return clearCookiePartitionPropertyIfNeeded(cookie.createNSHTTPCookie().autorelease(), isCookiePartitioningEnabled);
+#else
+        UNUSED_PARAM(isCookiePartitioningEnabled);
+#endif
+
+        return cookie.createNSHTTPCookie().autorelease();
     }).autorelease();
 }
 
