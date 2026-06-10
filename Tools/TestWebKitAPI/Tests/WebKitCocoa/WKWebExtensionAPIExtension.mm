@@ -29,6 +29,22 @@
 
 #import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+
+static bool didProcessCrash = false;
+
+@interface CrashDetectionDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation CrashDetectionDelegate
+
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
+{
+    didProcessCrash = true;
+}
+@end
 
 namespace TestWebKitAPI {
 
@@ -410,6 +426,37 @@ TEST(WKWebExtensionAPIExtension, GetViewsExcludesServiceWorkerBackground)
     Util::loadAndRunExtension(extensionServiceWorkerManifest, @{
         @"background.js": backgroundScript,
     });
+}
+
+TEST(WKWebExtensionAPIExtension, HandlePendingExtensionTasksWhileStopped)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function doTest() {",
+        @"  browser.extension.isAllowedIncognitoAccess(() => {",
+        @"    Promise.resolve().then(() => { })",
+        @"    doTest()",
+        @"  })",
+        @"}",
+        @"doTest()",
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = Util::loadExtension(extensionServiceWorkerManifest, @{
+        @"background.js": backgroundScript,
+    });
+    [extension run];
+
+    auto *view = [extension context]._backgroundWebView;
+    EXPECT_TRUE(!!view);
+
+    didProcessCrash = false;
+    auto navigationDelegate = adoptNS([[CrashDetectionDelegate alloc] init]);
+    [view setNavigationDelegate:navigationDelegate.get()];
+
+    [[extension context].webViewConfiguration.processPool _terminateServiceWorkers];
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(didProcessCrash);
 }
 
 TEST(WKWebExtensionAPIExtension, InIncognitoContext)

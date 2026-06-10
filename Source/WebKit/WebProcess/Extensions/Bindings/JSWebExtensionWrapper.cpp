@@ -32,8 +32,11 @@
 #include "WebExtensionAPIRuntime.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSClassRef.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
+#include <WebCore/JSDOMGlobalObject.h>
 
 namespace WebKit {
 
@@ -105,6 +108,12 @@ JSValueRef callWithArguments(JSObjectRef callbackFunction, JSRetainPtr<JSGlobalC
 {
     if (!globalContext || !callbackFunction)
         return nil;
+
+    auto* globalObject = toJS(globalContext.get());
+    RefPtr context = globalObject ? JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext() : nullptr;
+    if (!context || context->activeDOMObjectsAreStopped())
+        return nil;
+
     return JSObjectCallAsFunction(globalContext.get(), callbackFunction, nullptr, ArgumentCount, arguments.data(), nullptr);
 }
 
