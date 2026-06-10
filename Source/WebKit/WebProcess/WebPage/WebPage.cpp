@@ -1001,6 +1001,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_mainFrame->initWithCoreMainFrame(*this, page->protectedMainFrame());
 
+    for (const auto& iterator : parameters.urlSchemeHandlers)
+        registerURLSchemeHandler(iterator.value, iterator.key);
+    for (auto& scheme : parameters.urlSchemesWithLegacyCustomProtocolHandlers)
+        LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler({ scheme });
+
     if (auto& remotePageParameters = parameters.remotePageParameters) {
         Ref frameTreeSyncData = remotePageParameters->frameTreeParameters.frameTreeSyncData;
         page->protectedMainFrame()->updateFrameTreeSyncData(WTF::move(frameTreeSyncData));
@@ -1165,11 +1170,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         downcast<LibWebRTCProvider>(page->webRTCProvider()).enableEnumeratingVisibleNetworkInterfaces();
 #endif
 #endif
-
-    for (const auto& iterator : parameters.urlSchemeHandlers)
-        registerURLSchemeHandler(iterator.value, iterator.key);
-    for (auto& scheme : parameters.urlSchemesWithLegacyCustomProtocolHandlers)
-        LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler({ scheme });
 
 #if PLATFORM(IOS_FAMILY)
     setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize, parameters.viewportConfigurationLayoutSizeScaleFactorFromClient, parameters.viewportConfigurationMinimumEffectiveDeviceWidth);

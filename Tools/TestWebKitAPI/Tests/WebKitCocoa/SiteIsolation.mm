@@ -4108,6 +4108,30 @@ TEST(SiteIsolation, URLSchemeTask)
     });
 }
 
+TEST(SiteIsolation, StorageSiteValidationCustomScheme)
+{
+    HTTPServer server({
+        { "/main"_s, { ""_s } },
+        { "/iframe"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main"])
+            respond(task, "<iframe src='customscheme://webkit.org/iframe'></iframe>");
+        else if ([task.request.URL.path isEqualToString:@"/iframe"])
+            respond(task, "<script>sessionStorage.setItem('key', 'value'); alert(sessionStorage.getItem('key'))</script>");
+        else
+            EXPECT_TRUE(false);
+    };
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"customscheme"];
+    [[configuration websiteDataStore] _setStorageSiteValidationEnabled:YES];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "value");
+}
+
 TEST(SiteIsolation, ThemeColor)
 {
     HTTPServer server({
