@@ -29,7 +29,7 @@ public import SwiftUI
 
 extension WebPage {
     /// The theme color that the system gets from the first valid meta tag in the webpage.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public var themeColor: Color? {

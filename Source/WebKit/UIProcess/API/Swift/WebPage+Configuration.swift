@@ -29,7 +29,7 @@ internal import WebKit_Internal
 extension WebPage {
     /// A configuration type that specifies the preferences and behaviors of a webpage.
     @MainActor
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct Configuration {
@@ -150,7 +150,7 @@ extension WebPage {
 
 extension WebPage {
     /// A type that describes the authorization permissions policy for the device's sensors a web resource may access.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct DeviceSensorAuthorization {
@@ -182,7 +182,7 @@ extension WebPage {
 
 extension WebPage.Configuration {
     /// The behavior used when playing HTML video within a page.
-    @available(iOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     @available(macOS, unavailable)

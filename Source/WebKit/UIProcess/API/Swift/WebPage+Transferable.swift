@@ -31,7 +31,7 @@ internal import WebKit_Private
 internal import WebKit_Private.WKSnapshotConfigurationPrivate
 internal import WebKit_Private.WKWebViewPrivate
 
-@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+@available(anyAppleOSAndDownlevels 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WebPage: Transferable {

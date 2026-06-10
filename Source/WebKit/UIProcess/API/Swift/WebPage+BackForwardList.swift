@@ -95,7 +95,7 @@ extension WebPage {
     /// Because ``WebPage/backForwardList`` is an observable property, the states of these buttons
     /// are automatically updated.
     @MainActor
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct BackForwardList: Equatable, Sendable {

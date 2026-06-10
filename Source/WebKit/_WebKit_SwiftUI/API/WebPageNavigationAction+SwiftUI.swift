@@ -29,7 +29,7 @@ public import SwiftUI
 
 extension WebPage.NavigationAction {
     /// The modifier keys that were pressed at the time of the navigation request.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public var modifierFlags: EventModifiers { EventModifiers(wrapped.modifierFlags) }

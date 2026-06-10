@@ -1,4 +1,19 @@
-#!/bin/sh
+#!/bin/bash
+# Generates custom availability versions usable by Swift @available attributes,
+# based on build-time conditions. For example:
+#
+#     @available(anyAppleOSAndDownlevels 26.0, *)
+#     public func ...
+#
+# denotes a declaration that shipped on all OS releases that contain anyAppleOSAndDownlevels 26.0.
+# In comparison:
+#
+#     @available(TBA, *)
+#     public func ...
+#
+# denotes a declaration which has not yet shipped in a public OS release. In
+# internal builds, the TBA will be replaced with an actual version number in
+# the module's interface.
 
 for search_path in "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"; do
     candidate="${search_path}${WK_LIBRARY_HEADERS_FOLDER_PATH}/WebKitAdditions/Scripts/postprocess-framework-headers-definitions"
@@ -33,6 +48,46 @@ else
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
 fi
 
-echo "-Xfrontend -define-availability -Xfrontend \"WK_IOS_TBA:iOS ${IOS_VERSION}\"" \
-    "-Xfrontend -define-availability -Xfrontend \"WK_MAC_TBA:macOS ${OSX_VERSION}\"" \
-    "-Xfrontend -define-availability -Xfrontend \"WK_XROS_TBA:visionOS ${XROS_VERSION}\"" | tee "${SCRIPT_OUTPUT_FILE_0}"
+# Platform version numbers are dynamic: either the release version OR the
+# active deployment target, whichever is lower. This supports building
+# downlevels, where clients can use API that did not officially ship in that
+# release's SDK.
+function macOS {
+    minVersion=$(printf '%s\n' $1 ${MACOSX_DEPLOYMENT_TARGET} | sort -V | head -1)
+    echo macOS ${minVersion}
+}
+
+function iOS {
+    minVersion=$(printf '%s\n' $1 ${IPHONEOS_DEPLOYMENT_TARGET} | sort -V | head -1)
+    echo iOS ${minVersion}
+}
+
+function visionOS {
+    minVersion=$(printf '%s\n' $1 ${XROS_DEPLOYMENT_TARGET} | sort -V | head -1)
+    echo visionOS ${minVersion}
+}
+
+releases="
+# Shipped releases which contribute Swift API.
+anyAppleOSAndDownlevels 14.0: $(macOS 10.16), $(iOS 14.0)
+anyAppleOSAndDownlevels 15.0: $(macOS 12.0), $(iOS 15.0)
+anyAppleOSAndDownlevels 17.0: $(macOS 14.0), $(iOS 17.0), $(visionOS 1.0)
+anyAppleOSAndDownlevels 18.4: $(macOS 15.4), $(iOS 18.4), $(visionOS 2.4)
+anyAppleOSAndDownlevels 26.0: $(macOS 26.0), $(iOS 26.0), $(visionOS 26.0)
+anyAppleOSAndDownlevels 26.4: $(macOS 26.4), $(iOS 26.4), $(visionOS 26.4)
+
+# Upcoming API, release version unspecified.
+TBA: macOS ${OSX_VERSION}, iOS ${IOS_VERSION}, visionOS ${XROS_VERSION}
+
+# Legacy platform-specific versions that work like WebKit's ObjC availability
+# versions.
+WK_IOS_TBA: iOS ${IOS_VERSION}
+WK_MAC_TBA: macOS ${OSX_VERSION}
+WK_XROS_TBA: visionOS ${XROS_VERSION}
+"
+
+# Turn the release table into compiler arguments.
+echo "${releases}" | while read line; do
+    [[ -n "${line}" && "${line}" != \#* ]] || continue
+    echo "-Xfrontend -define-availability -Xfrontend \"${line}\""
+done | tee "${SCRIPT_OUTPUT_FILE_0}"

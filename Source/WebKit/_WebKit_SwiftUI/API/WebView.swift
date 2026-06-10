@@ -30,7 +30,7 @@ public import SwiftUI
 ///
 /// Connect a ``WebView`` with a ``WebPage`` to fully control the browsing experience, including essential functionality such as loading a URL.
 /// Any updates to the webpage propagate the information to the view.
-@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+@available(anyAppleOSAndDownlevels 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 public struct WebView: View {
@@ -98,7 +98,7 @@ public struct WebView: View {
 
 extension WebView {
     /// A type that defines the behavior of how horizontal swipe gestures trigger backward and forward page navigation.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct BackForwardNavigationGesturesBehavior: Sendable {
@@ -132,7 +132,7 @@ extension WebView {
     }
 
     /// The options for controlling the behavior for how magnification gestures interact with web views.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct MagnificationGesturesBehavior: Sendable {
@@ -166,7 +166,7 @@ extension WebView {
     }
 
     /// A type specifying the behavior for the presentation of link previews when pressing a link.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct LinkPreviewBehavior: Sendable {
@@ -200,7 +200,7 @@ extension WebView {
     }
 
     /// The behavior that determines whether a web view can display content full screen.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct ElementFullscreenBehavior: Sendable {
@@ -236,7 +236,7 @@ extension WebView {
     /// Contains information about an element the user activated in a webpage, which may be used to configure a context menu for that element.
     ///
     /// For links, the information contains the URL that is linked to.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct ActivatedElementInfo: Hashable, Sendable {

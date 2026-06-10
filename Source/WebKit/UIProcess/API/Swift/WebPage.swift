@@ -91,7 +91,7 @@ internal import WebKit_Internal
 /// of PDF or image export, use ``WebPage/exported(as:)``.
 @MainActor
 @Observable
-@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+@available(anyAppleOSAndDownlevels 26.0, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 #if compiler(>=6.2.3)
@@ -104,7 +104,7 @@ final public class WebPage {
     /// by webpages to apply parts of a style sheet depending on the media properties specified.
     ///
     /// You can customize the media type of a ``WebPage`` by using the ``WebPage/mediaType`` property.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public struct CSSMediaType: Hashable, RawRepresentable, Sendable {
@@ -131,7 +131,7 @@ final public class WebPage {
     }
 
     /// The set of possible fullscreen states a webpage may be in.
-    @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
+    @available(anyAppleOSAndDownlevels 26.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public enum FullscreenState: Hashable, Sendable {

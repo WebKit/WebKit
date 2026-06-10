@@ -31,7 +31,7 @@
 internal import WebKit_Private.WKWebExtensionPrivate
 #endif
 
-@available(iOS 14.0, macOS 10.16, *)
+@available(anyAppleOSAndDownlevels 14.0, *)
 extension WKPDFConfiguration {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -41,7 +41,7 @@ extension WKPDFConfiguration {
     }
 }
 
-@available(iOS 14.0, macOS 10.16, *)
+@available(anyAppleOSAndDownlevels 14.0, *)
 extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -99,7 +99,7 @@ extension WKWebView {
     }
 }
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(anyAppleOSAndDownlevels 15.0, *)
 extension WKWebView {
     // This is pre-existing API whose documentation does not use the source code.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -136,7 +136,7 @@ extension WKWebView {
 }
 
 #if ENABLE_WK_WEB_EXTENSIONS && compiler(>=6.1)
-@available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
+@available(anyAppleOSAndDownlevels 18.4, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WKWebExtension {
@@ -165,7 +165,7 @@ extension WKWebExtension {
     }
 }
 
-@available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
+@available(anyAppleOSAndDownlevels 18.4, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WKWebExtensionController {
@@ -188,7 +188,7 @@ extension WKWebExtensionController {
     }
 }
 
-@available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
+@available(anyAppleOSAndDownlevels 18.4, *)
 @available(watchOS, unavailable)
 @available(tvOS, unavailable)
 extension WKWebExtensionContext {

@@ -28,7 +28,7 @@ extension WKWebsiteDataStore {
     ///
     /// Changing the proxy configurations might interrupt current networking operations in any WKWebView that use this WKWebsiteDataStore,
     /// so it is encouraged to finish setting the proxy configurations before starting any page loads.
-    @available(iOS 17.0, macOS 14.0, visionOS 1.0, *)
+    @available(anyAppleOSAndDownlevels 17.0, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
     public var proxyConfigurations: [ProxyConfiguration] {
