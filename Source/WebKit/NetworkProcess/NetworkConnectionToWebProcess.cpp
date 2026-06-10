@@ -529,7 +529,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 
 void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
-    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString("Received an invalid message '"_s, description(messageName), "' from WebContent process "_s, m_webProcessIdentifier.toUInt64(), ", requesting for it to be terminated."_s).utf8().data());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %hu from WebContent process %" PRIu64 ", requesting for it to be terminated.", static_cast<uint16_t>(messageName), m_webProcessIdentifier.toUInt64());
     m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 

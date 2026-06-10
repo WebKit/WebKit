@@ -160,7 +160,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, connection, message) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION), ": " message ## _s).utf8().data()); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s" ": %s", CString(WTF_PRETTY_FUNCTION), CString(message)); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion " - " #message ## _s); \
         CRASH_IF_TESTING \
         return; \
@@ -172,7 +172,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s", CString(WTF_PRETTY_FUNCTION)); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         return; \
@@ -181,7 +181,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s", CString(WTF_PRETTY_FUNCTION)); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         { completion; } \
@@ -191,7 +191,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s", CString(WTF_PRETTY_FUNCTION)); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         { completion; } \
@@ -201,7 +201,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
     if (!(assertion)) [[unlikely]] { \
-        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString(__FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched "_s, unsafeSpan(WTF_PRETTY_FUNCTION)).utf8().data()); \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s", CString(WTF_PRETTY_FUNCTION)); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
         CRASH_IF_TESTING \
         return (returnValue); \

@@ -66,6 +66,8 @@
 
 #define DistantFuture   (86400.0 * 2000 * 365.2425 + 86400.0)   // same as +[NSDate distantFuture]
 
+using namespace WebCore;
+
 namespace {
 // Release global state that is accessed from both web thread as well
 // as any client thread that calls into WebKit.

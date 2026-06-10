@@ -475,7 +475,7 @@ void AuxiliaryProcessProxy::connectionWillOpen(IPC::Connection&)
 
 void AuxiliaryProcessProxy::logInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
-    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString("Received an invalid message '"_s, description(messageName), "' from the "_s, processName(), " process with PID "_s, processID()).utf8().data());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %hu from WebContent process with PID %d", static_cast<uint16_t>(messageName), processID());
 }
 
 bool AuxiliaryProcessProxy::platformIsBeingDebugged() const

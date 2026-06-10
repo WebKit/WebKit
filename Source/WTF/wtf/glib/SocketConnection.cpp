@@ -64,7 +64,7 @@ SocketConnection::~SocketConnection() = default;
 
 bool SocketConnection::didReceiveInvalidMessage(const CString& message)
 {
-    RELEASE_LOG_FAULT_WITH_PAYLOAD(Process, makeString("Received invalid message ("_s, message.span(), "), closing SocketConnection"_s).utf8().data());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(Process, "Received invalid message (%s), closing SocketConnection", message);
     close();
     m_readBuffer.shrink(0);
     return false;

@@ -233,12 +233,11 @@ void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
         if (currentRunLoopStatus.addRunLoopSpin() == RunLoopStatus::ShouldLogExcessiveRunLoopSpinning::No)
             continue;
 
-        auto reason = makeString("ServiceWorker message queue spun excessively without making web content progress for "_s, currentRunLoopStatus.secondsSpentSpinning(), " seconds. Shared timer firing in "_s, m_sharedTimer->fireTimeDelay().seconds(), " seconds. RunLoop rimers before: "_s, result.activeRunLoopTimersBeforeFiring, ". RunLoop timers after: "_s, result.activeRunLoopTimersAfterFiring);
-        RELEASE_LOG(ServiceWorker, "%s", reason.utf8().data());
+        RELEASE_LOG(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8().data(), result.activeRunLoopTimersAfterFiring.utf8().data());
 
 #if PLATFORM(COCOA)
         if (WTF::CocoaApplication::isAppleApplication())
-            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, reason.utf8().data());
+            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
 #endif
 
         // Reset status to start tracking a new sequence of spinning.
