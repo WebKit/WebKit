@@ -181,10 +181,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>& replyEncoder);
 
+    // Message handlers for StorageManager.
+    void persisted(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
+    void persist(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
+    void estimate(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&&);
+
     // Message handlers for FileSystem.
-    void persisted(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
-    void persist(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
-    void estimate(const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&&);
     void fileSystemGetDirectory(IPC::Connection&, WebCore::ClientOrigin&&, CompletionHandler<void(Expected<std::optional<WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&&);
     void closeHandle(WebCore::FileSystemHandleIdentifier);
     void isSameEntry(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(bool)>&&);
