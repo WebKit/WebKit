@@ -125,7 +125,10 @@ static unsigned incrementingTouchIdentifier = 1;
     _lastTouchesBeganTime = 0;
     _lastTouchesBeganLocation = std::nullopt;
 
-    [_contentView _touchEventsGestureRecognizerReset];
+    // If the last touch sequence ended abnormally, clear the pointer capture
+    // controller so that its active touch map doesn't retain extra touches.
+    if (_lastTouchEvent.type != WebKit::WKTouchEventType::End)
+        [protect(_contentView) _touchEventsGestureRecognizerReset];
 }
 
 - (void)cancel
