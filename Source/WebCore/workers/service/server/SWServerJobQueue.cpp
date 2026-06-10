@@ -102,7 +102,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
 
     // If the newest worker needs script loading (lazy import from store), load scripts before comparison.
     if (newestWorker && newestWorker->needsScriptLoading()) {
-        server->loadWorkerScripts(*newestWorker, [weakThis = WeakPtr { *this }, jobDataIdentifier, requestingProcessIdentifier, result = WTF::move(result)]() mutable {
+        server->loadWorkerScripts(*newestWorker, [weakThis = WeakPtr { *this }, jobDataIdentifier, requestingProcessIdentifier, result = WTF::move(result)](auto) mutable {
             if (CheckedPtr checkedThis = weakThis.get())
                 checkedThis->scriptFetchFinished(jobDataIdentifier, requestingProcessIdentifier, WTF::move(result));
         });

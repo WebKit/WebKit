@@ -825,6 +825,86 @@ TEST(ServiceWorkers, UpdateCheckAfterRestoreFromDisk)
     done = false;
 }
 
+TEST(ServiceWorkers, CheckRegistrationWithoutScript)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/scope/first.html"_s, { mainRegisteringWorkerInScopeBytes } },
+        { "/scope/second.html"_s, { mainUpdatingRestoredWorkerBytes } },
+        { "/scope/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+    });
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    // Register a service worker under /scope/ and wait for it to activate.
+    [webView loadRequest:server.request("/scope/first.html"_s)];
+    TestWebKitAPI::Util::run(&done);
+
+    // Flush registrations to disk and terminate the network process so that Phase 2 will
+    // import registrations from disk (with lazy script loading) in a fresh network process.
+    [[WKWebsiteDataStore defaultDataStore] _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    done = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+
+    // Verify there is a registration
+    RetainPtr websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
+    done = false;
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ(1U, dataRecords.count);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+
+    // We remove the registration script stored on disk. We do this by finding the Scripts folders and removing them.
+    NSURL *path = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/Default/" stringByExpandingTildeInPath]];
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:path includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:nil];
+    for (NSURL *url in enumerator) {
+        NSNumber *isDirectory;
+        [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+        if ([isDirectory boolValue] && [[url lastPathComponent] isEqualToString:@"Scripts"])
+            [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+    }
+
+    // Create a new web view, restoring registration from disk with lazy script loading.
+    // Try launching the service worker, removal of script should trigger unregistration of the service worker.
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"FAIL: No registrations found"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    done = false;
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request("/scope/second.html"_s)];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ(0U, dataRecords.count);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 static constexpr auto scriptBytesWithFetchSupport = R"SWRESOURCE(
 
 self.addEventListener("message", (event) => {

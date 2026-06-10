@@ -554,7 +554,7 @@ std::optional<ServiceWorkerScripts> SWRegistrationDatabase::retrieveWorkerScript
 {
     auto mainScript = scriptStorage().retrieve(registrationKey, mainScriptURL);
     if (!mainScript) {
-        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::retrieveWorkerScripts failed to retrieve main script from disk");
+        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::retrieveWorkerScripts failed to retrieve main script from disk for service worker %" PRIu64, identifier.toUInt64());
         return std::nullopt;
     }
 
@@ -563,7 +563,7 @@ std::optional<ServiceWorkerScripts> SWRegistrationDatabase::retrieveWorkerScript
         if (auto script = scriptStorage().retrieve(registrationKey, scriptURL))
             importedScripts.add(scriptURL, WTF::move(script));
         else
-            RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::retrieveWorkerScripts failed to retrieve imported script from disk");
+            RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::retrieveWorkerScripts failed to retrieve imported script from disk for service worker %" PRIu64, identifier.toUInt64());
     }
 
     return ServiceWorkerScripts { identifier, WTF::move(mainScript), WTF::move(importedScripts) };

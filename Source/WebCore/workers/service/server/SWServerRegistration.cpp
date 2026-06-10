@@ -233,6 +233,8 @@ bool SWServerRegistration::tryClear()
 // https://w3c.github.io/ServiceWorker/#clear-registration
 void SWServerRegistration::clear()
 {
+    RELEASE_LOG(ServiceWorker, "SWServerRegistration::clear %" PRIu64, identifier().toUInt64());
+
     if (RefPtr preInstallationWorker = m_preInstallationWorker) {
         ASSERT(preInstallationWorker->state() == ServiceWorkerState::Parsed);
         preInstallationWorker->terminate();
