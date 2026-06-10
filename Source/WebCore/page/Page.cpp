@@ -434,7 +434,10 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : makeUniqueWithoutRefCountedCheck<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(makeUniqueRef<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowPowerModeChange(isLowPowerModeEnabled); }))
-    , m_thermalMitigationNotifier(makeUniqueRef<ThermalMitigationNotifier>([this](bool thermalMitigationEnabled) { handleThermalMitigationChange(thermalMitigationEnabled); }))
+    , m_thermalMitigationNotifier(ThermalMitigationNotifier::create([weakThis = WeakPtr { *this }](bool thermalMitigationEnabled) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->handleThermalMitigationChange(thermalMitigationEnabled);
+    }))
     , m_performanceLogging(makeUniqueRef<PerformanceLogging>(*this))
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     , m_servicesOverlayController(makeUniqueRefWithoutRefCountedCheck<ServicesOverlayController>(*this))

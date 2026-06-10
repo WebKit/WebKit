@@ -117,9 +117,9 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
             if (RefPtr protectedThis = weakThis.get())
                 updateSpeculativeLoadManagerEnabledState();
         });
-        m_thermalMitigationNotifier = makeUnique<WebCore::ThermalMitigationNotifier>([this, weakThis = WeakPtr { *this }](bool) {
-            if (RefPtr protectedThis = weakThis.get())
-                updateSpeculativeLoadManagerEnabledState();
+        m_thermalMitigationNotifier = WebCore::ThermalMitigationNotifier::create([weakThis = WeakPtr { *this }](bool) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->updateSpeculativeLoadManagerEnabledState();
         });
         if (shouldUseSpeculativeLoadManager())
             m_speculativeLoadManager = makeUnique<SpeculativeLoadManager>(*this, protectedStorage());

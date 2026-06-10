@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 #if HAVE(APPLE_THERMAL_MITIGATION_SUPPORT)
 #include <wtf/RetainPtr.h>
@@ -37,18 +36,19 @@ OBJC_CLASS WebThermalMitigationObserver;
 
 namespace WebCore {
 
-class ThermalMitigationNotifier final : public CanMakeWeakPtr<ThermalMitigationNotifier>, public CanMakeCheckedPtr<ThermalMitigationNotifier> {
+class ThermalMitigationNotifier final : public RefCountedAndCanMakeWeakPtr<ThermalMitigationNotifier> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThermalMitigationNotifier, WEBCORE_EXPORT);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThermalMitigationNotifier);
 public:
     using ThermalMitigationChangeCallback = Function<void(bool thermalMitigationEnabled)>;
-    WEBCORE_EXPORT explicit ThermalMitigationNotifier(ThermalMitigationChangeCallback&&);
+    WEBCORE_EXPORT static Ref<ThermalMitigationNotifier> create(ThermalMitigationChangeCallback&&);
     WEBCORE_EXPORT ~ThermalMitigationNotifier();
 
     WEBCORE_EXPORT bool thermalMitigationEnabled() const;
     WEBCORE_EXPORT static bool isThermalMitigationEnabled();
 
 private:
+    explicit ThermalMitigationNotifier(ThermalMitigationChangeCallback&&);
+
 #if HAVE(APPLE_THERMAL_MITIGATION_SUPPORT)
     void notifyThermalMitigationChanged(bool);
     friend void notifyThermalMitigationChanged(ThermalMitigationNotifier&, bool);
