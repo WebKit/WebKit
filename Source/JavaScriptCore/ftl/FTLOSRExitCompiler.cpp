@@ -83,7 +83,8 @@ static void reboxAccordingToFormat(
         break;
     }
 
-    case DataFormatJS: {
+    case DataFormatJS:
+    case DataFormatStorage: {
         // Done already!
         break;
     }
