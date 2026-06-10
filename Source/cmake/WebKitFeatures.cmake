@@ -430,10 +430,16 @@ macro(WEBKIT_OPTION_END)
 
     list(SORT _WEBKIT_AVAILABLE_OPTIONS)
     set(_MAX_FEATURE_LENGTH 0)
+    set(_ENV_OVERRIDDEN_OPTIONS "")
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})
         string(LENGTH ${_name} _name_length)
         if (_name_length GREATER _MAX_FEATURE_LENGTH)
             set(_MAX_FEATURE_LENGTH ${_name_length})
+        endif ()
+
+        if (DEFINED ENV{WEBKIT_${_name}})
+            set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} $ENV{WEBKIT_${_name}})
+            list(APPEND _ENV_OVERRIDDEN_OPTIONS "${_name}=$ENV{WEBKIT_${_name}}")
         endif ()
 
         option(${_name} "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name}})
@@ -441,6 +447,11 @@ macro(WEBKIT_OPTION_END)
             mark_as_advanced(FORCE ${_name})
         endif ()
     endforeach ()
+
+    if (_ENV_OVERRIDDEN_OPTIONS)
+        list(JOIN _ENV_OVERRIDDEN_OPTIONS ", " _joined)
+        message(STATUS "Port defaults overridden by WEBKIT_* environment: ${_joined}")
+    endif ()
 
     if (ENABLE_LAYOUT_TESTS AND NOT DEVELOPER_MODE)
         set(ENABLE_LAYOUT_TESTS OFF)
