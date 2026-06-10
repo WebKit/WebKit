@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -273,6 +274,91 @@ TEST(WebLocks, ServiceWorkerLockRequestAfterCrossSiteNavigationInSameProcess)
 
     [webView synchronouslyLoadRequest:server1.request()];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebLocks, CrossSiteIframeUsingLocksInServiceWorkerHostingProcess)
+{
+    TestWebKitAPI::HTTPServer server1({ }, TestWebKitAPI::HTTPServer::Protocol::Http);
+    TestWebKitAPI::HTTPServer server2({ }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto swScript =
+        "self.addEventListener('install', e => self.skipWaiting());"
+        "self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));"_s;
+
+    // navigator.locks.request calls WebLockRegistryProxy::requestLock.
+    auto iframeHTML =
+        "<script>"
+        "  navigator.locks.request('iframe-lock', () => new Promise(() => {}));"
+        "  parent.postMessage('IFRAME_READY', '*');"
+        "</script>"_s;
+
+    auto pageHTML = makeString(
+        "<script>"
+        "  window.addEventListener('message', e => {"
+        "    if (e.data === 'IFRAME_READY')"
+        "      webkit.messageHandlers.testHandler.postMessage('IFRAME_READY');"
+        "  });"
+        "  navigator.serviceWorker.register('/sw.js')"
+        "    .then(() => navigator.serviceWorker.ready)"
+        "    .then(() => {"
+        "      const f = document.createElement('iframe');"
+        "      f.id = 'subframe';"
+        "      f.src = 'http://localhost:"_s, server2.port(), "/iframe';"
+        "      document.body.appendChild(f);"
+        "    });"
+        "</script>"_s);
+
+    server1.addResponse("/"_s, { pageHTML });
+    server1.addResponse("/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, swScript });
+    server2.addResponse("/iframe"_s, { iframeHTML });
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = processPool.get();
+    enableWebLocksAPI(configuration.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    __block bool done = false;
+    __block bool webProcessTerminated = false;
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webProcessTerminated = true;
+        done = true;
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message isEqualToString:@"IFRAME_READY"])
+            done = true;
+    }];
+
+    [webView loadRequest:server1.request()];
+    TestWebKitAPI::Util::run(&done);
+
+    // Wait long enough for webContentProcessDidTerminate to fire.
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_FALSE(webProcessTerminated);
+
+    // If the WebProcess was terminated by requestLock's MESSAGE_CHECK, we
+    // have already failed and don't need to check clientIsGoingAway.
+    if (webProcessTerminated)
+        return;
+
+    // Detaching the iframe will call WebLockRegistryProxy::clientIsGoingAway.
+    __block bool detachDone = false;
+    [webView evaluateJavaScript:@"document.getElementById('subframe').remove(); 1" completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        detachDone = true;
+    }];
+    TestWebKitAPI::Util::run(&detachDone);
+
+    // Wait long enough for webContentProcessDidTerminate to fire.
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_FALSE(webProcessTerminated);
 }
 
 } // namespace TestWebKitAPI
