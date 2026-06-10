@@ -1,0 +1,22 @@
+Verifies that text-size-adjust: none preserves CSS zoom and text zoom for rendered font metrics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS renderedHeight('zoom-none') is renderedHeight('zoom-auto')
+PASS renderedHeight('zoom-none') is renderedHeight('no-zoom-32')
+PASS renderedHeight('zoom-pct') is renderedHeight('no-zoom-auto')
+PASS renderedHeight('diff-zoom-none') is renderedHeight('diff-zoom-ref')
+PASS renderedHeight('diff-zoom-pct') is renderedHeight('no-zoom-8-zoom6')
+PASS renderedHeight('no-zoom-none') is renderedHeight('no-zoom-auto')
+PASS renderedHeight('tzoom-none') is renderedHeight('tzoom-auto')
+PASS renderedHeight('tzoom-pct') is renderedHeight('tzoom-8px')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Tests that text-size-adjust: none correctly preserves CSS zoom and text zoom for font rendering.
+
+X X X
+X X X
+X X X X
+X X X X

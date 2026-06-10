@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -192,10 +192,14 @@ void BuilderState::updateFontForTextSizeAdjust()
         return;
 
     auto newFontDescription = m_style.fontDescription();
+    auto baseSize = newFontDescription.specifiedSize();
     if (!m_style.textSizeAdjust().isNone())
-        newFontDescription.setComputedSize(newFontDescription.specifiedSize() * m_style.textSizeAdjust().multiplier());
-    else
-        newFontDescription.setComputedSize(newFontDescription.specifiedSize());
+        baseSize *= m_style.textSizeAdjust().multiplier();
+
+    float zoomFactor = m_style.usedZoom();
+    if (auto* frame = document().frame(); frame && m_style.textZoom() != TextZoom::Reset)
+        zoomFactor *= frame->textZoomFactor();
+    newFontDescription.setComputedSize(baseSize * zoomFactor, zoomFactor);
 
     m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
@@ -205,6 +209,19 @@ void BuilderState::updateFontForZoomChange()
 {
     if (m_style.usedZoom() == parentStyle().usedZoom() && m_style.textZoom() == parentStyle().textZoom())
         return;
+
+#if ENABLE(TEXT_AUTOSIZING)
+    // When text-size-adjust has an active percentage, updateFontForTextSizeAdjust() has already
+    // computed the correct size (incorporating both the multiplier and the current zoom factor).
+    // Skip recalculation here to avoid overwriting that result, which would lose the
+    // text-size-adjust multiplier.
+    if (document().settings().textAutosizingEnabled()
+        && !m_style.textSizeAdjust().isAuto()
+        && !m_style.textSizeAdjust().isNone()
+        && (!document().settings().textAutosizingUsesIdempotentMode()
+            || document().settings().idempotentModeAutosizingOnlyHonorsPercentages()))
+        return;
+#endif
 
     setFontDescriptionFontSize(m_style.fontDescription().specifiedSize());
 }
