@@ -79,12 +79,14 @@ public:
     static bool allowsDatabaseAccessInPrivateBrowsing(const String& scheme);
 
     // Allow non-HTTP schemes to be registered to allow CORS requests.
-    WEBCORE_EXPORT static void registerURLSchemeAsCORSEnabled(const String& scheme);
+    enum class SchemeRegisteredForTheFirstTime : bool { No, Yes };
+    WEBCORE_EXPORT static SchemeRegisteredForTheFirstTime registerURLSchemeAsCORSEnabled(const String& scheme);
     WEBCORE_EXPORT static bool shouldTreatURLSchemeAsCORSEnabled(StringView scheme);
     WEBCORE_EXPORT static Vector<String> allURLSchemesRegisteredAsCORSEnabled();
 
     WEBCORE_EXPORT static void registerURLSchemeAsHandledBySchemeHandler(const String&);
     WEBCORE_EXPORT static bool schemeIsHandledBySchemeHandler(StringView);
+    WEBCORE_EXPORT static bool isBuiltInWebKitHandledScheme(StringView);
 
     // Allow resources from some schemes to load on a page, regardless of its
     // Content Security Policy.
