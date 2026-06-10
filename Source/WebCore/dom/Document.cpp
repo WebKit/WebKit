@@ -9125,6 +9125,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition,
         // Store it on the old, and we'll call transferViewTransitionParams soon.
         m_inboundViewTransitionParams = oldViewTransition->takeViewTransitionParams().moveToUniquePtr();
         m_inboundViewTransitionParams->startTime = startTime;
+        m_inboundViewTransitionParams->oldDocumentOrigin = &securityOrigin();
     }
 }
 

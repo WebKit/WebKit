@@ -54,7 +54,6 @@ class DOMPromise;
 class DeferredPromise;
 class RenderLayerModelObject;
 class RenderViewTransitionCapture;
-class RenderLayerModelObject;
 class ViewTransitionTypeSet;
 template<typename> class ExceptionOr;
 
@@ -168,6 +167,7 @@ public:
     FloatSize initialLargeViewportSize;
     float initialPageZoom;
     MonotonicTime startTime;
+    RefPtr<SecurityOrigin> oldDocumentOrigin;
 };
 
 class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {

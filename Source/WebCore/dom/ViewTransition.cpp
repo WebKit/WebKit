@@ -116,6 +116,12 @@ RefPtr<ViewTransition> ViewTransition::resolveInboundCrossDocumentViewTransition
     if (MonotonicTime::now() - inboundViewTransitionParams->startTime > defaultTimeout)
         return nullptr;
 
+    // Re-check against the new document's final origin, which may differ from the URL-derived
+    // origin used by DocumentLoader::navigationCanTriggerCrossDocumentViewTransition.
+    if (!inboundViewTransitionParams->oldDocumentOrigin
+        || !inboundViewTransitionParams->oldDocumentOrigin->isSameOriginAs(document.securityOrigin()))
+        return nullptr;
+
     if (document.activeViewTransition())
         return nullptr;
 
