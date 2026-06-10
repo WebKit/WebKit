@@ -169,7 +169,7 @@ void RemoteRenderingBackend::workQueueUninitialize()
 
 void RemoteRenderingBackend::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
-    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName).characters(), m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString("Received an invalid message '"_s, description(messageName), "' from WebContent process "_s, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), ", requesting for it to be terminated."_s).utf8().data());
     callOnMainRunLoop([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess] {
         gpuConnectionToWebProcess->terminateWebProcess();
     });

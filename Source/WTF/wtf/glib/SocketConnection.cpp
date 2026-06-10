@@ -28,6 +28,7 @@
 #include <wtf/Logging.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GSpanExtras.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 
@@ -63,7 +64,7 @@ SocketConnection::~SocketConnection() = default;
 
 bool SocketConnection::didReceiveInvalidMessage(const CString& message)
 {
-    RELEASE_LOG_FAULT(Process, "Received invalid message (%s), closing SocketConnection", message.data());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(Process, makeString("Received invalid message ("_s, message.span(), "), closing SocketConnection"_s).utf8().data());
     close();
     m_readBuffer.shrink(0);
     return false;
