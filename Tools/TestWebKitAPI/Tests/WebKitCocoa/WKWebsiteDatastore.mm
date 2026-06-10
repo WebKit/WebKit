@@ -1378,4 +1378,53 @@ TEST(StorageSiteValidation, LoadWebArchive)
     EXPECT_FALSE(webContentProcessTerminated);
 }
 
+TEST(StorageSiteValidation, StorageBlockingPolicyAllowAll)
+{
+    HTTPServer server({
+        { "/setitem"_s, { "<script>window.localStorage.setItem('key', 'value')</script>"_s } },
+        { "/getitem"_s, { "<script>window.webkit.messageHandlers.testHandler.postMessage(localStorage.getItem('key'));</script>"_s } },
+        { "/webkit"_s, { "<iframe src='https://example.com/getitem'></iframe>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [[configuration websiteDataStore] _setStorageSiteValidationEnabled:YES];
+    // _WKStorageBlockingPolicyAllowAll allows 3rd-party to use unpartitioned storage for WebStorage.
+    [[configuration preferences] _setStorageBlockingPolicy:_WKStorageBlockingPolicyAllowAll];
+    RetainPtr messageHandler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    RetainPtr sharedDelegate = adoptNS([TestNavigationDelegate new]);
+    [sharedDelegate allowAnyTLSCertificate];
+    RetainPtr setWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [setWebView setNavigationDelegate:sharedDelegate.get()];
+    RetainPtr getWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [getWebView setNavigationDelegate:sharedDelegate.get()];
+
+    [setWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/setitem"]]];
+    [sharedDelegate waitForDidFinishNavigation];
+
+    // Ensure item is stored by getting it from a different view.
+    receivedScriptMessage = false;
+    [getWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/getitem"]]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"value", [lastScriptMessage body]);
+
+    RetainPtr validateDelegate = adoptNS([TestNavigationDelegate new]);
+    [validateDelegate allowAnyTLSCertificate];
+    __block bool webContentProcessTerminated = false;
+    validateDelegate.get().webContentProcessDidTerminate = ^(WKWebView *view, _WKProcessTerminationReason reason) {
+        // Setting receivedScriptMessage to end wait if web process is terminated.
+        receivedScriptMessage = true;
+        webContentProcessTerminated = true;
+    };
+    RetainPtr validateWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [validateWebView setNavigationDelegate:validateDelegate.get()];
+
+    // Validate that 3rd-party frame can get the item.
+    receivedScriptMessage = false;
+    [validateWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"value", [lastScriptMessage body]);
+    EXPECT_FALSE(webContentProcessTerminated);
+}
+
 } // namespace TestWebKitAPI

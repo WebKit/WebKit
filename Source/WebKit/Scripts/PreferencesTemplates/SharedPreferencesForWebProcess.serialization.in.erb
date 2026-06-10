@@ -29,7 +29,11 @@ struct WebKit::SharedPreferencesForWebProcess {
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
+<%- if @pref.type == "bool" -%>
     [BitField] bool <%= @pref.nameLower %>;
+<%- elsif @pref.type == "uint32_t" -%>
+    uint32_t <%= @pref.nameLower %>;
+<%- end -%>
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
