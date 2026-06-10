@@ -142,7 +142,17 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
     }
 
     // Steps 9-11: IsValidISODate + CreateISODateRecord + CreateTemporalMonthDay.
-    auto* result = TemporalPlainMonthDay::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(referenceYear, isoMonth, isoDay));
+    if (!ISO8601::isValidISODate(referenceYear, isoMonth, isoDay)) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay: not a valid ISO date"_s);
+
+    if (!ISO8601::isYearWithinLimits(referenceYear)) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, "reference year is out of range"_s);
+    if (!isInBounds<int32_t>(isoMonth)) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, "month is out of range"_s);
+    if (!isInBounds<int32_t>(isoDay)) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, "day is out of range"_s);
+
+    auto* result = TemporalPlainMonthDay::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(static_cast<int32_t>(referenceYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(isoDay)));
     RETURN_IF_EXCEPTION(scope, { });
     if (result && calId != iso8601CalendarID())
         result->setCalendarID(calId);

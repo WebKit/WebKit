@@ -1506,6 +1506,8 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
         ucal_set(cal.get(), UCAL_EXTENDED_YEAR, year.value_or(0));
 
     if (monthCode) {
+        if (!monthCode->monthNumber)
+            return makeUnexpected(rangeError("monthCode is not valid for this calendar"_s));
         // Month codes > M13 are always invalid. M13 is only valid for Coptic/Ethiopian.
         if (monthCode->monthNumber > 13) [[unlikely]]
             return makeUnexpected(rangeError("month is out of range"_s));
