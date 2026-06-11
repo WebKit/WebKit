@@ -41,7 +41,10 @@ def checked_decompress(src, dst):
 
 
 inputs = []
-if os.environ.get('WK_ENABLE_PGO_USE') == 'YES':
+# Fall back to the Xcode-provided setting name for configurations where we do
+# not pass the -fprofile-instr-use flag directly.
+if os.environ.get('WK_ENABLE_PGO_USE',
+                  os.environ.get('CLANG_USE_OPTIMIZATION_PROFILE')) == 'YES':
     for arch in archs.split():
         src = profiles_folder / f'{arch}/{project_name}.profdata.compressed'
         dst = output_folder / f'{arch}.profdata'
