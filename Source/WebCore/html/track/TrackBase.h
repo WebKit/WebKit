@@ -29,6 +29,7 @@
 
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/WebCoreOpaqueRoot.h>
+#include <atomic>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -80,7 +81,7 @@ public:
     void setTrackList(TrackListBase&);
     void clearTrackList();
     TrackListBase* NODELETE trackList() const;
-    WebCoreOpaqueRoot NODELETE opaqueRoot() const;
+    WebCoreOpaqueRoot NODELETE opaqueRoot() const { return m_opaqueRoot; }
 
     virtual bool enabled() const = 0;
 
@@ -122,6 +123,7 @@ private:
     uint64_t m_logIdentifier { 0 };
 #endif
     WeakPtr<TrackListBase, WeakPtrImplWithEventTargetData> m_trackList;
+    std::atomic<WebCoreOpaqueRoot> m_opaqueRoot { WebCoreOpaqueRoot { this } };
     size_t m_clientRegistrationId;
 };
 
