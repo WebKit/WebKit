@@ -34,7 +34,8 @@ INFOPLIST_FILE[sdk=embedded*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUServic
 INFOPLIST_FILE[sdk=macosx*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist;
 
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH) $(WK_RELOCATABLE_FRAMEWORKS_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS);
+WK_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH) $(WK_RELOCATABLE_FRAMEWORKS_LDFLAGS) $(SOURCE_VERSION_LDFLAGS);
 
 CODE_SIGN_ENTITLEMENTS[sdk=xrsimulator*] = Resources/ios/GPUService-visionOS-simulator.entitlements
 

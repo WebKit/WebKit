@@ -25,12 +25,15 @@ PRODUCT_NAME = TestIPC;
 
 PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
 
-CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = $(CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING_$(ENABLE_LLVM_PROFILE_GENERATION));
-CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING_ENABLE_LLVM_PROFILE_GENERATION = YES;
+// IR PGO profile generation flags
+WK_PGO_GEN_FLAGS = $(WK_PGO_GEN_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
+WK_PGO_GEN_FLAGS_YES = -fprofile-generate;
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BUILDING_TEST_IPC GTEST_API_=
+
+OTHER_CFLAGS = $(inherited) $(WK_PGO_GEN_FLAGS);
 
 WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
@@ -41,7 +44,7 @@ WK_BROWSERENGINEKIT_LDFLAGS[sdk=appletv*] =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=watch*] =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=xr*] =
 
-OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers;
+OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers $(WK_PGO_GEN_FLAGS);
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices -framework IOSurface -framework CoreVideo;
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText -framework IOSurface -framework CoreVideo;
 

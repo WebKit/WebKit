@@ -62,7 +62,7 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     my @weakExternalSymbols = ();
     my $skipProfileSymbols = coverageIsEnabled();
     if (defined $ENV{'ENABLE_LLVM_PROFILE_GENERATION'}) {
-        $skipProfileSymbols ||= $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ON" || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ENABLE_LLVM_PROFILE_GENERATION";
+        $skipProfileSymbols ||= $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ON" || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "YES";
     }
     while (<NM>) {
         if (/^STDOUT:/) {

@@ -38,6 +38,9 @@ OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS$(WK_XCODE_16_3));
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16_3 = -enable-experimental-feature ObjCImplementation;
 
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
+WK_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
+WK_PGO_USE_CFLAGS = ; // Disable IR PGO profile use
+WK_PGO_USE_LDFLAGS = ; // Disable IR PGO profile use
 OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS) $(FRAMEWORK_LDFLAGS_$(WK_PLATFORM_NAME));
 
 FRAMEWORK_LDFLAGS_xros = -framework AVKit;
