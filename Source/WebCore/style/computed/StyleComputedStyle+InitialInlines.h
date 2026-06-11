@@ -31,6 +31,10 @@
 #include <WebCore/StyleComputedStyleProperties+InitialInlines.h>
 #undef COMPUTED_STYLE_PROPERTIES_INITIAL_INLINES_INCLUDE_TRAP
 
+#include <WebCore/StyleLineHeight.h>
+#include <WebCore/StylePageSize.h>
+#include <WebCore/StyleZIndex.h>
+
 namespace WebCore {
 namespace Style {
 

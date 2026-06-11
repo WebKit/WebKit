@@ -42,6 +42,7 @@
 #include "RenderView.h"
 #include "StyleBorderImage.h"
 #include "StyleBoxShadow.h"
+#include "StyleColorResolver.h"
 #include "StyleFillLayers.h"
 #include "StyleMaskBorder.h"
 

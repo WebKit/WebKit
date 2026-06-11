@@ -47,6 +47,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleBoxShadow.h"
+#include "StyleColorResolver.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextBoxPainter.h"
 

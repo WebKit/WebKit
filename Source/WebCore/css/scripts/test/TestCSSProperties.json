@@ -95,7 +95,7 @@
             "codegen-properties": {
                 "animation-wrapper": "DiscreteCoordinatedValueListPropertyWrapper",
                 "coordinated-value-list-property": true,
-                "coordinated-value-list-property-item-type": "Style::Number<>",
+                "coordinated-value-list-property-item-type": "Style::Number",
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["coordinateValueList", "aggregates"],
                 "parser-grammar": "<number>#"
@@ -106,7 +106,7 @@
             "initial": "0",
             "codegen-properties": {
                 "coordinated-value-list-property": true,
-                "coordinated-value-list-property-item-type": "Style::Number<>",
+                "coordinated-value-list-property-item-type": "Style::Number",
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["coordinateValueList", "aggregates"],
                 "parser-grammar": "<number>#"
@@ -128,7 +128,7 @@
             "codegen-properties": {
                 "skip-computed-style": true,
                 "settings-flag": "cssSettingsOneEnabled",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -139,7 +139,7 @@
             "codegen-properties": {
                 "skip-computed-style": true,
                 "animation-wrapper": "Wrapper<float>",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -150,7 +150,7 @@
                 "skip-computed-style": true,
                 "animation-wrapper": "Wrapper<float>",
                 "animation-wrapper-acceleration": "always",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -161,7 +161,7 @@
                 "skip-computed-style": true,
                 "animation-wrapper": "Wrapper<float>",
                 "animation-wrapper-acceleration": "threaded-only",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -178,7 +178,7 @@
                 },
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -192,7 +192,7 @@
                 },
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -205,7 +205,7 @@
                 },
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -219,7 +219,7 @@
                 },
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>",
+                "computed-style-type": "Style::Number",
                 "parser-grammar": "<number>"
             }
         },
@@ -1126,27 +1126,27 @@
                 "parser-grammar": "<number>"
             }
         },
-        "test-render-style-storage-one-level-reference": {
+        "test-computed-style-storage-one-level-reference": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
             }
         },
-        "test-render-style-storage-one-level-value": {
+        "test-computed-style-storage-one-level-value": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
             }
         },
-        "test-render-style-storage-one-level-enum": {
+        "test-computed-style-storage-one-level-enum": {
             "animation-type": "discrete",
             "initial": "foo",
             "codegen-properties": {
@@ -1156,7 +1156,7 @@
                 "computed-style-type": "Style::TestEnumeration"
             }
         },
-        "test-render-style-storage-one-level-raw": {
+        "test-computed-style-storage-one-level-raw": {
             "animation-type": "discrete",
             "initial": "foo",
             "codegen-properties": {
@@ -1166,27 +1166,27 @@
                 "computed-style-type": "Style::TestRaw"
             }
         },
-        "test-render-style-storage-two-level-reference": {
+        "test-computed-style-storage-two-level-reference": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
             }
         },
-        "test-render-style-storage-two-level-value": {
+        "test-computed-style-storage-two-level-value": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
             }
         },
-        "test-render-style-storage-two-level-enum": {
+        "test-computed-style-storage-two-level-enum": {
             "animation-type": "discrete",
             "initial": "foo",
             "codegen-properties": {
@@ -1196,7 +1196,7 @@
                 "computed-style-type": "Style::TestEnumeration"
             }
         },
-        "test-render-style-storage-two-level-raw": {
+        "test-computed-style-storage-two-level-raw": {
             "animation-type": "discrete",
             "initial": "foo",
             "codegen-properties": {
@@ -1207,7 +1207,7 @@
             }
         },
 
-        "test-render-style-has-explicitly-set-policy-all-author-origin": {
+        "test-computed-style-has-explicitly-set-policy-all-author-origin": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
@@ -1216,10 +1216,10 @@
                 "computed-style-has-explicitly-set-storage-path": ["level1", "level2"],
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
             }
         },
-        "test-render-style-has-explicitly-set-policy-all-border-radius": {
+        "test-computed-style-has-explicitly-set-policy-all-border-radius": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
@@ -1228,10 +1228,10 @@
                 "computed-style-has-explicitly-set-storage-path": ["level1", "level2"],
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
             }
         },
-        "test-render-style-has-explicitly-set-policy-value-only": {
+        "test-computed-style-has-explicitly-set-policy-value-only": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
@@ -1240,7 +1240,18 @@
                 "computed-style-has-explicitly-set-storage-path": ["level1", "level2"],
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number"
+            }
+        },
+        "test-disabled-by-enable-if": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "enable-if": "ENABLE_NON_EXISTING_FEATURE",
+                "parser-grammar": "<number>",
+                "computed-style-storage-path": ["level1", "level2"],
+                "computed-style-storage-kind": "value",
+                "computed-style-type": "Style::Number"
             }
         }
     },

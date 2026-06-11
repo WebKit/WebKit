@@ -13,7 +13,6 @@ public:
     inline const Style::Color& testColor() const;
     inline void setTestColor(Style::Color&&);
     static inline Style::Color initialTestColor();
-    inline decltype(auto) testColorResolver() const;
     WebCore::Color testColorResolvingCurrentColor() const;
     WebCore::Color testColorResolvingCurrentColorApplyingColorFilter() const;
     WebCore::Color visitedDependentTestColor(OptionSet<PaintBehavior> = { }) const;
@@ -23,7 +22,6 @@ public:
     inline const Style::Color& testColorAllowsTypesAbsolute() const;
     inline void setTestColorAllowsTypesAbsolute(Style::Color&&);
     static inline Style::Color initialTestColorAllowsTypesAbsolute();
-    inline decltype(auto) testColorAllowsTypesAbsoluteResolver() const;
     WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColor() const;
     WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter() const;
     WebCore::Color visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior> = { }) const;
@@ -35,7 +33,6 @@ public:
     static inline Style::Color initialTestColorPropertyWithVisitedLinkSupport();
     inline const Style::Color& visitedLinkTestColorPropertyWithVisitedLinkSupport() const;
     inline void setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::Color&&);
-    inline decltype(auto) testColorPropertyWithVisitedLinkSupportResolver() const;
     WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
     WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
     WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
@@ -43,84 +40,84 @@ public:
     WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior> = { }) const;
     WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
-    // 'test-render-style-has-explicitly-set-policy-all-author-origin'
-    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
-    inline void setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<>);
-    static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin();
-    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
-    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(bool);
+    // 'test-computed-style-has-explicitly-set-policy-all-author-origin'
+    inline Style::Number testComputedStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    inline void setTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number);
+    static inline Style::Number initialTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin();
+    inline bool hasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    inline void setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(bool);
 
-    // 'test-render-style-has-explicitly-set-policy-all-border-radius'
-    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
-    inline void setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number<>);
-    static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius();
-    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
-    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(bool);
+    // 'test-computed-style-has-explicitly-set-policy-all-border-radius'
+    inline Style::Number testComputedStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    inline void setTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number);
+    static inline Style::Number initialTestComputedStyleHasExplicitlySetPolicyAllBorderRadius();
+    inline bool hasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    inline void setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(bool);
 
-    // 'test-render-style-has-explicitly-set-policy-value-only'
-    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyValueOnly() const;
-    inline void setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::Number<>);
-    static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyValueOnly();
-    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly() const;
-    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(bool);
+    // 'test-computed-style-has-explicitly-set-policy-value-only'
+    inline Style::Number testComputedStyleHasExplicitlySetPolicyValueOnly() const;
+    inline void setTestComputedStyleHasExplicitlySetPolicyValueOnly(Style::Number);
+    static inline Style::Number initialTestComputedStyleHasExplicitlySetPolicyValueOnly();
+    inline bool hasExplicitlySetTestComputedStyleHasExplicitlySetPolicyValueOnly() const;
+    inline void setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyValueOnly(bool);
 
-    // 'test-render-style-storage-one-level-enum'
-    inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
-    inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);
-    static constexpr Style::TestEnumeration initialTestRenderStyleStorageOneLevelEnum();
+    // 'test-computed-style-storage-one-level-enum'
+    inline Style::TestEnumeration testComputedStyleStorageOneLevelEnum() const;
+    inline void setTestComputedStyleStorageOneLevelEnum(Style::TestEnumeration);
+    static constexpr Style::TestEnumeration initialTestComputedStyleStorageOneLevelEnum();
 
-    // 'test-render-style-storage-one-level-raw'
-    inline Style::TestRaw testRenderStyleStorageOneLevelRaw() const;
-    inline void setTestRenderStyleStorageOneLevelRaw(Style::TestRaw);
-    static constexpr Style::TestRaw initialTestRenderStyleStorageOneLevelRaw();
+    // 'test-computed-style-storage-one-level-raw'
+    inline Style::TestRaw testComputedStyleStorageOneLevelRaw() const;
+    inline void setTestComputedStyleStorageOneLevelRaw(Style::TestRaw);
+    static constexpr Style::TestRaw initialTestComputedStyleStorageOneLevelRaw();
 
-    // 'test-render-style-storage-one-level-reference'
-    inline const Style::Number<>& testRenderStyleStorageOneLevelReference() const;
-    inline void setTestRenderStyleStorageOneLevelReference(Style::Number<>&&);
-    static inline Style::Number<> initialTestRenderStyleStorageOneLevelReference();
+    // 'test-computed-style-storage-one-level-reference'
+    inline const Style::Number& testComputedStyleStorageOneLevelReference() const;
+    inline void setTestComputedStyleStorageOneLevelReference(Style::Number&&);
+    static inline Style::Number initialTestComputedStyleStorageOneLevelReference();
 
-    // 'test-render-style-storage-one-level-value'
-    inline Style::Number<> testRenderStyleStorageOneLevelValue() const;
-    inline void setTestRenderStyleStorageOneLevelValue(Style::Number<>);
-    static inline Style::Number<> initialTestRenderStyleStorageOneLevelValue();
+    // 'test-computed-style-storage-one-level-value'
+    inline Style::Number testComputedStyleStorageOneLevelValue() const;
+    inline void setTestComputedStyleStorageOneLevelValue(Style::Number);
+    static inline Style::Number initialTestComputedStyleStorageOneLevelValue();
 
-    // 'test-render-style-storage-two-level-enum'
-    inline Style::TestEnumeration testRenderStyleStorageTwoLevelEnum() const;
-    inline void setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration);
-    static constexpr Style::TestEnumeration initialTestRenderStyleStorageTwoLevelEnum();
+    // 'test-computed-style-storage-two-level-enum'
+    inline Style::TestEnumeration testComputedStyleStorageTwoLevelEnum() const;
+    inline void setTestComputedStyleStorageTwoLevelEnum(Style::TestEnumeration);
+    static constexpr Style::TestEnumeration initialTestComputedStyleStorageTwoLevelEnum();
 
-    // 'test-render-style-storage-two-level-raw'
-    inline Style::TestRaw testRenderStyleStorageTwoLevelRaw() const;
-    inline void setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw);
-    static constexpr Style::TestRaw initialTestRenderStyleStorageTwoLevelRaw();
+    // 'test-computed-style-storage-two-level-raw'
+    inline Style::TestRaw testComputedStyleStorageTwoLevelRaw() const;
+    inline void setTestComputedStyleStorageTwoLevelRaw(Style::TestRaw);
+    static constexpr Style::TestRaw initialTestComputedStyleStorageTwoLevelRaw();
 
-    // 'test-render-style-storage-two-level-reference'
-    inline const Style::Number<>& testRenderStyleStorageTwoLevelReference() const;
-    inline void setTestRenderStyleStorageTwoLevelReference(Style::Number<>&&);
-    static inline Style::Number<> initialTestRenderStyleStorageTwoLevelReference();
+    // 'test-computed-style-storage-two-level-reference'
+    inline const Style::Number& testComputedStyleStorageTwoLevelReference() const;
+    inline void setTestComputedStyleStorageTwoLevelReference(Style::Number&&);
+    static inline Style::Number initialTestComputedStyleStorageTwoLevelReference();
 
-    // 'test-render-style-storage-two-level-value'
-    inline Style::Number<> testRenderStyleStorageTwoLevelValue() const;
-    inline void setTestRenderStyleStorageTwoLevelValue(Style::Number<>);
-    static inline Style::Number<> initialTestRenderStyleStorageTwoLevelValue();
+    // 'test-computed-style-storage-two-level-value'
+    inline Style::Number testComputedStyleStorageTwoLevelValue() const;
+    inline void setTestComputedStyleStorageTwoLevelValue(Style::Number);
+    static inline Style::Number initialTestComputedStyleStorageTwoLevelValue();
 
     // 'test-logical-property-group-physical-horizontal'
-    inline Style::Number<> testLogicalPropertyGroupPhysicalHorizontal() const;
-    inline void setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<>);
-    static inline Style::Number<> initialTestLogicalPropertyGroupPhysicalHorizontal();
+    inline Style::Number testLogicalPropertyGroupPhysicalHorizontal() const;
+    inline void setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number);
+    static inline Style::Number initialTestLogicalPropertyGroupPhysicalHorizontal();
 
     // 'test-logical-property-group-physical-vertical'
-    inline Style::Number<> testLogicalPropertyGroupPhysicalVertical() const;
-    inline void setTestLogicalPropertyGroupPhysicalVertical(Style::Number<>);
-    static inline Style::Number<> initialTestLogicalPropertyGroupPhysicalVertical();
+    inline Style::Number testLogicalPropertyGroupPhysicalVertical() const;
+    inline void setTestLogicalPropertyGroupPhysicalVertical(Style::Number);
+    static inline Style::Number initialTestLogicalPropertyGroupPhysicalVertical();
 
     // Logical getters and setters for 'test-group' properties of type 'axis'.
-    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalHorizontal(WritingMode) const;
-    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode) const;
-    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalHorizontal() const;
-    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical() const;
-    inline void setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<>);
-    inline void setLogicalTestLogicalPropertyGroupPhysicalVertical(Style::Number<>);
+    inline Style::Number logicalTestLogicalPropertyGroupPhysicalHorizontal(WritingMode) const;
+    inline Style::Number logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode) const;
+    inline Style::Number logicalTestLogicalPropertyGroupPhysicalHorizontal() const;
+    inline Style::Number logicalTestLogicalPropertyGroupPhysicalVertical() const;
+    inline void setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number);
+    inline void setLogicalTestLogicalPropertyGroupPhysicalVertical(Style::Number);
 
 protected:
     ComputedStyleProperties(ComputedStyleProperties&&) = default;

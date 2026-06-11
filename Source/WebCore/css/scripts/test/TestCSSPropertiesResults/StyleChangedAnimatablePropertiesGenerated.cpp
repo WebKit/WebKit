@@ -24,20 +24,20 @@ public:
 
     static void collect_level1_level2(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
     {
-        if (a.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin != b.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin);
-        if (a.testRenderStyleHasExplicitlySetPolicyAllBorderRadius != b.testRenderStyleHasExplicitlySetPolicyAllBorderRadius)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius);
-        if (a.testRenderStyleHasExplicitlySetPolicyValueOnly != b.testRenderStyleHasExplicitlySetPolicyValueOnly)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly);
-        if (a.testRenderStyleStorageTwoLevelEnum != b.testRenderStyleStorageTwoLevelEnum)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelEnum);
-        if (a.testRenderStyleStorageTwoLevelRaw != b.testRenderStyleStorageTwoLevelRaw)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelRaw);
-        if (a.testRenderStyleStorageTwoLevelReference != b.testRenderStyleStorageTwoLevelReference)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelReference);
-        if (a.testRenderStyleStorageTwoLevelValue != b.testRenderStyleStorageTwoLevelValue)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelValue);
+        if (a.testComputedStyleHasExplicitlySetPolicyAllAuthorOrigin != b.testComputedStyleHasExplicitlySetPolicyAllAuthorOrigin)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin);
+        if (a.testComputedStyleHasExplicitlySetPolicyAllBorderRadius != b.testComputedStyleHasExplicitlySetPolicyAllBorderRadius)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius);
+        if (a.testComputedStyleHasExplicitlySetPolicyValueOnly != b.testComputedStyleHasExplicitlySetPolicyValueOnly)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly);
+        if (a.testComputedStyleStorageTwoLevelEnum != b.testComputedStyleStorageTwoLevelEnum)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageTwoLevelEnum);
+        if (a.testComputedStyleStorageTwoLevelRaw != b.testComputedStyleStorageTwoLevelRaw)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageTwoLevelRaw);
+        if (a.testComputedStyleStorageTwoLevelReference != b.testComputedStyleStorageTwoLevelReference)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageTwoLevelReference);
+        if (a.testComputedStyleStorageTwoLevelValue != b.testComputedStyleStorageTwoLevelValue)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageTwoLevelValue);
 
         if (a.visitedLinkTestColorPropertyWithVisitedLinkSupport != b.visitedLinkTestColorPropertyWithVisitedLinkSupport)
             changingProperties.m_properties.set(CSSPropertyTestColorPropertyWithVisitedLinkSupport);
@@ -54,18 +54,18 @@ public:
             changingProperties.m_properties.set(CSSPropertyTestColorAllowsTypesAbsolute);
         if (a.testColorPropertyWithVisitedLinkSupport != b.testColorPropertyWithVisitedLinkSupport)
             changingProperties.m_properties.set(CSSPropertyTestColorPropertyWithVisitedLinkSupport);
+        if (a.testComputedStyleStorageOneLevelEnum != b.testComputedStyleStorageOneLevelEnum)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageOneLevelEnum);
+        if (a.testComputedStyleStorageOneLevelRaw != b.testComputedStyleStorageOneLevelRaw)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageOneLevelRaw);
+        if (a.testComputedStyleStorageOneLevelReference != b.testComputedStyleStorageOneLevelReference)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageOneLevelReference);
+        if (a.testComputedStyleStorageOneLevelValue != b.testComputedStyleStorageOneLevelValue)
+            changingProperties.m_properties.set(CSSPropertyTestComputedStyleStorageOneLevelValue);
         if (a.testLogicalPropertyGroupPhysicalHorizontal != b.testLogicalPropertyGroupPhysicalHorizontal)
             changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal);
         if (a.testLogicalPropertyGroupPhysicalVertical != b.testLogicalPropertyGroupPhysicalVertical)
             changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalVertical);
-        if (a.testRenderStyleStorageOneLevelEnum != b.testRenderStyleStorageOneLevelEnum)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageOneLevelEnum);
-        if (a.testRenderStyleStorageOneLevelRaw != b.testRenderStyleStorageOneLevelRaw)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageOneLevelRaw);
-        if (a.testRenderStyleStorageOneLevelReference != b.testRenderStyleStorageOneLevelReference)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageOneLevelReference);
-        if (a.testRenderStyleStorageOneLevelValue != b.testRenderStyleStorageOneLevelValue)
-            changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageOneLevelValue);
     }
 
     static void collect(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)

@@ -32,6 +32,7 @@
 #include "PlatformRenderTheme.h"
 #include "RenderBlock.h"
 #include "RenderTheme.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyleBase+ConstructionInlines.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleLineHeight.h"

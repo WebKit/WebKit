@@ -33,6 +33,12 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
+#include "StyleBackgroundData.h"
+#include "StyleBoxData.h"
+#include "StyleNonInheritedMiscData.h"
+#include "StyleNonInheritedRareData.h"
+#include "StyleSurroundData.h"
+
 namespace WebCore {
 namespace Style {
 

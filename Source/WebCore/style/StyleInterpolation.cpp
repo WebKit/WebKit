@@ -32,6 +32,7 @@
 #include "StyleInterpolation.h"
 
 #include "CSSRegisteredCustomProperty.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"

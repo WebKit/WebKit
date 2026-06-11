@@ -33,6 +33,12 @@
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
+#include "StyleSVGFillData.h"
+#include "StyleSVGLayoutData.h"
+#include "StyleSVGMarkerResourceData.h"
+#include "StyleSVGNonInheritedMiscData.h"
+#include "StyleSVGStopData.h"
+#include "StyleSVGStrokeData.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

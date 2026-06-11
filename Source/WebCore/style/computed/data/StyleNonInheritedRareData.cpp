@@ -27,6 +27,13 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
+#include "StyleBackdropFilterData.h"
+#include "StyleCustomPropertyData.h"
+#include "StyleGridData.h"
+#include "StyleGridItemData.h"
+#include "StyleMarqueeData.h"
+#include "StyleMaskBorderData.h"
+
 namespace WebCore {
 namespace Style {
 

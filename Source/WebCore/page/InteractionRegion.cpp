@@ -68,6 +68,7 @@
 #include "Settings.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
+#include "StyleColorResolver.h"
 #include "StyleResolver.h"
 #include "TextIterator.h"
 #include <wtf/NeverDestroyed.h>

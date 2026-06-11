@@ -44,6 +44,7 @@
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {

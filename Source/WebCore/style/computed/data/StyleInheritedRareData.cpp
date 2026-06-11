@@ -28,6 +28,9 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
+#include "StyleAppleColorFilterData.h"
+#include "StyleCustomPropertyData.h"
+
 namespace WebCore {
 namespace Style {
 

@@ -14,6 +14,28 @@ namespace WebCore {
 
 using namespace CSSPropertyParserHelpers;
 
+static bool isKeywordValidForTestComputedStyleStorageOneLevelEnum(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueBar:
+    case CSSValueID::CSSValueFoo:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isKeywordValidForTestComputedStyleStorageTwoLevelEnum(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueBar:
+    case CSSValueID::CSSValueFoo:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isKeywordValidForTestKeyword(CSSValueID keyword)
 {
     switch (keyword) {
@@ -77,28 +99,6 @@ static bool isKeywordValidForTestMatchOneWithReferenceWithSettingsFlag(CSSValueI
     switch (keyword) {
     case CSSValueID::CSSValueBar:
     case CSSValueID::CSSValueBaz:
-    case CSSValueID::CSSValueFoo:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isKeywordValidForTestRenderStyleStorageOneLevelEnum(CSSValueID keyword)
-{
-    switch (keyword) {
-    case CSSValueID::CSSValueBar:
-    case CSSValueID::CSSValueFoo:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isKeywordValidForTestRenderStyleStorageTwoLevelEnum(CSSValueID keyword)
-{
-    switch (keyword) {
-    case CSSValueID::CSSValueBar:
     case CSSValueID::CSSValueFoo:
         return true;
     default:
@@ -390,6 +390,120 @@ static RefPtr<CSSValue> consumeTestBoundedRepetitionWithSpacesWithTypeWithDefaul
         return CSSValuePair::create(term0.releaseNonNull(), term1.releaseNonNull(), term2.releaseNonNull(), term3.releaseNonNull());
     };
     return consumeBoundedRepetition(range, state);
+}
+
+static RefPtr<CSSValue> consumeTestComputedStyleStorageOneLevelRaw(CSSParserTokenRange& range)
+{
+    // [ foo || bar ]
+    auto consumeMatchOneOrMoreAnyOrder = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        RefPtr<CSSValue> value0; // foo
+        auto tryConsumeTerm0 = [&value0](CSSParserTokenRange& range) -> bool {
+            auto consumeTerm0 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+                // foo
+                switch (auto keyword = range.peek().id(); keyword) {
+                case CSSValueID::CSSValueFoo:
+                    range.consumeIncludingWhitespace();
+                    return CSSKeywordValue::create(CSS::Keyword { keyword });
+                default:
+                    return nullptr;
+                }
+            };
+            if (value0)
+                return false;
+            value0 = consumeTerm0(range);
+            return !!value0;
+        };
+        RefPtr<CSSValue> value1; // bar
+        auto tryConsumeTerm1 = [&value1](CSSParserTokenRange& range) -> bool {
+            auto consumeTerm1 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+                // bar
+                switch (auto keyword = range.peek().id(); keyword) {
+                case CSSValueID::CSSValueBar:
+                    range.consumeIncludingWhitespace();
+                    return CSSKeywordValue::create(CSS::Keyword { keyword });
+                default:
+                    return nullptr;
+                }
+            };
+            if (value1)
+                return false;
+            value1 = consumeTerm1(range);
+            return !!value1;
+        };
+        for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
+            if (tryConsumeTerm0(range) || tryConsumeTerm1(range))
+                continue;
+            break;
+        }
+        CSSValueListBuilder list;
+        if (value0) // foo
+            list.append(value0.releaseNonNull());
+        if (value1) // bar
+            list.append(value1.releaseNonNull());
+        if (list.isEmpty())
+            return { };
+        if (list.size() == 1)
+            return WTF::move(list[0]); // single item optimization
+        return CSSValueList::createSpaceSeparated(WTF::move(list));
+    };
+    return consumeMatchOneOrMoreAnyOrder(range);
+}
+
+static RefPtr<CSSValue> consumeTestComputedStyleStorageTwoLevelRaw(CSSParserTokenRange& range)
+{
+    // [ foo || bar ]
+    auto consumeMatchOneOrMoreAnyOrder = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        RefPtr<CSSValue> value0; // foo
+        auto tryConsumeTerm0 = [&value0](CSSParserTokenRange& range) -> bool {
+            auto consumeTerm0 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+                // foo
+                switch (auto keyword = range.peek().id(); keyword) {
+                case CSSValueID::CSSValueFoo:
+                    range.consumeIncludingWhitespace();
+                    return CSSKeywordValue::create(CSS::Keyword { keyword });
+                default:
+                    return nullptr;
+                }
+            };
+            if (value0)
+                return false;
+            value0 = consumeTerm0(range);
+            return !!value0;
+        };
+        RefPtr<CSSValue> value1; // bar
+        auto tryConsumeTerm1 = [&value1](CSSParserTokenRange& range) -> bool {
+            auto consumeTerm1 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+                // bar
+                switch (auto keyword = range.peek().id(); keyword) {
+                case CSSValueID::CSSValueBar:
+                    range.consumeIncludingWhitespace();
+                    return CSSKeywordValue::create(CSS::Keyword { keyword });
+                default:
+                    return nullptr;
+                }
+            };
+            if (value1)
+                return false;
+            value1 = consumeTerm1(range);
+            return !!value1;
+        };
+        for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
+            if (tryConsumeTerm0(range) || tryConsumeTerm1(range))
+                continue;
+            break;
+        }
+        CSSValueListBuilder list;
+        if (value0) // foo
+            list.append(value0.releaseNonNull());
+        if (value1) // bar
+            list.append(value1.releaseNonNull());
+        if (list.isEmpty())
+            return { };
+        if (list.size() == 1)
+            return WTF::move(list[0]); // single item optimization
+        return CSSValueList::createSpaceSeparated(WTF::move(list));
+    };
+    return consumeMatchOneOrMoreAnyOrder(range);
 }
 
 static RefPtr<CSSValue> consumeTestFunctionBoundedParameters(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -3013,120 +3127,6 @@ static RefPtr<CSSValue> consumeTestNumericValueRange(CSSParserTokenRange& range,
     return CSSPrimitiveValueResolver<CSS::Percentage<CSS::Range{1, 100}>>::consumeAndResolve(range, state);
 }
 
-static RefPtr<CSSValue> consumeTestRenderStyleStorageOneLevelRaw(CSSParserTokenRange& range)
-{
-    // [ foo || bar ]
-    auto consumeMatchOneOrMoreAnyOrder = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        RefPtr<CSSValue> value0; // foo
-        auto tryConsumeTerm0 = [&value0](CSSParserTokenRange& range) -> bool {
-            auto consumeTerm0 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-                // foo
-                switch (auto keyword = range.peek().id(); keyword) {
-                case CSSValueID::CSSValueFoo:
-                    range.consumeIncludingWhitespace();
-                    return CSSKeywordValue::create(CSS::Keyword { keyword });
-                default:
-                    return nullptr;
-                }
-            };
-            if (value0)
-                return false;
-            value0 = consumeTerm0(range);
-            return !!value0;
-        };
-        RefPtr<CSSValue> value1; // bar
-        auto tryConsumeTerm1 = [&value1](CSSParserTokenRange& range) -> bool {
-            auto consumeTerm1 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-                // bar
-                switch (auto keyword = range.peek().id(); keyword) {
-                case CSSValueID::CSSValueBar:
-                    range.consumeIncludingWhitespace();
-                    return CSSKeywordValue::create(CSS::Keyword { keyword });
-                default:
-                    return nullptr;
-                }
-            };
-            if (value1)
-                return false;
-            value1 = consumeTerm1(range);
-            return !!value1;
-        };
-        for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
-            if (tryConsumeTerm0(range) || tryConsumeTerm1(range))
-                continue;
-            break;
-        }
-        CSSValueListBuilder list;
-        if (value0) // foo
-            list.append(value0.releaseNonNull());
-        if (value1) // bar
-            list.append(value1.releaseNonNull());
-        if (list.isEmpty())
-            return { };
-        if (list.size() == 1)
-            return WTF::move(list[0]); // single item optimization
-        return CSSValueList::createSpaceSeparated(WTF::move(list));
-    };
-    return consumeMatchOneOrMoreAnyOrder(range);
-}
-
-static RefPtr<CSSValue> consumeTestRenderStyleStorageTwoLevelRaw(CSSParserTokenRange& range)
-{
-    // [ foo || bar ]
-    auto consumeMatchOneOrMoreAnyOrder = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        RefPtr<CSSValue> value0; // foo
-        auto tryConsumeTerm0 = [&value0](CSSParserTokenRange& range) -> bool {
-            auto consumeTerm0 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-                // foo
-                switch (auto keyword = range.peek().id(); keyword) {
-                case CSSValueID::CSSValueFoo:
-                    range.consumeIncludingWhitespace();
-                    return CSSKeywordValue::create(CSS::Keyword { keyword });
-                default:
-                    return nullptr;
-                }
-            };
-            if (value0)
-                return false;
-            value0 = consumeTerm0(range);
-            return !!value0;
-        };
-        RefPtr<CSSValue> value1; // bar
-        auto tryConsumeTerm1 = [&value1](CSSParserTokenRange& range) -> bool {
-            auto consumeTerm1 = [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-                // bar
-                switch (auto keyword = range.peek().id(); keyword) {
-                case CSSValueID::CSSValueBar:
-                    range.consumeIncludingWhitespace();
-                    return CSSKeywordValue::create(CSS::Keyword { keyword });
-                default:
-                    return nullptr;
-                }
-            };
-            if (value1)
-                return false;
-            value1 = consumeTerm1(range);
-            return !!value1;
-        };
-        for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
-            if (tryConsumeTerm0(range) || tryConsumeTerm1(range))
-                continue;
-            break;
-        }
-        CSSValueListBuilder list;
-        if (value0) // foo
-            list.append(value0.releaseNonNull());
-        if (value1) // bar
-            list.append(value1.releaseNonNull());
-        if (list.isEmpty())
-            return { };
-        if (list.size() == 1)
-            return WTF::move(list[0]); // single item optimization
-        return CSSValueList::createSpaceSeparated(WTF::move(list));
-    };
-    return consumeMatchOneOrMoreAnyOrder(range);
-}
-
 static RefPtr<CSSValue> consumeTestUnboundedRepetitionWithCommasWithMin(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <number>#{2,}
@@ -3306,15 +3306,15 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
     case CSSPropertyID::CSSPropertyTestAnimationWrapper:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
     case CSSPropertyID::CSSPropertyTestProperty:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
     case CSSPropertyID::CSSPropertyTestSinkPriority:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal:
@@ -3355,6 +3355,14 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeColor(range, state, { .allowedColorTypes = { CSS::ColorType::Absolute, CSS::ColorType::Current, CSS::ColorType::System } });
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
         return consumeColor(range, state, { .allowedColorTypes = { CSS::ColorType::Absolute } });
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum:
+        return consumeIdent(range, isKeywordValidForTestComputedStyleStorageOneLevelEnum);
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelRaw:
+        return consumeTestComputedStyleStorageOneLevelRaw(range);
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum:
+        return consumeIdent(range, isKeywordValidForTestComputedStyleStorageTwoLevelEnum);
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelRaw:
+        return consumeTestComputedStyleStorageTwoLevelRaw(range);
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
         return consumeTestFunctionBoundedParameters(range, state);
     case CSSPropertyID::CSSPropertyTestFunctionFixedParameters:
@@ -3469,14 +3477,6 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeTestMatchOneWithSettingsFlag(range, state);
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
         return consumeTestNumericValueRange(range, state);
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
-        return consumeIdent(range, isKeywordValidForTestRenderStyleStorageOneLevelEnum);
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
-        return consumeTestRenderStyleStorageOneLevelRaw(range);
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
-        return consumeIdent(range, isKeywordValidForTestRenderStyleStorageTwoLevelEnum);
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
-        return consumeTestRenderStyleStorageTwoLevelRaw(range);
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin:
         return consumeTestUnboundedRepetitionWithCommasWithMin(range, state);
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt:
@@ -3531,6 +3531,10 @@ bool CSSPropertyParsing::parseStylePropertyShorthand(CSSParserTokenRange& range,
 bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSValueID keyword, CSS::PropertyParserState& state)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum:
+        return isKeywordValidForTestComputedStyleStorageOneLevelEnum(keyword);
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum:
+        return isKeywordValidForTestComputedStyleStorageTwoLevelEnum(keyword);
     case CSSPropertyID::CSSPropertyTestKeyword:
         return isKeywordValidForTestKeyword(keyword);
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
@@ -3543,10 +3547,6 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
         return isKeywordValidForTestMatchOneWithMultipleKeywords(keyword);
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
         return isKeywordValidForTestMatchOneWithReferenceWithSettingsFlag(keyword);
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
-        return isKeywordValidForTestRenderStyleStorageOneLevelEnum(keyword);
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
-        return isKeywordValidForTestRenderStyleStorageTwoLevelEnum(keyword);
     case CSSPropertyID::CSSPropertyTestUrlWithModifiers:
         return isKeywordValidForTestUrlWithModifiers(keyword);
     case CSSPropertyID::CSSPropertyTestUrlWithNoModifiers:
@@ -3565,14 +3565,14 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
 bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum:
     case CSSPropertyID::CSSPropertyTestKeyword:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestMatchOneWithKeywordWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestMatchOneWithMultipleKeywords:
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
     case CSSPropertyID::CSSPropertyTestUrlWithModifiers:
     case CSSPropertyID::CSSPropertyTestUrlWithNoModifiers:
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:

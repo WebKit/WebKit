@@ -3253,6 +3253,7 @@ style/calc/StyleCalculationTree+Evaluation.cpp
 style/calc/StyleCalculationTree.cpp
 style/calc/StyleCalculationValue.cpp
 style/calc/StyleCalculationValueMap.cpp
+style/computed/custom/StyleComputedStyleProperties+Custom.cpp @header:RenderStyleGetters @cost:5
 style/computed/data/StyleAppleColorFilterData.cpp @cost:5
 style/computed/data/StyleBackdropFilterData.cpp @cost:5
 style/computed/data/StyleBackgroundData.cpp @cost:5
@@ -3286,8 +3287,6 @@ style/computed/data/StyleTransformData.cpp @cost:5
 style/computed/data/StyleVisitedLinkColorData.cpp @cost:5
 style/computed/StyleComputedStyle.cpp @cost:5
 style/computed/StyleComputedStyleBase.cpp @header:RenderStyleGetters @cost:6
-style/computed/StyleComputedStyleProperties+GettersCustom.cpp @header:RenderStyleGetters @cost:5
-style/computed/StyleComputedStyleProperties+InitialCustom.cpp @header:RenderStyleGetters @cost:4
 style/values/align/StyleAlignContent.cpp
 style/values/align/StyleAlignItems.cpp
 style/values/align/StyleAlignSelf.cpp @header:RenderStyleGetters @cost:5

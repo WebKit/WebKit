@@ -29,6 +29,7 @@
 #include "LegacyRenderSVGResourceGradientInlines.h"
 #include "RenderSVGText.h"
 #include "SVGRenderingContext.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>

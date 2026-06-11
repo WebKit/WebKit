@@ -36,19 +36,19 @@ const std::array<CSSPropertyID, 22> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestColor,
     CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute,
     CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport,
+    CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin,
+    CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius,
+    CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelRaw,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelRaw,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference,
+    CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalBlock,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical,
-    CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin,
-    CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius,
-    CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference,
-    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue,
     CSSPropertyID::CSSPropertyTestSettingsOne,
 };
 
@@ -78,6 +78,17 @@ static constexpr std::array<StringImpl::StaticStringImpl, 118> propertyNameData 
     StringImpl::StaticStringImpl("test-color", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-color-allows-types-absolute", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-color-property-with-visited-link-support", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-has-explicitly-set-policy-all-author-origin", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-has-explicitly-set-policy-all-border-radius", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-has-explicitly-set-policy-value-only", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-one-level-enum", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-one-level-raw", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-one-level-reference", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-one-level-value", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-two-level-enum", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-two-level-raw", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-two-level-reference", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-computed-style-storage-two-level-value", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-custom-extractor", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-function-bounded-parameters", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-function-fixed-parameters", StringImpl::StringAtom),
@@ -137,17 +148,6 @@ static constexpr std::array<StringImpl::StaticStringImpl, 118> propertyNameData 
     StringImpl::StaticStringImpl("test-match-one-with-settings-flag", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-numeric-value-range", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-property", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-all-author-origin", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-all-border-radius", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-value-only", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-one-level-enum", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-one-level-raw", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-one-level-reference", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-one-level-value", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-two-level-enum", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-two-level-raw", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-two-level-reference", StringImpl::StringAtom),
-    StringImpl::StaticStringImpl("test-render-style-storage-two-level-value", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-settings-one", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-unbounded-repetition-with-commas-with-min", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-unbounded-repetition-with-commas-with-min-no-single-item-opt", StringImpl::StringAtom),
@@ -212,6 +212,17 @@ test-bounded-repetition-with-spaces-with-type-with-default-previous-two, CSSProp
 test-color, CSSPropertyID::CSSPropertyTestColor
 test-color-allows-types-absolute, CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute
 test-color-property-with-visited-link-support, CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport
+test-computed-style-has-explicitly-set-policy-all-author-origin, CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin
+test-computed-style-has-explicitly-set-policy-all-border-radius, CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius
+test-computed-style-has-explicitly-set-policy-value-only, CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly
+test-computed-style-storage-one-level-enum, CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum
+test-computed-style-storage-one-level-raw, CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelRaw
+test-computed-style-storage-one-level-reference, CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference
+test-computed-style-storage-one-level-value, CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue
+test-computed-style-storage-two-level-enum, CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum
+test-computed-style-storage-two-level-raw, CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelRaw
+test-computed-style-storage-two-level-reference, CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference
+test-computed-style-storage-two-level-value, CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue
 test-custom-extractor, CSSPropertyID::CSSPropertyTestCustomExtractor
 test-function-bounded-parameters, CSSPropertyID::CSSPropertyTestFunctionBoundedParameters
 test-function-fixed-parameters, CSSPropertyID::CSSPropertyTestFunctionFixedParameters
@@ -277,17 +288,6 @@ test-match-one-with-settings-flag, CSSPropertyID::CSSPropertyTestMatchOneWithSet
 test-medium-priority, CSSPropertyID::CSSPropertyTestMediumPriority
 test-numeric-value-range, CSSPropertyID::CSSPropertyTestNumericValueRange
 test-property, CSSPropertyID::CSSPropertyTestProperty
-test-render-style-has-explicitly-set-policy-all-author-origin, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
-test-render-style-has-explicitly-set-policy-all-border-radius, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius
-test-render-style-has-explicitly-set-policy-value-only, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly
-test-render-style-storage-one-level-enum, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
-test-render-style-storage-one-level-raw, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
-test-render-style-storage-one-level-reference, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
-test-render-style-storage-one-level-value, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue
-test-render-style-storage-two-level-enum, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum
-test-render-style-storage-two-level-raw, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw
-test-render-style-storage-two-level-reference, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference
-test-render-style-storage-two-level-value, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue
 test-settings-one, CSSPropertyID::CSSPropertyTestSettingsOne
 test-shorthand-one, CSSPropertyID::CSSPropertyTestShorthandOne
 test-shorthand-two, CSSPropertyID::CSSPropertyTestShorthandTwo
@@ -458,6 +458,17 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestColor
     false, // CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute
     false, // CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelRaw
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelRaw
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference
+    false, // CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue
     false, // CSSPropertyID::CSSPropertyTestCustomExtractor
     false, // CSSPropertyID::CSSPropertyTestFunctionBoundedParameters
     false, // CSSPropertyID::CSSPropertyTestFunctionFixedParameters
@@ -517,17 +528,6 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag
     false, // CSSPropertyID::CSSPropertyTestNumericValueRange
     false, // CSSPropertyID::CSSPropertyTestProperty
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference
-    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue
     false, // CSSPropertyID::CSSPropertyTestSettingsOne
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt
@@ -619,6 +619,13 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeNoSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndCustomType:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType:
@@ -645,13 +652,6 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt:

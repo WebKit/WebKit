@@ -49,6 +49,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleBoxShadow.h"
+#include "StyleColorResolver.h"
 #include "StyleProperties.h"
 #include "TransformState.h"
 #include <ranges>

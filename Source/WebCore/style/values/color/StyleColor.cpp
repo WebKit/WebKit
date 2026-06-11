@@ -46,6 +46,7 @@
 #include "StyleColorLayers.h"
 #include "StyleColorMix.h"
 #include "StyleColorResolutionState.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle.h"
 #include "StyleContrastColor.h"
 #include "StyleHexColor.h"

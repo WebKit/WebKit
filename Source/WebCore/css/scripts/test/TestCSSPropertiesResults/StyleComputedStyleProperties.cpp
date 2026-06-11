@@ -3,79 +3,85 @@
 #include "config.h"
 #include "StyleComputedStyleProperties.h"
 
-#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleColorPropertyTraits+TestColor.h"
+#include "StyleColorPropertyTraits+TestColorAllowsTypesAbsolute.h"
+#include "StyleColorPropertyTraits+TestColorPropertyWithVisitedLinkSupport.h"
+#include "StyleColorResolver.h"
+#include "StyleComputedStyleProperties+TestColorAllowsTypesAbsoluteGetter.h"
+#include "StyleComputedStyleProperties+TestColorGetter.h"
+#include "StyleComputedStyleProperties+TestColorPropertyWithVisitedLinkSupportGetter.h"
 
 namespace WebCore {
 namespace Style {
 
 WebCore::Color ComputedStyleProperties::testColorResolvingCurrentColor() const
 {
-    return testColorResolver().colorResolvingCurrentColor();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>>> { *this }.colorResolvingCurrentColor();
 }
 
 WebCore::Color ComputedStyleProperties::testColorResolvingCurrentColorApplyingColorFilter() const
 {
-    return testColorResolver().colorResolvingCurrentColorApplyingColorFilter();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>>> { *this }.colorResolvingCurrentColorApplyingColorFilter();
 }
 
 WebCore::Color ComputedStyleProperties::visitedDependentTestColor(OptionSet<PaintBehavior> paintBehavior) const
 {
-    return testColorResolver().visitedDependentColor(paintBehavior);
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>>> { *this }.visitedDependentColor(paintBehavior);
 }
 
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
 {
-    return testColorResolver().visitedDependentColorApplyingColorFilter(paintBehavior);
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>>> { *this }.visitedDependentColorApplyingColorFilter(paintBehavior);
 }
 
 WebCore::Color ComputedStyleProperties::testColorAllowsTypesAbsoluteResolvingCurrentColor() const
 {
-    return testColorAllowsTypesAbsoluteResolver().colorResolvingCurrentColor();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>>> { *this }.colorResolvingCurrentColor();
 }
 
 WebCore::Color ComputedStyleProperties::testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter() const
 {
-    return testColorAllowsTypesAbsoluteResolver().colorResolvingCurrentColorApplyingColorFilter();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>>> { *this }.colorResolvingCurrentColorApplyingColorFilter();
 }
 
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior> paintBehavior) const
 {
-    return testColorAllowsTypesAbsoluteResolver().visitedDependentColor(paintBehavior);
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>>> { *this }.visitedDependentColor(paintBehavior);
 }
 
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
 {
-    return testColorAllowsTypesAbsoluteResolver().visitedDependentColorApplyingColorFilter(paintBehavior);
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>>> { *this }.visitedDependentColorApplyingColorFilter(paintBehavior);
 }
 
 WebCore::Color ComputedStyleProperties::testColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const
 {
-    return testColorPropertyWithVisitedLinkSupportResolver().colorResolvingCurrentColor();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this }.colorResolvingCurrentColor();
 }
 
 WebCore::Color ComputedStyleProperties::testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const
 {
-    return testColorPropertyWithVisitedLinkSupportResolver().colorResolvingCurrentColorApplyingColorFilter();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this }.colorResolvingCurrentColorApplyingColorFilter();
 }
 
 WebCore::Color ComputedStyleProperties::visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const
 {
-    return testColorPropertyWithVisitedLinkSupportResolver().visitedLinkColorResolvingCurrentColor();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this }.visitedLinkColorResolvingCurrentColor();
 }
 
 WebCore::Color ComputedStyleProperties::visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const
 {
-    return testColorPropertyWithVisitedLinkSupportResolver().visitedLinkColorResolvingCurrentColorApplyingColorFilter();
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this }.visitedLinkColorResolvingCurrentColorApplyingColorFilter();
 }
 
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior> paintBehavior) const
 {
-    return testColorPropertyWithVisitedLinkSupportResolver().visitedDependentColor(paintBehavior);
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this }.visitedDependentColor(paintBehavior);
 }
 
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
 {
-    return testColorPropertyWithVisitedLinkSupportResolver().visitedDependentColorApplyingColorFilter(paintBehavior);
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this }.visitedDependentColorApplyingColorFilter(paintBehavior);
 }
 
 } // namespace WebCore

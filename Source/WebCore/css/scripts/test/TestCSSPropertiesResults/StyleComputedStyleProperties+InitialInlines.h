@@ -6,100 +6,20 @@
 #error "Please do not include this file anywhere except from StyleComputedStyle+InitialInlines.h."
 #endif
 
-#include <WebCore/StyleComputedStyleProperties+InitialCustomInlines.h>
-
-namespace WebCore {
-namespace Style {
-
-inline Style::Color ComputedStyleProperties::initialTestColor()
-{
-    return CSS::Keyword::CurrentColor { };
-}
-
-inline Style::Color ComputedStyleProperties::initialTestColorAllowsTypesAbsolute()
-{
-    return CSS::Keyword::CurrentColor { };
-}
-
-inline Style::Color ComputedStyleProperties::initialTestColorPropertyWithVisitedLinkSupport()
-{
-    return CSS::Keyword::CurrentColor { };
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyValueOnly()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-constexpr Style::TestEnumeration ComputedStyleProperties::initialTestRenderStyleStorageOneLevelEnum()
-{
-    return Style::TestEnumeration::Foo;
-}
-
-constexpr Style::TestRaw ComputedStyleProperties::initialTestRenderStyleStorageOneLevelRaw()
-{
-    return CSS::Keyword::Foo { };
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageOneLevelReference()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageOneLevelValue()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-constexpr Style::TestEnumeration ComputedStyleProperties::initialTestRenderStyleStorageTwoLevelEnum()
-{
-    return Style::TestEnumeration::Foo;
-}
-
-constexpr Style::TestRaw ComputedStyleProperties::initialTestRenderStyleStorageTwoLevelRaw()
-{
-    return CSS::Keyword::Foo { };
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageTwoLevelReference()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageTwoLevelValue()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestLogicalPropertyGroupPhysicalHorizontal()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-inline Style::Number<> ComputedStyleProperties::initialTestLogicalPropertyGroupPhysicalVertical()
-{
-    using namespace CSS::Literals;
-    return 0_css_number;
-}
-
-} // namespace WebCore
-} // namespace Style
+#include <WebCore/StyleComputedStyleProperties+TestColorAllowsTypesAbsoluteInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestColorInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestColorPropertyWithVisitedLinkSupportInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleHasExplicitlySetPolicyAllAuthorOriginInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleHasExplicitlySetPolicyAllBorderRadiusInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleHasExplicitlySetPolicyValueOnlyInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageOneLevelEnumInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageOneLevelRawInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageOneLevelReferenceInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageOneLevelValueInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageTwoLevelEnumInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageTwoLevelRawInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageTwoLevelReferenceInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestComputedStyleStorageTwoLevelValueInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestLogicalPropertyGroupPhysicalHorizontalInitial.h>
+#include <WebCore/StyleComputedStyleProperties+TestLogicalPropertyGroupPhysicalVerticalInitial.h>
 

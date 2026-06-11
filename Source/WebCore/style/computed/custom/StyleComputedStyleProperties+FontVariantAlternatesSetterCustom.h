@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,22 +22,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StyleComputedStyleProperties+InitialCustomInlines.h"
+#pragma once
 
-#include "RenderTheme.h"
+#include "StyleComputedStyleProperties.h"
+
+#include "FontCascadeDescription.h"
+#include "StyleFontVariantAlternates.h"
 
 namespace WebCore {
 namespace Style {
 
-#if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
+// FIXME: Support font properties.
 
-Color ComputedStyleProperties::initialTapHighlightColor()
+inline void ComputedStyleProperties::setFontVariantAlternates(FontVariantAlternates value)
 {
-    return RenderTheme::tapHighlightColor();
+    auto description = fontDescription();
+    description.setVariantAlternates(value.takePlatform());
+    setFontDescription(WTF::move(description));
 }
-
-#endif
 
 } // namespace Style
 } // namespace WebCore

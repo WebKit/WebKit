@@ -124,7 +124,6 @@ style/StyleScope.cpp
 [ iOS ] style/StyleScopeRuleSets.cpp
 style/UserAgentStyle.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
-style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
 svg/SVGClipPathElement.cpp
 svg/SVGUseElement.cpp
 testing/Internals.cpp

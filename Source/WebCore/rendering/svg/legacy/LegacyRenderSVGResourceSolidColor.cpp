@@ -27,6 +27,7 @@
 #include "RenderObjectDocument.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>

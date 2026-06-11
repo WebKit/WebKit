@@ -33,6 +33,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "StyleAppleColorFilter.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextDecorationLine.h"
 #include "TextBoxPainter.h"

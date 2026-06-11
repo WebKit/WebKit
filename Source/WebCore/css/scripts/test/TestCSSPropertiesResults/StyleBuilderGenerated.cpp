@@ -27,7 +27,7 @@ public:
     }
     static void applyValueBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState, CSSValue& value)
     {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
+        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number, BackgroundLayers>(builderState, value);
     }
     static void applyInitialBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState)
     {
@@ -39,7 +39,7 @@ public:
     }
     static void applyValueBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState, CSSValue& value)
     {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
+        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number, BackgroundLayers>(builderState, value);
     }
     static void applyInitialTestAnimationWrapper(BuilderState& builderState)
     {
@@ -51,7 +51,7 @@ public:
     }
     static void applyValueTestAnimationWrapper(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestAnimationWrapper(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestAnimationWrapper(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
     static void applyInitialTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
@@ -63,7 +63,7 @@ public:
     }
     static void applyValueTestAnimationWrapperAccelerationAlways(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestAnimationWrapperAccelerationAlways(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestAnimationWrapperAccelerationAlways(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
     static void applyInitialTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
@@ -75,7 +75,7 @@ public:
     }
     static void applyValueTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
     static void applyInitialTestColor(BuilderState& builderState)
     {
@@ -122,144 +122,144 @@ public:
         if (builderState.applyPropertyToVisitedLinkStyle())
             builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(toStyleFromCSSValue<Style::Color>(builderState, value, ForVisitedLink::Yes));
     }
-    static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
+    static void applyInitialTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::ComputedStyle::initialTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin());
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
-    static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
+    static void applyInheritTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()));
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(forwardInheritedValue(builderState.parentStyle().testComputedStyleHasExplicitlySetPolicyAllAuthorOrigin()));
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
-    static void applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(toStyleFromCSSValue<Style::Number<>>(builderState, value));
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(toStyleFromCSSValue<Style::Number>(builderState, value));
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
     }
-    static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
+    static void applyInitialTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(false);
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(Style::ComputedStyle::initialTestComputedStyleHasExplicitlySetPolicyAllBorderRadius());
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(false);
     }
-    static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
+    static void applyInheritTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllBorderRadius()));
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState.parentStyle().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(forwardInheritedValue(builderState.parentStyle().testComputedStyleHasExplicitlySetPolicyAllBorderRadius()));
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(builderState.parentStyle().hasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllBorderRadius());
     }
-    static void applyValueTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(toStyleFromCSSValue<Style::Number<>>(builderState, value));
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(true);
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(toStyleFromCSSValue<Style::Number>(builderState, value));
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(true);
     }
-    static void applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
+    static void applyInitialTestComputedStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyValueOnly());
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyValueOnly(Style::ComputedStyle::initialTestComputedStyleHasExplicitlySetPolicyValueOnly());
     }
-    static void applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
+    static void applyInheritTestComputedStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyValueOnly()));
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyValueOnly(forwardInheritedValue(builderState.parentStyle().testComputedStyleHasExplicitlySetPolicyValueOnly()));
     }
-    static void applyValueTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(toStyleFromCSSValue<Style::Number<>>(builderState, value));
-        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(true);
+        builderState.style().setTestComputedStyleHasExplicitlySetPolicyValueOnly(toStyleFromCSSValue<Style::Number>(builderState, value));
+        builderState.style().setHasExplicitlySetTestComputedStyleHasExplicitlySetPolicyValueOnly(true);
     }
-    static void applyInitialTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageOneLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelEnum());
+        builderState.style().setTestComputedStyleStorageOneLevelEnum(Style::ComputedStyle::initialTestComputedStyleStorageOneLevelEnum());
     }
-    static void applyInheritTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageOneLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageOneLevelEnum()));
+        builderState.style().setTestComputedStyleStorageOneLevelEnum(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageOneLevelEnum()));
     }
-    static void applyValueTestRenderStyleStorageOneLevelEnum(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageOneLevelEnum(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
+        builderState.style().setTestComputedStyleStorageOneLevelEnum(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageOneLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelRaw());
+        builderState.style().setTestComputedStyleStorageOneLevelRaw(Style::ComputedStyle::initialTestComputedStyleStorageOneLevelRaw());
     }
-    static void applyInheritTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageOneLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelRaw(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageOneLevelRaw()));
+        builderState.style().setTestComputedStyleStorageOneLevelRaw(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageOneLevelRaw()));
     }
-    static void applyValueTestRenderStyleStorageOneLevelRaw(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageOneLevelRaw(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelRaw(toStyleFromCSSValue<Style::TestRaw>(builderState, value));
+        builderState.style().setTestComputedStyleStorageOneLevelRaw(toStyleFromCSSValue<Style::TestRaw>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageOneLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelReference());
+        builderState.style().setTestComputedStyleStorageOneLevelReference(Style::ComputedStyle::initialTestComputedStyleStorageOneLevelReference());
     }
-    static void applyInheritTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageOneLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageOneLevelReference()));
+        builderState.style().setTestComputedStyleStorageOneLevelReference(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageOneLevelReference()));
     }
-    static void applyValueTestRenderStyleStorageOneLevelReference(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageOneLevelReference(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestComputedStyleStorageOneLevelReference(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageOneLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelValue());
+        builderState.style().setTestComputedStyleStorageOneLevelValue(Style::ComputedStyle::initialTestComputedStyleStorageOneLevelValue());
     }
-    static void applyInheritTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageOneLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageOneLevelValue()));
+        builderState.style().setTestComputedStyleStorageOneLevelValue(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageOneLevelValue()));
     }
-    static void applyValueTestRenderStyleStorageOneLevelValue(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageOneLevelValue(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestComputedStyleStorageOneLevelValue(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelEnum());
+        builderState.style().setTestComputedStyleStorageTwoLevelEnum(Style::ComputedStyle::initialTestComputedStyleStorageTwoLevelEnum());
     }
-    static void applyInheritTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageTwoLevelEnum()));
+        builderState.style().setTestComputedStyleStorageTwoLevelEnum(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageTwoLevelEnum()));
     }
-    static void applyValueTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageTwoLevelEnum(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
+        builderState.style().setTestComputedStyleStorageTwoLevelEnum(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageTwoLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelRaw());
+        builderState.style().setTestComputedStyleStorageTwoLevelRaw(Style::ComputedStyle::initialTestComputedStyleStorageTwoLevelRaw());
     }
-    static void applyInheritTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageTwoLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelRaw(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageTwoLevelRaw()));
+        builderState.style().setTestComputedStyleStorageTwoLevelRaw(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageTwoLevelRaw()));
     }
-    static void applyValueTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageTwoLevelRaw(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelRaw(toStyleFromCSSValue<Style::TestRaw>(builderState, value));
+        builderState.style().setTestComputedStyleStorageTwoLevelRaw(toStyleFromCSSValue<Style::TestRaw>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageTwoLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelReference());
+        builderState.style().setTestComputedStyleStorageTwoLevelReference(Style::ComputedStyle::initialTestComputedStyleStorageTwoLevelReference());
     }
-    static void applyInheritTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageTwoLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageTwoLevelReference()));
+        builderState.style().setTestComputedStyleStorageTwoLevelReference(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageTwoLevelReference()));
     }
-    static void applyValueTestRenderStyleStorageTwoLevelReference(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageTwoLevelReference(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestComputedStyleStorageTwoLevelReference(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
-    static void applyInitialTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
+    static void applyInitialTestComputedStyleStorageTwoLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelValue());
+        builderState.style().setTestComputedStyleStorageTwoLevelValue(Style::ComputedStyle::initialTestComputedStyleStorageTwoLevelValue());
     }
-    static void applyInheritTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
+    static void applyInheritTestComputedStyleStorageTwoLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(forwardInheritedValue(builderState.parentStyle().testRenderStyleStorageTwoLevelValue()));
+        builderState.style().setTestComputedStyleStorageTwoLevelValue(forwardInheritedValue(builderState.parentStyle().testComputedStyleStorageTwoLevelValue()));
     }
-    static void applyValueTestRenderStyleStorageTwoLevelValue(BuilderState& builderState, CSSValue& value)
+    static void applyValueTestComputedStyleStorageTwoLevelValue(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestComputedStyleStorageTwoLevelValue(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
     static void applyInitialTestSettingsOne(BuilderState& builderState)
     {
@@ -271,7 +271,7 @@ public:
     }
     static void applyValueTestSettingsOne(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestSettingsOne(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestSettingsOne(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
     static void applyInitialTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {
@@ -283,7 +283,7 @@ public:
     }
     static void applyValueTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState, CSSValue& value)
     {
-        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(toStyleFromCSSValue<Style::Number>(builderState, value));
     }
 };
 
@@ -433,6 +433,149 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
             break;
         }
         break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleHasExplicitlySetPolicyAllBorderRadius(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleHasExplicitlySetPolicyValueOnly(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleHasExplicitlySetPolicyValueOnly(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleHasExplicitlySetPolicyValueOnly(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageOneLevelEnum(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageOneLevelEnum(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageOneLevelEnum(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelRaw:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageOneLevelRaw(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageOneLevelRaw(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageOneLevelRaw(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageOneLevelReference(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageOneLevelReference(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageOneLevelReference(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageOneLevelValue(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageOneLevelValue(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageOneLevelValue(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageTwoLevelEnum(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageTwoLevelEnum(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageTwoLevelEnum(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelRaw:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageTwoLevelRaw(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageTwoLevelRaw(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageTwoLevelRaw(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageTwoLevelReference(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageTwoLevelReference(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageTwoLevelReference(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestComputedStyleStorageTwoLevelValue(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestComputedStyleStorageTwoLevelValue(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestComputedStyleStorageTwoLevelValue(builderState, value);
+            break;
+        }
+        break;
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
         break;
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
@@ -550,149 +693,6 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
         break;
     case CSSPropertyID::CSSPropertyTestProperty:
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageOneLevelEnum(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageOneLevelEnum(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageOneLevelEnum(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageOneLevelRaw(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageOneLevelRaw(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageOneLevelRaw(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageOneLevelReference(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageOneLevelReference(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageOneLevelReference(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageOneLevelValue(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageOneLevelValue(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageOneLevelValue(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageTwoLevelEnum(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageTwoLevelEnum(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageTwoLevelEnum(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageTwoLevelRaw(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageTwoLevelRaw(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageTwoLevelRaw(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageTwoLevelReference(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageTwoLevelReference(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageTwoLevelReference(builderState, value);
-            break;
-        }
-        break;
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
-        switch (valueType) {
-        case ApplyValueType::Initial:
-            BuilderFunctions::applyInitialTestRenderStyleStorageTwoLevelValue(builderState);
-            break;
-        case ApplyValueType::Inherit:
-            BuilderFunctions::applyInheritTestRenderStyleStorageTwoLevelValue(builderState);
-            break;
-        case ApplyValueType::Value:
-            BuilderFunctions::applyValueTestRenderStyleStorageTwoLevelValue(builderState, value);
-            break;
-        }
         break;
     case CSSPropertyID::CSSPropertyTestSettingsOne:
         switch (valueType) {

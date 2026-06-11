@@ -131,6 +131,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SimpleRange.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleDocumentScope.h"
 #include "StyleResolver.h"

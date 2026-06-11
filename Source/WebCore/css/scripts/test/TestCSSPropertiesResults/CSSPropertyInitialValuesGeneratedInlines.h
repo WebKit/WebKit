@@ -19,6 +19,13 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::CSSPropertyTestAnimationWrapper:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllAuthorOrigin:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyAllBorderRadius:
+    case CSSPropertyID::CSSPropertyTestComputedStyleHasExplicitlySetPolicyValueOnly:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelReference:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelValue:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelReference:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
     case CSSPropertyID::CSSPropertyTestHighPriority:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal:
@@ -31,13 +38,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::CSSPropertyTestMediumPriority:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
-    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
     case CSSPropertyID::CSSPropertyTestSinkPriority:
     case CSSPropertyID::CSSPropertyTestTopPriority:
@@ -49,12 +49,12 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
         return CSSValueCurrentColor;
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelEnum:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageOneLevelRaw:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelEnum:
+    case CSSPropertyID::CSSPropertyTestComputedStyleStorageTwoLevelRaw:
     case CSSPropertyID::CSSPropertyTestKeyword:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
-    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
         return CSSValueFoo;
     case CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestUrlWithModifiers:

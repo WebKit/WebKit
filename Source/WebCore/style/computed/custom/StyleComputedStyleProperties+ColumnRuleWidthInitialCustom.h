@@ -22,18 +22,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StyleComputedStyleProperties+GettersCustomInlines.h"
+#pragma once
 
-#include "RenderTheme.h"
-#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <WebCore/StyleComputedStyleProperties.h>
+
+#include <WebCore/StyleLineWidth.h>
 
 namespace WebCore {
 namespace Style {
 
-const WebCore::Color& NODELETE ComputedStyleProperties::color() const
+constexpr LineWidth ComputedStyleProperties::initialColumnRuleWidth()
 {
-    return m_inheritedData->color;
+    return LineWidth { 3.0f };
 }
 
 } // namespace Style

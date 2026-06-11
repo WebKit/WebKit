@@ -912,6 +912,7 @@ class StyleProperty:
         Schema.Entry("specification", allowed_types=[dict], convert_to=Specification),
         Schema.Entry("status", allowed_types=[dict, str], convert_to=Status),
         Schema.Entry("values", allowed_types=[list]),
+        Schema.Entry("enabled", allowed_types=[bool], default_value=True),
     )
 
     def __init__(self, **dictionary):
@@ -933,9 +934,7 @@ class StyleProperty:
         json_value["codegen-properties"] = codegen_properties
 
         if codegen_properties.enable_if is not None and not parsing_context.is_enabled(conditional=codegen_properties.enable_if):
-            if parsing_context.verbose:
-                print(f"SKIPPED {name} due to failing to satisfy 'enable-if' condition, '{json_value['codegen-properties'].enable_if}', with active macro set")
-            return None
+            json_value["enabled"] = False
 
         if codegen_properties.skip_codegen is not None and codegen_properties.skip_codegen:
             if parsing_context.verbose:
@@ -1267,10 +1266,65 @@ class StyleProperty:
             function_specifiers += ['inline']
         return function_specifiers
 
+    @property
+    def getter_inlines_filename(self):
+        return f"StyleComputedStyleProperties+{self.id_without_prefix}Getter.h"
+
+    @property
+    def setter_inlines_filename(self):
+        return f"StyleComputedStyleProperties+{self.id_without_prefix}Setter.h"
+
+    @property
+    def initial_inlines_filename(self):
+        return f"StyleComputedStyleProperties+{self.id_without_prefix}Initial.h"
+
+    @property
+    def computed_style_type_filename(self):
+        SPECIAL_CASES = {
+            'WebCore::Color': 'Color.h',
+            'Style::TextShadows': 'StyleTextShadow.h',
+            'Style::BoxShadows': 'StyleBoxShadow.h',
+            'Style::AnchorNames': 'StyleAnchorName.h',
+            'Style::ContainerNames': 'StyleContainerName.h',
+            'Style::BorderRadiusValue': 'StyleBorderRadius.h',
+            'Style::InsetEdge': 'StyleInset.h',
+            'Style::MarginEdge': 'StyleMargin.h',
+            'Style::PaddingEdge': 'StylePadding.h',
+            'Style::ScrollPaddingEdge': 'StyleScrollPadding.h',
+            'Style::ScrollMarginEdge': 'StyleScrollMargin.h',
+            'Style::PerspectiveOriginX': 'StylePerspectiveOrigin.h',
+            'Style::PerspectiveOriginY': 'StylePerspectiveOrigin.h',
+            'Style::TransformOriginX': 'StyleTransformOrigin.h',
+            'Style::TransformOriginY': 'StyleTransformOrigin.h',
+            'Style::TransformOriginZ': 'StyleTransformOrigin.h',
+            'Style::PositionTryOrder': 'PositionTryOrder.h',
+            'Style::ViewTransitionClasses': 'StyleViewTransitionClass.h',
+            'StyleAppearance': 'StyleAppearance.h',
+            'ApplePayButtonStyle': 'ApplePayButtonPart.h',
+            'ApplePayButtonType': 'ApplePayButtonPart.h',
+            'AppleVisualEffect': 'AppleVisualEffect.h',
+            'Kerning': 'TextFlags.h',
+            'FontOpticalSizing': 'TextFlags.h',
+            'UnicodeBidi': 'UnicodeBidi.h',
+        }
+
+        computed_style_type = self.codegen_properties.computed_style_type
+
+        if special_cased_result := SPECIAL_CASES.get(computed_style_type):
+            return special_cased_result
+
+        if computed_style_type.startswith('Style::Webkit'):
+            return f"StyleWebKit{computed_style_type.removeprefix('Style::Webkit')}.h"
+        if computed_style_type.startswith('Style::'):
+            return f"Style{computed_style_type.removeprefix('Style::')}.h"
+        return f"RenderStyleConstants.h"
+
 
 class StyleProperties:
     def __init__(self, properties):
-        self.properties = properties
+        self.properties = [property for property in properties if property.enabled]
+        self.disabled_properties = [property for property in properties if not property.enabled]
+
         self.properties_by_name = {property.name: property for property in properties}
         self.logical_property_groups = {}
         self._all = None
@@ -3232,19 +3286,20 @@ class GenerationContext:
         to.newline()
 
     def generate_includes(self, *, to, headers=[], system_headers=[]):
-        for header in headers:
+        for header in sorted(headers):
             to.write(f"#include \"{header}\"")
-        for header in system_headers:
+        for header in sorted(system_headers):
             to.write(f"#include {header}")
         to.newline()
 
     def generate_cpp_required_includes(self, *, to, header):
-        self.generate_includes(to=to, headers=["config.h", header])
+        to.write(f"#include \"config.h\"")
+        self.generate_includes(to=to, headers=[header])
 
     def generate_forward_declarations(self, *, to, structs=[], classes=[]):
-        for struct in structs:
+        for struct in sorted(structs):
             to.write(f"struct {struct};")
-        for class_ in classes:
+        for class_ in sorted(classes):
             to.write(f"class {class_};")
         to.newline()
 
@@ -5927,9 +5982,1711 @@ class GenerateStyleInterpolationWrapperMap:
         to.write("}")
         to.newline()
 
+# MARK: - Utility classes for Style::ComputedStyleProperties generation
+
+class ComputedStylePropertyStorage:
+    @staticmethod
+    def storage_path_filenames(storage_path):
+        FILENAME_KEY = "$"
+        FILENAME_MAPPING_ROOT = {
+            # NOTE: "level1" and "level2" are only used for testing code.
+            "level1" : {
+                FILENAME_KEY: "StyleLevel1Data.h",
+                "level2": { FILENAME_KEY: "StyleLevel2Data.h" },
+            },
+            "m_nonInheritedData": {
+                FILENAME_KEY: "StyleNonInheritedData.h",
+                "boxData": { FILENAME_KEY: "StyleBoxData.h" },
+                "backgroundData": { FILENAME_KEY: "StyleBackgroundData.h" },
+                "surroundData": { FILENAME_KEY: "StyleSurroundData.h" },
+                "miscData": {
+                    FILENAME_KEY: "StyleNonInheritedMiscData.h",
+                    "deprecatedFlexibleBox": { FILENAME_KEY: "StyleDeprecatedFlexibleBoxData.h" },
+                    "flexibleBox": { FILENAME_KEY: "StyleFlexibleBoxData.h" },
+                    "multiCol": { FILENAME_KEY: "StyleMultiColumnData.h" },
+                    "filter": { FILENAME_KEY: "StyleFilterData.h" },
+                    "transform": { FILENAME_KEY: "StyleTransformData.h" },
+                    "visitedLinkColor": { FILENAME_KEY: "StyleVisitedLinkColorData.h" },
+                },
+                "rareData": {
+                    FILENAME_KEY: "StyleNonInheritedRareData.h",
+                    "marquee": { FILENAME_KEY: "StyleMarqueeData.h" },
+                    "backdropFilter": { FILENAME_KEY: "StyleBackdropFilterData.h" },
+                    "grid": { FILENAME_KEY: "StyleGridData.h" },
+                    "gridItem": { FILENAME_KEY: "StyleGridItemData.h" },
+                    "maskBorder": { FILENAME_KEY: "StyleMaskBorderData.h" },
+                }
+            },
+            "m_inheritedRareData": {
+                FILENAME_KEY: "StyleInheritedRareData.h",
+                "appleColorFilter": { FILENAME_KEY: "StyleAppleColorFilterData.h" }
+            },
+            "m_inheritedData": {
+                FILENAME_KEY: "StyleInheritedData.h",
+                "fontData": { FILENAME_KEY: "StyleFontData.h" }
+            },
+            "m_svgData": {
+                FILENAME_KEY: "StyleSVGData.h",
+                "fillData": { FILENAME_KEY: "StyleSVGFillData.h" },
+                "strokeData": { FILENAME_KEY: "StyleSVGStrokeData.h" },
+                "markerResourceData": { FILENAME_KEY: "StyleSVGMarkerResourceData.h" },
+                "stopData": { FILENAME_KEY: "StyleSVGStopData.h" },
+                "miscData": { FILENAME_KEY: "StyleSVGNonInheritedMiscData.h" },
+                "layoutData": { FILENAME_KEY: "StyleSVGLayoutData.h" },
+            }
+        }
+
+        filename_mapping = None
+        for path_component in storage_path:
+            if not filename_mapping:
+                filename_mapping = FILENAME_MAPPING_ROOT.get(path_component)
+            else:
+                filename_mapping = filename_mapping.get(path_component)
+            if filename_mapping:
+                yield filename_mapping[FILENAME_KEY]
+
+
+class StylePropertyStorageAccess:
+    def __init__(self, *, type, kind, name, container_kind, container_path):
+        self.type = type
+        self.kind = kind
+        self.name = name
+        self.container_kind = container_kind
+        self.container_path = container_path
+
+    @property
+    def includes_needed_for_use(self):
+        return {*ComputedStylePropertyStorage.storage_path_filenames(self.container_path)}
+
+    # Computes the expression of loads needed to get the member variable used to store the property.
+    def compute_get_expression(self):
+        # Compute getter expression, starting with the base set of loads to access the storage container.
+        container_base = "->".join(self.container_path)
+
+        if self.container_kind == 'data':
+            expression = f"{container_base}->{self.name}"
+        elif self.container_kind == 'struct':
+            expression = f"{container_base}.{self.name}"
+        elif self.container_kind == 'physical-group':
+            expression = f"{container_base}.{self.name.id_without_prefix_with_lowercase_first_letter}()"
+
+        # If necessary, wrap the load in a cast or conversion.
+        if self.kind == 'enum':
+            expression = f"static_cast<{self.type}>({expression})"
+        elif self.kind == 'raw':
+            expression = f"{self.type}::fromRaw({expression})"
+        return expression
+
+    # Computes the expression of loads and assignments needed to set the member variable used to store the property.
+    def compute_set_expression(self, argument_name):
+        # Compute the right side of the assignment expression for the setter expression.
+        if self.kind == 'reference':
+            rhs = f"WTF::move({argument_name})"
+        elif self.kind == 'enum':
+            rhs = f"static_cast<unsigned>({argument_name})"
+        elif self.kind == 'raw':
+            rhs = f"{argument_name}.toRaw()"
+        else:
+            rhs = f"{argument_name}"
+
+        # Compute setter expression, starting with the base set of loads to access the storage container.
+        container_base = ".access().".join(self.container_path)
+
+        if self.container_kind == 'data':
+            expression = f"{container_base}.access().{self.name} = {rhs}"
+        elif self.container_kind == 'struct':
+            expression = f"{container_base}.{self.name} = {rhs}"
+        elif self.container_kind == 'physical-group':
+            expression = f"{container_base}.set{self.name.id_without_prefix}({rhs})"
+        return expression
+
+
+class ComputedStylePropertyFunctionSignature(object):
+    class Argument(object):
+        def __init__(self, *, type, name, default=None):
+            self.type = type
+            self.name = name
+            self.default = default
+
+        @property
+        def value_for_function_declaration(self):
+            if self.default:
+                return f"{self.type} = {self.default}"
+            return f"{self.type}"
+
+        @property
+        def value_for_function_definition(self):
+            return f"{self.type} {self.name}"
+
+    def __init__(self, *, function_scope="ComputedStyleProperties", function_name, function_exported=False, function_constexpr=False, function_static=False, function_inline=False, function_return_type, function_arguments, function_qualifiers):
+        self.function_scope = function_scope
+        self.function_name = function_name
+        self.function_static = function_static
+        self.function_constexpr = function_constexpr
+        self.function_inline = function_inline
+        self.function_exported = function_exported
+        self.function_return_type = function_return_type
+        self.function_arguments = function_arguments
+        self.function_qualifiers = function_qualifiers
+
+    def generate_function_declaration(self, *, to):
+        function_specifiers = []
+        if self.function_static:
+            function_specifiers.append('static')
+        if self.function_constexpr:
+            function_specifiers.append('constexpr')
+        elif self.function_inline:
+            function_specifiers.append('inline')
+        elif self.function_exported:
+            function_specifiers.append('WEBCORE_EXPORT')
+        to.write(
+              f"{''.join(map(lambda x: x + ' ', function_specifiers))}"
+            + f"{self.function_return_type} "
+            + f"{self.function_name}"
+            + f"({', '.join(map(lambda x: x.value_for_function_declaration, self.function_arguments))})"
+            + f"{''.join(map(lambda x: ' ' + x, self.function_qualifiers))};"
+        )
+
+    @property
+    def is_inline(self):
+        return self.function_constexpr or self.function_inline
+
+    def generate_function_definition(self, *, to):
+        function_specifiers = []
+        if self.function_constexpr:
+            function_specifiers.append('constexpr')
+        elif self.function_inline:
+            function_specifiers.append('inline')
+        to.write(
+              f"{''.join(map(lambda x: x + ' ', function_specifiers))}"
+            + f"{self.function_return_type} "
+            + f"{self.function_scope}::{self.function_name}"
+            + f"({', '.join(map(lambda x: x.value_for_function_definition, self.function_arguments))})"
+            + f"{''.join(map(lambda x: ' ' + x, self.function_qualifiers))}"
+        )
+
+
+# Shared logic for all getter functions.
+def _generate_getter_function_definition_shared(*, to, function_signature, get_expression):
+    function_signature.generate_function_definition(to=to)
+    to.write(f"{{")
+    with to.indent():
+        to.write(f"return {get_expression};")
+    to.write(f"}}")
+    to.newline()
+
+# Shared logic for all setter functions.
+def _generate_setter_function_definition_shared(*, to, function_signature, storage_access, did_set_expression=None):
+    argument_name = function_signature.function_arguments[0].name
+    get_expression = storage_access.compute_get_expression()
+    set_expression = storage_access.compute_set_expression(argument_name)
+
+    function_signature.generate_function_definition(to=to)
+    to.write(f"{{")
+    with to.indent():
+        if function_signature.function_return_type == 'void':
+            to.write(f"if ({argument_name} != {get_expression}) {{")
+            with to.indent():
+                to.write(f"{set_expression};")
+                if did_set_expression:
+                    to.write(f"{did_set_expression};")
+            to.write(f"}}")
+        elif return_type == 'bool':
+            to.write(f"if ({argument_name} != {get_expression}) {{")
+            with to.indent():
+                to.write(f"{set_expression};")
+                if did_set_expression:
+                    to.write(f"{did_set_expression};")
+                to.write(f"return true;")
+            to.write(f"}}")
+            to.write(f"return false;")
+    to.write(f"}}")
+    to.newline()
+
+# Shared logic for all initial value functions.
+def _generate_initial_function_definition_shared(*, to, function_signature, requires_using_namespace_css_literals, initial_expression):
+    function_signature.generate_function_definition(to=to)
+    to.write(f"{{")
+    with to.indent():
+        if requires_using_namespace_css_literals:
+            to.write(f"using namespace CSS::Literals;")
+        to.write(f"return {initial_expression};")
+    to.write(f"}}")
+    to.newline()
+
+class ComputedStyleFunctionBase(object):
+    def __init__(self, signature):
+        self.signature = signature
+
+    @property
+    def is_inline(self):
+        return self.signature.is_inline
+
+    @property
+    def is_skipped(self):
+        return False
+
+    @property
+    def is_custom(self):
+        return False
+
+    @property
+    def includes_needed_for_custom(self):
+        return set()
+
+    @property
+    def includes_needed_for_definition(self):
+        return set()
+
+    def generate_function_declaration(self, *, to):
+        self.signature.generate_function_declaration(to=to)
+
+
+# MARK: - Functions for principle value getting/setting/initial on Style::ComputedStyleProperties.
+
+class ComputedStylePropertyPrincipleGetter(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=property.codegen_properties.computed_style_getter,
+                function_constexpr=property.codegen_properties.computed_style_getter_constexpr,
+                function_inline=property.codegen_properties.computed_style_getter_inline,
+                function_exported=property.codegen_properties.computed_style_getter_exported,
+                function_return_type=property.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_getter_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}GetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        return {*self.storage_access.includes_needed_for_use, self.property.computed_style_type_filename}
+
+    def generate_function_definition(self, *, to):
+        _generate_getter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            get_expression=self.storage_access.compute_get_expression()
+        )
+
+
+class ComputedStylePropertyPrincipleSetter(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=property.codegen_properties.computed_style_setter,
+                function_constexpr=property.codegen_properties.computed_style_setter_constexpr,
+                function_inline=property.codegen_properties.computed_style_setter_inline,
+                function_exported=property.codegen_properties.computed_style_setter_exported,
+                function_return_type=property.setter_return_type,
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type=property.setter_argument_type, name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_setter
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_setter_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}SetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        result = {*self.storage_access.includes_needed_for_use, self.property.computed_style_type_filename}
+        # "didSet" implementations are always inline in the custom header.
+        if self.property.codegen_properties.computed_style_setter_requires_did_set:
+            result.update(self.includes_needed_for_custom)
+        return result
+
+    def generate_function_definition(self, *, to):
+        if self.property.codegen_properties.computed_style_setter_requires_did_set:
+            did_set_expression = f"didSet{self.property.codegen_properties.computed_style_name_for_methods}()"
+        else:
+            did_set_expression = None
+
+        _generate_setter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            storage_access=self.storage_access,
+            did_set_expression=did_set_expression
+        )
+
+class ComputedStylePropertyPrincipleDidSet(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"didSet{property.codegen_properties.computed_style_name_for_methods}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[],
+                function_qualifiers=[]
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_setter or not self.property.codegen_properties.computed_style_setter_requires_did_set
+
+    @property
+    def is_custom(self):
+        return True
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}SetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        raise Exception(f"'{self.signature.function_name}' always requires a custom definition")
+
+    def generate_function_definition(self, *, to):
+        raise Exception(f"'{self.signature.function_name}' always requires a custom definition")
+
+
+class ComputedStylePropertyPrincipleInitial(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=property.codegen_properties.computed_style_initial,
+                function_static=True,
+                function_constexpr=property.codegen_properties.computed_style_initial_constexpr,
+                function_inline=property.codegen_properties.computed_style_initial_inline,
+                function_exported=property.codegen_properties.computed_style_initial_exported,
+                function_return_type=property.initial_return_type,
+                function_arguments=[],
+                function_qualifiers=[]
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_initial
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_initial_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}InitialCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.property.computed_style_type_filename}
+
+    def _compute_initial_expression(self):
+        def pick_literal_expression(element):
+            if self.property.codegen_properties.computed_style_storage_kind == 'enum':
+                return element.cpp_enum_literal(self.property.codegen_properties.computed_style_type)
+            return element.cpp_literal
+
+        if len(self.property.initial.list) == 1:
+            if isinstance(self.property.initial.list[0], SpecialLiteral):
+                raise Exception(f"Special literals must have custom initial function implementation")
+            return pick_literal_expression(self.property.initial.list[0])
+        else:
+            return "{ " + ", ".join(pick_literal_expression(element) for element in self.property.initial.list) + " }"
+
+    def generate_function_definition(self, *, to):
+        _generate_initial_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            requires_using_namespace_css_literals=self.property.initial.requires_using_namespace_css_literals,
+            initial_expression=self._compute_initial_expression()
+        )
+
+# MARK: - Functions for "has explicitly set" value getting/setting on Style::ComputedStyleProperties.
+
+class ComputedStylePropertyHasExplicitlySetGetter(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}",
+                function_inline=True,
+                function_return_type='bool',
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.computed_style_has_explicitly_set_storage_path
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_has_explicitly_set_getter_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}GetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        return {*self.storage_access.includes_needed_for_use}
+
+    def generate_function_definition(self, *, to):
+        _generate_getter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            get_expression=self.storage_access.compute_get_expression()
+        )
+
+
+class ComputedStylePropertyHasExplicitlySetSetter(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='bool', name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_setter or not self.property.codegen_properties.computed_style_has_explicitly_set_storage_path
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_has_explicitly_set_setter_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}SetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        return {*self.storage_access.includes_needed_for_use}
+
+    def generate_function_definition(self, *, to):
+        _generate_setter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            storage_access=self.storage_access,
+        )
+
+# MARK: - Functions for Visited Link alternative value getting/setting on Style::ComputedStyleProperties.
+
+class ComputedStylePropertyVisitedLinkGetter(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}",
+                function_inline=True,
+                function_return_type=property.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.computed_style_visited_link_storage_path
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_visited_link_getter_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}GetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        return {*self.storage_access.includes_needed_for_use, self.property.computed_style_type_filename}
+
+    def generate_function_definition(self, *, to):
+        _generate_getter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            get_expression=self.storage_access.compute_get_expression()
+        )
+
+
+class ComputedStylePropertyVisitedLinkSetter(ComputedStyleFunctionBase):
+    def __init__(self, property, storage_access):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"setVisitedLink{property.codegen_properties.computed_style_name_for_methods}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type=property.setter_argument_type, name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.property = property
+        self.storage_access = storage_access
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_setter or not self.property.codegen_properties.computed_style_visited_link_storage_path
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.computed_style_visited_link_setter_custom
+
+    @property
+    def includes_needed_for_custom(self):
+        return {f"StyleComputedStyleProperties+{self.property.id_without_prefix}SetterCustom.h"}
+
+    @property
+    def includes_needed_for_definition(self):
+        return {*self.storage_access.includes_needed_for_use, self.property.computed_style_type_filename}
+
+    def generate_function_definition(self, *, to):
+        _generate_setter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            storage_access=self.storage_access,
+        )
+
+# MARK: - Functions for Color Resolving on Style::ComputedStyleProperties.
+
+# Base class for color resolving function getters.
+class ComputedStylePropertyColorResolvingFunction(ComputedStyleFunctionBase):
+    def __init__(self, property, signature):
+        super().__init__(signature)
+        self.property = property
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property
+
+    @property
+    def includes_needed_for_definition(self):
+        return {"StyleColorResolver.h", self.property.getter_inlines_filename, ColorPropertyTraitsGenerator(self.property).inlines_filename}
+
+    @property
+    def color_resolver_getter(self):
+        return f"ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<{self.property.id_without_scope}>>> {{ *this }}"
+
+
+class ComputedStylePropertyColorPrincipleResolvingCurrentColor(ComputedStylePropertyColorResolvingFunction):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{property.codegen_properties.computed_style_getter}ResolvingCurrentColor",
+                function_exported=property.codegen_properties.computed_style_resolving_current_color_exported,
+                function_return_type='WebCore::Color',
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.color_resolver_getter}.colorResolvingCurrentColor();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStylePropertyColorPrincipleResolvingCurrentColorApplyingColorFilter(ComputedStylePropertyColorResolvingFunction):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{property.codegen_properties.computed_style_getter}ResolvingCurrentColorApplyingColorFilter",
+                function_exported=property.codegen_properties.computed_style_resolving_current_color_applying_color_filter_exported,
+                function_return_type='WebCore::Color',
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.color_resolver_getter}.colorResolvingCurrentColorApplyingColorFilter();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStylePropertyColorVisitedLinkResolvingCurrentColor(ComputedStylePropertyColorResolvingFunction):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+            function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColor",
+                function_exported=property.codegen_properties.computed_style_visited_link_resolving_current_color_exported,
+                function_return_type='WebCore::Color',
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property or not self.property.codegen_properties.computed_style_visited_link_storage_path
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.color_resolver_getter}.visitedLinkColorResolvingCurrentColor();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStylePropertyColorVisitedLinkResolvingCurrentColorApplyingColorFilter(ComputedStylePropertyColorResolvingFunction):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColorApplyingColorFilter",
+                function_exported=property.codegen_properties.computed_style_visited_link_resolving_current_color_applying_color_filter_exported,
+                function_return_type='WebCore::Color',
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property or not self.property.codegen_properties.computed_style_visited_link_storage_path
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.color_resolver_getter}.visitedLinkColorResolvingCurrentColorApplyingColorFilter();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStylePropertyColorVisitedDependent(ComputedStylePropertyColorResolvingFunction):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"visitedDependent{property.codegen_properties.computed_style_name_for_methods}",
+                function_exported=property.codegen_properties.computed_style_visited_dependent_exported,
+                function_return_type='WebCore::Color',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='OptionSet<PaintBehavior>', name='paintBehavior', default='{ }')],
+                function_qualifiers=['const']
+            )
+        )
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.color_resolver_getter}.visitedDependentColor({self.signature.function_arguments[0].name});")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStylePropertyColorVisitedDependentApplyingColorFilter(ComputedStylePropertyColorResolvingFunction):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"visitedDependent{property.codegen_properties.computed_style_name_for_methods}ApplyingColorFilter",
+                function_exported=property.codegen_properties.computed_style_visited_dependent_applying_color_filter_exported,
+                function_return_type='WebCore::Color',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='OptionSet<PaintBehavior>', name='paintBehavior', default='{ }')],
+                function_qualifiers=['const']
+            )
+        )
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.color_resolver_getter}.visitedDependentColorApplyingColorFilter({self.signature.function_arguments[0].name});")
+        to.write(f"}}")
+        to.newline()
+
+
+# MARK: - Functions for "axis" Logical Property Group getting/setting on Style::ComputedStyleProperties.
+
+class ComputedStyleLogicalPropertyGroupAxisGetterForSpecifiedWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, major, minor):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"logical{major.id_without_prefix}",
+                function_inline=True,
+                function_return_type=major.getter_return_type,
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='WritingMode', name='writingMode')],
+                function_qualifiers=['const']
+            )
+        )
+        self.major = major
+        self.minor = minor
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.major.getter_inlines_filename, self.minor.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.signature.function_arguments[0].name}.isHorizontal() ? {self.major.codegen_properties.computed_style_getter}() : {self.minor.codegen_properties.computed_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupAxisGetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, major, minor):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"logical{major.id_without_prefix}",
+                function_inline=True,
+                function_return_type=major.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.major = major
+        self.minor = minor
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.major.getter_inlines_filename, self.minor.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return logical{self.major.id_without_prefix}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupAxisSetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, major, minor):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"setLogical{major.id_without_prefix}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type=major.setter_argument_type, name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.major = major
+        self.minor = minor
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.major.setter_inlines_filename, self.minor.setter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode().isHorizontal())")
+            with to.indent():
+                to.write(f"{self.major.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"{self.minor.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+        to.write(f"}}")
+        to.newline()
+
+
+# MARK: - Functions for "side" Logical Property Group getting/setting on Style::ComputedStyleProperties.
+
+class ComputedStyleLogicalPropertyGroupSideStartEndGetterForSpecifiedWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, left, right, top, bottom):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                function_inline=True,
+                function_return_type=left.getter_return_type,
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='WritingMode', name='writingMode')],
+                function_qualifiers=['const']
+            )
+        )
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.left.getter_inlines_filename, self.right.getter_inlines_filename, self.top.getter_inlines_filename, self.bottom.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if ({self.signature.function_arguments[0].name}.isHorizontal())")
+            with to.indent():
+                to.write(f"return {self.signature.function_arguments[0].name}.isInlineLeftToRight() ? {self.left.codegen_properties.computed_style_getter}() : {self.right.codegen_properties.computed_style_getter}();")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"return {self.signature.function_arguments[0].name}.isInlineTopToBottom() ? {self.top.codegen_properties.computed_style_getter}() : {self.bottom.codegen_properties.computed_style_getter}();")
+        to.write(f"}}")
+
+
+class ComputedStyleLogicalPropertyGroupSideStartEndGetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, left, right, top, bottom):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                function_inline=True,
+                function_return_type=left.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.left.getter_inlines_filename, self.right.getter_inlines_filename, self.top.getter_inlines_filename, self.bottom.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.signature.function_name}(writingMode());")
+        to.write(f"}}")
+
+
+class ComputedStyleLogicalPropertyGroupSideStartEndSetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, left, right, top, bottom):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"set{prefix.id_without_prefix}{edge}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type=left.setter_argument_type, name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.left.setter_inlines_filename, self.right.setter_inlines_filename, self.top.setter_inlines_filename, self.bottom.setter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode().isHorizontal()) {{")
+            with to.indent():
+                to.write(f"if (writingMode().isInlineLeftToRight())")
+                with to.indent():
+                    to.write(f"{self.left.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+                to.write(f"else")
+                with to.indent():
+                    to.write(f"{self.right.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"}} else {{")
+            with to.indent():
+                to.write(f"if (writingMode().isInlineTopToBottom())")
+                with to.indent():
+                    to.write(f"{self.top.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+                to.write(f"else")
+                with to.indent():
+                    to.write(f"{self.bottom.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"}}")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupSideBeforeAfterGetterForSpecifiedWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, left, right, top, bottom):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                function_inline=True,
+                function_return_type=left.getter_return_type,
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='WritingMode', name='writingMode')],
+                function_qualifiers=['const']
+            )
+        )
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.left.getter_inlines_filename, self.right.getter_inlines_filename, self.top.getter_inlines_filename, self.bottom.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"switch ({self.signature.function_arguments[0].name}.blockDirection()) {{")
+            to.write(f"case FlowDirection::LeftToRight:")
+            with to.indent():
+                to.write(f"return {self.left.codegen_properties.computed_style_getter}();")
+            to.write(f"case FlowDirection::RightToLeft:")
+            with to.indent():
+                to.write(f"return {self.right.codegen_properties.computed_style_getter}();")
+            to.write(f"case FlowDirection::TopToBottom:")
+            with to.indent():
+                to.write(f"return {self.top.codegen_properties.computed_style_getter}();")
+            to.write(f"case FlowDirection::BottomToTop:")
+            with to.indent():
+                to.write(f"return {self.bottom.codegen_properties.computed_style_getter}();")
+            to.write(f"}}")
+            to.write(f"ASSERT_NOT_REACHED();")
+            to.write(f"return {self.bottom.codegen_properties.computed_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupSideBeforeAfterGetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, left, right, top, bottom):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                function_inline=True,
+                function_return_type=left.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.left.getter_inlines_filename, self.right.getter_inlines_filename, self.top.getter_inlines_filename, self.bottom.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.signature.function_name}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupSideBeforeAfterSetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, left, right, top, bottom):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"set{prefix.id_without_prefix}{edge}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type=left.setter_argument_type, name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.left = left
+        self.right = right
+        self.top = top
+        self.bottom = bottom
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.left.setter_inlines_filename, self.right.setter_inlines_filename, self.top.setter_inlines_filename, self.bottom.setter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"switch (writingMode().blockDirection()) {{")
+            to.write(f"case FlowDirection::LeftToRight:")
+            with to.indent():
+                to.write(f"return {self.left.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"case FlowDirection::RightToLeft:")
+            with to.indent():
+                to.write(f"return {self.right.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"case FlowDirection::TopToBottom:")
+            with to.indent():
+                to.write(f"return {self.top.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"case FlowDirection::BottomToTop:")
+            with to.indent():
+                to.write(f"return {self.bottom.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"}}")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupSideLogicalLeftRightGetterForSpecifiedWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, horizontal, vertical):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                function_inline=True,
+                function_return_type=horizontal.getter_return_type,
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='WritingMode', name='writingMode')],
+                function_qualifiers=['const']
+            )
+        )
+        self.horizontal = horizontal
+        self.vertical = vertical
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.horizontal.getter_inlines_filename, self.vertical.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if ({self.signature.function_arguments[0].name}.isHorizontal())")
+            with to.indent():
+                to.write(f"return {self.horizontal.codegen_properties.computed_style_getter}();")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"return {self.vertical.codegen_properties.computed_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupSideLogicalLeftRightGetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, horizontal, vertical):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                function_inline=True,
+                function_return_type=horizontal.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.horizontal = horizontal
+        self.vertical = vertical
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.horizontal.getter_inlines_filename, self.vertical.getter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {self.signature.function_name}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+
+class ComputedStyleLogicalPropertyGroupSideLogicalLeftRightSetterForCurrentWritingMode(ComputedStyleFunctionBase):
+    def __init__(self, prefix, edge, horizontal, vertical):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"set{prefix.id_without_prefix}{edge}",
+                function_inline=True,
+                function_return_type='void',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type=horizontal.setter_argument_type, name='value')],
+                function_qualifiers=[]
+            )
+        )
+        self.horizontal = horizontal
+        self.vertical = vertical
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.horizontal.setter_inlines_filename, self.vertical.setter_inlines_filename}
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode().isHorizontal())")
+            with to.indent():
+                to.write(f"{self.horizontal.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"{self.vertical.codegen_properties.computed_style_setter}(WTF::move({self.signature.function_arguments[0].name}));")
+        to.write(f"}}")
+        to.newline()
+
+
+# MARK: - Functions for Style::ColorPropertyTraits.
+
+# Base class for color traits function getters.
+class ColorPropertyTraitsFunctionBase(ComputedStyleFunctionBase):
+    def __init__(self, property, signature):
+        super().__init__(signature)
+        self.property = property
+
+    @property
+    def includes_needed_for_definition(self):
+        return {self.property.getter_inlines_filename}
+
+    @property
+    def includes_needed_for_custom(self):
+        return {self.property.getter_inlines_filename, ColorPropertyTraitsGenerator(self.property).custom_filename}
+
+
+class ColorPropertyTraitsColorGetter(ColorPropertyTraitsFunctionBase):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>",
+                function_name=f"color",
+                function_static=True,
+                function_inline=True,
+                function_return_type='const Color&',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style')],
+                function_qualifiers=[]
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.color_property_traits_color_custom
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return style.{self.property.codegen_properties.computed_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ColorPropertyTraitsVisitedLinkColorGetter(ColorPropertyTraitsFunctionBase):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>",
+                function_name=f"visitedLinkColor",
+                function_static=True,
+                function_inline=True,
+                function_return_type='const Color&',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style')],
+                function_qualifiers=[]
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property or not self.property.codegen_properties.visited_link_color_support
+
+    @property
+    def is_custom(self):
+        return self.property.codegen_properties.color_property_traits_visited_link_color_custom
+
+    def generate_function_definition(self, *, to):
+        self.signature.generate_function_definition(to=to)
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return style.visitedLink{self.property.codegen_properties.computed_style_name_for_methods}();")
+        to.write(f"}}")
+        to.newline()
+
+
+class ColorPropertyTraitsColorResolvingCurrentColorGetter(ColorPropertyTraitsFunctionBase):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>",
+                function_name=f"colorResolvingCurrentColor",
+                function_static=True,
+                function_inline=True,
+                function_return_type='WebCore::Color',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style')],
+                function_qualifiers=[]
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property or not self.property.codegen_properties.color_property_traits_requires_resolving_current_color
+
+    @property
+    def is_custom(self):
+        return True
+
+    def generate_function_definition(self, *, to):
+        raise Exception(f"'{self.signature.function_scope}::{self.signature.function_name}' always requires a custom definition")
+
+
+class ColorPropertyTraitsVisitedLinkColorResolvingCurrentColorGetter(ColorPropertyTraitsFunctionBase):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>",
+                function_name=f"visitedLinkColorResolvingCurrentColor",
+                function_static=True,
+                function_inline=True,
+                function_return_type='WebCore::Color',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style')],
+                function_qualifiers=[]
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property or not self.property.codegen_properties.visited_link_color_support or not self.property.codegen_properties.color_property_traits_requires_resolving_current_color
+
+    @property
+    def is_custom(self):
+        return True
+
+    def generate_function_definition(self, *, to):
+        raise Exception(f"'{self.signature.function_scope}::{self.signature.function_name}' always requires a custom definition")
+
+
+class ColorPropertyTraitsExcludesVisitedLinkColorGetter(ColorPropertyTraitsFunctionBase):
+    def __init__(self, property):
+        super().__init__(
+            property,
+            ComputedStylePropertyFunctionSignature(
+                function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>",
+                function_name=f"excludesVisitedLinkColor",
+                function_static=True,
+                function_inline=True,
+                function_return_type='bool',
+                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const WebCore::Color&', name='color')],
+                function_qualifiers=[]
+            )
+        )
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter or not self.property.codegen_properties.color_property or not self.property.codegen_properties.color_property_traits_requires_excludes_visited_link_color
+
+    @property
+    def is_custom(self):
+        return True
+
+    def generate_function_definition(self, *, to):
+        raise Exception(f"'{self.signature.function_scope}::{self.signature.function_name}' always requires a custom definition")
+
+
+class ComputedStylePropertyFunctionSet(object):
+    def __init__(self, functions):
+        self.functions = functions
+
+    def __iter__(self):
+        return iter(self.functions)
+
+    @property
+    def includes_needed_for_inline_definitions(self):
+        filenames = set()
+        for function in self.functions:
+            if function.is_skipped:
+                continue
+            if not function.is_inline:
+                continue
+            if function.is_custom:
+                filenames.update(function.includes_needed_for_custom)
+            else:
+                filenames.update(function.includes_needed_for_definition)
+        return filenames
+
+    @property
+    def includes_needed_for_out_of_line_definitions(self):
+        filenames = set()
+        for function in self.functions:
+            if function.is_skipped:
+                continue
+            if function.is_inline:
+                continue
+            filenames.update(function.includes_needed_for_definition)
+        return filenames
+
+    def generate_function_declarations(self, *, to):
+        for function in self.functions:
+            if function.is_skipped:
+                continue
+            function.generate_function_declaration(to=to)
+
+    def generate_inline_function_definitions(self, *, to):
+        for function in self.functions:
+            if function.is_skipped:
+                continue
+            if function.is_custom:
+                continue
+            if not function.is_inline:
+                continue
+            function.generate_function_definition(to=to)
+
+    def generate_out_of_line_function_definitions(self, *, to):
+        for function in self.functions:
+            if function.is_skipped:
+                continue
+            if function.is_custom:
+                continue
+            if function.is_inline:
+                continue
+            function.generate_function_definition(to=to)
+
+
+class ComputedStylePropertyPrinciple(object):
+    def __init__(self, property):
+        self.property = property
+
+        if self.property.codegen_properties.computed_style_storage_container == 'physical-group':
+            name = Name(self.property.codegen_properties.logical_property_group.resolver)
+        else:
+            name = self.property.codegen_properties.computed_style_storage_name
+        self.storage_access = StylePropertyStorageAccess(
+            type=self.property.codegen_properties.computed_style_type,
+            kind=self.property.codegen_properties.computed_style_storage_kind,
+            name=name,
+            container_kind=self.property.codegen_properties.computed_style_storage_container,
+            container_path=self.property.codegen_properties.computed_style_storage_path
+        )
+        self.getter = ComputedStylePropertyPrincipleGetter(self.property, self.storage_access)
+        self.setter = ComputedStylePropertyPrincipleSetter(self.property, self.storage_access)
+        self.did_set = ComputedStylePropertyPrincipleDidSet(self.property, self.storage_access)
+        self.initial = ComputedStylePropertyPrincipleInitial(self.property, self.storage_access)
+
+
+class ComputedStylePropertyHasExplicitlySet(object):
+    def __init__(self, property):
+        self.property = property
+
+        if property.codegen_properties.computed_style_has_explicitly_set_storage_container == 'physical-group':
+            name = Name(property.codegen_properties.logical_property_group.resolver)
+        else:
+            name = property.codegen_properties.computed_style_has_explicitly_set_storage_name
+
+        self.storage_access = StylePropertyStorageAccess(
+            type='bool',
+            kind='value',
+            name=name,
+            container_kind=property.codegen_properties.computed_style_has_explicitly_set_storage_container,
+            container_path=property.codegen_properties.computed_style_has_explicitly_set_storage_path
+        )
+        self.getter = ComputedStylePropertyHasExplicitlySetGetter(self.property, self.storage_access)
+        self.setter = ComputedStylePropertyHasExplicitlySetSetter(self.property, self.storage_access)
+
+
+class ComputedStylePropertyVisitedLink(object):
+    def __init__(self, property):
+        self.property = property
+
+        if property.codegen_properties.computed_style_visited_link_storage_container == 'physical-group':
+            name = Name(property.codegen_properties.logical_property_group.resolver)
+        else:
+            name = property.codegen_properties.computed_style_visited_link_storage_name
+
+        self.storage_access = StylePropertyStorageAccess(
+            type=property.codegen_properties.computed_style_type,
+            kind=property.codegen_properties.computed_style_storage_kind,
+            name=name,
+            container_kind=property.codegen_properties.computed_style_visited_link_storage_container,
+            container_path=property.codegen_properties.computed_style_visited_link_storage_path
+        )
+        self.getter = ComputedStylePropertyVisitedLinkGetter(property, self.storage_access)
+        self.setter = ComputedStylePropertyVisitedLinkSetter(property, self.storage_access)
+
+
+class ComputedStylePropertyColor(object):
+    def __init__(self, property):
+        self.property = property
+
+        self.principle_resolving_current_color = ComputedStylePropertyColorPrincipleResolvingCurrentColor(property)
+        self.principle_resolving_current_color_applying_color_filter = ComputedStylePropertyColorPrincipleResolvingCurrentColorApplyingColorFilter(property)
+        self.visited_link_resolving_current_color = ComputedStylePropertyColorVisitedLinkResolvingCurrentColor(property)
+        self.visited_link_resolving_current_color_applying_color_filter = ComputedStylePropertyColorVisitedLinkResolvingCurrentColorApplyingColorFilter(property)
+        self.visited_dependent = ComputedStylePropertyColorVisitedDependent(property)
+        self.visited_dependent_applying_color_filter = ComputedStylePropertyColorVisitedDependentApplyingColorFilter(property)
+
+
+class ComputedStylePropertyGenerator:
+    def __init__(self, property):
+        self.property = property
+
+        self.principle = ComputedStylePropertyPrinciple(property)
+        self.has_explicitly_set = ComputedStylePropertyHasExplicitlySet(property)
+        self.visited_link = ComputedStylePropertyVisitedLink(property)
+        self.color = ComputedStylePropertyColor(property)
+
+    @property
+    def getter_inlines_filename(self):
+        return self.property.getter_inlines_filename
+
+    @property
+    def setter_inlines_filename(self):
+        return self.property.setter_inlines_filename
+
+    @property
+    def initial_inlines_filename(self):
+        return self.property.initial_inlines_filename
+
+    @property
+    def computed_style_type_filename(self):
+        return self.property.computed_style_type_filename
+
+    @property
+    def all_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.principle.getter,
+            self.principle.setter,
+            self.principle.initial,
+            self.principle.did_set,
+            self.has_explicitly_set.getter,
+            self.has_explicitly_set.setter,
+            self.visited_link.getter,
+            self.visited_link.setter,
+            self.color.principle_resolving_current_color,
+            self.color.principle_resolving_current_color_applying_color_filter,
+            self.color.visited_link_resolving_current_color,
+            self.color.visited_link_resolving_current_color_applying_color_filter,
+            self.color.visited_dependent,
+            self.color.visited_dependent_applying_color_filter,
+        ])
+
+    @property
+    def getter_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.principle.getter,
+            self.has_explicitly_set.getter,
+            self.visited_link.getter,
+            self.color.principle_resolving_current_color,
+            self.color.principle_resolving_current_color_applying_color_filter,
+            self.color.visited_link_resolving_current_color,
+            self.color.visited_link_resolving_current_color_applying_color_filter,
+            self.color.visited_dependent,
+            self.color.visited_dependent_applying_color_filter,
+        ])
+
+    @property
+    def setter_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.principle.setter,
+            self.has_explicitly_set.setter,
+            self.visited_link.setter,
+        ])
+
+    @property
+    def initial_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.principle.initial,
+        ])
+
+
+class ComputedStyleLogicalPropertyGroupAxisGenerator(object):
+    def __init__(self, property_group_name, property_group):
+        self.property_group_name = Name(property_group_name)
+        self.property_group = property_group
+
+        horizontal = property_group['physical']['horizontal']
+        vertical = property_group['physical']['vertical']
+
+        self.horizontal_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupAxisGetterForSpecifiedWritingMode(horizontal, vertical)
+        self.vertical_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupAxisGetterForSpecifiedWritingMode(vertical, horizontal)
+        self.horizontal_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupAxisGetterForCurrentWritingMode(horizontal, vertical)
+        self.vertical_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupAxisGetterForCurrentWritingMode(vertical, horizontal)
+        self.horizontal_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupAxisSetterForCurrentWritingMode(horizontal, vertical)
+        self.vertical_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupAxisSetterForCurrentWritingMode(vertical, horizontal)
+
+    @property
+    def getter_inlines_filename(self):
+        return f"StyleComputedStyleProperties+Logical{self.property_group_name.id_without_prefix}Getter.h"
+
+    @property
+    def setter_inlines_filename(self):
+        return f"StyleComputedStyleProperties+Logical{self.property_group_name.id_without_prefix}Setter.h"
+
+    @property
+    def all_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.horizontal_getter_for_specified_writing_mode,
+            self.vertical_getter_for_specified_writing_mode,
+            self.horizontal_getter_for_current_writing_mode,
+            self.vertical_getter_for_current_writing_mode,
+            self.horizontal_setter_for_current_writing_mode,
+            self.vertical_setter_for_current_writing_mode,
+        ])
+
+    @property
+    def getter_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.horizontal_getter_for_specified_writing_mode,
+            self.vertical_getter_for_specified_writing_mode,
+            self.horizontal_getter_for_current_writing_mode,
+            self.vertical_getter_for_current_writing_mode,
+        ])
+
+    @property
+    def setter_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.horizontal_setter_for_current_writing_mode,
+            self.vertical_setter_for_current_writing_mode,
+        ])
+
+
+class ComputedStyleLogicalPropertyGroupSideGenerator(object):
+    def __init__(self, property_group_name, property_group):
+        self.property_group_name = Name(property_group_name)
+        self.property_group = property_group
+
+        top = property_group['physical']['top']
+        right = property_group['physical']['right']
+        bottom = property_group['physical']['bottom']
+        left = property_group['physical']['left']
+
+        self.start_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupSideStartEndGetterForSpecifiedWritingMode(self.property_group_name, 'Start', left, right, top, bottom)
+        self.start_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideStartEndGetterForCurrentWritingMode(self.property_group_name, 'Start', left, right, top, bottom)
+        self.start_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideStartEndSetterForCurrentWritingMode(self.property_group_name, 'Start', left, right, top, bottom)
+
+        self.end_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupSideStartEndGetterForSpecifiedWritingMode(self.property_group_name, 'End', right, left, bottom, top)
+        self.end_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideStartEndGetterForCurrentWritingMode(self.property_group_name, 'End', right, left, bottom, top)
+        self.end_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideStartEndSetterForCurrentWritingMode(self.property_group_name, 'End', right, left, bottom, top)
+
+        self.before_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupSideBeforeAfterGetterForSpecifiedWritingMode(self.property_group_name, 'Before', left, right, top, bottom)
+        self.before_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideBeforeAfterGetterForCurrentWritingMode(self.property_group_name, 'Before', left, right, top, bottom)
+        self.before_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideBeforeAfterSetterForCurrentWritingMode(self.property_group_name, 'Before', left, right, top, bottom)
+
+        self.after_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupSideBeforeAfterGetterForSpecifiedWritingMode(self.property_group_name, 'After', right, left, bottom, top)
+        self.after_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideBeforeAfterGetterForCurrentWritingMode(self.property_group_name, 'After', right, left, bottom, top)
+        self.after_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideBeforeAfterSetterForCurrentWritingMode(self.property_group_name, 'After', right, left, bottom, top)
+
+        self.logical_left_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupSideLogicalLeftRightGetterForSpecifiedWritingMode(self.property_group_name, 'LogicalLeft', left, top)
+        self.logical_left_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideLogicalLeftRightGetterForCurrentWritingMode(self.property_group_name, 'LogicalLeft', left, top)
+        self.logical_left_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideLogicalLeftRightSetterForCurrentWritingMode(self.property_group_name, 'LogicalLeft', left, top)
+
+        self.logical_right_getter_for_specified_writing_mode = ComputedStyleLogicalPropertyGroupSideLogicalLeftRightGetterForSpecifiedWritingMode(self.property_group_name, 'LogicalRight', right, bottom)
+        self.logical_right_getter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideLogicalLeftRightGetterForCurrentWritingMode(self.property_group_name, 'LogicalRight', right, bottom)
+        self.logical_right_setter_for_current_writing_mode = ComputedStyleLogicalPropertyGroupSideLogicalLeftRightSetterForCurrentWritingMode(self.property_group_name, 'LogicalRight', right, bottom)
+
+    @property
+    def getter_inlines_filename(self):
+        return f"StyleComputedStyleProperties+Logical{self.property_group_name.id_without_prefix}Getter.h"
+
+    @property
+    def setter_inlines_filename(self):
+        return f"StyleComputedStyleProperties+Logical{self.property_group_name.id_without_prefix}Setter.h"
+
+    @property
+    def all_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.start_getter_for_specified_writing_mode,
+            self.start_getter_for_current_writing_mode,
+            self.start_setter_for_current_writing_mode,
+            self.end_getter_for_specified_writing_mode,
+            self.end_getter_for_current_writing_mode,
+            self.end_setter_for_current_writing_mode,
+            self.before_getter_for_specified_writing_mode,
+            self.before_getter_for_current_writing_mode,
+            self.before_setter_for_current_writing_mode,
+            self.after_getter_for_specified_writing_mode,
+            self.after_getter_for_current_writing_mode,
+            self.after_setter_for_current_writing_mode,
+            self.logical_left_getter_for_specified_writing_mode,
+            self.logical_left_getter_for_current_writing_mode,
+            self.logical_left_setter_for_current_writing_mode,
+            self.logical_right_getter_for_specified_writing_mode,
+            self.logical_right_getter_for_current_writing_mode,
+            self.logical_right_setter_for_current_writing_mode,
+        ])
+
+    @property
+    def getter_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.start_getter_for_specified_writing_mode,
+            self.start_getter_for_current_writing_mode,
+            self.end_getter_for_specified_writing_mode,
+            self.end_getter_for_current_writing_mode,
+            self.before_getter_for_specified_writing_mode,
+            self.before_getter_for_current_writing_mode,
+            self.after_getter_for_specified_writing_mode,
+            self.after_getter_for_current_writing_mode,
+            self.logical_left_getter_for_specified_writing_mode,
+            self.logical_left_getter_for_current_writing_mode,
+            self.logical_right_getter_for_specified_writing_mode,
+            self.logical_right_getter_for_current_writing_mode,
+        ])
+
+    @property
+    def setter_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.start_setter_for_current_writing_mode,
+            self.end_setter_for_current_writing_mode,
+            self.before_setter_for_current_writing_mode,
+            self.after_setter_for_current_writing_mode,
+            self.logical_left_setter_for_current_writing_mode,
+            self.logical_right_setter_for_current_writing_mode,
+        ])
+
+class ColorPropertyTraitsGenerator(object):
+    def __init__(self, property):
+        self.property = property
+
+        self.color_getter = ColorPropertyTraitsColorGetter(property)
+        self.visited_link_color_getter = ColorPropertyTraitsVisitedLinkColorGetter(property)
+        self.color_resolving_current_color_getter = ColorPropertyTraitsColorResolvingCurrentColorGetter(property)
+        self.visited_link_color_resolving_current_color_getter = ColorPropertyTraitsVisitedLinkColorResolvingCurrentColorGetter(property)
+        self.excludes_visited_link_color_getter = ColorPropertyTraitsExcludesVisitedLinkColorGetter(property)
+
+    @property
+    def all_functions(self):
+        return ComputedStylePropertyFunctionSet([
+            self.color_getter,
+            self.visited_link_color_getter,
+            self.color_resolving_current_color_getter,
+            self.visited_link_color_resolving_current_color_getter,
+            self.excludes_visited_link_color_getter,
+        ])
+
+    @property
+    def inlines_filename(self):
+        return f"StyleColorPropertyTraits+{self.property.id_without_prefix}.h"
+
+    @property
+    def custom_filename(self):
+        return f"StyleColorPropertyTraits+{self.property.id_without_prefix}Custom.h"
+
+    def generate_declaration(self, *, to):
+        to.write(f"template<> struct ColorPropertyTraits<PropertyNameConstant<{self.property.id_without_scope}>> {{")
+        with to.indent():
+            self.all_functions.generate_function_declarations(to=to)
+        to.write(f"}};")
+        to.newline()
+
 
 # Generates `StyleComputedStyleProperties.h`, `StyleComputedStyleProperties.cpp`, `StyleComputedStyleProperties+GettersInlines.h`, `StyleComputedStyleProperties+SettersInlines.h` and `StyleComputedStyleProperties+InitialInlines.h`.
-class GenerateStyleComputedStyleProperties:
+class GenerateStyleComputedStyleProperties(object):
     def __init__(self, generation_context):
         self.generation_context = generation_context
 
@@ -5941,6 +7698,58 @@ class GenerateStyleComputedStyleProperties:
     def style_properties(self):
         return self.generation_context.properties_and_descriptors.style_properties
 
+    @property
+    def property_generators(self):
+        for property in self.style_properties.all:
+            if property.codegen_properties.skip_computed_style:
+                continue
+            if property.codegen_properties.is_logical:
+                continue
+            if property.codegen_properties.longhands:
+                continue
+            if property.codegen_properties.cascade_alias:
+                continue
+            if property.codegen_properties.coordinated_value_list_property:
+                continue
+            yield ComputedStylePropertyGenerator(property)
+
+    @property
+    def disabled_property_generators(self):
+        for property in self.style_properties.disabled_properties:
+            yield ComputedStylePropertyGenerator(property)
+
+    @property
+    def color_property_traits_generators(self):
+        for property in self.style_properties.all:
+            if property.codegen_properties.skip_computed_style:
+                continue
+            if property.codegen_properties.is_logical:
+                continue
+            if property.codegen_properties.longhands:
+                continue
+            if property.codegen_properties.cascade_alias:
+                continue
+            if property.codegen_properties.coordinated_value_list_property:
+                continue
+            if not property.codegen_properties.color_property:
+                continue
+            yield ColorPropertyTraitsGenerator(property)
+
+    @property
+    def disabled_color_property_traits_generators(self):
+        for property in self.style_properties.disabled_properties:
+            if not property.codegen_properties.color_property:
+                continue
+            yield ColorPropertyTraitsGenerator(property)
+
+    @property
+    def logical_property_group_generators(self):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            if property_group['kind'] == 'axis':
+                yield ComputedStyleLogicalPropertyGroupAxisGenerator(property_group_name, property_group)
+            elif property_group['kind'] == 'side':
+                yield ComputedStyleLogicalPropertyGroupSideGenerator(property_group_name, property_group)
+
     def generate(self):
         self.generate_style_computed_style_properties_h()
         self.generate_style_computed_style_properties_cpp()
@@ -5948,415 +7757,27 @@ class GenerateStyleComputedStyleProperties:
         self.generate_style_computed_style_properties_setters_inlines_h()
         self.generate_style_computed_style_properties_initial_inlines_h()
 
-    # Computes the expression of loads needed to get the member variable used to store the property.
-    def _compute_get_expression(self, property, container_kind, container_path, storage_type, storage_name, storage_kind):
-        # Compute getter expression, starting with the base set of loads to access the storage container.
-        container = "->".join(container_path)
+        for property_generator in self.property_generators:
+            self.generate_style_computed_style_properties_specific_getters_inlines_h(property_generator)
+            self.generate_style_computed_style_properties_specific_setters_inlines_h(property_generator)
+            self.generate_style_computed_style_properties_specific_initial_inlines_h(property_generator)
 
-        if container_kind == 'data':
-            expression = f"{container}->{storage_name}"
-        elif container_kind == 'struct':
-            expression = f"{container}.{storage_name}"
-        elif container_kind == 'physical-group':
-            expression = f"{container}.{Name(property.codegen_properties.logical_property_group.resolver).id_without_prefix_with_lowercase_first_letter}()"
+        for property_generator in self.disabled_property_generators:
+            self.generate_style_computed_style_properties_specific_disabled_properties_getters_inlines_h(property_generator)
+            self.generate_style_computed_style_properties_specific_disabled_properties_setters_inlines_h(property_generator)
+            self.generate_style_computed_style_properties_specific_disabled_properties_initial_inlines_h(property_generator)
 
-        # If necessary, wrap the load in a cast or conversion.
-        if storage_kind == 'enum':
-            expression = f"static_cast<{storage_type}>({expression})"
-        elif storage_kind == 'raw':
-            expression = f"{storage_type}::fromRaw({expression})"
-        return expression
+        for logical_property_group_generator in self.logical_property_group_generators:
+            self.generate_style_computed_style_properties_specific_getters_inlines_h(logical_property_group_generator)
+            self.generate_style_computed_style_properties_specific_setters_inlines_h(logical_property_group_generator)
 
-    # Computes the expression of loads and assignments needed to set the member variable used to store the property.
-    def _compute_set_expression(self, property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name):
-        # Compute the right side of the assignment expression for the setter expression.
-        if storage_kind == 'reference':
-            rhs = f"WTF::move({argument_name})"
-        elif storage_kind == 'enum':
-            rhs = f"static_cast<unsigned>({argument_name})"
-        elif storage_kind == 'raw':
-            rhs = f"{argument_name}.toRaw()"
-        else:
-            rhs = f"{argument_name}"
+        for color_property_traits_generator in self.color_property_traits_generators:
+            self.generate_style_color_property_traits_h(color_property_traits_generator)
 
-        # Compute setter expression, starting with the base set of loads to access the storage container.
-        container = ".access().".join(container_path)
-
-        if container_kind == 'data':
-            expression = f"{container}.access().{storage_name} = {rhs}"
-        elif container_kind == 'struct':
-            expression = f"{container}.{storage_name} = {rhs}"
-        elif container_kind == 'physical-group':
-            expression = f"{container}.set{Name(property.codegen_properties.logical_property_group.resolver).id_without_prefix}({rhs})"
-
-        return expression
-
-    # Computes the expression, if any, to call after setting the value to storage.
-    def _compute_did_set_expression(self, property):
-        if not property.codegen_properties.computed_style_setter_requires_did_set:
-            return None
-        return f"didSet{property.codegen_properties.computed_style_name_for_methods}()"
-
-    # Computes the expression for the initial value function.
-    def _compute_initial_expression(self, property):
-        def pick_literal_expression(element):
-            if property.codegen_properties.computed_style_storage_kind == 'enum':
-                return element.cpp_enum_literal(property.codegen_properties.computed_style_type)
-            return element.cpp_literal
-
-        if len(property.initial.list) == 1:
-            if isinstance(property.initial.list[0], SpecialLiteral):
-                raise Exception(f"Special literals must have custom initial function implementation")
-            return pick_literal_expression(property.initial.list[0])
-        else:
-            return "{ " + ", ".join(pick_literal_expression(element) for element in property.initial.list) + " }"
+        for color_property_traits_generator in self.disabled_color_property_traits_generators:
+            self.generate_style_color_property_traits_disabled_h(color_property_traits_generator)
 
     # Generate StyleComputedStyleProperties.h
-
-    def _generate_property_function_declarations(self, *, to):
-        for property in self.style_properties.all:
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            to.write(f"// '{property}'")
-
-            if not property.codegen_properties.skip_computed_style_getter:
-                getter_name = property.codegen_properties.computed_style_getter
-                getter_function_specifiers = property.getter_declaration_function_specifiers
-                getter_return_type = property.getter_return_type
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=getter_name,
-                    function_specifiers=getter_function_specifiers,
-                    return_type=getter_return_type,
-                    function_qualifiers=['const']
-                )
-
-            if not property.codegen_properties.skip_computed_style_setter:
-                setter_name = property.codegen_properties.computed_style_setter
-                setter_function_specifiers = property.setter_declaration_function_specifiers
-                setter_return_type = property.setter_return_type
-                setter_argument_type = property.setter_argument_type
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=setter_name,
-                    function_specifiers=setter_function_specifiers,
-                    return_type=setter_return_type,
-                    argument_types=[setter_argument_type]
-                )
-
-                if property.codegen_properties.computed_style_setter_requires_did_set:
-                    did_set_name = f"didSet{property.codegen_properties.computed_style_name_for_methods}"
-                    did_set_function_specifiers = ['inline']
-                    did_set_return_type = 'void'
-
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=did_set_name,
-                        function_specifiers=did_set_function_specifiers,
-                        return_type=did_set_return_type
-                    )
-
-            if not property.codegen_properties.skip_computed_style_initial:
-                initial_name = property.codegen_properties.computed_style_initial
-                initial_function_specifiers = property.initial_declaration_function_specifiers
-                initial_return_type = property.initial_return_type
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=initial_name,
-                    function_specifiers=initial_function_specifiers,
-                    return_type=initial_return_type
-                )
-
-            if property.codegen_properties.color_property:
-                if property.codegen_properties.computed_style_visited_link_storage_path:
-                    if not property.codegen_properties.visited_link_color_support:
-                        raise Exception("Property {property} has computed_style_visited_link_storage_path but not visited_link_color_support")
-                    getter_name = f"visitedLink{property.codegen_properties.computed_style_name_for_methods}"
-                    setter_name = f"setVisitedLink{property.codegen_properties.computed_style_name_for_methods}"
-                    getter_function_specifiers = ['inline']
-                    getter_return_type = property.getter_return_type
-                    setter_function_specifiers = ['inline']
-                    setter_return_type = 'void'
-                    setter_argument_type = property.setter_argument_type
-
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=getter_name,
-                        function_specifiers=getter_function_specifiers,
-                        return_type=getter_return_type,
-                        function_qualifiers=['const']
-                    )
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=setter_name,
-                        function_specifiers=setter_function_specifiers,
-                        return_type=setter_return_type,
-                        argument_types=[setter_argument_type]
-                    )
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=f"{property.codegen_properties.computed_style_getter}Resolver",
-                    function_specifiers=['inline'],
-                    return_type="decltype(auto)",
-                    function_qualifiers=['const']
-                )
-
-                if property.codegen_properties.computed_style_resolving_current_color_exported:
-                    function_specifiers = ['WEBCORE_EXPORT']
-                else:
-                    function_specifiers = []
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=f"{property.codegen_properties.computed_style_getter}ResolvingCurrentColor",
-                    function_specifiers=function_specifiers,
-                    return_type='WebCore::Color',
-                    function_qualifiers=['const']
-                )
-
-                if property.codegen_properties.computed_style_resolving_current_color_applying_color_filter_exported:
-                    function_specifiers = ['WEBCORE_EXPORT']
-                else:
-                    function_specifiers = []
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=f"{property.codegen_properties.computed_style_getter}ResolvingCurrentColorApplyingColorFilter",
-                    function_specifiers=function_specifiers,
-                    return_type='WebCore::Color',
-                    function_qualifiers=['const']
-                )
-
-                if property.codegen_properties.computed_style_visited_link_storage_path:
-                    if property.codegen_properties.computed_style_visited_link_resolving_current_color_exported:
-                        function_specifiers = ['WEBCORE_EXPORT']
-                    else:
-                        function_specifiers = []
-
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColor",
-                        function_specifiers=function_specifiers,
-                        return_type='WebCore::Color',
-                        function_qualifiers=['const']
-                    )
-
-                    if property.codegen_properties.computed_style_visited_link_resolving_current_color_applying_color_filter_exported:
-                        function_specifiers = ['WEBCORE_EXPORT']
-                    else:
-                        function_specifiers = []
-
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColorApplyingColorFilter",
-                        function_specifiers=function_specifiers,
-                        return_type='WebCore::Color',
-                        function_qualifiers=['const']
-                    )
-
-                if property.codegen_properties.computed_style_visited_dependent_exported:
-                    function_specifiers = ['WEBCORE_EXPORT']
-                else:
-                    function_specifiers = []
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=f"visitedDependent{property.codegen_properties.computed_style_name_for_methods}",
-                    function_specifiers=function_specifiers,
-                    return_type='WebCore::Color',
-                    argument_types=['OptionSet<PaintBehavior> = { }'],
-                    function_qualifiers=['const']
-                )
-
-                if property.codegen_properties.computed_style_visited_dependent_applying_color_filter_exported:
-                    function_specifiers = ['WEBCORE_EXPORT']
-                else:
-                    function_specifiers = []
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=f"visitedDependent{property.codegen_properties.computed_style_name_for_methods}ApplyingColorFilter",
-                    function_specifiers=function_specifiers,
-                    return_type='WebCore::Color',
-                    argument_types=['OptionSet<PaintBehavior> = { }'],
-                    function_qualifiers=['const']
-                )
-
-            if property.codegen_properties.computed_style_has_explicitly_set_storage_path:
-                getter_name = f"hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}"
-                setter_name = f"setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}"
-                getter_function_specifiers = ['inline']
-                getter_return_type = 'bool'
-                setter_function_specifiers = ['inline']
-                setter_return_type = f"void"
-                setter_argument_type = 'bool'
-
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=getter_name,
-                    function_specifiers=getter_function_specifiers,
-                    return_type=getter_return_type,
-                    function_qualifiers=['const']
-                )
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name=setter_name,
-                    function_specifiers=setter_function_specifiers,
-                    return_type=setter_return_type,
-                    argument_types=[setter_argument_type]
-                )
-            to.newline()
-
-    def _generate_logical_property_function_declarations(self, *, to):
-        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
-            to.write(f"// Logical getters and setters for '{property_group_name}' properties of type '{property_group['kind']}'.")
-            if property_group['kind'] == 'axis':
-                horizontal_property = property_group['physical']['horizontal']
-                vertical_property = property_group['physical']['vertical']
-
-                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
-                getter_return_type = horizontal_property.getter_return_type
-                setter_argument_type = horizontal_property.setter_argument_type
-
-                for property in [horizontal_property, vertical_property]:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"logical{property.id_without_prefix}",
-                        function_specifiers=['inline'],
-                        return_type=getter_return_type,
-                        argument_types=['WritingMode'],
-                        function_qualifiers=['const']
-                    )
-                for property in [horizontal_property, vertical_property]:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"logical{property.id_without_prefix}",
-                        function_specifiers=['inline'],
-                        return_type=getter_return_type,
-                        argument_types=[],
-                        function_qualifiers=['const']
-                    )
-                for property in [horizontal_property, vertical_property]:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"setLogical{property.id_without_prefix}",
-                        function_specifiers=['inline'],
-                        return_type='void',
-                        argument_types=[setter_argument_type]
-                    )
-            elif property_group['kind'] == 'side':
-                property = property_group['physical']['bottom']
-                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
-                getter_return_type = property.getter_return_type
-                setter_argument_type = property.setter_argument_type
-
-                prefix = Name(property_group_name)
-
-                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
-                        function_specifiers=['inline'],
-                        return_type=getter_return_type,
-                        argument_types=['WritingMode'],
-                        function_qualifiers=['const']
-                    )
-                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
-                        function_specifiers=['inline'],
-                        return_type=getter_return_type,
-                        argument_types=[],
-                        function_qualifiers=['const']
-                    )
-                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name=f"set{prefix.id_without_prefix}{edge}",
-                        function_specifiers=['inline'],
-                        return_type='void',
-                        argument_types=[setter_argument_type]
-                    )
-            else:
-                # FIXME: Add logical getters / setters for other group kinds (like 'corner') if it would be useful.
-                to.write(f"// FIXME: Add support for logical getter/setters of kind '{property_group['kind']}'.")
-            to.newline()
-
-    def _generate_color_trait_declarations(self, *, to):
-        for property in self.style_properties.all:
-            if not property.codegen_properties.color_property:
-                continue
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            to.write(f"template<> struct ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>> {{")
-            with to.indent():
-                self.generation_context.generate_function_declaration(
-                    to=to,
-                    function_name='color',
-                    function_specifiers=['static', 'inline'],
-                    return_type='const Color&',
-                    argument_types=['const ComputedStyleProperties&']
-                )
-                if property.codegen_properties.visited_link_color_support:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name='visitedLinkColor',
-                        function_specifiers=['static', 'inline'],
-                        return_type='const Color&',
-                        argument_types=['const ComputedStyleProperties&']
-                    )
-
-                if property.codegen_properties.color_property_traits_requires_resolving_current_color:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name='colorResolvingCurrentColor',
-                        function_specifiers=['static', 'inline'],
-                        return_type='WebCore::Color',
-                        argument_types=['const ComputedStyleProperties&']
-                    )
-                    if property.codegen_properties.visited_link_color_support:
-                        self.generation_context.generate_function_declaration(
-                            to=to,
-                            function_name='visitedLinkColorResolvingCurrentColor',
-                            function_specifiers=['static', 'inline'],
-                            return_type='WebCore::Color',
-                            argument_types=['const ComputedStyleProperties&']
-                        )
-
-                if property.codegen_properties.color_property_traits_requires_excludes_visited_link_color:
-                    self.generation_context.generate_function_declaration(
-                        to=to,
-                        function_name='excludesVisitedLinkColor',
-                        function_specifiers=['static', 'inline'],
-                        return_type='bool',
-                        argument_types=['const WebCore::Color&']
-                    )
-
-            to.write(f"}};")
-            to.newline()
 
     def generate_style_computed_style_properties_h(self):
         with open('StyleComputedStyleProperties.h', 'w') as output_file:
@@ -6382,12 +7803,15 @@ class GenerateStyleComputedStyleProperties:
                 writer.write(f"public:")
 
                 with writer.indent():
-                    self._generate_property_function_declarations(
-                        to=writer
-                    )
-                    self._generate_logical_property_function_declarations(
-                        to=writer
-                    )
+                    for property_generator in self.property_generators:
+                        writer.write(f"// '{property_generator.property}'")
+                        property_generator.all_functions.generate_function_declarations(to=writer)
+                        writer.newline()
+
+                    for logical_property_group_generator in self.logical_property_group_generators:
+                        writer.write(f"// Logical getters and setters for '{logical_property_group_generator.property_group_name}' properties of type '{logical_property_group_generator.property_group['kind']}'.")
+                        logical_property_group_generator.all_functions.generate_function_declarations(to=writer)
+                        writer.newline()
 
                 writer.write(f"protected:")
 
@@ -6405,71 +7829,10 @@ class GenerateStyleComputedStyleProperties:
                 writer.write(f"}};")
                 writer.newline()
 
-                self._generate_color_trait_declarations(
-                    to=writer
-                )
+                for color_property_traits_generator in self.color_property_traits_generators:
+                    color_property_traits_generator.generate_declaration(to=writer)
 
     # Generate StyleComputedStyleProperties.cpp
-
-    def _generate_color_resolution_function_definitions(self, *, to):
-        for property in self.style_properties.all:
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-            if not property.codegen_properties.color_property:
-                continue
-
-            color_resolver = f"{property.codegen_properties.computed_style_getter}Resolver()"
-
-            to.write(f"WebCore::Color ComputedStyleProperties::{property.codegen_properties.computed_style_getter}ResolvingCurrentColor() const")
-            to.write(f"{{")
-            with to.indent():
-                to.write(f"return {color_resolver}.colorResolvingCurrentColor();")
-            to.write(f"}}")
-            to.newline()
-
-            to.write(f"WebCore::Color ComputedStyleProperties::{property.codegen_properties.computed_style_getter}ResolvingCurrentColorApplyingColorFilter() const")
-            to.write(f"{{")
-            with to.indent():
-                to.write(f"return {color_resolver}.colorResolvingCurrentColorApplyingColorFilter();")
-            to.write(f"}}")
-            to.newline()
-
-            if property.codegen_properties.computed_style_visited_link_storage_path:
-                to.write(f"WebCore::Color ComputedStyleProperties::visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColor() const")
-                to.write(f"{{")
-                with to.indent():
-                    to.write(f"return {color_resolver}.visitedLinkColorResolvingCurrentColor();")
-                to.write(f"}}")
-                to.newline()
-
-                to.write(f"WebCore::Color ComputedStyleProperties::visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColorApplyingColorFilter() const")
-                to.write(f"{{")
-                with to.indent():
-                    to.write(f"return {color_resolver}.visitedLinkColorResolvingCurrentColorApplyingColorFilter();")
-                to.write(f"}}")
-                to.newline()
-
-            to.write(f"WebCore::Color ComputedStyleProperties::visitedDependent{property.codegen_properties.computed_style_name_for_methods}(OptionSet<PaintBehavior> paintBehavior) const")
-            to.write(f"{{")
-            with to.indent():
-                to.write(f"return {color_resolver}.visitedDependentColor(paintBehavior);")
-            to.write(f"}}")
-            to.newline()
-
-            to.write(f"WebCore::Color ComputedStyleProperties::visitedDependent{property.codegen_properties.computed_style_name_for_methods}ApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const")
-            to.write(f"{{")
-            with to.indent():
-                to.write(f"return {color_resolver}.visitedDependentColorApplyingColorFilter(paintBehavior);")
-            to.write(f"}}")
-            to.newline()
 
     def generate_style_computed_style_properties_cpp(self):
         with open('StyleComputedStyleProperties.cpp', 'w') as output_file:
@@ -6484,318 +7847,72 @@ class GenerateStyleComputedStyleProperties:
                 header="StyleComputedStyleProperties.h"
             )
 
+            headers = set()
+            for property_generator in self.property_generators:
+                headers.update(property_generator.all_functions.includes_needed_for_out_of_line_definitions)
+
             self.generation_context.generate_includes(
                 to=writer,
-                headers=[
-                    "StyleComputedStyle+GettersInlines.h",
-                ]
+                headers=headers
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_color_resolution_function_definitions(
-                    to=writer
-                )
+                for property_generator in self.property_generators:
+                    property_generator.all_functions.generate_out_of_line_function_definitions(to=writer)
+                for logical_property_group_generator in self.logical_property_group_generators:
+                    logical_property_group_generator.all_functions.generate_out_of_line_function_definitions(to=writer)
+
+    # Generate StyleComputedStyleProperties+{PropertyName/LogicalPropertyGroupName}Getters.h
+
+    def generate_header_for_disabled_property(self, generator, filename):
+        with open(filename, 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            writer.write(f"// The property '{generator.property}' has been disabled.")
+            writer.newline()
+
+    def generate_style_computed_style_properties_specific_disabled_properties_getters_inlines_h(self, generator):
+        self.generate_header_for_disabled_property(generator, generator.getter_inlines_filename)
+
+    def generate_style_computed_style_properties_specific_disabled_properties_setters_inlines_h(self, generator):
+        self.generate_header_for_disabled_property(generator, generator.setter_inlines_filename)
+
+    def generate_style_computed_style_properties_specific_disabled_properties_initial_inlines_h(self, generator):
+        self.generate_header_for_disabled_property(generator, generator.initial_inlines_filename)
+
+    def generate_style_computed_style_properties_specific_getters_inlines_h(self, generator):
+        with open(generator.getter_inlines_filename, 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            system_headers = [
+                f"<WebCore/StyleComputedStyleProperties.h>",
+            ] + list(map(lambda x: f"<WebCore/{x}>", generator.getter_functions.includes_needed_for_inline_definitions))
+
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=system_headers
+            )
+
+            with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
+                generator.getter_functions.generate_inline_function_definitions(to=writer)
 
     # Generate StyleComputedStyleProperties+GettersInlines.h
-
-    def _generate_getters_inlines_property_function_definition(self, *, to, function_name, function_specifiers, return_type, get_expression):
-        to.write(f"{''.join(map(lambda x: x + ' ', function_specifiers))}{return_type} ComputedStyleProperties::{function_name}() const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return {get_expression};")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_getters_inlines_property_function_definitions(self, *, to):
-        for property in self.style_properties.all:
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            if not property.codegen_properties.computed_style_storage_path and not property.codegen_properties.skip_computed_style_getter:
-                raise Exception(f"Missing ComputedStyle storage path for property {property.id}.")
-
-            if not property.codegen_properties.computed_style_getter_custom and not property.codegen_properties.skip_computed_style_getter:
-                function_name = property.codegen_properties.computed_style_getter
-                function_specifiers = property.getter_definition_function_specifiers
-                return_type = property.getter_return_type
-                storage_type = property.codegen_properties.computed_style_type
-                storage_name = property.codegen_properties.computed_style_storage_name
-                storage_kind = property.codegen_properties.computed_style_storage_kind
-                container_kind = property.codegen_properties.computed_style_storage_container
-                container_path = property.codegen_properties.computed_style_storage_path
-
-                self._generate_getters_inlines_property_function_definition(
-                    to=to,
-                    function_name=function_name,
-                    function_specifiers=function_specifiers,
-                    return_type=return_type,
-                    get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind)
-                )
-
-            if property.codegen_properties.color_property:
-                if property.codegen_properties.computed_style_visited_link_storage_path and not property.codegen_properties.skip_computed_style_getter:
-                    function_name = f"visitedLink{property.codegen_properties.computed_style_name_for_methods}"
-                    function_specifiers = ['inline']
-                    return_type = property.getter_return_type
-                    storage_type = property.codegen_properties.computed_style_type
-                    storage_kind = property.codegen_properties.computed_style_storage_kind  # the storage kind for visited links are always the same as the principle value
-                    storage_name = property.codegen_properties.computed_style_visited_link_storage_name
-                    container_kind = property.codegen_properties.computed_style_visited_link_storage_container
-                    container_path = property.codegen_properties.computed_style_visited_link_storage_path
-
-                    self._generate_getters_inlines_property_function_definition(
-                        to=to,
-                        function_name=function_name,
-                        function_specifiers=function_specifiers,
-                        return_type=return_type,
-                        get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind)
-                    )
-
-                color_resolver_getter_name = f"{property.codegen_properties.computed_style_getter}Resolver"
-                color_resolver_getter_function_specifiers = ['inline']
-                color_resolver_getter_return_type = 'decltype(auto)'
-                color_resolver_getter_expression = f"ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>> {{ *this }}"
-
-                self._generate_getters_inlines_property_function_definition(
-                    to=to,
-                    function_name=color_resolver_getter_name,
-                    function_specifiers=color_resolver_getter_function_specifiers,
-                    return_type=color_resolver_getter_return_type,
-                    get_expression=color_resolver_getter_expression
-                )
-
-            if property.codegen_properties.computed_style_has_explicitly_set_storage_path:
-                function_name = f"hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}"
-                function_specifiers = ['inline']
-                return_type = 'bool'
-                storage_type = 'bool'
-                storage_kind = 'value'
-                storage_name = property.codegen_properties.computed_style_has_explicitly_set_storage_name
-                container_kind = property.codegen_properties.computed_style_has_explicitly_set_storage_container
-                container_path = property.codegen_properties.computed_style_has_explicitly_set_storage_path
-
-                self._generate_getters_inlines_property_function_definition(
-                    to=to,
-                    function_name=function_name,
-                    function_specifiers=function_specifiers,
-                    return_type=return_type,
-                    get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind)
-                )
-
-    def _generate_getters_inlines_function_definition_logical_axis(self, *, to, axis, getter_return_type, horizontal, vertical):
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::logical{axis.id_without_prefix}(WritingMode writingMode) const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return writingMode.isHorizontal() ? {horizontal.codegen_properties.computed_style_getter}() : {vertical.codegen_properties.computed_style_getter}();")
-        to.write(f"}}")
-        to.newline()
-
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::logical{axis.id_without_prefix}() const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return logical{axis.id_without_prefix}(writingMode());")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_getters_inlines_function_definition_logical_side_start_end(self, *, to, prefix, edge, getter_return_type, left, right, top, bottom):
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode writingMode) const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"if (writingMode.isHorizontal())")
-            with to.indent():
-                to.write(f"return writingMode.isInlineLeftToRight() ? {left.codegen_properties.computed_style_getter}() : {right.codegen_properties.computed_style_getter}();")
-            to.write(f"else")
-            with to.indent():
-                to.write(f"return writingMode.isInlineTopToBottom() ? {top.codegen_properties.computed_style_getter}() : {bottom.codegen_properties.computed_style_getter}();")
-        to.write(f"}}")
-        to.newline()
-
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(writingMode());")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_getters_inlines_function_definition_logical_side_before_after(self, *, to, prefix, edge, getter_return_type, left, right, top, bottom):
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode writingMode) const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"switch (writingMode.blockDirection()) {{")
-            to.write(f"case FlowDirection::LeftToRight:")
-            with to.indent():
-                to.write(f"return {left.codegen_properties.computed_style_getter}();")
-            to.write(f"case FlowDirection::RightToLeft:")
-            with to.indent():
-                to.write(f"return {right.codegen_properties.computed_style_getter}();")
-            to.write(f"case FlowDirection::TopToBottom:")
-            with to.indent():
-                to.write(f"return {top.codegen_properties.computed_style_getter}();")
-            to.write(f"case FlowDirection::BottomToTop:")
-            with to.indent():
-                to.write(f"return {bottom.codegen_properties.computed_style_getter}();")
-            to.write(f"}}")
-            to.write(f"ASSERT_NOT_REACHED();")
-            to.write(f"return {bottom.codegen_properties.computed_style_getter}();")
-        to.write(f"}}")
-        to.newline()
-
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(writingMode());")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_getters_inlines_function_definition_logical_side_left_right(self, *, to, prefix, edge, getter_return_type, left, right):
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode writingMode) const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"if (writingMode.isHorizontal())")
-            with to.indent():
-                to.write(f"return {left.codegen_properties.computed_style_getter}();")
-            to.write(f"else")
-            with to.indent():
-                to.write(f"return {right.codegen_properties.computed_style_getter}();")
-        to.write(f"}}")
-        to.newline()
-
-        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(writingMode());")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_getters_inlines_logical_property_function_definitions(self, *, to):
-        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
-            if property_group['kind'] == 'axis':
-                horizontal = property_group['physical']['horizontal']
-                vertical = property_group['physical']['vertical']
-
-                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
-                getter_return_type = horizontal.getter_return_type
-
-                self._generate_getters_inlines_function_definition_logical_axis(
-                    to=to,
-                    axis=horizontal,
-                    getter_return_type=getter_return_type,
-                    horizontal=horizontal,
-                    vertical=vertical
-                )
-                self._generate_getters_inlines_function_definition_logical_axis(
-                    to=to,
-                    axis=vertical,
-                    getter_return_type=getter_return_type,
-                    horizontal=vertical,
-                    vertical=horizontal
-                )
-            elif property_group['kind'] == 'side':
-                left = property_group['physical']['left']
-                right = property_group['physical']['right']
-                bottom = property_group['physical']['bottom']
-                top = property_group['physical']['top']
-
-                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
-                getter_return_type = left.getter_return_type
-
-                prefix = Name(property_group_name)
-
-                self._generate_getters_inlines_function_definition_logical_side_start_end(
-                    to=to,
-                    prefix=prefix,
-                    edge='Start',
-                    getter_return_type=getter_return_type,
-                    left=left,
-                    right=right,
-                    top=top,
-                    bottom=bottom
-                )
-                self._generate_getters_inlines_function_definition_logical_side_start_end(
-                    to=to,
-                    prefix=prefix,
-                    edge='End',
-                    getter_return_type=getter_return_type,
-                    left=right,
-                    right=left,
-                    top=bottom,
-                    bottom=top
-                )
-                self._generate_getters_inlines_function_definition_logical_side_before_after(
-                    to=to,
-                    prefix=prefix,
-                    edge='Before',
-                    getter_return_type=getter_return_type,
-                    left=left,
-                    right=right,
-                    top=top,
-                    bottom=bottom
-                )
-                self._generate_getters_inlines_function_definition_logical_side_before_after(
-                    to=to,
-                    prefix=prefix,
-                    edge='After',
-                    getter_return_type=getter_return_type,
-                    left=right,
-                    right=left,
-                    top=bottom,
-                    bottom=top
-                )
-                self._generate_getters_inlines_function_definition_logical_side_left_right(
-                    to=to,
-                    prefix=prefix,
-                    edge='LogicalLeft',
-                    getter_return_type=getter_return_type,
-                    left=left,
-                    right=top
-                )
-                self._generate_getters_inlines_function_definition_logical_side_left_right(
-                    to=to,
-                    prefix=prefix,
-                    edge='LogicalRight',
-                    getter_return_type=getter_return_type,
-                    left=right,
-                    right=bottom
-                )
-
-    def _generate_getters_inlines_color_trait_definitions(self, *, to):
-        for property in self.style_properties.all:
-            if not property.codegen_properties.color_property:
-                continue
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            if not property.codegen_properties.color_property_traits_color_custom:
-                to.write(f"inline const Color& ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>::color(const ComputedStyleProperties& style)")
-                to.write(f"{{")
-                with to.indent():
-                    to.write(f"return style.{property.codegen_properties.computed_style_getter}();")
-                to.write(f"}}")
-                to.newline()
-
-            if property.codegen_properties.visited_link_color_support and not property.codegen_properties.color_property_traits_visited_link_color_custom:
-                to.write(f"inline const Color& ColorPropertyTraits<PropertyNameConstant<{property.id_without_scope}>>::visitedLinkColor(const ComputedStyleProperties& style)")
-                to.write(f"{{")
-                with to.indent():
-                    to.write(f"return style.visitedLink{property.codegen_properties.computed_style_name_for_methods}();")
-                to.write(f"}}")
-                to.newline()
 
     def generate_style_computed_style_properties_getters_inlines_h(self):
         with open('StyleComputedStyleProperties+GettersInlines.h', 'w') as output_file:
@@ -6814,299 +7931,43 @@ class GenerateStyleComputedStyleProperties:
             writer.write("#endif")
             writer.newline()
 
+            system_headers = [
+                "<WebCore/StyleComputedStyleBase+GettersInlines.h>",
+            ] + list(map(lambda x: f"<WebCore/{x.getter_inlines_filename}>", self.property_generators)) + list(map(lambda x: f"<WebCore/{x.getter_inlines_filename}>", self.logical_property_group_generators))
+
             self.generation_context.generate_includes(
                 to=writer,
-                system_headers=[
-                    "<WebCore/StyleComputedStyleProperties+GettersCustomInlines.h>",
-                ]
+                system_headers=system_headers
+            )
+
+    # Generate StyleComputedStyleProperties+{PropertyName/LogicalPropertyGroupName}Setters.h
+
+    def generate_style_computed_style_properties_specific_setters_inlines_h(self, generator):
+        with open(generator.setter_inlines_filename, 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                headers=[f"StyleComputedStyleProperties.h"]
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                headers=generator.setter_functions.includes_needed_for_inline_definitions
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_getters_inlines_property_function_definitions(
-                    to=writer
-                )
-                self._generate_getters_inlines_logical_property_function_definitions(
-                    to=writer
-                )
-                self._generate_getters_inlines_color_trait_definitions(
-                    to=writer
-                )
+                generator.setter_functions.generate_inline_function_definitions(to=writer)
 
     # Generate StyleComputedStyleProperties+SettersInlines.h
-
-    def _generate_setters_inlines_property_function_definition(self, *, to, function_name, function_specifiers, return_type, argument_type, argument_name, get_expression, set_expression, did_set_expression=None):
-        to.write(f"{''.join(map(lambda x: x + ' ', function_specifiers))}{return_type} ComputedStyleProperties::{function_name}({argument_type} {argument_name})")
-        to.write(f"{{")
-        with to.indent():
-            if return_type == 'void':
-                to.write(f"if ({argument_name} != {get_expression}) {{")
-                with to.indent():
-                    to.write(f"{set_expression};")
-                    if did_set_expression:
-                        to.write(f"{did_set_expression};")
-                to.write(f"}}")
-            elif return_type == 'bool':
-                to.write(f"if ({argument_name} != {get_expression}) {{")
-                with to.indent():
-                    to.write(f"{set_expression};")
-                    if did_set_expression:
-                        to.write(f"{did_set_expression};")
-                    to.write(f"return true;")
-                to.write(f"}}")
-                to.write(f"return false;")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_setters_inlines_property_function_definitions(self, *, to):
-        for property in self.style_properties.all:
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.skip_computed_style_setter:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            if not property.codegen_properties.computed_style_storage_path:
-                raise Exception(f"Missing ComputedStyle storage path for property {property.id}.")
-
-            if not property.codegen_properties.computed_style_setter_custom:
-                function_name = property.codegen_properties.computed_style_setter
-                function_specifiers = property.setter_definition_function_specifiers
-                return_type = "void"
-                argument_type = property.setter_argument_type
-                argument_name = "value"
-                storage_type = property.codegen_properties.computed_style_type
-                storage_kind = property.codegen_properties.computed_style_storage_kind
-                storage_name = property.codegen_properties.computed_style_storage_name
-                container_kind = property.codegen_properties.computed_style_storage_container
-                container_path = property.codegen_properties.computed_style_storage_path
-
-                self._generate_setters_inlines_property_function_definition(
-                    to=to,
-                    function_name=function_name,
-                    function_specifiers=function_specifiers,
-                    return_type=return_type,
-                    argument_type=argument_type,
-                    argument_name=argument_name,
-                    get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind),
-                    set_expression=self._compute_set_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name),
-                    did_set_expression=self._compute_did_set_expression(property)
-                )
-
-            if property.codegen_properties.computed_style_visited_link_storage_path:
-                function_name = f"setVisitedLink{property.codegen_properties.computed_style_name_for_methods}"
-                function_specifiers = ['inline']
-                return_type = "void"
-                argument_type = property.setter_argument_type
-                argument_name = "value"
-                storage_type = property.codegen_properties.computed_style_type
-                storage_kind = property.codegen_properties.computed_style_storage_kind  # the storage kind for visited links are always the same as the principle value
-                storage_name = property.codegen_properties.computed_style_visited_link_storage_name
-                container_kind = property.codegen_properties.computed_style_visited_link_storage_container
-                container_path = property.codegen_properties.computed_style_visited_link_storage_path
-
-                self._generate_setters_inlines_property_function_definition(
-                    to=to,
-                    function_name=function_name,
-                    function_specifiers=function_specifiers,
-                    return_type=return_type,
-                    argument_type=argument_type,
-                    argument_name=argument_name,
-                    get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind),
-                    set_expression=self._compute_set_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name)
-                )
-
-            if property.codegen_properties.computed_style_has_explicitly_set_storage_path:
-                function_name = f"setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}"
-                function_specifiers = ['inline']
-                return_type = "void"
-                argument_type = 'bool'
-                argument_name = f"value"
-                storage_type = 'bool'
-                storage_kind = 'value'
-                storage_name = property.codegen_properties.computed_style_has_explicitly_set_storage_name
-                container_kind = property.codegen_properties.computed_style_has_explicitly_set_storage_container
-                container_path = property.codegen_properties.computed_style_has_explicitly_set_storage_path
-
-                self._generate_setters_inlines_property_function_definition(
-                    to=to,
-                    function_name=function_name,
-                    function_specifiers=function_specifiers,
-                    return_type=return_type,
-                    argument_type=argument_type,
-                    argument_name=argument_name,
-                    get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind),
-                    set_expression=self._compute_set_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name)
-                )
-
-    def _generate_setters_inlines_function_definition_logical_axis(self, *, to, axis, setter_argument_type, horizontal, vertical):
-        to.write(f"inline void ComputedStyleProperties::setLogical{axis.id_without_prefix}({setter_argument_type} value)")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"if (writingMode().isHorizontal())")
-            with to.indent():
-                to.write(f"{horizontal.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"else")
-            with to.indent():
-                to.write(f"{vertical.codegen_properties.computed_style_setter}(WTF::move(value));")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_setters_inlines_function_definition_logical_side_start_end(self, *, to, prefix, edge, setter_argument_type, left, right, top, bottom):
-        to.write(f"void ComputedStyleProperties::set{prefix.id_without_prefix}{edge}({setter_argument_type} value)")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"if (writingMode().isHorizontal()) {{")
-            with to.indent():
-                to.write(f"if (writingMode().isInlineLeftToRight())")
-                with to.indent():
-                    to.write(f"{left.codegen_properties.computed_style_setter}(WTF::move(value));")
-                to.write(f"else")
-                with to.indent():
-                    to.write(f"{right.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"}} else {{")
-            with to.indent():
-                to.write(f"if (writingMode().isInlineTopToBottom())")
-                with to.indent():
-                    to.write(f"{top.codegen_properties.computed_style_setter}(WTF::move(value));")
-                to.write(f"else")
-                with to.indent():
-                    to.write(f"{bottom.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"}}")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_setters_inlines_function_definition_logical_side_before_after(self, *, to, prefix, edge, setter_argument_type, left, right, top, bottom):
-        to.write(f"void ComputedStyleProperties::set{prefix.id_without_prefix}{edge}({setter_argument_type} value)")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"switch (writingMode().blockDirection()) {{")
-            to.write(f"case FlowDirection::LeftToRight:")
-            with to.indent():
-                to.write(f"return {left.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"case FlowDirection::RightToLeft:")
-            with to.indent():
-                to.write(f"return {right.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"case FlowDirection::TopToBottom:")
-            with to.indent():
-                to.write(f"return {top.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"case FlowDirection::BottomToTop:")
-            with to.indent():
-                to.write(f"return {bottom.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"}}")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_setters_inlines_function_definition_logical_side_left_right(self, *, to, prefix, edge, setter_argument_type, left, right):
-        to.write(f"void ComputedStyleProperties::set{prefix.id_without_prefix}{edge}({setter_argument_type} value)")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"if (writingMode().isHorizontal())")
-            with to.indent():
-                to.write(f"{left.codegen_properties.computed_style_setter}(WTF::move(value));")
-            to.write(f"else")
-            with to.indent():
-                to.write(f"{right.codegen_properties.computed_style_setter}(WTF::move(value));")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_setters_inlines_logical_property_function_definitions(self, *, to):
-        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
-            if property_group['kind'] == 'axis':
-                horizontal = property_group['physical']['horizontal']
-                vertical = property_group['physical']['vertical']
-
-                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
-                setter_argument_type = horizontal.setter_argument_type
-
-                self._generate_setters_inlines_function_definition_logical_axis(
-                    to=to,
-                    axis=horizontal,
-                    setter_argument_type=setter_argument_type,
-                    horizontal=horizontal,
-                    vertical=vertical
-                )
-                self._generate_setters_inlines_function_definition_logical_axis(
-                    to=to,
-                    axis=vertical,
-                    setter_argument_type=setter_argument_type,
-                    horizontal=vertical,
-                    vertical=horizontal
-                )
-
-            elif property_group['kind'] == 'side':
-                left = property_group['physical']['left']
-                right = property_group['physical']['right']
-                bottom = property_group['physical']['bottom']
-                top = property_group['physical']['top']
-
-                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
-                setter_argument_type = left.setter_argument_type
-
-                prefix = Name(property_group_name)
-
-                self._generate_setters_inlines_function_definition_logical_side_start_end(
-                    to=to,
-                    prefix=prefix,
-                    edge='Start',
-                    setter_argument_type=setter_argument_type,
-                    left=left,
-                    right=right,
-                    top=top,
-                    bottom=bottom
-                )
-                self._generate_setters_inlines_function_definition_logical_side_start_end(
-                    to=to,
-                    prefix=prefix,
-                    edge='End',
-                    setter_argument_type=setter_argument_type,
-                    left=right,
-                    right=left,
-                    top=bottom,
-                    bottom=top
-                )
-                self._generate_setters_inlines_function_definition_logical_side_before_after(
-                    to=to,
-                    prefix=prefix,
-                    edge='Before',
-                    setter_argument_type=setter_argument_type,
-                    left=left,
-                    right=right,
-                    top=top,
-                    bottom=bottom
-                )
-                self._generate_setters_inlines_function_definition_logical_side_before_after(
-                    to=to,
-                    prefix=prefix,
-                    edge='After',
-                    setter_argument_type=setter_argument_type,
-                    left=right,
-                    right=left,
-                    top=bottom,
-                    bottom=top
-                )
-                self._generate_setters_inlines_function_definition_logical_side_left_right(
-                    to=to,
-                    prefix=prefix,
-                    edge='LogicalLeft',
-                    setter_argument_type=setter_argument_type,
-                    left=left,
-                    right=top
-                )
-                self._generate_setters_inlines_function_definition_logical_side_left_right(
-                    to=to,
-                    prefix=prefix,
-                    edge='LogicalRight',
-                    setter_argument_type=setter_argument_type,
-                    left=right,
-                    right=bottom
-                )
 
     def generate_style_computed_style_properties_setters_inlines_h(self):
         with open('StyleComputedStyleProperties+SettersInlines.h', 'w') as output_file:
@@ -7127,60 +7988,41 @@ class GenerateStyleComputedStyleProperties:
 
             self.generation_context.generate_includes(
                 to=writer,
-                headers=[
-                    "StyleComputedStyleProperties+SettersCustomInlines.h",
-                ]
+                headers=["StyleComputedStyleBase+SettersInlines.h"]
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                headers=list(map(lambda x: f"{x.setter_inlines_filename}", self.property_generators)) + list(map(lambda x: f"{x.setter_inlines_filename}", self.logical_property_group_generators))
+            )
+
+    # Generate StyleComputedStyleProperties+{PropertyName}Initial.h
+
+    def generate_style_computed_style_properties_specific_initial_inlines_h(self, generator):
+        with open(generator.initial_inlines_filename, 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=["<WebCore/StyleComputedStyleProperties.h>"]
+            )
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=list(map(lambda x: f"<WebCore/{x}>", generator.initial_functions.includes_needed_for_inline_definitions))
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_setters_inlines_property_function_definitions(
-                    to=writer
-                )
-                self._generate_setters_inlines_logical_property_function_definitions(
-                    to=writer
-                )
+                generator.initial_functions.generate_inline_function_definitions(to=writer)
 
     # Generate StyleComputedStyleProperties+InitialInlines.h
-
-    def _generate_initial_inlines_function_definition(self, *, to, function_name, function_specifiers, return_type, initial_expression, requires_using_namespace_css_literals):
-        to.write(f"{''.join(map(lambda x: x + ' ', function_specifiers))}{return_type} ComputedStyleProperties::{function_name}()")
-        to.write(f"{{")
-        with to.indent():
-            if requires_using_namespace_css_literals:
-                to.write(f"using namespace CSS::Literals;")
-            to.write(f"return {initial_expression};")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_initial_inlines_property_function_definitions(self, *, to):
-        for property in self.style_properties.all:
-            if property.codegen_properties.skip_computed_style:
-                continue
-            if property.codegen_properties.skip_computed_style_initial:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            if not property.codegen_properties.computed_style_initial_custom:
-                function_name = property.codegen_properties.computed_style_initial
-                function_specifiers = property.initial_definition_function_specifiers
-                return_type = property.initial_return_type
-                requires_using_namespace_css_literals = property.initial.requires_using_namespace_css_literals
-
-                self._generate_initial_inlines_function_definition(
-                    to=to,
-                    function_name=function_name,
-                    function_specifiers=function_specifiers,
-                    return_type=return_type,
-                    initial_expression=self._compute_initial_expression(property),
-                    requires_using_namespace_css_literals=requires_using_namespace_css_literals
-                )
 
     def generate_style_computed_style_properties_initial_inlines_h(self):
         with open('StyleComputedStyleProperties+InitialInlines.h', 'w') as output_file:
@@ -7201,15 +8043,37 @@ class GenerateStyleComputedStyleProperties:
 
             self.generation_context.generate_includes(
                 to=writer,
-                system_headers=[
-                    "<WebCore/StyleComputedStyleProperties+InitialCustomInlines.h>",
-                ]
+                system_headers=list(map(lambda x: f"<WebCore/{x.initial_inlines_filename}>", self.property_generators))
+            )
+
+    # Generate StyleColorPropertyTraits+{PropertyName}.h
+
+    def generate_style_color_property_traits_disabled_h(self, generator):
+        self.generate_header_for_disabled_property(generator, generator.inlines_filename)
+
+    def generate_style_color_property_traits_h(self, generator):
+        with open(generator.inlines_filename, 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=["<WebCore/StyleComputedStyleProperties.h>"]
+            )
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=list(map(lambda x: f"<WebCore/{x}>", generator.all_functions.includes_needed_for_inline_definitions))
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_initial_inlines_property_function_definitions(
-                    to=writer
-                )
+                generator.all_functions.generate_inline_function_definitions(to=writer)
 
 
 # Generates `StyleChangedAnimatablePropertiesGenerated.cpp`.

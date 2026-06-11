@@ -30,6 +30,11 @@
 #include "Color.h"
 #include "LayoutUnit.h"
 #include "RenderObject.h"
+#include "StyleColorPropertyTraits+BorderBottomColor.h"
+#include "StyleColorPropertyTraits+BorderLeftColor.h"
+#include "StyleColorPropertyTraits+BorderRightColor.h"
+#include "StyleColorPropertyTraits+BorderTopColor.h"
+#include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 

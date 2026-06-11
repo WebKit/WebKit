@@ -36,6 +36,7 @@
 #import "PlatformRenderTheme.h"
 #import "RenderObjectInlines.h"
 #import "RenderTheme.h"
+#import "StyleColorResolver.h"
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
