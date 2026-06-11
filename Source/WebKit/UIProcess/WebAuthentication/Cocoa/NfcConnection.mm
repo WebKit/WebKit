@@ -31,6 +31,7 @@
 #import "NfcService.h"
 #import "WKNFReaderSessionDelegate.h"
 #import <WebCore/FidoConstants.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
@@ -98,6 +99,15 @@ void NfcConnection::stop() const
     [m_session disconnectTag];
     [m_session stopPolling];
     [m_session endSession];
+}
+
+void NfcConnection::stopWithCompletionHandler(Function<void()>&& completionHandler)
+{
+    [m_session disconnectTag];
+    [m_session stopPolling];
+    [m_session endSessionWithCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)]() mutable {
+        completionHandler();
+    }).get()];
 }
 
 void NfcConnection::didDetectTags(NSArray *tags)

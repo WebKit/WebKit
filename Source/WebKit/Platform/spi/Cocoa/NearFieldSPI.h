@@ -90,6 +90,7 @@ typedef NS_ENUM(uint32_t, NFNdefAvailability) {
 @end
 
 @interface NFSession : NSObject <NFSession>
+- (void)endSessionWithCompletion:(void(^)(void))theCallback;
 @end
 
 @protocol NFReaderSessionDelegate;

@@ -441,6 +441,17 @@ TEST(WebAuthenticationPanel, NoPanelNfcSucceed)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
 }
+
+TEST(WebAuthenticationPanel, NfcHardwareBusyRetry)
+{
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-nfc-busy" withExtension:@"html"];
+
+    auto webView = setUpTestWebViewForTestAuthenticationPanel();
+    [webView focus];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+}
 #endif
 
 // FIXME rdar://145102423

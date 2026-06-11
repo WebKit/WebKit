@@ -31,6 +31,7 @@
 #import "NearFieldSPI.h"
 #import "NfcConnection.h"
 #import <WebCore/FidoConstants.h>
+#import <objc/runtime.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -186,6 +187,33 @@ static NSData* NFReaderSessionTransceive(id, SEL, NSData *)
     return globalNfcService ? globalNfcService->transceive() : nil;
 }
 
+static void NFSessionEndSessionWithCompletion(id, SEL, void (^completion)(void)) {
+    if (completion)
+        completion();
+}
+
+static id NFHardwareManagerSharedManager(id, SEL)
+{
+    static NeverDestroyed<RetainPtr<id>> manager = adoptNS([[getNFHardwareManagerClassSingleton() alloc] init]);
+    return manager.get().get();
+}
+
+static BOOL NFHardwareManagerAreFeaturesSupported(id, SEL, NFFeature, NSError**)
+{
+    return YES;
+}
+
+static void NFHardwareManagerStartReaderSessionWithBusyError(id, SEL, void (^callback)(NFReaderSession*, NSError*)) {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSError *error = [NSError errorWithDomain:@"com.apple.nfcd" code:2 userInfo:@{ NSLocalizedDescriptionKey: @"Busy" }];
+        callback(nil, error);
+    });
+}
+
+static IMP originalSharedHardwareManager;
+static IMP originalAreFeaturesSupported;
+static IMP originalStartReaderSession;
+
 } // namespace
 
 #endif // HAVE(NEAR_FIELD)
@@ -229,7 +257,51 @@ void MockNfcService::receiveStartPolling()
 void MockNfcService::platformStartDiscovery()
 {
 #if HAVE(NEAR_FIELD)
+    if (m_configuration.nfc && m_configuration.nfc->error == Mock::NfcError::HardwareBusy) {
+        // Clear error so retry (via m_restartTimer) will succeed through normal mock path.
+        m_configuration.nfc->error = Mock::NfcError::Success;
+
+        // Ensure NFHardwareManager class exists. On platforms where the NearField
+        // framework is not available (e.g., macOS), the soft-link returns nil. Register
+        // a fake class so the soft-link accessor finds it on first call and the
+        // subsequent method swizzles have a real class to operate on.
+        if (!objc_getClass("NFHardwareManager")) {
+            SUPPRESS_UNRETAINED_LOCAL Class cls = objc_allocateClassPair([NSObject class], "NFHardwareManager", 0);
+            ASSERT(cls);
+            SUPPRESS_UNRETAINED_LOCAL Class metaCls = object_getClass(cls);
+            class_addMethod(metaCls, @selector(sharedHardwareManager), (IMP)NFHardwareManagerSharedManager, "@@:");
+            class_addMethod(cls, @selector(areFeaturesSupported:outError:), (IMP)NFHardwareManagerAreFeaturesSupported, "B@:I^@");
+            class_addMethod(cls, @selector(startReaderSession:), (IMP)NFHardwareManagerStartReaderSessionWithBusyError, "@@:@?");
+            objc_registerClassPair(cls);
+        }
+
+        Method hmMethod0 = class_getClassMethod(getNFHardwareManagerClassSingleton(), @selector(sharedHardwareManager));
+        originalSharedHardwareManager = method_setImplementation(hmMethod0, (IMP)NFHardwareManagerSharedManager);
+
+        Method hmMethod1 = class_getInstanceMethod(getNFHardwareManagerClassSingleton(), @selector(areFeaturesSupported:outError:));
+        originalAreFeaturesSupported = method_setImplementation(hmMethod1, (IMP)NFHardwareManagerAreFeaturesSupported);
+
+        Method hmMethod2 = class_getInstanceMethod(getNFHardwareManagerClassSingleton(), @selector(startReaderSession:));
+        originalStartReaderSession = method_setImplementation(hmMethod2, (IMP)NFHardwareManagerStartReaderSessionWithBusyError);
+
+        NfcService::platformStartDiscovery();
+        return;
+    }
     if (!!m_configuration.nfc) {
+        // Restore any swizzled NFHardwareManager methods from the HardwareBusy path.
+        if (originalSharedHardwareManager) {
+            method_setImplementation(class_getClassMethod(getNFHardwareManagerClassSingleton(), @selector(sharedHardwareManager)), originalSharedHardwareManager);
+            originalSharedHardwareManager = nil;
+        }
+        if (originalAreFeaturesSupported) {
+            method_setImplementation(class_getInstanceMethod(getNFHardwareManagerClassSingleton(), @selector(areFeaturesSupported:outError:)), originalAreFeaturesSupported);
+            originalAreFeaturesSupported = nil;
+        }
+        if (originalStartReaderSession) {
+            method_setImplementation(class_getInstanceMethod(getNFHardwareManagerClassSingleton(), @selector(startReaderSession:)), originalStartReaderSession);
+            originalStartReaderSession = nil;
+        }
+
         weakGlobalNfcService() = *this;
 
         Method methodToSwizzle1 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(setDelegate:));
@@ -249,6 +321,11 @@ void MockNfcService::platformStartDiscovery()
 
         Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClassSingleton(), @selector(startPollingWithError:));
         method_setImplementation(methodToSwizzle5, (IMP)NFReaderSessionStartPollingWithError);
+
+        // endSessionWithCompletion: is declared on NFSession (superclass), not NFReaderSession.
+        // Use class_replaceMethod to add it directly to NFReaderSession so the mock completion
+        // handler fires during restartDiscoveryInternal without modifying the superclass.
+        class_replaceMethod(getNFReaderSessionClassSingleton(), @selector(endSessionWithCompletion:), (IMP)NFSessionEndSessionWithCompletion, "v@:@?");
 
         auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
         setConnection(NfcConnection::create(readerSession.get(), *this));

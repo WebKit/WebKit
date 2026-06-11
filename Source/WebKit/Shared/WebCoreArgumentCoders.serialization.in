@@ -6342,7 +6342,8 @@ header: <WebCore/ISOVTTCue.h>
     NoTags,
     WrongTagType,
     NoConnections,
-    MaliciousPayload
+    MaliciousPayload,
+    HardwareBusy
 };
 
 [Nested] struct WebCore::MockWebAuthenticationConfiguration::NfcConfiguration {

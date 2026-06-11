@@ -54,17 +54,18 @@ protected:
     void setConnection(Ref<NfcConnection>&&); // For MockNfcConnection
 #endif
 
+    // Overrided by MockNfcService.
+    virtual void platformStartDiscovery();
+
 private:
     void startDiscoveryInternal() final;
     void restartDiscoveryInternal() final;
-
-    // Overrided by MockNfcService.
-    virtual void platformStartDiscovery();
 
 #if HAVE(NEAR_FIELD)
     // Only one reader session is allowed per time.
     // Keep the reader session alive here when it tries to connect to a tag.
     RefPtr<NfcConnection> m_connection;
+    bool m_startingSession { false };
 #endif
     RunLoop::Timer m_restartTimer;
 };

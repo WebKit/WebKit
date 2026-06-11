@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #import "CtapNfcDriver.h"
+#import "Logging.h"
 #import "NearFieldSPI.h"
 #import "NfcConnection.h"
 #import <wtf/BlockPtr.h>
@@ -91,8 +92,17 @@ void NfcService::startDiscoveryInternal()
 void NfcService::restartDiscoveryInternal()
 {
 #if HAVE(NEAR_FIELD)
-    if (RefPtr connection = m_connection)
-        connection->stop();
+    if (RefPtr connection = m_connection) {
+        m_connection = nullptr;
+        RELEASE_LOG(WebAuthn, "NfcService::restartDiscoveryInternal: ending session before starting new one");
+        connection->stopWithCompletionHandler([weakThis = WeakPtr { *this }] {
+            RunLoop::mainSingleton().dispatch([weakThis] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->platformStartDiscovery();
+            });
+        });
+        return;
+    }
 #endif
     m_restartTimer.startOneShot(1_s); // Magic number to give users enough time for reactions.
 }
@@ -103,11 +113,22 @@ void NfcService::platformStartDiscovery()
     if (!isAvailable())
         return;
 
+    if (m_startingSession)
+        return;
+    m_startingSession = true;
+
+    RELEASE_LOG(WebAuthn, "NfcService::platformStartDiscovery: starting new NFC reader session");
     // Will be executed in a different thread.
     auto callback = makeBlockPtr([weakThis = WeakPtr { *this }] (NFReaderSession *session, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
         if (error) {
-            LOG_ERROR("Couldn't start a NFC reader session: %@", error);
+            RELEASE_LOG(WebAuthn, "NfcService::platformStartDiscovery: failed to start NFC reader session, scheduling retry");
+            RunLoop::mainSingleton().dispatch([weakThis = WTF::move(weakThis)] {
+                if (RefPtr protectedThis = weakThis.get()) {
+                    protectedThis->m_startingSession = false;
+                    protectedThis->m_restartTimer.startOneShot(1_s);
+                }
+            });
             return;
         }
 
@@ -118,6 +139,7 @@ void NfcService::platformStartDiscovery()
                 return;
             }
 
+            protectedThis->m_startingSession = false;
             // NfcConnection will take care of polling tags and connecting to them.
             protectedThis->m_connection = NfcConnection::create(WTF::move(session), *protectedThis);
         });

@@ -56,7 +56,8 @@
     "no-tags",
     "wrong-tag-type",
     "no-connections",
-    "malicious-payload"
+    "malicious-payload",
+    "hardware-busy"
 };
 
 [

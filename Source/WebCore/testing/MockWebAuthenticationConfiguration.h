@@ -58,7 +58,8 @@ struct MockWebAuthenticationConfiguration {
         NoTags,
         WrongTagType,
         NoConnections,
-        MaliciousPayload
+        MaliciousPayload,
+        HardwareBusy
     };
 
     enum class UserVerification : uint8_t {

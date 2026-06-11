@@ -46,6 +46,7 @@ public:
 
     Vector<uint8_t> transact(Vector<uint8_t>&& data) const;
     void stop() const;
+    void stopWithCompletionHandler(Function<void()>&&);
 
     // For WKNFReaderSessionDelegate
     void didDetectTags(NSArray *);
