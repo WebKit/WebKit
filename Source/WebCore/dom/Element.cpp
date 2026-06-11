@@ -3462,7 +3462,7 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, std::
     }
     auto scopedRegistry = ShadowRootScopedCustomElementRegistry::No;
     if (!registryKind)
-        registryKind = !registry && usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window;
+        registryKind = CustomElementRegistryKind::Window;
     if (registryKind == CustomElementRegistryKind::Null) {
         ASSERT(!registry);
         scopedRegistry = ShadowRootScopedCustomElementRegistry::Yes;
@@ -4428,15 +4428,18 @@ void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventIn
     });
 }
 
+ContainerNode& Element::templateContentOrSelf()
+{
+    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*this))
+        return templateElement->fragmentForInsertion();
+    return *this;
+}
+
 ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
 
-    Ref container = [this]() -> Ref<ContainerNode> {
-        if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*this))
-            return templateElement->content();
-        return *this;
-    }();
+    Ref container = templateContentOrSelf();
 
     // Parsing empty string creates additional elements only inside <html> container
     // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhtml
@@ -4446,7 +4449,7 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, CustomElementRegistry::registryForNodeOrTreeScope(container, container->treeScope()));
+    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, CustomElementRegistry::registryForNode(container));
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -6131,7 +6134,7 @@ ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Elemen
     return downcast<Element>(result.releaseReturnValue());
 }
 
-// Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
+// Step 3 of https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-insertadjacenthtml
 static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, Element& element)
 {
     if (equalLettersIgnoringASCIICase(where, "beforebegin"_s) || equalLettersIgnoringASCIICase(where, "afterend"_s)) {
@@ -6145,29 +6148,21 @@ static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, 
     return Exception { ExceptionCode::SyntaxError };
 }
 
-// Step 2 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
-static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where, Element& element)
-{
-    auto contextNodeResult = contextNodeForInsertion(where, element);
-    if (contextNodeResult.hasException())
-        return contextNodeResult.releaseException();
-    CheckedRef contextNode = contextNodeResult.releaseReturnValue();
-    RefPtr contextElement = dynamicDowncast<Element>(contextNode.get());
-    if (!contextElement || (contextNode->document().isHTMLDocument() && is<HTMLHtmlElement>(contextNode.get())))
-        return Ref<Element> { HTMLBodyElement::create(protect(contextNode->document())) };
-    return contextElement.releaseNonNull();
-}
-
-// https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-insertadjacenthtml
 ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, NodeVector* addedNodes)
 {
-    // Steps 1 and 2.
-    auto contextElement = contextElementForInsertion(where, *this);
-    if (contextElement.hasException())
-        return contextElement.releaseException();
-    // Step 3.
-    RefPtr registry = CustomElementRegistry::registryForElement(contextElement.returnValue());
-    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, { ParserContentPolicy::AllowScriptingContent }, registry.get());
+    // Steps 3 and 4.
+    auto contextNodeResult = contextNodeForInsertion(where, *this);
+    if (contextNodeResult.hasException())
+        return contextNodeResult.releaseException();
+    Ref contextNode = contextNodeResult.releaseReturnValue();
+    // Step 5.
+    RefPtr registry = CustomElementRegistry::registryForNode(contextNode);
+    RefPtr maybeContextElement = dynamicDowncast<Element>(contextNode);
+    Ref contextElement = (maybeContextElement && !(contextNode->document().isHTMLDocument() && is<HTMLHtmlElement>(contextNode)))
+        ? maybeContextElement.releaseNonNull()
+        : Ref<Element> { HTMLBodyElement::create(protect(contextNode->document())) };
+    auto fragment = createFragmentForInnerOuterHTML(contextElement, markup, { ParserContentPolicy::AllowScriptingContent }, registry);
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -6177,7 +6172,7 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
         collectChildNodes(fragment.returnValue(), *addedNodes);
     }
 
-    // Step 4.
+    // Step 6.
     auto result = insertAdjacent(where, fragment.releaseReturnValue());
     if (result.hasException())
         return result.releaseException();

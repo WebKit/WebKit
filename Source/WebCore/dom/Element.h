@@ -403,6 +403,8 @@ public:
     Ref<Element> cloneElementWithChildren(Document&, CustomElementRegistry*) const;
     Ref<Element> cloneElementWithoutChildren(Document&, CustomElementRegistry*) const;
 
+    ContainerNode& templateContentOrSelf();
+
     void normalizeAttributes();
 
     // For exposing to DOM only.

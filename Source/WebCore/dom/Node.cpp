@@ -802,7 +802,7 @@ ExceptionOr<void> Node::normalize()
 Ref<Node> Node::cloneNode(bool deep) const
 {
     ASSERT(!isShadowRoot());
-    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*this, treeScope());
+    RefPtr registry = CustomElementRegistry::registryForNode(*this);
     return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::SelfOnly, registry.get());
 }
 

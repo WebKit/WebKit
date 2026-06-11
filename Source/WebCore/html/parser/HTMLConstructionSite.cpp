@@ -859,10 +859,15 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
         }
-        if (!registry && treeScope->rootNode().usesNullCustomElementRegistry())
-            element->setUsesNullCustomElementRegistry();
     }
     ASSERT(element);
+    auto parentOptsOutOfCustomElementRegistry = [&] {
+        if (RefPtr parent = dynamicDowncast<Element>(currentNode()))
+            return parent->templateContentOrSelf().usesNullCustomElementRegistry();
+        return currentNode().usesNullCustomElementRegistry();
+    };
+    if (!registry && (treeScope->rootNode().usesNullCustomElementRegistry() || parentOptsOutOfCustomElementRegistry()))
+        element->setUsesNullCustomElementRegistry();
     if (registry && registry->isScoped() && registry != treeScope->customElementRegistry()) [[unlikely]]
         CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
 

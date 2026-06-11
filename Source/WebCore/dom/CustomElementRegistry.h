@@ -91,6 +91,11 @@ public:
         return treeScope.customElementRegistry();
     }
 
+    static CustomElementRegistry* registryForNode(const Node& node)
+    {
+        return registryForNodeOrTreeScope(node, node.treeScope());
+    }
+
     static void addToScopedCustomElementRegistryMap(Element&, CustomElementRegistry&);
     static void removeFromScopedCustomElementRegistryMap(Element&);
 
