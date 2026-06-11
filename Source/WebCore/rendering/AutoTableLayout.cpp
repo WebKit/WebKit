@@ -175,7 +175,7 @@ void AutoTableLayout::fullRecalc()
     unsigned nEffCols = m_table->numEffCols();
     m_layoutStruct.resizeToFit(nEffCols);
     m_layoutStruct.fill(Layout());
-    m_spanCells.fill(0);
+    m_spanCells.clear();
 
     Style::PreferredSize groupLogicalWidth = CSS::Keyword::Auto { };
     unsigned currentColumn = 0;
@@ -213,6 +213,13 @@ void AutoTableLayout::fullRecalc()
 
     for (unsigned i = 0; i < nEffCols; i++)
         recalcColumn(i);
+
+    // Process spanning cells in order of increasing colSpan, so narrower spans constrain
+    // their columns before wider spans are distributed across them (see calcEffectiveLogicalWidth).
+    // stable_sort keeps cells of equal colSpan in the order they were discovered.
+    std::ranges::stable_sort(m_spanCells, [](auto& a, auto& b) {
+        return a->colSpan() < b->colSpan();
+    });
 
     for (auto& section : childrenOfType<RenderTableSection>(*m_table)) {
         section.clearContentLogicalWidthsInvalidation();
@@ -328,11 +335,7 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
         m_layoutStruct[i].effectiveMaxLogicalWidth = m_layoutStruct[i].maxLogicalWidth;
     }
 
-    for (size_t i = 0; i < m_spanCells.size(); ++i) {
-        RenderTableCell* cell = m_spanCells[i];
-        if (!cell)
-            break;
-
+    for (auto* cell : m_spanCells) {
         unsigned span = cell->colSpan();
 
         auto [ cellLogicalWidth, cellUsedZoom ] = cell->styleOrColLogicalWidth();
@@ -578,8 +581,8 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
     return std::min<float>(maxLogicalWidth, tableMaxWidth);
 }
 
-/* gets all cells that originate in a column and have a cellspan > 1
-   Sorts them by increasing cellspan
+/* Collects all cells that originate in a column and have a colSpan > 1.
+   fullRecalc() sorts them by increasing colSpan after collection.
 */
 void AutoTableLayout::insertSpanCell(RenderTableCell* cell)
 {
@@ -587,21 +590,7 @@ void AutoTableLayout::insertSpanCell(RenderTableCell* cell)
     if (!cell || cell->colSpan() == 1)
         return;
 
-    unsigned size = m_spanCells.size();
-    if (!size || m_spanCells[size-1] != 0) {
-        m_spanCells.grow(size + 10);
-        for (unsigned i = 0; i < 10; i++)
-            m_spanCells[size + i] = 0;
-        size += 10;
-    }
-
-    // add them in sort. This is a slow algorithm, and a binary search or a fast sorting after collection would be better
-    unsigned pos = 0;
-    unsigned span = cell->colSpan();
-    while (pos < m_spanCells.size() && m_spanCells[pos] && span > m_spanCells[pos]->colSpan())
-        ++pos;
-    memmoveSpan(m_spanCells.mutableSpan().subspan(pos + 1), m_spanCells.subspan(pos, size - (pos + 1)));
-    m_spanCells[pos] = cell;
+    m_spanCells.append(cell);
 }
 
 void AutoTableLayout::layout()
