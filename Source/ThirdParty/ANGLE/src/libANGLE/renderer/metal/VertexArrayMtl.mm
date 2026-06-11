@@ -1062,6 +1062,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
                                   &streamed));
         conversion->convertedBuffer = streamed.buffer();
         conversion->convertedOffset = streamed.offset();
+        conversion->dirty = false;
     }
     else
     {
