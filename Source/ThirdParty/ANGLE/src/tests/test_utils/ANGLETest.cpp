@@ -621,8 +621,8 @@ void ANGLETestBase::initOSWindow()
         return;
     }
 
-    // On Linux we must keep the test windows visible. On Windows it doesn't seem to need it.
-    setWindowVisible(getOSWindow(), !IsWindows());
+    // On Linux we must keep the test windows visible. On Windows or Metal it doesn't seem to need it.
+    setWindowVisible(getOSWindow(), !(IsWindows() || IsMac() || IsIOS()));
 
     switch (mCurrentParams->driver)
     {
