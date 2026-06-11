@@ -433,20 +433,52 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    std::optional<WebAssemblyCompileOptions> compileOptions;
+    if (Options::useWasmJSStringBuiltins()) {
+        JSValue compileOptionsArgument = callFrame->argument(1);
+        JSObject* compileOptionsObject = compileOptionsArgument.getObject();
+        if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]]
+            RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.compileStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)))));
+        compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
+        if (scope.exception()) [[unlikely]] {
+            auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+            RELEASE_AND_RETURN(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+        }
+    }
+
     ASSERT(globalObject->globalObjectMethodTable()->compileStreaming);
-    return JSValue::encode(globalObject->globalObjectMethodTable()->compileStreaming(globalObject, callFrame->argument(0)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(globalObject->globalObjectMethodTable()->compileStreaming(globalObject, callFrame->argument(0), WTF::move(compileOptions))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject) [[unlikely]]
-        return JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument))));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(importArgument)))));
+
+    std::optional<WebAssemblyCompileOptions> compileOptions;
+    if (Options::useWasmJSStringBuiltins()) {
+        JSValue compileOptionsArgument = callFrame->argument(2);
+        JSObject* compileOptionsObject = compileOptionsArgument.getObject();
+        if (!compileOptionsArgument.isUndefined() && !compileOptionsObject) [[unlikely]]
+            RELEASE_AND_RETURN(scope, JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "third argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(compileOptionsArgument)))));
+        compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
+        if (scope.exception()) [[unlikely]] {
+            auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+            RELEASE_AND_RETURN(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
+        }
+    }
 
     ASSERT(globalObject->globalObjectMethodTable()->instantiateStreaming);
     // FIXME: <http://webkit.org/b/184888> if there's an importObject and it contains a Memory, then we can compile the module with the right memory type (fast or not) by looking at the memory's type.
-    return JSValue::encode(globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, callFrame->argument(0), importObject));
+    RELEASE_AND_RETURN(scope, JSValue::encode(globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, callFrame->argument(0), importObject, WTF::move(compileOptions))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyGetterJSTag, (JSGlobalObject* globalObject, CallFrame*))

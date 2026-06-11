@@ -1,0 +1,183 @@
+<!-- webkit-test-runner [ jscOptions=--useWasmJSStringBuiltins=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebAssembly JS String Builtins Streaming Test</title>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test that WebAssembly.compileStreaming and .instantiateStreaming can accept compile options for JS String Builtins");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest() {
+    /*
+    (module
+        (; 0000000b ;)    (type (; 0 ;)
+        (; 0000000b ;)      (func
+        (; 0000000d ;)        (param i32)
+        (; 0000000f ;)        (result (ref extern)
+                            )
+                        )
+        (; 00000011 ;)    (import "wasm:js-string" "fromCharCode" (func (; 0 ;) (type 0)
+                            (param  (; 0 ;) i32)
+                            (result (ref extern)
+                        ))
+                        )
+        )
+    */
+    let bytes = new Int8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 7, 1, 96, 1, 127, 1, 100, 111, 2, 31, 1, 14, 119, 97,
+        115, 109, 58, 106, 115, 45, 115, 116, 114, 105, 110, 103, 12, 102, 114, 111, 109, 67, 104, 97, 114, 67, 111,
+        100, 101, 0, 0, 3, 1, 0, 5, 4, 1, 1, 0, 0, 7, 10, 1, 6, 109, 101, 109, 111, 114, 121, 2, 0, 10,
+        -127, -128, -128, 0, 0]);
+
+    // Test WebAssembly.compileStreaming with builtins option
+    try {
+        let response = new Response(bytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        let module = await WebAssembly.compileStreaming(response, { builtins: ["js-string"] });
+        await WebAssembly.instantiate(module, {}, { builtins: ["js-string"] });
+        testPassed("compileStreaming with builtins option succeeded");
+    } catch (e) {
+        testFailed("compileStreaming with builtins option threw " + e.constructor.name + ": " + e.message);
+    }
+
+    // Test WebAssembly.instantiateStreaming with builtins option
+    try {
+        let response = new Response(bytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        await WebAssembly.instantiateStreaming(response, {}, { builtins: ["js-string"] });
+        testPassed("instantiateStreaming with builtins option succeeded");
+    } catch (e) {
+        testFailed("instantiateStreaming with builtins option threw " + e.constructor.name + ": " + e.message);
+    }
+
+    // Import object to satisfy the wasm:js-string import manually
+    let importObject = {
+        "wasm:js-string": {
+            fromCharCode: (code) => String.fromCharCode(code)
+        }
+    };
+
+    // Test WebAssembly.compileStreaming without builtins, import satisfied via importObject
+    try {
+        let response = new Response(bytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        let module = await WebAssembly.compileStreaming(response);
+        await WebAssembly.instantiate(module, importObject);
+        testPassed("compileStreaming without builtins, import via importObject succeeded");
+    } catch (e) {
+        testFailed("compileStreaming without builtins, import via importObject threw " + e.constructor.name + ": " + e.message);
+    }
+
+    // Test WebAssembly.instantiateStreaming without builtins, import satisfied via importObject
+    try {
+        let response = new Response(bytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        await WebAssembly.instantiateStreaming(response, importObject);
+        testPassed("instantiateStreaming without builtins, import via importObject succeeded");
+    } catch (e) {
+        testFailed("instantiateStreaming without builtins, import via importObject threw " + e.constructor.name + ": " + e.message);
+    }
+
+    // Test WebAssembly.compileStreaming with invalid options (number instead of object)
+    try {
+        let response = new Response(bytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        await WebAssembly.compileStreaming(response, 42);
+        testFailed("compileStreaming with invalid options should throw, but did not");
+    } catch (e) {
+        if (e instanceof TypeError)
+            testPassed("compileStreaming with invalid options threw TypeError");
+        else
+            testFailed("compileStreaming with invalid options threw " + e.constructor.name + " instead of TypeError");
+    }
+
+    // Test WebAssembly.instantiateStreaming with invalid options (number instead of object)
+    try {
+        let response = new Response(bytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        await WebAssembly.instantiateStreaming(response, {}, 42);
+        testFailed("instantiateStreaming with invalid options should throw, but did not");
+    } catch (e) {
+        if (e instanceof TypeError)
+            testPassed("instantiateStreaming with invalid options threw TypeError");
+        else
+            testFailed("instantiateStreaming with invalid options threw " + e.constructor.name + " instead of TypeError");
+    }
+
+    // Module that imports "fromCharCode" but with the wrong signature (two i32 params instead of one).
+    // This should cause a CompileError when compiled with { builtins: ["js-string"] } because
+    // the signature doesn't match the expected builtin signature.
+    /*
+    (module
+      (type (func (param i32 i32) (result externref)))
+      (import "wasm:js-string" "fromCharCode" (func (type 0)))
+    )
+    */
+    let wrongSignatureBytes = new Int8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x07, 0x01, 0x60,
+        0x02, 0x7f, 0x7f, 0x01, 0x6f, 0x02, 0x1f, 0x01, 0x0e, 0x77, 0x61, 0x73, 0x6d, 0x3a, 0x6a, 0x73, 0x2d, 0x73,
+        0x74, 0x72, 0x69, 0x6e, 0x67, 0x0c, 0x66, 0x72, 0x6f, 0x6d, 0x43, 0x68, 0x61, 0x72, 0x43, 0x6f, 0x64, 0x65,
+        0x00, 0x00]);
+
+    // Test WebAssembly.compileStreaming with wrong builtin signature throws CompileError
+    try {
+        let response = new Response(wrongSignatureBytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        await WebAssembly.compileStreaming(response, { builtins: ["js-string"] });
+        testFailed("compileStreaming with wrong builtin signature should throw, but did not");
+    } catch (e) {
+        if (e instanceof WebAssembly.CompileError)
+            testPassed("compileStreaming with wrong builtin signature threw CompileError");
+        else
+            testFailed("compileStreaming with wrong builtin signature threw " + e.constructor.name + " instead of CompileError");
+    }
+
+    // Test WebAssembly.instantiateStreaming with wrong builtin signature throws CompileError
+    try {
+        let response = new Response(wrongSignatureBytes, {
+            headers: {
+                "Content-Type": "application/wasm"
+            }
+        });
+        await WebAssembly.instantiateStreaming(response, {}, { builtins: ["js-string"] });
+        testFailed("instantiateStreaming with wrong builtin signature should throw, but did not");
+    } catch (e) {
+        if (e instanceof WebAssembly.CompileError)
+            testPassed("instantiateStreaming with wrong builtin signature threw CompileError");
+        else
+            testFailed("instantiateStreaming with wrong builtin signature threw " + e.constructor.name + " instead of CompileError");
+    }
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

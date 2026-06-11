@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/WasmStreamingParser.h>
+#include <JavaScriptCore/WebAssemblyCompileOptions.h>
 #include <wtf/Platform.h>
 
 #if ENABLE(WEBASSEMBLY)
@@ -48,7 +49,7 @@ class StreamingPlan;
 
 class StreamingCompiler final : public StreamingParserClient, public ThreadSafeRefCounted<StreamingCompiler> {
 public:
-    JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*, const SourceCode&);
+    JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&);
 
     JS_EXPORT_PRIVATE ~StreamingCompiler();
 
@@ -62,7 +63,7 @@ public:
     JS_EXPORT_PRIVATE JSGlobalObject* globalObjectIfActive();
 
 private:
-    JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject*, const SourceCode&);
+    JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&);
 
     bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
     void didFinishParsing() final;
@@ -75,6 +76,7 @@ private:
     bool m_eagerFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_finalized WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_threadedCompilationStarted { false };
+    std::optional<WebAssemblyCompileOptions> m_compileOptions;
     Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
     ThreadSafeWeakPtr<DeferredWorkTimer::Ticket> m_ticket;
