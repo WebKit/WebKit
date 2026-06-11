@@ -464,10 +464,8 @@ std::optional<RenderLayer::SVGRendererTransform> RenderLayer::computeRendererTra
     auto referenceBoxRect = layerModelObject->transformReferenceBoxRect(style);
 
     // For non-layer renderers, undo the alignReferenceBox shift applied in transformReferenceBoxRect().
-    if (!rendererRef->hasSelfPaintingLayer()) {
-        if (CheckedPtr svgModel = dynamicDowncast<RenderSVGModelObject>(rendererRef.get()))
-            referenceBoxRect.moveBy(svgModel->nominalSVGLayoutLocation());
-    }
+    if (!rendererRef->hasSelfPaintingLayer() && rendererRef->isSVGLayerAwareRenderer())
+        referenceBoxRect.moveBy(layerModelObject->nominalSVGLayoutLocation());
 
     layerModelObject->applyTransform(transform, style, referenceBoxRect, Style::TransformResolver::allTransformOperations);
 
@@ -533,34 +531,40 @@ void RenderLayer::paintRendererByApplyingTransformForSVG(GraphicsContext& contex
 
         childLayer->paintLayer(context, childPaintingInfo,
             adjustedPaintFlags | PaintLayerFlag::AppliedTransform);
-    } else if (rendererToPaint->isRenderSVGContainer()) {
-        LayoutPoint containerPaintOffset;
-        if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(rendererToPaint.get()); viewportContainer && viewportContainer->isAnonymous()) {
-            // Outermost viewport container: coordinate system starts at (0, 0).
-        } else if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(rendererToPaint.get()))
-            containerPaintOffset = svgModel->nominalSVGLayoutLocation();
-        paintSubtreeWithinTransformScopeForSVG(context, rendererToPaint.get(), containerPaintOffset, scope.transformedPaintingInfo(), adjustedPaintFlags, paintBehavior, subtreePaintRoot, outerPaintingInfo, newAccumulatedTransform);
-
-        auto& transformedPaintingInfo = scope.transformedPaintingInfo();
-        PaintInfo outlinePaintInfo(context, transformedPaintingInfo.paintDirtyRect, PaintPhase::SelfOutline, paintBehavior, subtreePaintRoot,
-            nullptr, nullptr, &transformedPaintingInfo.rootLayer->renderer(), this,
-            transformedPaintingInfo.requireSecurityOriginAccessForWidgets);
-        rendererToPaint->paint(outlinePaintInfo, containerPaintOffset);
     } else {
-        LayoutPoint leafPaintOffset;
-        if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(rendererToPaint.get())) {
-            leafPaintOffset = svgModel->nominalSVGLayoutLocation();
-            leafPaintOffset.moveBy(-svgModel->currentSVGLayoutLocation());
-        }
+        // Non-layer renderer painted directly within the transform scope.
         auto& transformedPaintingInfo = scope.transformedPaintingInfo();
-        LayoutRect dirtyRect = transformedPaintingInfo.paintDirtyRect;
-        PaintInfo paintInfo(context, dirtyRect, PaintPhase::Foreground, paintBehavior, subtreePaintRoot,
-            nullptr, nullptr, &transformedPaintingInfo.rootLayer->renderer(), this,
-            transformedPaintingInfo.requireSecurityOriginAccessForWidgets);
-        rendererToPaint->paint(paintInfo, leafPaintOffset);
-        PaintInfo outlinePaintInfo(paintInfo);
-        outlinePaintInfo.phase = PaintPhase::Outline;
-        rendererToPaint->paint(outlinePaintInfo, leafPaintOffset);
+        auto paintInScope = [&](PaintPhase phase, const LayoutPoint& offset) {
+            PaintInfo paintInfo(context, transformedPaintingInfo.paintDirtyRect, phase, paintBehavior, subtreePaintRoot,
+                nullptr, nullptr, &transformedPaintingInfo.rootLayer->renderer(), this,
+                transformedPaintingInfo.requireSecurityOriginAccessForWidgets);
+            rendererToPaint->paint(paintInfo, offset);
+        };
+
+        // A renderer's own paint() positions content at paintOffset + currentSVGLayoutLocation() - at a
+        // transform-scope root we want it at the visual top-left, so pass (nominal - current). This is
+        // uniform for shapes, images, text and a container's own outline.
+        LayoutPoint selfPaintOffset;
+        if (rendererToPaint->isSVGLayerAwareRenderer()) {
+            CheckedRef layerModelObject = downcast<RenderLayerModelObject>(rendererToPaint.get());
+            selfPaintOffset = layerModelObject->nominalSVGLayoutLocation();
+            selfPaintOffset.moveBy(-layerModelObject->currentSVGLayoutLocation());
+        }
+
+        if (rendererToPaint->isRenderSVGContainer()) {
+            // Children recurse from the container's nominal origin (= selfPaintOffset + current) and
+            // re-add their own currentSVGLayoutLocation; the anonymous outermost viewport starts at (0, 0).
+            LayoutPoint recursionBase;
+            if (auto* viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(rendererToPaint.get()); viewportContainer && viewportContainer->isAnonymous()) {
+                // Outermost viewport container: coordinate system starts at (0, 0).
+            } else if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(rendererToPaint.get()))
+                recursionBase = svgModel->nominalSVGLayoutLocation();
+            paintSubtreeWithinTransformScopeForSVG(context, rendererToPaint.get(), recursionBase, transformedPaintingInfo, adjustedPaintFlags, paintBehavior, subtreePaintRoot, outerPaintingInfo, newAccumulatedTransform);
+            paintInScope(PaintPhase::SelfOutline, selfPaintOffset);
+        } else {
+            paintInScope(PaintPhase::Foreground, selfPaintOffset);
+            paintInScope(PaintPhase::Outline, selfPaintOffset);
+        }
     }
 }
 
