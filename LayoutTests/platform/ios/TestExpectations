@@ -8353,6 +8353,8 @@ webkit.org/b/307889 http/tests/multipart/multipart-async-image.html [ Pass Failu
 
 imported/w3c/web-platform-tests/css/css-highlight-api/highlight-text-across-elements.html [ ImageOnlyFailure ]
 
+webkit.org/b/316939 imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Pass Failure ]
+
 # webkit.org/b/308506 UnifiedPDFPlugin on iOS should receive full annotations support
 pdf/annotations [ Skip ]
 pdf/pdf-in-iframe-with-text-annotation.html [ Skip ]
