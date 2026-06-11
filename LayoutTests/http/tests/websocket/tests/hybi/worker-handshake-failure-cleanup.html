@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Verifies that NetworkSocketChannel is cleaned up in the network process when a worker WebSocket fails the handshake and the worker self-terminates. https://bugs.webkit.org/show_bug.cgi?id=315342");
+
+window.jsTestIsAsync = true;
+
+if (!window.internals) {
+    testFailed("This test requires window.internals.");
+    finishJSTest();
+}
+
+const WORKER_COUNT = 5;
+let workersDone = 0;
+
+function spawnWorker()
+{
+    const blob = new Blob([
+        `const ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/handshake-fail-with-200-ok");
+         ws.onerror = () => {};
+         ws.onclose = () => { postMessage("done"); self.close(); };`
+    ], { type: "application/javascript" });
+    const w = new Worker(URL.createObjectURL(blob));
+    w.onmessage = () => {
+        if (++workersDone === WORKER_COUNT)
+            pollUntilCleanedUp();
+    };
+}
+
+async function pollUntilCleanedUp()
+{
+    // With the fix, the network-side count drops to 0 within milliseconds of
+    // the worker WebSockets terminating. With the leak, it never returns to 0.
+    for (let i = 0; i < 100; ++i) {
+        const count = await internals.numberOfWebSocketChannelsInNetworkProcess();
+        if (count === 0) {
+            testPassed("NetworkSocketChannel count returned to 0 after worker WebSockets terminated.");
+            finishJSTest();
+            return;
+        }
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    const finalCount = await internals.numberOfWebSocketChannelsInNetworkProcess();
+    testFailed(`NetworkSocketChannel count never returned to 0 (final count: ${finalCount}).`);
+    finishJSTest();
+}
+
+for (let i = 0; i < WORKER_COUNT; ++i)
+    spawnWorker();
+</script>
+</body>
+</html>

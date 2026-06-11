@@ -111,6 +111,7 @@ private:
     String m_extensions;
     size_t m_bufferedAmount { 0 };
     bool m_isClosing { false };
+    bool m_needsToCallClose { false };
     const Ref<WebCore::NetworkSendQueue> m_messageQueue;
     WebCore::WebSocketChannelInspector m_inspector;
     WebCore::ResourceRequest m_handshakeRequest;

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebSocketProvider.h"
 
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
 #include "WebSocketChannelManager.h"
@@ -50,6 +51,11 @@ using namespace WebCore;
 RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client)
 {
     return WebKit::WebSocketChannel::create(m_webPageProxyID, document, client);
+}
+
+void WebSocketProvider::countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&& completionHandler)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CountWebSocketChannelsForTesting { }, WTF::move(completionHandler));
 }
 
 WebSocketProvider::~WebSocketProvider() = default;
