@@ -524,6 +524,10 @@
 351275980 MAC METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
 351275980 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
 
+// Validation failure. Correctly handled in WebGL.
+0 MAC METAL : Texture2DTestES3.TexImageFormatMismatch/ES3_Metal* = SKIP
+0 IOS METAL : Texture2DTestES3.TexImageFormatMismatch/ES3_Metal* = SKIP
+
 // D3D
 42264944 WIN D3D9 : GLSLValidationTest.HandleExcessiveLoopBug/* = SKIP
 42264653 WIN D3D11 : GLSLTestLoops.*ContinueInSwitch/* = SKIP

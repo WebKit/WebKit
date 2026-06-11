@@ -17797,7 +17797,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
 }
 
 // Create an integer format texture but specify a FLOAT sampler. OpenGL
-// tolerates this but it causes a Vulkan validation error.
+// tolerates this but it causes a Vulkan and Metal validation error.
 TEST_P(Texture2DTestES3, TexImageFormatMismatch)
 {
     GLint textureUnit = 2;

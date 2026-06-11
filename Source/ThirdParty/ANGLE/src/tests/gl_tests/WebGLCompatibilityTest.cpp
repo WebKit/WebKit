@@ -7269,6 +7269,73 @@ TEST_P(WebGL2CompatibilityTest, DrawLargeIndexOOB)
     }
 }
 
+// Create an integer format texture but specify a FLOAT sampler. In WebGL,
+// unlike OpenGL, this must generate INVALID_OPERATION at draw time.
+// Also verify that with a matching float texture, the draw succeeds and
+// produces the expected output.
+// Modeled after TEST_P(Texture2DTestES3, TexImageFormatMismatch).
+TEST_P(WebGL2CompatibilityTest, TexImageFormatMismatch)
+{
+    constexpr char kVS[] =
+        R"(#version 300 es
+in vec4 a_position;
+out vec2 v_texCoord;
+void main()
+{
+    gl_Position = a_position;
+    v_texCoord = (a_position.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision highp float;
+uniform highp sampler2D tex;
+in vec2 v_texCoord;
+out vec4 fragColor;
+void main()
+{
+    fragColor = texture(tex, v_texCoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    GLint texLocation = glGetUniformLocation(program, "tex");
+    ASSERT_NE(-1, texLocation);
+
+    glUseProgram(program);
+
+    glUniform1i(texLocation, 0);
+
+    // First, verify that a matching float-format texture works and draws correctly.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    std::vector<GLColor> greenData(8 * 8, GLColor::green);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                    greenData.data());
+    ASSERT_GL_NO_ERROR();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    // Drawing with a matching sampler/texture format must succeed.
+    drawQuad(program, "a_position", 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // In WebGL, drawing with a sampler/texture format mismatch must fail.
+    GLubyte texData[8 * 8 * 2] = {};
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT,
+                    texData);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, "a_position", 0.5f, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
