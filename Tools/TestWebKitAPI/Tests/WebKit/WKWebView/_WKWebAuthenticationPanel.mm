@@ -578,6 +578,14 @@ TEST(WebAuthenticationPanel, PanelTwice)
     auto webView = setUpTestWebViewForTestAuthenticationPanel();
     RetainPtr delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
+
+    // Surface the error reason for debugging purposes.
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        // will this message contain the failure reason?
+        WTFLogAlways("jessicadebug message:%s", [message UTF8String]);
+
+    }];
+
 #if PLATFORM(IOS_FAMILY)
     [webView focusInWindow];
 #endif

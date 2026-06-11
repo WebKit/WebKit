@@ -23,6 +23,6 @@
         window.webkit.messageHandlers.testHandler.postMessage("Succeeded!");
     }, error => {
         // console.log(error.message);
-        window.webkit.messageHandlers.testHandler.postMessage(error.message);
+        window.webkit.messageHandlers.testHandler.postMessage(error.name + ": " + error.message);
     });
 </script>
