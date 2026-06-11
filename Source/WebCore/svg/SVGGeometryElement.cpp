@@ -28,8 +28,10 @@
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGShape.h"
 #include "NodeDocument.h"
+#include "Path.h"
 #include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGPathData.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "SVGPropertyOwnerRegistry.h"
@@ -53,41 +55,47 @@ float SVGGeometryElement::getTotalLength() const
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
-    auto* renderer = this->renderer();
-    if (!renderer)
-        return 0;
-
-    if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
-        return renderSVGShape->getTotalLength();
-
-    if (CheckedPtr renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer))
-        return renderSVGShape->getTotalLength();
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    // The length is computed from the element's path geometry. This works for both rendered and
+    // non-rendered (e.g. display:none) elements; the renderer-based path is derived from the same
+    // geometry, so the result is equivalent. For a <path>, SVGPathElement overrides this method.
+    if (const Path* path = cachedRendererPath())
+        return path->length();
+    return pathFromGraphicsElement(*this).length();
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
-    auto* renderer = this->renderer();
-    // Spec: If current element is a non-rendered element, throw an InvalidStateError.
-    if (!renderer)
+    // Reuse the renderer's cached path when it has one; only compute the geometry directly for
+    // non-rendered (e.g. display:none) elements and uncached shape fast paths.
+    Path computedPath;
+    const Path* path = cachedRendererPath();
+    if (!path) {
+        computedPath = pathFromGraphicsElement(*this);
+        path = &computedPath;
+    }
+
+    // Spec: If the user agent is not able to compute the total length of the path (i.e. the element
+    // has no path geometry), throw an InvalidStateError. This covers empty rendered shapes as well
+    // as non-rendered (e.g. display:none) elements, independent of the 'display' value.
+    if (path->isEmpty())
         return Exception { ExceptionCode::InvalidStateError };
 
-    // Spec: Clamp distance to [0, length].
-    distance = clampTo<float>(distance, 0, getTotalLength());
+    // Spec: Clamp distance to [0, length], then return a newly created, detached SVGPoint.
+    distance = clampTo<float>(distance, 0, path->length());
+    return SVGPoint::create(path->pointAtLength(distance));
+}
 
-    // Spec: Return a newly created, detached SVGPoint object.
-    if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
-        return SVGPoint::create(renderSVGShape->getPointAtLength(distance));
+const Path* SVGGeometryElement::cachedRendererPath() const
+{
+    if (auto* renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer()); renderSVGShape && renderSVGShape->hasPath())
+        return &renderSVGShape->path();
 
-    if (CheckedPtr renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer))
-        return SVGPoint::create(renderSVGShape->getPointAtLength(distance));
+    if (auto* renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer()); renderSVGShape && renderSVGShape->hasPath())
+        return &renderSVGShape->path();
 
-    ASSERT_NOT_REACHED();
-    return Exception { ExceptionCode::InvalidStateError };
+    return nullptr;
 }
 
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
