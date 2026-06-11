@@ -51,11 +51,19 @@ RefPtr<NativeImage> IOSurfaceDrawingBuffer::copyNativeImage() const
 void IOSurfaceDrawingBuffer::forceCopy()
 {
     m_needCopy = false;
+    // Prior to upcoming external modification, "invalidate" the surface to make CGIOSurfaceContext
+    // copy the contents out.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
     if (PAL::canLoad_CoreGraphics_CGIOSurfaceContextInvalidateSurface())
         PAL::softLink_CoreGraphics_CGIOSurfaceContextInvalidateSurface(m_copyOnWriteContext.get());
     else
         CGContextFillRect(m_copyOnWriteContext.get(), CGRect { });
+    // Ensuring ordering with the copy and upcoming external modifications: Since the upcoming modification is external to the CGIOSurfaceContext, we
+    // must flush to guarantee that the copy has been performed before we make the modification.
+    // Ensuring ordering with committed but not scheduled reads: There might be pending read references on the IOSurface from consumer
+    // CGIOSurfaceContexts via the CGImage. I.e. the read operations have committed but not yet scheduled. Flush on
+    // the producer context will schedule these too. In other words: flushes are global.
+    CGContextFlush(m_copyOnWriteContext.get());
 }
 
 }
