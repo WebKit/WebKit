@@ -102,6 +102,7 @@ void WebParentalControlsURLFilter::isURLAllowedImpl(WebCore::IsMainFrameLoad isM
         [filter evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
             // Make sure we don't crash even if [BEWebContentFilter evaluateURL:completionHandler:] calls its
             // completion handler more than once (which seems to happen in practice).
+            // FIXME: Remove this null check once BEWebContentFilter enforces that a completion handler can't be called more than once, rdar://179333173
             if (completionHandler)
                 completionHandler(!shouldBlock, replacementData);
         }).get()];
