@@ -1,0 +1,15 @@
+<!doctype html>
+
+<title>Setting color-scheme on a same-origin iframe affects the chosen system color in the iframe document</title>
+<link rel="help" href="https://drafts.csswg.org/css-color-adjust/#color-scheme-effect">
+<link rel="author" title="Kiet Ho" href="mailto:kiet.ho@apple.com">
+<link rel="match" href="color-scheme-iframe-affects-system-color-ref.html">
+<style>
+  iframe {
+    width: 300px;
+    height: 300px;
+  }
+</style>
+
+<iframe style="color-scheme: light" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/css/css-color-adjust/rendering/dark-color-scheme/system-color/support/system-color-frame.html"></iframe>
+<iframe style="color-scheme: dark" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/css/css-color-adjust/rendering/dark-color-scheme/system-color/support/system-color-frame.html"></iframe>

@@ -9946,6 +9946,34 @@ bool Document::useDarkAppearance([[maybe_unused]] const Style::ComputedStyle* st
     UNUSED_PARAM(style);
 #endif
 
+    // https://drafts.csswg.org/css-color-adjust-1/#color-scheme-page
+    // > If this document is embedded in another document (e.g using <iframe>), its
+    // > preferred color scheme is from its embedding element's element color scheme.
+    // We go up the frame tree to find the first embedding element that has an explicitly
+    // set element color scheme, and that's this document's preferred color scheme.
+    //
+    // FIXME: this logic should really be in Frame/FrameView/LocalFrameView (there's
+    // already a LocalFrameView::useDarkAppearance). However pretty much anywhere that
+    // checks for dark appearance calls this method (even LocalFrameView::useDarkAppearance!),
+    // so for now this will have to live here.
+    if (RefPtr<const Frame> child = this->frame()) {
+        RefPtr<const Frame> parent = child->parent();
+
+        while (parent) {
+            ASSERT(child);
+
+            auto ownerElementAppearance = protect(parent->virtualView())->appearanceOfOwnerElementOfChildFrame(*child);
+            if (ownerElementAppearance.contains(FrameOwnerElementAppearance::ExplicitlySet))
+                return ownerElementAppearance.contains(FrameOwnerElementAppearance::IsDark);
+
+            child = parent;
+            parent = child->parent();
+        }
+    }
+
+    // If this document is the main document (not embedded), or none of its embedding
+    // elements have an element color scheme, fall back to page color scheme.
+
     bool pageUsesDarkAppearance = false;
     if (RefPtr documentPage = page())
         pageUsesDarkAppearance = documentPage->useDarkAppearance();

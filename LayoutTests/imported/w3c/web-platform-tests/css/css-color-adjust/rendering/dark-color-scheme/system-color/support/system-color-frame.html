@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<meta id="colorSchemeMeta" name="color-scheme" content="light dark">
+
+<style>
+  body {
+    background-color: Canvas;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  table,
+  tr,
+  td {
+    border: 1px solid CanvasText;
+  }
+
+  td {
+    min-width: 50px;
+  }
+
+  td {
+    padding: 10px;
+  }
+</style>
+
+<h3>System colors</h3>
+
+<table>
+  <tr>
+    <td>ButtonText</td>
+    <td style="background-color: ButtonText"></td>
+  </tr>
+  <tr>
+    <td>Canvas</td>
+    <td style="background-color: Canvas"></td>
+  </tr>
+  <tr>
+    <td>CanvasText</td>
+    <td style="background-color: CanvasText"></td>
+  </tr>
+  <tr>
+    <td>FieldText</td>
+    <td style="background-color: FieldText"></td>
+  </tr>
+</table>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const colorSchemeOverride = params.get("colorSchemeOverride");
+  if (colorSchemeOverride)
+    colorSchemeMeta.content = colorSchemeOverride;
+</script>
