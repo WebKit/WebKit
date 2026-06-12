@@ -124,33 +124,20 @@ template<typename T, TransferFunctionMode mode> T ProPhotoRGBTransferFunction<T,
 
 template<typename T, TransferFunctionMode mode> T Rec2020TransferFunction<T, mode>::toGammaEncoded(T c)
 {
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c <= beta)
-            return 4.5f * c;
-
-        return clampTo<T>(alpha * std::pow(c, gamma) - (alpha - 1.0f), 0, 1);
-    } else {
-        if (std::abs(c) <= beta)
-            return 4.5f * c;
-
-        float sign = std::signbit(c) ? -1.0 : 1.0;
-        return (alpha * std::pow(c, gamma) - (alpha - 1.0)) * sign;
-    }
+    auto sign = std::signbit(c) ? -1.0f : 1.0f;
+    auto result = std::pow(std::abs(c), 1.0f / 2.4f) * sign;
+    if constexpr (mode == TransferFunctionMode::Clamped)
+        return clampTo<T>(result, 0, 1);
+    return result;
 }
 
 template<typename T, TransferFunctionMode mode> T Rec2020TransferFunction<T, mode>::toLinear(T c)
 {
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c < beta * 4.5f)
-            return c / 4.5f;
-        return clampTo<T>(std::pow((c + alpha - 1.0) / alpha, 1.0 / gamma), 0, 1);
-    } else {
-        if (std::abs(c) < beta * 4.5f)
-            return c / 4.5f;
-
-        float sign = std::signbit(c) ? -1.0 : 1.0;
-        return std::pow((c + alpha - 1.0) / alpha, 1.0 / gamma) * sign;
-    }
+    auto sign = std::signbit(c) ? -1.0f : 1.0f;
+    auto result = std::pow(std::abs(c), 2.4f) * sign;
+    if constexpr (mode == TransferFunctionMode::Clamped)
+        return clampTo<T>(result, 0, 1);
+    return result;
 }
 
 // MARK: SRGBTransferFunction.
