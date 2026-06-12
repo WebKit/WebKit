@@ -452,7 +452,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
                     return CancelPath;
             }
             dfg.nextPhase();
-            integerRangeOptimizationChanged = performIntegerRangeOptimization(dfg);
+            integerRangeOptimizationChanged = Options::useIntegerRangeOptimization()
+                ? performIntegerRangeOptimization(dfg) : false;
             changed |= integerRangeOptimizationChanged;
         }
 

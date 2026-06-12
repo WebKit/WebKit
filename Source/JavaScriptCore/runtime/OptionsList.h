@@ -277,6 +277,11 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, minimumCallToKnownRate, 0.51, Normal, nullptr) \
     v(Bool, createPreHeaders, true, Normal, nullptr) \
     v(Bool, useMovHintRemoval, true, Normal, nullptr) \
+    v(Bool, useIntegerRangeOptimization, true, Normal, "master toggle for the DFG IntegerRangeOptimization phase"_s) \
+    v(Bool, useIROBoundsCheckElimination, true, Normal, "IRO: convert provably-in-bounds CheckInBounds to Identity"_s) \
+    v(Bool, useIROOverflowElimination, true, Normal, "IRO: relax provably-non-overflowing CheckOverflow arithmetic to Unchecked"_s) \
+    v(Bool, useIROBranchFolding, true, Normal, "IRO: fold branches with a provable direction"_s) \
+    v(Bool, useIROShiftMulRanges, true, Normal, "IRO: emit result ranges for right-shift and multiply (feeds overflow-elim)"_s) \
     v(Bool, usePutStackSinking, true, Normal, nullptr) \
     v(Bool, useObjectAllocationSinking, true, Normal, nullptr) \
     v(Bool, verboseObjectAllocationSinking, false, Normal, nullptr) \

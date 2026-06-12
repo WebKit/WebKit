@@ -1769,6 +1769,8 @@ public:
                     continue;
                 }
                 case ArithAdd: {
+                    if (!Options::useIROOverflowElimination())
+                        break;
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
                     if (node->arithMode() != Arith::CheckOverflow)
@@ -1800,6 +1802,8 @@ public:
                 }
 
                 case ArithSub: {
+                    if (!Options::useIROOverflowElimination())
+                        break;
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
                     if (node->arithMode() != Arith::CheckOverflow)
@@ -1831,6 +1835,8 @@ public:
                 }
 
                 case ArithMul: {
+                    if (!Options::useIROOverflowElimination())
+                        break;
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
                     if (node->arithMode() != Arith::CheckOverflow && node->arithMode() != Arith::CheckOverflowAndNegativeZero)
@@ -1873,6 +1879,8 @@ public:
                 }
 
                 case CheckInBounds: {
+                    if (!Options::useIROBoundsCheckElimination())
+                        break;
                     auto iter = m_relationships.find(node->child1().node());
                     if (iter == m_relationships.end())
                         break;
@@ -1925,6 +1933,8 @@ public:
                 }
 
                 case Branch: {
+                    if (!Options::useIROBranchFolding())
+                        break;
                     BranchDirection direction = tryProveBranchDirection(node);
                     if (!isKnownDirection(direction))
                         break;
@@ -2295,6 +2305,66 @@ private:
 
             apply(node->child1().node());
             apply(node->child2().node());
+            break;
+        }
+
+        case ArithBitRShift: {
+            if (!Options::useIROShiftMulRanges())
+                break;
+            // Arithmetic right shift by a constant is monotonic, so the result range
+            // is [valueLo >> C, valueHi >> C] -- tight even for an unbounded value
+            // (full int32 >> 14 collapses to [-2^17, 2^17)). Bounds downstream uses.
+            if (!node->isBinaryInt32UseKind() || !node->child2()->isInt32Constant())
+                break;
+            int32_t c = node->child2()->asInt32() & 0x1f;
+            auto [lo, hi] = rangeFor(node->child1().node());
+            int32_t rlo = lo >> c, rhi = hi >> c;
+            if (rlo > std::numeric_limits<int32_t>::min())
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, rlo - 1));
+            if (rhi < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, rhi + 1));
+            break;
+        }
+
+        case ArithBitURShift: {
+            if (!Options::useIROShiftMulRanges())
+                break;
+            // Logical right shift fills zeros from the top, so the result is always
+            // >= 0, and <= (value >= 0 ? valueHi >> C : the unsigned ceiling).
+            if (!node->isBinaryInt32UseKind() || !node->child2()->isInt32Constant())
+                break;
+            int32_t c = node->child2()->asInt32() & 0x1f;
+            auto [lo, hi] = rangeFor(node->child1().node());
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            if (lo >= 0 && (hi >> c) < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, (hi >> c) + 1));
+            break;
+        }
+
+        case ArithMul: {
+            if (!Options::useIROShiftMulRanges())
+                break;
+            // Emit the product's range from the operand ranges (extremes are at the
+            // four corners). Unlike the overflow-elim transform, this records a range
+            // even when CheckOverflow stays, so downstream ops see a bounded product.
+            if (!node->isBinaryInt32UseKind())
+                break;
+            auto [llo, lhi] = rangeFor(node->child1().node());
+            auto [rlo, rhi] = rangeFor(node->child2().node());
+            int64_t c1 = static_cast<int64_t>(llo) * rlo;
+            int64_t c2 = static_cast<int64_t>(llo) * rhi;
+            int64_t c3 = static_cast<int64_t>(lhi) * rlo;
+            int64_t c4 = static_cast<int64_t>(lhi) * rhi;
+            int64_t pMin = std::min({ c1, c2, c3, c4 });
+            int64_t pMax = std::max({ c1, c2, c3, c4 });
+            // If the product can exceed int32, the Int32Use result wraps and its range
+            // is unknown -- only record a range when the whole product fits.
+            if (pMin < std::numeric_limits<int32_t>::min() || pMax > std::numeric_limits<int32_t>::max())
+                break;
+            if (pMin > std::numeric_limits<int32_t>::min())
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, static_cast<int32_t>(pMin) - 1));
+            if (pMax < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, static_cast<int32_t>(pMax) + 1));
             break;
         }
 
