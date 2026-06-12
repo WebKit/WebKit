@@ -2747,19 +2747,15 @@ sub shouldRemoveCMakeCache(@)
     }
 
     my $cacheFileModifiedTime = stat($cmakeCache)->mtime;
-    my $platformConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "Options" . cmakeBasedPortName() . ".cmake");
-    if ($cacheFileModifiedTime < stat($platformConfiguration)->mtime) {
-        return 1;
-    }
 
-    my $globalConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsCommon.cmake");
-    if ($cacheFileModifiedTime < stat($globalConfiguration)->mtime) {
-        return 1;
-    }
-
-    my $compilerFlagsCMake = File::Spec->catdir(sourceDir(), "Source", "cmake", "WebKitCompilerFlags.cmake");
-    if ($cacheFileModifiedTime < stat($compilerFlagsCMake)->mtime) {
-        return 1;
+    # Any .cmake file under Source/cmake can influence the generated cache, so
+    # glob them all instead of enumerating by hand. Top level only; use
+    # File::Find if cmake modules ever move into subdirectories.
+    my $cmakeModuleDirectory = File::Spec->catdir(sourceDir(), "Source", "cmake");
+    for my $cmakeFile (bsd_glob(File::Spec->catfile($cmakeModuleDirectory, "*.cmake"))) {
+        if ($cacheFileModifiedTime < stat($cmakeFile)->mtime) {
+            return 1;
+        }
     }
 
     # FIXME: This probably does not work as expected, or the next block to
@@ -2773,13 +2769,6 @@ sub shouldRemoveCMakeCache(@)
     my $inspectorImageDirectory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface", "Images");
     if ($cacheFileModifiedTime < stat($inspectorImageDirectory)->mtime) {
         return 1;
-    }
-
-    if(isAnyWindows()) {
-        my $winConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsWin.cmake");
-        if ($cacheFileModifiedTime < stat($winConfiguration)->mtime) {
-            return 1;
-        }
     }
 
     # If a change on the JHBuild moduleset has been done, we need to clean the cache as well.
