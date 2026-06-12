@@ -44,6 +44,10 @@ private:
     float calcWidthArray();
 
     Vector<Style::PreferredSize> m_width;
+    // For percentage-width columns sized by a content-box cell, the cell's border and
+    // padding is reserved in addition to the resolved percentage (matching Firefox and
+    // current Chrome). Parallel to m_width; zero for fixed/auto columns.
+    Vector<float> m_columnBorderPadding;
 };
 
 } // namespace WebCore

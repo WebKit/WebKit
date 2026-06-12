@@ -73,20 +73,20 @@ layer at (213,87) size 100x22 clip at (214,88) size 98x20
   RenderTableCell {TD} at (204,26) size 100x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,115) size 234x22 clip at (12,116) size 232x20
-  RenderTableCell {TD} at (2,2) size 234x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+layer at (11,115) size 238x22 clip at (12,116) size 236x20
+  RenderTableCell {TD} at (2,2) size 238x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (247,115) size 58x22 clip at (248,116) size 56x20
-  RenderTableCell {TD} at (237,2) size 59x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
+layer at (251,115) size 54x22 clip at (252,116) size 52x20
+  RenderTableCell {TD} at (241,2) size 55x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,139) size 234x22 clip at (12,140) size 232x20
-  RenderTableCell {TD} at (2,26) size 234x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+layer at (11,139) size 238x22 clip at (12,140) size 236x20
+  RenderTableCell {TD} at (2,26) size 238x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (247,139) size 58x22 clip at (248,140) size 56x20
-  RenderTableCell {TD} at (237,26) size 59x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
+layer at (251,139) size 54x22 clip at (252,140) size 52x20
+  RenderTableCell {TD} at (241,26) size 55x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
 layer at (11,167) size 154x22 clip at (12,168) size 152x20

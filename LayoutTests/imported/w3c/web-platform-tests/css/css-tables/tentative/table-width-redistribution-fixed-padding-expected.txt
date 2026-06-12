@@ -112,41 +112,9 @@ width expected 340 but got 356
 PASS table 8
 PASS table 9
 PASS table 10
-FAIL table 11 assert_equals:
-<table style="width:calc(100px + 68px)" data-expected-width="168">
-  <tbody><tr>
-    <td style="width:50%" data-expected-width="63">50%</td>
-    <td style="width:30%" data-expected-width="42">30%</td>
-    <td style="width:20%" data-expected-width="31">20%</td>
-  </tr>
-</tbody></table>
-width expected 63 but got 68
-FAIL table 12 assert_equals:
-<table style="width:calc(100px + 68px)" data-expected-width="168">
-  <tbody><tr>
-    <td style="width:25%" data-expected-width="60">25%</td>
-    <td style="width:15%" data-expected-width="42.5">15%</td>
-    <td style="width:10%" data-expected-width="33">10%</td>
-  </tr>
-</tbody></table>
-width expected 60 but got 68
-FAIL table 13 assert_equals:
-<table style="width:calc(100px + 68px)" data-expected-width="168">
-  <tbody><tr>
-    <td style="width:50%" data-expected-width="63"><div style="width:50px">50</div></td>
-    <td style="width:30%" data-expected-width="42"><div style="width:50px">50</div></td>
-    <td style="width:20%" data-expected-width="31"><div style="width:50px">50</div></td>
-  </tr>
-</tbody></table>
-width expected 63 but got 68
+PASS table 11
+PASS table 12
+PASS table 13
 PASS table 14
-FAIL table 15 assert_equals:
-<table style="width:calc(100px + 32px)" data-expected-width="132">
-  <tbody><tr>
-    <td style="width:20%" data-expected-width="9">20%</td>
-    <td style="width:60%" data-expected-width="19">60%</td>
-    <td style="width:60px" data-expected-width="72">60px</td>
-  </tr>
-</tbody></table>
-width expected 9 but got 7
+PASS table 15
 
