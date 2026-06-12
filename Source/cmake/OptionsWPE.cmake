@@ -265,6 +265,10 @@ if (USE_LIBHYPHEN)
     endif ()
 endif ()
 
+# Resolve FreeType so WOFF2Checks can detect its builtin WOFF2 support. Skia
+# resolves it again later, in a subdirectory scope that is not visible here.
+find_package(Freetype 2.9.0 REQUIRED)
+
 include(WOFF2Checks)
 if (FREETYPE_WOFF2_SUPPORT_IS_AVAILABLE)
     SET_AND_EXPOSE_TO_BUILD(HAVE_WOFF_SUPPORT ON)
