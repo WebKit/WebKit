@@ -1302,7 +1302,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             }
         }
 
-        auto track = TrackPrivateType::create(*this, i, GRefPtr(pad));
+        auto track = TrackPrivateType::create(*this, i, GRefPtr(pad), streamId);
         ASSERT(track->streamId() == streamId);
         if (!track->trackIndex() && (type == GStreamerTrackType::Audio || type == GStreamerTrackType::Video))
             track->setActive(true);
