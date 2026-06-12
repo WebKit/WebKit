@@ -56,6 +56,8 @@ function test()
 
             InspectorTest.expectThat(webSocketResource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
             InspectorTest.expectEqual(webSocketResource.url, url, `Resource URL should be "${url}".`);
+            InspectorTest.expectEqual(webSocketResource.statusCode, 101, "Resource status code should be 101.");
+            InspectorTest.expectEqual(webSocketResource.statusText, "Switching Protocols", "Resource status text should be \"Switching Protocols\".");
             InspectorTest.expectThat(!isEmptyObject(webSocketResource.requestHeaders), "Resource should have request headers.");
             InspectorTest.expectThat(!isEmptyObject(webSocketResource.responseHeaders), "Resource should have response headers.");
             InspectorTest.log(`Resource readyState should be ${String(webSocketResource.readyState)}.`);

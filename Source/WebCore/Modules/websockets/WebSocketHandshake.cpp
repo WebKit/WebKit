@@ -430,7 +430,7 @@ int WebSocketHandshake::readStatusLine(std::span<const uint8_t> header, int& sta
     }
 
     statusCode = parseInteger<int>(statusCodeString).value();
-    statusText = String(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, index - *secondSpaceIndex - 3))); // Exclude "\r\n".
+    statusText = String(byteCast<Latin1Character>(header.subspan(*secondSpaceIndex + 1, lineLength - *secondSpaceIndex - 3))); // Exclude "\r\n".
     return lineLength;
 }
 
