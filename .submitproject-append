@@ -7,3 +7,4 @@
     includedSubdirectoryPatterns = Tools/TestRunnerShared
     includedSubdirectoryPatterns = Tools/WebKitTestRunner
     excludedSubdirectoryPatterns = Tools/WebKitTestRunner/gtk
+    excludedSubdirectoryPatterns = Tools/WebKitTestRunner/glib
