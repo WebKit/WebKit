@@ -506,8 +506,7 @@ void ScrollView::scrollTo(const ScrollPosition& newPosition)
     // We should not attempt to actually modify layer contents if the layout phase
     // is not complete. Instead, defer the scroll event until the layout finishes.
     if (shouldDeferScrollUpdateAfterContentSizeChange()) {
-        ASSERT(!m_deferredScrollDelta);
-        m_deferredScrollDelta = scrollDelta;
+        m_deferredScrollDelta = m_deferredScrollDelta ? *m_deferredScrollDelta + scrollDelta : scrollDelta;
         return;
     }
 
