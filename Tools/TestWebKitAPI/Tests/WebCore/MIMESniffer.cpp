@@ -49,4 +49,14 @@ TEST(MIMESniffer, MIMETypes)
     ASSERT_EQ(MIMESniffer::getMIMETypeFromContent({ wavedata.data(), wavedata.size() }), String("audio/wave"_s));
 }
 
+TEST(MIMESniffer, WebMSnifferDoesNotReadPastEnd)
+{
+    // Truncated WebM-style header crafted so hasSignatureForWebM() advances
+    // iter exactly to length(): EBML magic (4 bytes) + 0x42 0x82 (2 bytes) +
+    // a 1-byte vint with the high bit set. Catches a 1-byte out-of-bounds
+    // read in MIMESniffer.cpp under ASan / libc++ hardened mode.
+    constexpr std::array<const uint8_t, 7> truncatedWebM = { 0x1A, 0x45, 0xDF, 0xA3, 0x42, 0x82, 0x80 };
+    MIMESniffer::getMIMETypeFromContent(std::span { truncatedWebM });
+}
+
 } // namespace TestWebKitAPI

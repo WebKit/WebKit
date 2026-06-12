@@ -156,7 +156,7 @@ static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
             //  5. If iter is less than length - 4, abort these steps.
             // TODO: this is a spec error. It will always be less than length - 4 unless an error occurred.
             //  6. Let matched be the result of matching a padded sequence 0x77 0x65 0x62 0x6D ("webm") on sequence at offset iter.
-            while (!sequence[iter] && iter < length)
+            while (iter < length && !sequence[iter])
                 iter++;
             if (iter >= length - 4)
                 break;
