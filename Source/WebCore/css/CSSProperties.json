@@ -4781,6 +4781,7 @@
         },
         "dominant-baseline": {
             "animation-type": "discrete",
+            "inherited": true,
             "initial": "auto",
             "values": [
                 "auto",
@@ -4797,15 +4798,15 @@
                 "text-after-edge"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_svgData", "nonInheritedFlags"],
+                "computed-style-storage-path": ["m_svgData", "inheritedFlags"],
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "DominantBaseline",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/text.html#DominantBaselineProperty"
+                "category": "css-inline",
+                "url": "https://drafts.csswg.org/css-inline-3/#propdef-dominant-baseline"
             }
         },
         "dynamic-range-limit": {

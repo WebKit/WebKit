@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>SVG dominant-baseline property inheritance to tspan</title>
+<link rel="help" href="https://drafts.csswg.org/css-inline-3/#propdef-dominant-baseline">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#DominantBaselineProperty">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=297455">
+<meta name="assert" content="The dominant-baseline property is inherited per SVG2 and CSS Inline 3. A tspan inside a text element with dominant-baseline set should inherit the value.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg width="400" height="200" style="font-family: serif; font-size: 36px;">
+  <!-- tspan with explicit dominant-baseline="middle" (reference) -->
+  <text x="10" y="50">
+    <tspan id="tspan-explicit" dominant-baseline="middle">T</tspan>
+  </text>
+
+  <!-- tspan inheriting dominant-baseline="middle" from parent text -->
+  <text x="10" y="100" dominant-baseline="middle">
+    <tspan id="tspan-inherited">T</tspan>
+  </text>
+
+  <!-- tspan overriding parent's middle with auto -->
+  <text x="10" y="150" dominant-baseline="middle">
+    <tspan id="tspan-override" dominant-baseline="auto">T</tspan>
+  </text>
+
+  <!-- tspan with default auto (reference for override test) -->
+  <text x="10" y="150">
+    <tspan id="tspan-auto">T</tspan>
+  </text>
+</svg>
+
+<script>
+test(() => {
+  const el = document.getElementById('tspan-inherited');
+  const computed = getComputedStyle(el).dominantBaseline;
+  assert_equals(computed, 'middle',
+    'tspan should inherit dominant-baseline="middle" from parent text');
+}, 'computed style of tspan reflects inherited dominant-baseline');
+
+test(() => {
+  const el = document.getElementById('tspan-override');
+  const computed = getComputedStyle(el).dominantBaseline;
+  assert_equals(computed, 'auto',
+    'tspan with explicit dominant-baseline="auto" should override parent');
+}, 'tspan can override inherited dominant-baseline in computed style');
+
+test(() => {
+  // Compare baseline offsets: explicit middle (at y=50) vs inherited middle (at y=100).
+  // Both should shift the baseline by the same amount relative to their parent y.
+  const explicit = document.getElementById('tspan-explicit');
+  const inherited = document.getElementById('tspan-inherited');
+  const explicitOffset = explicit.getStartPositionOfChar(0).y - 50;
+  const inheritedOffset = inherited.getStartPositionOfChar(0).y - 100;
+  assert_approx_equals(inheritedOffset, explicitOffset, 1.0,
+    'inherited dominant-baseline="middle" should produce same baseline offset as explicitly set on tspan');
+}, 'inherited dominant-baseline produces same baseline offset as directly set');
+
+test(() => {
+  // tspan overriding to auto (at y=150) vs tspan with default auto (at y=150).
+  // Both should be at the same position.
+  const overridden = document.getElementById('tspan-override');
+  const autoEl = document.getElementById('tspan-auto');
+  const overriddenOffset = overridden.getStartPositionOfChar(0).y - 150;
+  const autoOffset = autoEl.getStartPositionOfChar(0).y - 150;
+  assert_approx_equals(overriddenOffset, autoOffset, 1.0,
+    'tspan overriding inherited middle to auto should position same as default auto');
+}, 'tspan override of inherited dominant-baseline works correctly');
+</script>

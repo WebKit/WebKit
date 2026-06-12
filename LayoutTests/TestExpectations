@@ -8244,3 +8244,10 @@ webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/mul
 
 imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Skip ] # Different hash generated on each run
 imported/w3c/web-platform-tests/preload/modulepreload-multiple.html [ Failure Pass ]
+
+# webkit.org/b/297455 With dominant-baseline now inherited, the baseline shift is
+# applied to descendant tspans during layout. getStartPositionOfChar/getEndPositionOfChar
+# returns a y position that does not match the unshifted attribute value in this case.
+# Bug 311553 (PR #62106) handled the same query for explicit dominant-baseline on a
+# tspan; the inherited path needs follow-up investigation.
+webkit.org/b/297455 imported/w3c/web-platform-tests/svg/text/scripted/getstartpositionofchar-dominant-baseline-shift.html [ Failure ]
