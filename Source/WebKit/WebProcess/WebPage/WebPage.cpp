@@ -7944,7 +7944,8 @@ void WebPage::dismissImmersiveElement(const Element&, CompletionHandler<void()>&
 
 void WebPage::exitImmersive() const
 {
-    if (RefPtr localTopDocument = this->localTopDocument(); RefPtr protectedImmersive = localTopDocument->immersiveIfExists())
+    RefPtr localTopDocument = this->localTopDocument();
+    if (RefPtr protectedImmersive = localTopDocument ? localTopDocument->immersiveIfExists() : nullptr)
         protectedImmersive->exitImmersive();
 }
 #endif
