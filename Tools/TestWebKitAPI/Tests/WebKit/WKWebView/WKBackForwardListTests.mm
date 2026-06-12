@@ -396,6 +396,65 @@ TEST(WKBackForwardList, InteractionStateRestorationMultipleItems)
     EXPECT_STREQ([[list.get().backList.firstObject URL] absoluteString].UTF8String, url1.get().absoluteString.UTF8String);
 }
 
+TEST(WKBackForwardList, InteractionStateRestoreWithUserAttributionPreservesBackList)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/page1"_s, { "<title>Page 1</title>"_s } },
+        { "/page2"_s, { "<title>Page 2</title>"_s } },
+        { "/page3"_s, { "<title>Page 3</title>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr url1 = [NSURL URLWithString:@"https://webkit.org/page1"];
+    RetainPtr url2 = [NSURL URLWithString:@"https://example.com/page2"];
+    RetainPtr url3 = [NSURL URLWithString:@"https://apple.com/page3"];
+
+    auto userAttributedRequest = ^(NSURL *url) {
+        RetainPtr request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
+        [request setAttribution:NSURLRequestAttributionUser];
+        return request;
+    };
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPool.get()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:userAttributedRequest(url1.get()).get()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:userAttributedRequest(url2.get()).get()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:userAttributedRequest(url3.get()).get()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    id interactionState = [webView interactionState];
+
+    webView = nil;
+
+    RetainPtr restoredConfiguration = server.httpsProxyConfiguration();
+    [restoredConfiguration setProcessPool:processPool.get()];
+
+    RetainPtr restoredView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:restoredConfiguration.get()]);
+    restoredView.get().navigationDelegate = navigationDelegate.get();
+
+    [restoredView setInteractionState:interactionState];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ([restoredView backForwardList].backList.count, 2U);
+    EXPECT_WK_STREQ([restoredView backForwardList].backList[0].URL.absoluteString, [url1 absoluteString]);
+    EXPECT_WK_STREQ([restoredView backForwardList].backList[1].URL.absoluteString, [url2 absoluteString]);
+    EXPECT_WK_STREQ([restoredView backForwardList].currentItem.URL.absoluteString, [url3 absoluteString]);
+}
+
 @interface WKBackForwardNavigationDelegate : NSObject <WKNavigationDelegatePrivate>
 - (void)waitForDidFinishNavigationOrDidSameDocumentNavigation;
 @end
