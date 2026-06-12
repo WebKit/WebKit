@@ -248,10 +248,8 @@ IDBStorageManager& OriginStorageManager::StorageBucket::idbStorageManager(IDBSto
 CacheStorageManager& OriginStorageManager::StorageBucket::cacheStorageManager(CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, CacheStorageManager::QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
 {
     if (!m_cacheStorageManager) {
-        std::optional<WebCore::ClientOrigin> optionalOrigin;
-        if (m_level < UnifiedOriginStorageLevel::Standard)
-            optionalOrigin = origin;
-        m_cacheStorageManager = CacheStorageManager::create(resolvedCacheStoragePath(), registry, optionalOrigin, WTF::move(quotaCheckFunction), WTF::move(queue));
+        auto shouldWriteOriginFile = m_level < UnifiedOriginStorageLevel::Standard ? ShouldWriteOriginFile::Yes : ShouldWriteOriginFile::No;
+        m_cacheStorageManager = CacheStorageManager::create(resolvedCacheStoragePath(), registry, origin, shouldWriteOriginFile, WTF::move(quotaCheckFunction), WTF::move(queue));
     }
 
     return *m_cacheStorageManager;
