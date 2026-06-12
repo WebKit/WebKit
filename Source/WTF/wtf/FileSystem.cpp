@@ -735,7 +735,8 @@ FileHandle createDumpFile(StringView filename, StringView extension, StringView 
         auto [p, handle] = openTemporaryFile(filename, extension);
         return WTF::move(handle);
     }
-    return openFile(makeString(path, pathSeparator, filename, extension), FileOpenMode::Truncate);
+    // Why ReadWrite? On linux, we need to mmap dump files so that perf can see them, which will fail without read permission.
+    return openFile(makeString(path, pathSeparator, filename, extension), FileOpenMode::ReadWrite);
 }
 
 #if !PLATFORM(PLAYSTATION)
