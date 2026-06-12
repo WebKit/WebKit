@@ -41,6 +41,7 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+struct ClientOrigin;
 enum class FileSystemWriteCloseReason : bool;
 enum class FileSystemWriteCommandType : uint8_t;
 }
@@ -59,6 +60,7 @@ public:
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
     uint64_t allocatedUnusedCapacity();
+    std::optional<WebCore::ClientOrigin> origin() const;
 
     void close();
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);

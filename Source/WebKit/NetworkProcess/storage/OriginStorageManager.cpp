@@ -73,7 +73,7 @@ public:
     void setMode(StorageBucketMode mode) { m_mode = mode; }
     void connectionClosed(IPC::Connection::UniqueID);
     String typeStoragePath(StorageType) const;
-    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, FileSystemStorageManager::QuotaCheckFunction&&);
+    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, FileSystemStorageManager::QuotaCheckFunction&&);
     FileSystemStorageManager* existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
     LocalStorageManager* existingLocalStorageManager() { return m_localStorageManager.get(); }
@@ -213,10 +213,10 @@ String OriginStorageManager::StorageBucket::typeStoragePath(StorageType type) co
     return FileSystem::pathByAppendingComponent(m_rootPath, storageIdentifier);
 }
 
-FileSystemStorageManager& OriginStorageManager::StorageBucket::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, FileSystemStorageManager::QuotaCheckFunction&& quotaCheckFunction)
+FileSystemStorageManager& OriginStorageManager::StorageBucket::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, FileSystemStorageManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_fileSystemStorageManager)
-        m_fileSystemStorageManager = FileSystemStorageManager::create(typeStoragePath(StorageType::FileSystem), registry, WTF::move(quotaCheckFunction));
+        m_fileSystemStorageManager = FileSystemStorageManager::create(typeStoragePath(StorageType::FileSystem), registry, origin, WTF::move(quotaCheckFunction));
 
     return *m_fileSystemStorageManager;
 }
@@ -686,9 +686,9 @@ Ref<OriginQuotaManager> OriginStorageManager::protectedQuotaManager()
     return m_quotaManager.get();
 }
 
-FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
+FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin)
 {
-    return defaultBucket().fileSystemStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+    return defaultBucket().fileSystemStorageManager(registry, origin, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
         auto strongReference = quotaManager.get();
         if (!strongReference)
             return completionHandler(false);

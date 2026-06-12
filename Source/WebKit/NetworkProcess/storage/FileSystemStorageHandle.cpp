@@ -29,6 +29,7 @@
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageManager.h"
 #include "SharedFileHandle.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemWriteCloseReason.h>
 #include <WebCore/FileSystemWriteCommandType.h>
 #include <wtf/FileSystem.h>
@@ -76,6 +77,13 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
     , m_name(WTF::move(name))
 {
     ASSERT(!m_path.isEmpty());
+}
+
+std::optional<WebCore::ClientOrigin> FileSystemStorageHandle::origin() const
+{
+    if (RefPtr manager = m_manager.get())
+        return manager->origin();
+    return std::nullopt;
 }
 
 void FileSystemStorageHandle::close()
