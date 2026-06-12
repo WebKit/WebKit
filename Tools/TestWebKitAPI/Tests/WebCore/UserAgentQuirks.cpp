@@ -119,6 +119,8 @@ TEST(UserAgentTest, Quirks)
 #if ENABLE(THUNDER)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.netflix.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.disneyplus.com/");
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://www.hbomax.com/");
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://auth.hbomax.com/");
 #endif
 
 #if ENABLE(WEBXR) && PLATFORM(WPE)
