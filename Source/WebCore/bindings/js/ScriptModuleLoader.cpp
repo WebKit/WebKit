@@ -398,7 +398,12 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
                 scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, destination, ReferrerPolicy::EmptyString);
         }
     }
-    ASSERT(baseURL.isValid());
+
+    if (!baseURL.isValid()) {
+        scope.release();
+        return rejectPromise(*m_context, globalObject, ExceptionCode::TypeError, "Cannot import a module from a document with no base URL."_s);
+    }
+
     ASSERT(scriptFetcher);
     ASSERT(parameters);
 
