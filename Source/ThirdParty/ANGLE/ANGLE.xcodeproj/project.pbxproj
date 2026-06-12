@@ -679,8 +679,13 @@
 		7BDE1EFC2DED9248007E43DC /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BDE1EFA2DED923F007E43DC /* libgtest.a */; };
 		7BE34ADC2E01938A001AD21A /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */; };
 		7BE34ADE2E0193AC001AD21A /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */; };
-		7BED401F2F97ADD200A240A7 /* GLSLOutputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED401E2F97ADD200A240A7 /* GLSLOutputTest.cpp */; };
-		7BED40232F97AEA800A240A7 /* CompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED40212F97AEA800A240A7 /* CompilerTest.cpp */; };
+		7BED4E022F98E33B00A240A7 /* GLSLOutputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFF2F98E33B00A240A7 /* GLSLOutputTest.cpp */; };
+		7BED4E042F98E33B00A240A7 /* BufferPoolTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFC2F98E33B00A240A7 /* BufferPoolTestMetal.mm */; };
+		7BED4E052F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFB2F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp */; };
+		7BED4E062F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFE2F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp */; };
+		7BED4E072F98E33B00A240A7 /* GLSLValidationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */; };
+		7BED4E0B2F98E35C00A240A7 /* CompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */; };
+		7BED4E0C2F98E35C00A240A7 /* CompilerTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED4E092F98E35C00A240A7 /* CompilerTest.h */; };
 		7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */; };
 		7BF554C42C81EF29002B101E /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		7BF554C52C81EF4D002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
@@ -2217,9 +2222,13 @@
 		7BDE1EFA2DED923F007E43DC /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE4AA542DE4544900A16F7E /* ANGLEEnd2EndTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ANGLEEnd2EndTests; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BED401E2F97ADD200A240A7 /* GLSLOutputTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLOutputTest.cpp; sourceTree = "<group>"; };
-		7BED40202F97AEA800A240A7 /* CompilerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerTest.h; sourceTree = "<group>"; };
-		7BED40212F97AEA800A240A7 /* CompilerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilerTest.cpp; sourceTree = "<group>"; };
+		7BED4DFB2F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BaseInstanceOverflowTest.cpp; sourceTree = "<group>"; };
+		7BED4DFC2F98E33B00A240A7 /* BufferPoolTestMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BufferPoolTestMetal.mm; sourceTree = "<group>"; };
+		7BED4DFE2F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLConstantFoldingTest.cpp; sourceTree = "<group>"; };
+		7BED4DFF2F98E33B00A240A7 /* GLSLOutputTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLOutputTest.cpp; sourceTree = "<group>"; };
+		7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLValidationTest.cpp; sourceTree = "<group>"; };
+		7BED4E092F98E35C00A240A7 /* CompilerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerTest.h; sourceTree = "<group>"; };
+		7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilerTest.cpp; sourceTree = "<group>"; };
 		7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilities_unittest.cpp; sourceTree = "<group>"; };
 		7BF5549B2C81EDE0002B101E /* libtranslator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtranslator.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzer.cpp; path = WebKit/TranslatorFuzzer.cpp; sourceTree = "<group>"; };
@@ -3909,6 +3918,7 @@
 				7BFAF4EE2DE59D8D00327F7F /* AdvancedBlendTest.cpp */,
 				7BFAF4EF2DE59D8D00327F7F /* AtomicCounterBufferTest.cpp */,
 				7BFAF4F02DE59D8D00327F7F /* AttributeLayoutTest.cpp */,
+				7BED4DFB2F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp */,
 				7BFAF4F12DE59D8D00327F7F /* BindGeneratesResourceTest.cpp */,
 				7BFAF4F22DE59D8D00327F7F /* BindUniformLocationTest.cpp */,
 				7BFAF4F32DE59D8D00327F7F /* BlendFuncExtendedTest.cpp */,
@@ -3919,6 +3929,7 @@
 				7BFAF4F82DE59D8D00327F7F /* BlobCacheTest.cpp */,
 				7BFAF4F92DE59D8D00327F7F /* BPTCCompressedTextureTest.cpp */,
 				7BFAF4FA2DE59D8D00327F7F /* BufferDataTest.cpp */,
+				7BED4DFC2F98E33B00A240A7 /* BufferPoolTestMetal.mm */,
 				7BFAF4FB2DE59D8D00327F7F /* BuiltinVariableTest.cpp */,
 				7BFAF4AE2DE4903000327F7F /* ClearTest.cpp */,
 				7BFAF50A2DE59DA000327F7F /* ClientArraysTest.cpp */,
@@ -3964,9 +3975,11 @@
 				7BFAF54F2DE59DCD00327F7F /* FramebufferTest.cpp */,
 				7BFAF5502DE59DCD00327F7F /* GeometryShaderTest.cpp */,
 				7BFAF5522DE59DCD00327F7F /* GetTexLevelParameterTest.cpp */,
-				7BED401E2F97ADD200A240A7 /* GLSLOutputTest.cpp */,
+				7BED4DFE2F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp */,
+				7BED4DFF2F98E33B00A240A7 /* GLSLOutputTest.cpp */,
 				7BFAF5632DE59E0900327F7F /* GLSLTest.cpp */,
 				7B8EC83E2DF1BC9100105EB6 /* GLSLUBTest.cpp */,
+				7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */,
 				7BFAF5642DE59E0900327F7F /* ImageTest.cpp */,
 				7B8EC83F2DF1BC9100105EB6 /* ImageTestMetal.mm */,
 				7BFAF5662DE59E0900327F7F /* IncompatibleTextureTest.cpp */,
@@ -4074,8 +4087,8 @@
 				7BFAF4D12DE49C3B00327F7F /* ANGLETest.h */,
 				7BFAF91B2DE6F8B500327F7F /* compiler_test.cpp */,
 				7BFAF91A2DE6F8B500327F7F /* compiler_test.h */,
-				7BED40212F97AEA800A240A7 /* CompilerTest.cpp */,
-				7BED40202F97AEA800A240A7 /* CompilerTest.h */,
+				7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */,
+				7BED4E092F98E35C00A240A7 /* CompilerTest.h */,
 				7BFAF6682DE5A8F100327F7F /* gl_raii.h */,
 				7BFAF66A2DE5A8F100327F7F /* MultiThreadSteps.cpp */,
 				7BFAF6692DE5A8F100327F7F /* MultiThreadSteps.h */,
@@ -4944,6 +4957,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BED4E0C2F98E35C00A240A7 /* CompilerTest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5866,6 +5880,7 @@
 				7BFAF4BA2DE494CF00327F7F /* ANGLETest.cpp in Sources */,
 				7BFAF5042DE59D8D00327F7F /* AtomicCounterBufferTest.cpp in Sources */,
 				7BFAF5052DE59D8D00327F7F /* AttributeLayoutTest.cpp in Sources */,
+				7BED4E052F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp in Sources */,
 				7BFAF5012DE59D8D00327F7F /* BindGeneratesResourceTest.cpp in Sources */,
 				7BFAF4FF2DE59D8D00327F7F /* BindUniformLocationTest.cpp in Sources */,
 				7BFAF5022DE59D8D00327F7F /* BlendFuncExtendedTest.cpp in Sources */,
@@ -5876,6 +5891,7 @@
 				7BFAF4FC2DE59D8D00327F7F /* BlobCacheTest.cpp in Sources */,
 				7BFAF5072DE59D8D00327F7F /* BPTCCompressedTextureTest.cpp in Sources */,
 				7BFAF5032DE59D8D00327F7F /* BufferDataTest.cpp in Sources */,
+				7BED4E042F98E33B00A240A7 /* BufferPoolTestMetal.mm in Sources */,
 				7BFAF5092DE59D8D00327F7F /* BuiltinVariableTest.cpp in Sources */,
 				7BFAF4AF2DE4903000327F7F /* ClearTest.cpp in Sources */,
 				7BFAF51A2DE59DA000327F7F /* ClientArraysTest.cpp in Sources */,
@@ -5954,9 +5970,11 @@
 				7BFAF55E2DE59DCD00327F7F /* GetTexLevelParameterTest.cpp in Sources */,
 				7BFAF6712DE5AA3500327F7F /* gl_enum_utils.cpp in Sources */,
 				7BFAF6702DE5AA3500327F7F /* gl_enum_utils_autogen.cpp in Sources */,
-				7BED401F2F97ADD200A240A7 /* GLSLOutputTest.cpp in Sources */,
+				7BED4E062F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp in Sources */,
+				7BED4E022F98E33B00A240A7 /* GLSLOutputTest.cpp in Sources */,
 				7BFAF5BA2DE59E0900327F7F /* GLSLTest.cpp in Sources */,
 				7B8EC8412DF1BC9100105EB6 /* GLSLUBTest.cpp in Sources */,
+				7BED4E072F98E33B00A240A7 /* GLSLValidationTest.cpp in Sources */,
 				7BFAF4E02DE49CE200327F7F /* GPUTestConfig.cpp in Sources */,
 				7BFAF4E12DE49CE200327F7F /* GPUTestExpectationsParser.cpp in Sources */,
 				7BFAF4ED2DE59D5700327F7F /* GPUTestExpectationsTest.cpp in Sources */,
@@ -6320,7 +6338,7 @@
 			files = (
 				7BFAF8302DE6EB6F00327F7F /* angle_features_autogen.cpp in Sources */,
 				7BFAF9252DE6F8B500327F7F /* compiler_test.cpp in Sources */,
-				7BED40232F97AEA800A240A7 /* CompilerTest.cpp in Sources */,
+				7BED4E0B2F98E35C00A240A7 /* CompilerTest.cpp in Sources */,
 				7BFAF8282DE6EB3B00327F7F /* crash_handler_posix.cpp in Sources */,
 				7BFAF82C2DE6EB6100327F7F /* EGLWindow.cpp in Sources */,
 				7BFAF82E2DE6EB6100327F7F /* Matrix.cpp in Sources */,
