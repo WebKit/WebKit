@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All rights reserved.
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -653,6 +653,12 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
+
+    if (isStopping()) {
+        attemptToRunDeferredScriptsAndEnd();
+        return;
+    }
+
     m_scriptRunner->executeScriptsWaitingForStylesheets();
     if (!isWaitingForScripts())
         resumeParsingAfterScriptExecution();
