@@ -98,7 +98,10 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
     bool supportDepthStencilAutoResolve = supportDepthAutoResolve && supportStencilAutoResolve;
 
     // Source: https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
-    {metal_format_caps}
+    // clang-format off
+{metal_format_caps}
+    // clang-format on
+
 }}
 
 }}  // namespace mtl
@@ -219,6 +222,64 @@ def maybe_add_deprecation_warning_supression(is_deprecated_pixel_format,
 # Returns a bool indicating whether `pixel_format` has been deprecated in iOS 18.0+.
 def is_format_deprecated(pixel_format):
     return 'MTLPixelFormatPVRTC_RGB' in pixel_format
+
+
+def is_format_compressed(mtl_format):
+    name = mtl_format.replace('MTLPixelFormat', '')
+    return any(name.startswith(prefix) for prefix in ['BC', 'ETC', 'EAC', 'PVRTC', 'ASTC'])
+
+
+def get_mtl_format_info(mtl_format):
+    """Extract channel count and pixel byte size from an MTLPixelFormat name.
+
+    For depth/stencil formats, returns channels=0 with the correct pixel byte size.
+    Examples:
+        MTLPixelFormatRGBA32Float       -> (4, 16, 4)  # 4 channels, 4 bytes each, alignment 4
+        MTLPixelFormatRG16Float         -> (2, 4, 2)   # 2 channels, 2 bytes each, alignment 2
+        MTLPixelFormatR8Unorm           -> (1, 1, 1)   # 1 channel, 1 byte, alignment 1
+        MTLPixelFormatDepth32Float      -> (0, 4, 4)   # depth, 4 bytes, alignment 4
+        MTLPixelFormatDepth16Unorm      -> (0, 2, 2)   # depth, 2 bytes, alignment 2
+        MTLPixelFormatStencil8          -> (0, 1, 1)   # stencil, 1 byte, alignment 1
+        MTLPixelFormatDepth32Float_Stencil8 -> (0, 5, 4) # depth+stencil, 5 bytes, alignment 4
+    """
+    name = mtl_format.replace('MTLPixelFormat', '')
+
+    if name == 'Invalid':
+        return 0, 0, 0
+
+    base_name = name.replace('_sRGB', '')
+
+    predefined_formats = {
+        'Depth32Float': (0, 4, 4),
+        'Depth16Unorm': (0, 2, 2),
+        'Stencil8': (0, 1, 1),
+        'Depth32Float_Stencil8': (0, 5, 4), # "When using this format, some Metal device objects allocate 64-bits per pixel."
+        'Depth24Unorm_Stencil8': (0, 4, 4),
+        'BGR10A2Unorm': (4, 4, 4),
+        'RGB10A2Unorm': (4, 4, 4),
+        'RGB10A2Uint': (4, 4, 4),
+        'RG11B10Float': (3, 4, 4),
+        'RGB9E5Float': (3, 4, 4),
+        'B5G6R5Unorm': (3, 2, 2),
+        'A1BGR5Unorm': (4, 2, 2),
+        'ABGR4Unorm': (4, 2, 2),
+        'BGR5A1Unorm': (4, 2, 2),
+    }
+    predefined = predefined_formats.get(base_name)
+    if predefined:
+        return predefined
+
+    # Regular formats: [channels][bits][type]
+    # e.g. R8Unorm, RG16Float, RGBA32Uint, BGRA8Unorm, A8Unorm
+    m = re.match(r'^(A|RGBA|BGRA|BGR|RGB|RG|R)(\d+)(Unorm|Snorm|Uint|Sint|Float)$', base_name)
+    assert m
+
+    channels = len(m.group(1))
+    bits = int(m.group(2))
+    bytes_per_channel = bits // 8
+    pixel_bytes = channels * bytes_per_channel
+    alignment = pixel_bytes // channels
+    return channels, pixel_bytes, alignment
 
 # NOTE(hqle): This is a modified version of the get_vertex_copy_function() function in
 # src/libANGLE/renderer/angle_format.py
@@ -720,22 +781,36 @@ def gen_mtl_format_caps_init_string(map_image):
     ios_specific_caps = map_image['caps_ios_specific']
     caps_init_str = ''
 
-    def cap_to_param(caps, key):
-        return '/** ' + key + '*/ ' + caps.get(key, 'false')
-
     def caps_to_cpp(caps_table):
         init_str = ''
         # Tracks whether the pixel format family being added to `init_str` is deprecated.
         section_contains_deprecated_format = False
         for mtl_format in sorted(caps_table.keys()):
+            if is_format_compressed(mtl_format):
+                compressed = 'true'
+                pixel_bytes = 0
+                pixel_bytes_msaa = 0
+                channels = 0
+                alignment = 0
+            else:
+                compressed = 'false'
+                channels, pixel_bytes, alignment = get_mtl_format_info(mtl_format)
+                pixel_bytes_msaa = pixel_bytes
+
             caps = caps_table[mtl_format]
-            filterable = cap_to_param(caps, 'filterable')
-            writable = cap_to_param(caps, 'writable')
-            colorRenderable = cap_to_param(caps, 'colorRenderable')
-            depthRenderable = cap_to_param(caps, 'depthRenderable')
-            blendable = cap_to_param(caps, 'blendable')
-            multisample = cap_to_param(caps, 'multisample')
-            resolve = cap_to_param(caps, 'resolve')
+
+            filterable = caps.get('filterable', 'false')
+            writable = caps.get('writable', 'false')
+            color_renderable = caps.get('colorRenderable', 'false')
+            depth_renderable = caps.get('depthRenderable', 'false')
+            blendable = caps.get('blendable', 'false')
+            multisample = caps.get('multisample', 'false')
+            resolve = caps.get('resolve', 'false')
+            compressed = caps.get('compressed', compressed)
+            pixel_bytes = caps.get('pixelBytes', pixel_bytes)
+            pixel_bytes_msaa = caps.get('pixelBytes', pixel_bytes_msaa)
+            channels = caps.get('channels', channels)
+            alignment = caps.get('alignment', alignment)
 
             # Add deprecation warnings around MTLPixelFormatPVRTC_* enums.
             format_is_deprecated = is_format_deprecated(mtl_format)
@@ -743,9 +818,21 @@ def gen_mtl_format_caps_init_string(map_image):
                 format_is_deprecated, section_contains_deprecated_format)
             section_contains_deprecated_format = format_is_deprecated
 
-            init_str += "    setFormatCaps({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7});\n\n".format(
-                mtl_format, filterable, writable, blendable, multisample, resolve, colorRenderable,
-                depthRenderable)
+            init_str += f"""    setFormatCaps({mtl_format},
+                  {{
+                      .filterable      = {filterable},
+                      .writable        = {writable},
+                      .colorRenderable = {color_renderable},
+                      .depthRenderable = {depth_renderable},
+                      .blendable       = {blendable},
+                      .multisample     = {multisample},
+                      .resolve         = {resolve},
+                      .compressed      = {compressed},
+                      .pixelBytes      = {pixel_bytes},
+                      .pixelBytesMSAA  = {pixel_bytes},
+                      .channels        = {channels},
+                      .alignment       = {alignment}
+                  }});\n"""
 
         return init_str
 

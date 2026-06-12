@@ -154,45 +154,7 @@ class FormatTable final : angle::NonCopyable
     void initNativeFormatCapsAutogen(const DisplayMtl *display);
     void initNativeFormatCaps(const DisplayMtl *display);
 
-    void setFormatCaps(MTLPixelFormat formatId,
-                       bool filterable,
-                       bool writable,
-                       bool blendable,
-                       bool multisample,
-                       bool resolve,
-                       bool colorRenderable);
-
-    void setFormatCaps(MTLPixelFormat formatId,
-                       bool filterable,
-                       bool writable,
-                       bool blendable,
-                       bool multisample,
-                       bool resolve,
-                       bool colorRenderable,
-                       NSUInteger bytesPerChannel,
-                       NSUInteger channels);
-
-    void setFormatCaps(MTLPixelFormat formatId,
-                       bool filterable,
-                       bool writable,
-                       bool blendable,
-                       bool multisample,
-                       bool resolve,
-                       bool colorRenderable,
-                       bool depthRenderable);
-
-    void setFormatCaps(MTLPixelFormat formatId,
-                       bool filterable,
-                       bool writable,
-                       bool blendable,
-                       bool multisample,
-                       bool resolve,
-                       bool colorRenderable,
-                       bool depthRenderable,
-                       NSUInteger bytesPerChannel,
-                       NSUInteger channels);
-
-    void setCompressedFormatCaps(MTLPixelFormat formatId, bool filterable);
+    void setFormatCaps(MTLPixelFormat formatId, const FormatCaps &caps);
 
     void adjustFormatCapsForDevice(const mtl::ContextDevice &device,
                                    MTLPixelFormat id,

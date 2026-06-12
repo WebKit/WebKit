@@ -272,71 +272,9 @@ const VertexFormat &FormatTable::getVertexFormat(angle::FormatID angleFormatId,
     return mVertexFormatTables[tableIdx][static_cast<size_t>(angleFormatId)];
 }
 
-void FormatTable::setFormatCaps(MTLPixelFormat formatId,
-                                bool filterable,
-                                bool writable,
-                                bool blendable,
-                                bool multisample,
-                                bool resolve,
-                                bool colorRenderable)
+void FormatTable::setFormatCaps(MTLPixelFormat formatId, const FormatCaps &caps)
 {
-    setFormatCaps(formatId, filterable, writable, blendable, multisample, resolve, colorRenderable,
-                  false, 0);
-}
-void FormatTable::setFormatCaps(MTLPixelFormat formatId,
-                                bool filterable,
-                                bool writable,
-                                bool blendable,
-                                bool multisample,
-                                bool resolve,
-                                bool colorRenderable,
-                                NSUInteger pixelBytes,
-                                NSUInteger channels)
-{
-    setFormatCaps(formatId, filterable, writable, blendable, multisample, resolve, colorRenderable,
-                  false, pixelBytes, channels);
-}
-
-void FormatTable::setFormatCaps(MTLPixelFormat formatId,
-                                bool filterable,
-                                bool writable,
-                                bool blendable,
-                                bool multisample,
-                                bool resolve,
-                                bool colorRenderable,
-                                bool depthRenderable)
-{
-    setFormatCaps(formatId, filterable, writable, blendable, multisample, resolve, colorRenderable,
-                  depthRenderable, 0, 0);
-}
-void FormatTable::setFormatCaps(MTLPixelFormat id,
-                                bool filterable,
-                                bool writable,
-                                bool blendable,
-                                bool multisample,
-                                bool resolve,
-                                bool colorRenderable,
-                                bool depthRenderable,
-                                NSUInteger pixelBytes,
-                                NSUInteger channels)
-{
-    mNativePixelFormatCapsTable[id].filterable      = filterable;
-    mNativePixelFormatCapsTable[id].writable        = writable;
-    mNativePixelFormatCapsTable[id].colorRenderable = colorRenderable;
-    mNativePixelFormatCapsTable[id].depthRenderable = depthRenderable;
-    mNativePixelFormatCapsTable[id].blendable       = blendable;
-    mNativePixelFormatCapsTable[id].multisample     = multisample;
-    mNativePixelFormatCapsTable[id].resolve         = resolve;
-    mNativePixelFormatCapsTable[id].pixelBytes      = pixelBytes;
-    mNativePixelFormatCapsTable[id].pixelBytesMSAA  = pixelBytes;
-    mNativePixelFormatCapsTable[id].channels        = channels;
-    if (channels != 0)
-        mNativePixelFormatCapsTable[id].alignment = MAX(pixelBytes / channels, 1U);
-}
-
-void FormatTable::setCompressedFormatCaps(MTLPixelFormat formatId, bool filterable)
-{
-    setFormatCaps(formatId, filterable, false, false, false, false, false, false);
+    mNativePixelFormatCapsTable[formatId] = caps;
 }
 
 void FormatTable::adjustFormatCapsForDevice(const mtl::ContextDevice &device,
