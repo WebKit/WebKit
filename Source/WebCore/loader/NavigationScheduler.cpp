@@ -101,6 +101,7 @@ public:
     virtual void didStopTimer(Frame&, NewLoadInProgress) { }
     virtual bool targetIsCurrentFrame() const { return true; }
     virtual bool isSameDocumentNavigation(Frame&) const { return false; }
+    virtual bool isHistoryNavigation() const { return false; }
 
     enum class ShouldCancel : uint8_t { No, Yes };
     virtual ShouldCancel adjustForNewBackForwardEntry() { return ShouldCancel::No; }
@@ -348,6 +349,8 @@ public:
         RefPtr currentItem = localFrame->loader().history().currentItem();
         return currentItem && historyItem->shouldDoSameDocumentNavigationTo(*currentItem);
     }
+
+    bool isHistoryNavigation() const final { return true; }
 
     ShouldCancel adjustForNewBackForwardEntry() final
     {
@@ -620,6 +623,7 @@ void NavigationScheduler::clear()
 {
     m_timer.stop();
     m_redirect = nullptr;
+    m_pendingHistoryNavigations.clear();
 }
 
 inline bool NavigationScheduler::shouldScheduleNavigation() const
@@ -807,6 +811,13 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
         return;
     }
 
+    // Queue consecutive history navigations rather than cancel-and-replace, so each
+    // history.go() call results in its own traversal task. See whatwg/html#6927.
+    if ((m_redirect && m_redirect->isHistoryNavigation()) || !m_pendingHistoryNavigations.isEmpty()) {
+        m_pendingHistoryNavigations.append(makeUnique<ScheduledHistoryNavigation>(steps));
+        return;
+    }
+
     schedule(makeUnique<ScheduledHistoryNavigation>(steps));
 }
 
@@ -848,7 +859,20 @@ void NavigationScheduler::timerFired()
     std::unique_ptr<ScheduledNavigation> redirect = std::exchange(m_redirect, nullptr);
     LOG(History, "NavigationScheduler %p timerFired - firing redirect %p", this, redirect.get());
 
+    bool wasHistoryNavigation = redirect->isHistoryNavigation();
     redirect->fire(frame);
+
+    if (wasHistoryNavigation)
+        processNextPendingHistoryNavigation();
+}
+
+void NavigationScheduler::processNextPendingHistoryNavigation()
+{
+    if (m_redirect || m_pendingHistoryNavigations.isEmpty())
+        return;
+
+    m_redirect = m_pendingHistoryNavigations.takeFirst();
+    startTimer();
 }
 
 void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect)
@@ -914,6 +938,7 @@ void NavigationScheduler::cancel(NewLoadInProgress newLoadInProgress)
     LOG(History, "NavigationScheduler %p cancel(newLoadInProgress=%d)", this, newLoadInProgress == NewLoadInProgress::Yes);
 
     m_timer.stop();
+    m_pendingHistoryNavigations.clear();
 
     if (auto redirect = std::exchange(m_redirect, nullptr))
         redirect->didStopTimer(protect(m_frame), newLoadInProgress);
