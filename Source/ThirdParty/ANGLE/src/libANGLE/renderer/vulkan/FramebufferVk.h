@@ -162,6 +162,8 @@ class FramebufferVk : public FramebufferImpl
 
     bool isFoveationEnabled() { return mFoveationState.isFoveated(); }
 
+    const vk::ImageHelper *getImageWithTileMemory() const;
+
   private:
     enum class ClearWithCommand
     {

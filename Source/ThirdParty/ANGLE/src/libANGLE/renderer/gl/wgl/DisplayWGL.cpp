@@ -227,6 +227,17 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
     ReleaseDC(placeholderWindow, placeholderDeviceContext);
     DestroyWindow(placeholderWindow);
 
+    // The GL backend requires at least OpenGL 3.2, which in turn requires
+    // WGL_ARB_create_context (wglCreateContextAttribsARB).  Drivers without it
+    // (e.g. the Microsoft software OpenGL 1.1 renderer) cannot be used; fail
+    // here before any further resources are allocated.
+    if (!mFunctionsWGL->createContextAttribsARB)
+    {
+        return egl::Error(EGL_NOT_INITIALIZED,
+                          "WGL_ARB_create_context is required but not available; "
+                          "OpenGL 3.2 or higher is needed by the GL backend.");
+    }
+
     const egl::AttributeMap &displayAttributes = display->getAttributeMap();
     EGLint requestedDisplayType                = static_cast<EGLint>(displayAttributes.get(
         EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
@@ -863,19 +874,11 @@ HGLRC DisplayWGL::createContextAttribs(const gl::Version &version, int profileMa
 
 egl::Error DisplayWGL::createRenderer(std::shared_ptr<RendererWGL> *outRenderer)
 {
-    HGLRC context = nullptr;
-
-    if (mFunctionsWGL->createContextAttribsARB)
-    {
-        context = initializeContextAttribs(mDisplayAttributes);
-    }
-
-    // If wglCreateContextAttribsARB is unavailable or failed, try the standard wglCreateContext
-    if (!context)
-    {
-        // Don't have control over GL versions
-        context = mFunctionsWGL->createContext(mDeviceContext);
-    }
+    // initializeImpl verified that wglCreateContextAttribsARB is available; the
+    // legacy wglCreateContext path cannot produce a context meeting the
+    // backend's GL 3.2+ requirement and is no longer used.
+    ASSERT(mFunctionsWGL->createContextAttribsARB);
+    HGLRC context = initializeContextAttribs(mDisplayAttributes);
 
     if (!context)
     {

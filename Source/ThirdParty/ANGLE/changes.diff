@@ -3419,10 +3419,10 @@ index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32c
  
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 9614024b4767b407b09706b820c7218470905f3b..b34420348b0dfd3e20252cb9c39f55dc98b84def 100644
+index 36cd567569da4c4905bc1c664a51974445352805..fa85ac2155fd9b3e1d04f5e1bc98f6a7ef46a331 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9933,6 +9933,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -9955,6 +9955,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -3456,7 +3456,7 @@ index 9614024b4767b407b09706b820c7218470905f3b..b34420348b0dfd3e20252cb9c39f55dc
  void Context::endTiling(GLbitfield preserveMask)
  {
      ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
-@@ -10007,6 +10034,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
+@@ -10029,6 +10056,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
      mState.getBlobCacheCallbacks() = {set, get, userParam};
  }
  
@@ -3525,10 +3525,10 @@ index aea0acc7cb8b630ee9092ffde7bfae8e46503b4b..5c6ff476f4f7328a806d159dac0a531b
                           const AttributeMap &attributes) const;
  
 diff --git a/src/libANGLE/ErrorStrings.h b/src/libANGLE/ErrorStrings.h
-index 5fc0d6ec9f2cb9a3c592324053ac2f3fc45013a7..056d1f783e5b59d034268841f4c759c975eda5dc 100644
+index 57f3546df1b2b1cd747dd20bfc99a33034016e41..7f18026f8d85cd68c93d761240798c142ae4173a 100644
 --- a/src/libANGLE/ErrorStrings.h
 +++ b/src/libANGLE/ErrorStrings.h
-@@ -647,6 +647,7 @@ inline constexpr const char *kTransformFeedbackNotPaused = "The active Transform
+@@ -648,6 +648,7 @@ inline constexpr const char *kTransformFeedbackNotPaused = "The active Transform
  inline constexpr const char *kTransformFeedbackPaused = "The active Transform Feedback object is paused.";
  inline constexpr const char *kTransformFeedbackProgramBinary = "Cannot change program binary while program is associated with an active transform feedback object.";
  inline constexpr const char *kTransformFeedbackTargetActive = "Target is TRANSFORM_FEEDBACK_BUFFER and transform feedback is currently active.";
@@ -3537,7 +3537,7 @@ index 5fc0d6ec9f2cb9a3c592324053ac2f3fc45013a7..056d1f783e5b59d034268841f4c759c9
  inline constexpr const char *kTransformFeedbackVaryingIndexOutOfRange = "Index must be less than the transform feedback varying count in the program.";
  inline constexpr const char *kTypeNotUnsignedShortByte = "Only UNSIGNED_SHORT and UNSIGNED_BYTE types are supported.";
 diff --git a/src/libANGLE/Framebuffer.cpp b/src/libANGLE/Framebuffer.cpp
-index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474b127e63b 100644
+index 161f69f6c7d5ba7bcccc78e14e1a573042d7a605..67e76161260846b7454d20cbc827d3d652789c52 100644
 --- a/src/libANGLE/Framebuffer.cpp
 +++ b/src/libANGLE/Framebuffer.cpp
 @@ -171,6 +171,48 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
@@ -3664,7 +3664,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
      if (mPixelLocalStorage)
      {
          mPixelLocalStorage->onFramebufferDestroyed(context);
-@@ -1154,6 +1236,23 @@ size_t Framebuffer::getDrawbufferStateCount() const
+@@ -1159,6 +1241,23 @@ size_t Framebuffer::getDrawbufferStateCount() const
      return mState.mDrawBufferStates.size();
  }
  
@@ -3688,7 +3688,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
  GLenum Framebuffer::getDrawBufferState(size_t drawBuffer) const
  {
      ASSERT(drawBuffer < mState.mDrawBufferStates.size());
-@@ -1405,6 +1504,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1410,6 +1509,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
          }
      }
  
@@ -3714,7 +3714,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
      const FramebufferAttachment &depthAttachment = mState.mDepthAttachment;
      if (depthAttachment.isAttached())
      {
-@@ -1458,6 +1576,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1463,6 +1581,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                      err::kFramebufferIncompleteMismatchedLayeredAttachments);
              }
          }
@@ -3735,7 +3735,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
      }
  
      const FramebufferAttachment &stencilAttachment = mState.mStencilAttachment;
-@@ -1513,6 +1645,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1518,6 +1650,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                      err::kFramebufferIncompleteMismatchedLayeredAttachments);
              }
          }
@@ -3756,7 +3756,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
      }
  
      // Starting from ES 3.0 stencil and depth, if present, should be the same image
-@@ -2014,6 +2160,66 @@ void Framebuffer::setAttachmentMultisampleMultiview(const Context *context,
+@@ -2017,6 +2163,66 @@ void Framebuffer::setAttachmentMultisampleMultiview(const Context *context,
                    samples);
  }
  
@@ -3823,7 +3823,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
  void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
                                                         GLsizei numViews,
                                                         GLuint baseViewIndex,
-@@ -2191,11 +2397,40 @@ void Framebuffer::updateAttachment(const Context *context,
+@@ -2194,11 +2400,40 @@ void Framebuffer::updateAttachment(const Context *context,
      invalidateCompletenessCache();
  }
  
@@ -3864,7 +3864,7 @@ index 0672c1298aa58925ea2ac1bdc8a468c0c92b41d5..a02bd5ca8ec9a6ded43db2e803871474
  void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
  {
      if (srgbWriteControlMode != mState.getWriteControlMode())
-@@ -2860,4 +3095,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
+@@ -2865,4 +3100,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
  
      return angle::Result::Continue;
  }
@@ -7556,7 +7556,7 @@ index b7981ba547b0c01c3a9ae2cc23f6999ceeaa6d0f..2b6b152dda70493fe7a765289f970252
  
  #endif /* LIBANGLE_RENDERER_METAL_VERTEXARRAYMTL_H_ */
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40991e8bb2 100644
+index a0e48bffb01fb3d122f903618f7ec208a682e9ad..746aef141f5f44b360e757128e659a8db48713da 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 @@ -15,6 +15,7 @@
@@ -7746,7 +7746,9 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +    size_t elementSize = gl::GetDrawElementsTypeSize(type);
 +    uint32_t perPrimitiveIndexCount;
 +    switch (drawMode)
-+    {
+     {
+-        ANGLE_TRY(streamIndexBufferFromClient(context, type, count, indices, idxBufferOut,
+-                                              idxBufferOffsetOut));
 +        case gl::PrimitiveMode::Points:
 +            perPrimitiveIndexCount = 1;
 +            break;
@@ -7761,25 +7763,28 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +        default:
 +            UNREACHABLE();
 +            return;
-+    }
-+    if (count < perPrimitiveIndexCount)
-     {
--        ANGLE_TRY(streamIndexBufferFromClient(context, type, count, indices, idxBufferOut,
--                                              idxBufferOffsetOut));
-+        return;
      }
 -    else
-+    if (mode != drawMode)
++    if (count < perPrimitiveIndexCount)
      {
 -        bool needConversion = type == gl::DrawElementsType::UnsignedByte;
 -        if (needConversion)
-+        firstIndex *= perPrimitiveIndexCount;
-+        count = (count - perPrimitiveIndexCount + 1) * perPrimitiveIndexCount;
++        return;
 +    }
-+    switch (drawMode)
++    if (mode != drawMode)
      {
 -            ANGLE_TRY(convertIndexBuffer(context, type, convertedOffset, idxBufferOut,
 -                                         idxBufferOffsetOut));
++        firstIndex *= perPrimitiveIndexCount;
++        count = (count - perPrimitiveIndexCount + 1) * perPrimitiveIndexCount;
+     }
+-        else
++    switch (drawMode)
+     {
+-            // No conversion needed:
+-            BufferMtl *bufferMtl = mtl::GetImpl(glElementArrayBuffer);
+-            *idxBufferOut        = bufferMtl->getCurrentBuffer();
+-            *idxBufferOffsetOut  = convertedOffset;
 +        case gl::PrimitiveMode::Points:
 +            AppendDrawCommands<0>(drawCommands, count, firstIndex, elementSize);
 +            break;
@@ -7798,8 +7803,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +        default:
 +            UNREACHABLE();
 +            return;
-     }
--        else
++    }
 +}
 +
 +// Computes draw command ranges from draw index ranges for primitive restart.
@@ -7823,11 +7827,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +{
 +    uint32_t perPrimitiveIndexCount;
 +    switch (drawMode)
-     {
--            // No conversion needed:
--            BufferMtl *bufferMtl = mtl::GetImpl(glElementArrayBuffer);
--            *idxBufferOut        = bufferMtl->getCurrentBuffer();
--            *idxBufferOffsetOut  = convertedOffset;
++    {
 +        case gl::PrimitiveMode::Points:
 +            perPrimitiveIndexCount = 1;
 +            break;
@@ -7857,13 +7857,13 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +    for (const auto &range : drawIndexRanges)
 +    {
 +        if (range.end < firstIndex)
-+        {
-+            continue;
-+        }
-+        if (range.begin > lastIndex)
          {
 -        // This buffer is already converted to ushort indices above
 -        *indexTypeOut = gl::DrawElementsType::UnsignedShort;
++            continue;
++        }
++        if (range.begin > lastIndex)
++        {
 +            break;
          }
 +        DrawIndexRange clippedRange{std::max(range.begin, firstIndex),
@@ -7921,13 +7921,13 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +            // primitives that produce `perPrimitiveIndexCount` indices.
 +            drawIndexCount = (indexCount - perPrimitiveIndexCount + 1) * perPrimitiveIndexCount;
 +            drawBeginIndex = clippedRange.begin * perPrimitiveIndexCount;
-+        }
-+        AppendDrawCommands<0>(drawCommands, drawIndexCount, drawBeginIndex, drawIndexSize);
-     }
+         }
 -    // Reminder, offset is in bytes, not elements.
 -    // Slice draw commands based off of indices.
 -    uint32_t nIndicesPerPrimitive;
 -    switch (primitiveMode)
++        AppendDrawCommands<0>(drawCommands, drawIndexCount, drawBeginIndex, drawIndexSize);
++    }
 +}
 +
 +angle::Result VertexArrayMtl::resolveDrawElementsDraw(
@@ -8012,12 +8012,12 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 -            size_t indicesUsed = ((range.restartBegin + restartSize) - currentIndexOffset);
 -            if (indicesLeft <= indicesUsed)
 +    else
-     {
--                indicesLeft = 0;
++    {
 +        firstIndex = static_cast<size_t>(reinterpret_cast<uintptr_t>(indices)) /
 +                     gl::GetDrawElementsTypeSize(type);
 +        if (type != indexBufferType)
-+        {
+         {
+-                indicesLeft = 0;
 +            mtl::BufferSlice idxSlice;
 +            ANGLE_TRY(convertIndexBuffer(glContext, type, 0, &idxSlice));
 +            indexBuffer       = idxSlice.buffer();
@@ -8069,7 +8069,10 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +        // No primitive restart splitting — inject a single full range.
 +        indexRangesStorage.emplace_back(firstIndex, firstIndex + count - 1);
 +        indexRanges = &indexRangesStorage;
-+    }
+     }
+-    if (indicesLeft >= nIndicesPerPrimitive)
+-        drawCommands.push_back({indicesLeft, currentIndexOffset * indexTypeBytes});
+-    return drawCommands;
 +
 +    // Step 3: Conditionally rewrite the index buffer for provoking vertex.
 +    // preconditionIndexBuffer dispatches per-range, so with primitive restart it only
@@ -8099,10 +8102,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +    {
 +        AppendDrawCommands(drawCommands, mode, static_cast<uint32_t>(count), firstIndex, newMode,
 +                           indexBufferType);
-     }
--    if (indicesLeft >= nIndicesPerPrimitive)
--        drawCommands.push_back({indicesLeft, currentIndexOffset * indexTypeBytes});
--    return drawCommands;
++    }
 +
 +    *outNewMode           = newMode;
 +    *outDrawCommands      = std::move(drawCommands);
@@ -8133,7 +8133,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
          return angle::Result::Continue;
      }
  
-@@ -881,10 +1055,13 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -881,10 +1055,14 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
           contextMtl->getRenderCommandEncoder()))
      {
          // We shouldn't use GPU to convert when we are in a middle of a render pass.
@@ -8145,10 +8145,11 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
 +                                  &streamed));
 +        conversion->convertedBuffer = streamed.buffer();
 +        conversion->convertedOffset = streamed.offset();
++        conversion->dirty = false;
      }
      else
      {
-@@ -892,8 +1069,8 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -892,8 +1070,8 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
                                          conversion));
      }
      // Calculate ranges for prim restart simple types.
@@ -8159,7 +8160,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
  
      return angle::Result::Continue;
  }
-@@ -913,8 +1090,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -913,8 +1091,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
      // Allocate new buffer, save it in conversion struct so that we can reuse it when the content
      // of the original buffer is not dirty.
      conversion->data.releaseInFlightBuffers(contextMtl);
@@ -8172,7 +8173,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
  
      // Do the conversion on GPU.
      ANGLE_TRY(display->getUtils().convertIndexBufferGPU(
-@@ -935,16 +1114,14 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -935,16 +1115,14 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
                                                            gl::DrawElementsType indexType,
                                                            size_t indexCount,
                                                            const void *sourcePointer,
@@ -8191,7 +8192,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
  
      return angle::Result::Continue;
  }
-@@ -957,18 +1134,6 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -957,18 +1135,6 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
  {
      unsigned srcFormatSize = srcVertexFormat.intendedAngleFormat().pixelBytes;
  
@@ -8210,7 +8211,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
      ContextMtl *contextMtl = mtl::GetImpl(glContext);
  
      // Convert to tightly packed format
-@@ -995,7 +1160,7 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -995,7 +1161,7 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
          mCurrentArrayBufferStrides[attribIndex] = stride;
          return angle::Result::Continue;
      }
@@ -8219,7 +8220,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
          srcBuffer, static_cast<VertexConversionBufferMtl *>(conversion), binding, srcFormatSize);
  
      const angle::Format &convertedAngleFormat = convertedFormat.actualAngleFormat();
-@@ -1079,26 +1244,36 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -1079,26 +1245,36 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
  {
      ContextMtl *contextMtl = mtl::GetImpl(glContext);
  
@@ -8266,7 +8267,7 @@ index a0e48bffb01fb3d122f903618f7ec208a682e9ad..ce6ca93dcf2340f48002dec4b77e2a40
      params.dstStride            = targetStride;
      params.dstComponents        = convertedFormat.actualAngleFormat().channelCount;
  
-@@ -1120,8 +1295,8 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -1120,8 +1296,8 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
  
      ANGLE_TRY(conversion->data.commit(contextMtl));
  
@@ -10387,10 +10388,10 @@ index cab5e56ae928431771ea1ffd8e2db92121d84798..7520ee4ef485a0037fb27c15b2218d96
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index d16a3d0341979b0fb7d123c790337031d30b3436..13ca7cdde8fd73e775c864422df11b405f337cb8 100644
+index 8cbf2a588fdc83f06c32a93add57d2b7bb9686d4..7113634e6061cb0caf19aa5311549004d5b5c3c8 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5941,6 +5941,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5937,6 +5937,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -10542,7 +10543,7 @@ index 4eaad41f83aa2fa824872060994565fc039e49f3..bf0e366735da841e0bc391e646731e2f
                  return false;
              }
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index ec176ba51f98a096d38721d084bcc6422d79e5b2..bdbdb87fb0d327f2bed4fa1b2b7928b0c06f89a1 100644
+index 3fa34acf37f1625c01e6a7b490a5bd8a127d3679..c5fa74bcc4427cb6f130f51bda34bbbebca82777 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
 @@ -724,6 +724,9 @@ bool ValidCapUncommon(const PrivateState &state, ErrorSet *errors, GLenum cap, b
@@ -10555,7 +10556,7 @@ index ec176ba51f98a096d38721d084bcc6422d79e5b2..bdbdb87fb0d327f2bed4fa1b2b7928b0
          default:
              break;
      }
-@@ -5905,6 +5908,19 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
+@@ -5923,6 +5926,19 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
      return true;
  }
  
@@ -10991,10 +10992,10 @@ index 0943c311aec4ccee5cc4e15b08a4df8366caf2e6..d2b950c572580cbda24ee8223bfe8533
      // file access.
      angle::InitMetalFileAPIHooking(argc, argv);
 diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
-index a551075c16527c221be9a3bd617f2f49af2e49cc..8b193a9ae1207543a9e6c62d578b88bd611600d7 100644
+index 43ed0011803bb39c33ad49e47ea7ececefd6a24f..6d0ab220c0cc7855e0a4729d58fad3df89e34062 100644
 --- a/src/tests/angle_end2end_tests.gni
 +++ b/src/tests/angle_end2end_tests.gni
-@@ -94,6 +94,7 @@ angle_end2end_tests_sources = [
+@@ -95,6 +95,7 @@ angle_end2end_tests_sources = [
    "gl_tests/GLSLConstantFoldingTest.cpp",
    "gl_tests/GLSLOutputTest.cpp",
    "gl_tests/GLSLTest.cpp",
@@ -11002,6 +11003,21 @@ index a551075c16527c221be9a3bd617f2f49af2e49cc..8b193a9ae1207543a9e6c62d578b88bd
    "gl_tests/GLSLValidationTest.cpp",
    "gl_tests/GeometryShaderTest.cpp",
    "gl_tests/GetImageTest.cpp",
+diff --git a/src/tests/angle_end2end_tests_expectations.txt b/src/tests/angle_end2end_tests_expectations.txt
+index 003d9b36b44bd5b1003b0699765b5df55d3a3088..28324122c3c36b54367bdd5cc84dff05ca4b3fef 100644
+--- a/src/tests/angle_end2end_tests_expectations.txt
++++ b/src/tests/angle_end2end_tests_expectations.txt
+@@ -524,6 +524,10 @@
+ 351275980 MAC METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
+ 351275980 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
+ 
++// Validation failure. Correctly handled in WebGL.
++0 MAC METAL : Texture2DTestES3.TexImageFormatMismatch/ES3_Metal* = SKIP
++0 IOS METAL : Texture2DTestES3.TexImageFormatMismatch/ES3_Metal* = SKIP
++
+ // D3D
+ 42264944 WIN D3D9 : GLSLValidationTest.HandleExcessiveLoopBug/* = SKIP
+ 42264653 WIN D3D11 : GLSLTestLoops.*ContinueInSwitch/* = SKIP
 diff --git a/src/tests/angle_end2end_tests_main.cpp b/src/tests/angle_end2end_tests_main.cpp
 index fa39d189cd0bca74fe6c484438fc29dc7fddbbb7..b6b08996139e1d43ee4a450cc25cafe02648ab94 100644
 --- a/src/tests/angle_end2end_tests_main.cpp
@@ -11206,6 +11222,19 @@ index b51b5f07cba261dddef39cc80115986108722bab..817668c08b7a018ad2525aa9999914c4
  
      EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
      EGLDisplay display = eglGetPlatformDisplayEXT(
+diff --git a/src/tests/gl_tests/BufferDataTest.cpp b/src/tests/gl_tests/BufferDataTest.cpp
+index 45a3fc6381546af27e5b8e393e8600da2405e0ef..cedd36092c827e4c52066974e38cc5c58623d5ee 100644
+--- a/src/tests/gl_tests/BufferDataTest.cpp
++++ b/src/tests/gl_tests/BufferDataTest.cpp
+@@ -1048,7 +1048,7 @@ TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
+ 
+     GLBuffer vb;
+     glBindBuffer(GL_ARRAY_BUFFER, vb);
+-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size(), quadVertices.data(),
++    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size() * 3, quadVertices.data(),
+                  GL_STATIC_DRAW);
+ 
+     GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
 diff --git a/src/tests/gl_tests/ContextLostTest.cpp b/src/tests/gl_tests/ContextLostTest.cpp
 index 1192e7e7828b69347983ead73f848240f4f73c64..3daa4a2cf708810462b04281822da20f42189a16 100644
 --- a/src/tests/gl_tests/ContextLostTest.cpp
@@ -15305,7 +15334,7 @@ index fc5fb4aff5d85f7e998ef1908bfa041596dfa117..6a259cf4b022fd6eae58284831d9efcf
  TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
  {
 diff --git a/src/tests/gl_tests/RobustResourceInitTest.cpp b/src/tests/gl_tests/RobustResourceInitTest.cpp
-index b70fbdf2eea72f9931e2b261d18e4942f41197d9..fc6fdcb085063293f5a96be5cd908fafc51cf3ba 100644
+index 9faedd6bf5c635da25e246de66c068fa202e7b5d..62693e6bcaf6cd3e0639c41192828fb44ba4dfd9 100644
 --- a/src/tests/gl_tests/RobustResourceInitTest.cpp
 +++ b/src/tests/gl_tests/RobustResourceInitTest.cpp
 @@ -13,7 +13,6 @@
@@ -15329,7 +15358,7 @@ index c80df6c93426bfb422cd640170824f7c0a6a0067..2c1bcc1156342c45d734b6f762e38406
  
  namespace angle
 diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest.cpp
-index e756a93276b200187a8cf168f48f0787e25c5cfc..a25e5c00bf9c2cc0eee221ab5997480dae07ba81 100644
+index e756a93276b200187a8cf168f48f0787e25c5cfc..4ce2e7263e70916c5564bf3f48dcf5bb135314e3 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
 @@ -2010,6 +2010,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
@@ -15468,6 +15497,15 @@ index e756a93276b200187a8cf168f48f0787e25c5cfc..a25e5c00bf9c2cc0eee221ab5997480d
  // Test that skip defined in unpack parameters is taken into account when determining whether
  // unpacking source extends outside unpack buffer bounds.
  TEST_P(Texture2DTestES3, UnpackSkipPixelsOutOfBounds)
+@@ -17691,7 +17797,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
+ }
+ 
+ // Create an integer format texture but specify a FLOAT sampler. OpenGL
+-// tolerates this but it causes a Vulkan validation error.
++// tolerates this but it causes a Vulkan and Metal validation error.
+ TEST_P(Texture2DTestES3, TexImageFormatMismatch)
+ {
+     GLint textureUnit = 2;
 @@ -17739,6 +17845,172 @@ TEST_P(Texture2DTestES3, TexImageFormatMismatch)
      glDrawElementsInstanced(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, 0, 1);
  }
@@ -15771,10 +15809,10 @@ index fc742ddb4b03d07e6ebbd513360cd8118b245a07..5afd3663fb967b1f364d3ab353a05b0a
          {nullptr, nullptr, nullptr, nullptr, nullptr},
          {nullptr, nullptr, nullptr, nullptr, nullptr},
 diff --git a/src/tests/gl_tests/VertexAttributeTest.cpp b/src/tests/gl_tests/VertexAttributeTest.cpp
-index 098713a133833977498df93cb449374ea4d8c6fe..82a539c8cae57865028839545fbd650979e16464 100644
+index ebaaf8500701e72f779c3046179df20b7c408898..d3dbc656a0e6acdcc47a18bd3b79af572fe9edaf 100644
 --- a/src/tests/gl_tests/VertexAttributeTest.cpp
 +++ b/src/tests/gl_tests/VertexAttributeTest.cpp
-@@ -5791,6 +5791,212 @@ void main(void)
+@@ -5792,6 +5792,212 @@ void main(void)
      EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
  }
  
@@ -15987,8 +16025,17 @@ index 098713a133833977498df93cb449374ea4d8c6fe..82a539c8cae57865028839545fbd6509
  // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
  #if !defined(__APPLE__)
  #    define EMULATED_VAO_CONFIGS                                          \
+@@ -5879,7 +6085,7 @@ TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
+     std::vector<float> verts(256 * 2);
+     for (int i = 0; i < 256; i++)
+     {
+-        float x, y;
++        float x = 0, y = 0;
+         // Vertices 0, 1, 2: cover the right half of the framebuffer
+         // Vertices 3, 4, 5: cover the left half of the framebuffer
+         switch (i % 6)
 diff --git a/src/tests/gl_tests/WebGLCompatibilityTest.cpp b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
-index a57b0bf6a50c67a4fa706c1e95109c24302141ec..e992959289e274a6c41531fa75b5195d820d304a 100644
+index a57b0bf6a50c67a4fa706c1e95109c24302141ec..2a1a3af96b85a5df8e0128fbeb4cff08c4b20c91 100644
 --- a/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 +++ b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 @@ -1812,15 +1812,16 @@ void main()
@@ -16057,7 +16104,7 @@ index a57b0bf6a50c67a4fa706c1e95109c24302141ec..e992959289e274a6c41531fa75b5195d
  }
  
  // Test for drawing with a null index buffer
-@@ -7162,6 +7193,82 @@ TEST_P(WebGL2CompatibilityTest, PrimitiveRestartIndexAfterToggleIsError)
+@@ -7162,6 +7193,149 @@ TEST_P(WebGL2CompatibilityTest, PrimitiveRestartIndexAfterToggleIsError)
      EXPECT_GL_ERROR(GL_INVALID_OPERATION);
  }
  
@@ -16137,6 +16184,73 @@ index a57b0bf6a50c67a4fa706c1e95109c24302141ec..e992959289e274a6c41531fa75b5195d
 +    }
 +}
 +
++// Create an integer format texture but specify a FLOAT sampler. In WebGL,
++// unlike OpenGL, this must generate INVALID_OPERATION at draw time.
++// Also verify that with a matching float texture, the draw succeeds and
++// produces the expected output.
++// Modeled after TEST_P(Texture2DTestES3, TexImageFormatMismatch).
++TEST_P(WebGL2CompatibilityTest, TexImageFormatMismatch)
++{
++    constexpr char kVS[] =
++        R"(#version 300 es
++in vec4 a_position;
++out vec2 v_texCoord;
++void main()
++{
++    gl_Position = a_position;
++    v_texCoord = (a_position.xy * 0.5) + 0.5;
++})";
++
++    constexpr char kFS[] =
++        R"(#version 300 es
++precision highp float;
++uniform highp sampler2D tex;
++in vec2 v_texCoord;
++out vec4 fragColor;
++void main()
++{
++    fragColor = texture(tex, v_texCoord);
++})";
++
++    ANGLE_GL_PROGRAM(program, kVS, kFS);
++
++    GLint texLocation = glGetUniformLocation(program, "tex");
++    ASSERT_NE(-1, texLocation);
++
++    glUseProgram(program);
++
++    glUniform1i(texLocation, 0);
++
++    // First, verify that a matching float-format texture works and draws correctly.
++    GLTexture tex;
++    glBindTexture(GL_TEXTURE_2D, tex);
++    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
++    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
++    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
++
++    std::vector<GLColor> greenData(8 * 8, GLColor::green);
++    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE,
++                    greenData.data());
++    ASSERT_GL_NO_ERROR();
++
++    glActiveTexture(GL_TEXTURE0);
++    glBindTexture(GL_TEXTURE_2D, tex);
++
++    // Drawing with a matching sampler/texture format must succeed.
++    drawQuad(program, "a_position", 0.5f, 1.0f, true);
++    ASSERT_GL_NO_ERROR();
++    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
++
++    // In WebGL, drawing with a sampler/texture format mismatch must fail.
++    GLubyte texData[8 * 8 * 2] = {};
++    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT,
++                    texData);
++    ASSERT_GL_NO_ERROR();
++
++    drawQuad(program, "a_position", 0.5f, 1.0f, true);
++    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
++}
++
  ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
  
  GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
@@ -16157,7 +16271,7 @@ index 144cd6f0c27ffe48f4cbb5d3e2cb90a36c74a7c5..0ffe2a20545b7c18eda8f4231863a00a
  }
  
 diff --git a/src/tests/test_utils/ANGLETest.cpp b/src/tests/test_utils/ANGLETest.cpp
-index 8394357e9a01f073ae6a5696da8a555bc97a43ba..f30ddb769bb75672c4bcfbd154c6c0229e1af905 100644
+index 8394357e9a01f073ae6a5696da8a555bc97a43ba..09b43499d948839f8bcf08224bcbce68e62feba4 100644
 --- a/src/tests/test_utils/ANGLETest.cpp
 +++ b/src/tests/test_utils/ANGLETest.cpp
 @@ -29,9 +29,7 @@
@@ -16200,6 +16314,17 @@ index 8394357e9a01f073ae6a5696da8a555bc97a43ba..f30ddb769bb75672c4bcfbd154c6c022
 +    }
  
      if (gEnableRenderDocCapture)
+     {
+@@ -614,8 +621,8 @@ void ANGLETestBase::initOSWindow()
+         return;
+     }
+ 
+-    // On Linux we must keep the test windows visible. On Windows it doesn't seem to need it.
+-    setWindowVisible(getOSWindow(), !IsWindows());
++    // On Linux we must keep the test windows visible. On Windows or Metal it doesn't seem to need it.
++    setWindowVisible(getOSWindow(), !(IsWindows() || IsMac() || IsIOS()));
+ 
+     switch (mCurrentParams->driver)
      {
 @@ -703,9 +710,6 @@ void ANGLETestBase::ANGLETestSetUp()
      fullTestNameStr << testInfo->test_suite_name() << "." << testInfo->name();

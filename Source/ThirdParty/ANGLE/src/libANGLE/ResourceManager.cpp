@@ -97,8 +97,13 @@ void TypedResourceManager<ResourceType, ImplT, IDType>::deleteObject(const Conte
         return;
     }
 
-    // Requires an explicit this-> because of C++ template rules.
-    this->mHandleAllocator.release(GetIDValue(handle));
+    // if `BindGeneratesResource` is disabled then we do not recycle the handle ID until the object
+    // has had the `onDestroy` method called.
+    if (!context->retainIdUntilObjectDestroyed())
+    {
+        // Requires an explicit this-> because of C++ template rules.
+        this->mHandleAllocator.release(GetIDValue(handle));
+    }
 
     if (resource)
     {

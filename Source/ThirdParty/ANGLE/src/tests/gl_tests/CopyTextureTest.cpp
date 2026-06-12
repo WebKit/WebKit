@@ -941,6 +941,10 @@ TEST_P(CopyTextureTest, CopyTextureInvalidTextureIds)
                           false, false);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 
+    glCopyTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[0], 0, GL_RGBA,
+                          GL_UNSIGNED_BYTE, false, false, false);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
     glCopyTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, GL_RGBA,
                           GL_UNSIGNED_BYTE, false, false, false);
     EXPECT_GL_NO_ERROR();
@@ -1037,6 +1041,10 @@ TEST_P(CopyTextureTest, CopySubTextureInvalidTextureIds)
     glCopySubTextureCHROMIUM(99995, 0, GL_TEXTURE_2D, 99996, 0, 1, 1, 0, 0, 1, 1, false, false,
                              false);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    glCopySubTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[0], 0, 1, 1, 0, 0, 1, 1,
+                             false, false, false);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     glCopySubTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, 1, 1, 0, 0, 1, 1,
                              false, false, false);

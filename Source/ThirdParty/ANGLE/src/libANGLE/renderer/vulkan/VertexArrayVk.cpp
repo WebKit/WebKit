@@ -529,7 +529,8 @@ angle::Result VertexArrayVk::convertIndexBufferGPU(ContextVk *contextVk,
     UtilsVk::ConvertIndexParameters params = {};
     params.srcOffset                       = static_cast<uint32_t>(offsetIntoSrcData);
     params.dstOffset                       = 0;
-    params.maxIndex                        = static_cast<uint32_t>(bufferVk->getSize());
+    // Remaining space in buffer was already computed above.
+    params.maxIndex = static_cast<uint32_t>(srcDataSize);
 
     ANGLE_TRY(contextVk->getUtils().convertIndexBuffer(contextVk, dst, src, params));
     mTranslatedByteIndexData.clearDirty();

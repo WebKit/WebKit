@@ -12,6 +12,7 @@ namespace angle
 {
 int GetANGLERevision();
 const char *GetANGLEVersionString();
+const char *GetANGLEEGLVersionString();
 const char *GetANGLECommitHash();
 int GetANGLECommitHashSize();
 const char *GetANGLEShaderProgramVersion();

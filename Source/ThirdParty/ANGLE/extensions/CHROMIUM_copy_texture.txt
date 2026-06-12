@@ -125,6 +125,9 @@ Additions to the OpenGL ES 2.0 Specification
     INVALID_VALUE is generated if <sourceId> or <destId> are not valid texture
     objects.
 
+    INVALID_OPERATION is generated if <sourceId> and <destId> refer to the same
+    texture objects and <sourceLevel> is the same as <destLevel>.
+
     INVALID_ENUM is generated if <destTarget> is not one of the valid targets
     described above.
 

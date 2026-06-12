@@ -12,9 +12,6 @@
 42266627 PIXEL6 NATIVE : respawnables = SKIP
 42266034 LINUX SWIFTSHADER : star_wars_kotor = SKIP
 
-// This trace is having issues with buffer IDs after Reset exposed by http://crrev/c/7712789
-289380798 VULKAN : final_fantasy = SKIP
-
 // This trace is missing clouds due to precision diffs between stages
 183647942 ANDROID ARM : minecraft = SKIP
 
@@ -64,7 +61,6 @@
 42264359 ANDROID PIXEL4ORXL NATIVE : cashman_casino = SKIP
 42264359 ANDROID PIXEL4ORXL NATIVE : lightning_link = SKIP
 450251026 ANDROID PIXEL6 VULKAN : black_beacon = SKIP
-42266403 ANDROID PIXEL6 NATIVE : final_fantasy = SKIP
 
 42265489 ANDROID QUALCOMM NATIVE : marvel_strike_force = SKIP
 378464990 QUALCOMM VULKAN : genshin_impact = SKIP

@@ -18,7 +18,7 @@ namespace gl
 {
 namespace
 {
-constexpr size_t kInvalidContentsObserverIndex            = std::numeric_limits<size_t>::max();
+constexpr size_t kInvalidContentsObserverIndex = std::numeric_limits<size_t>::max();
 }  // anonymous namespace
 
 // VertexArrayBufferBindingMaskAndContext implementation
@@ -95,8 +95,7 @@ BufferState::~BufferState() {}
 
 Buffer::Buffer(rx::GLImplFactory *factory, BufferID id)
     : RefCountObject(factory->generateSerial(), id), mImpl(factory->createBuffer(mState))
-{
-}
+{}
 
 Buffer::~Buffer()
 {
@@ -107,9 +106,16 @@ void Buffer::onDestroy(const Context *context)
 {
     mContentsObservers.clear();
 
+    if (context && context->retainIdUntilObjectDestroyed())
+    {
+        context->onBufferDestroy(this);
+    }
+
     // In tests, mImpl might be null.
     if (mImpl)
+    {
         mImpl->destroy(context);
+    }
 }
 
 void Buffer::onBind(const Context *context, BufferBinding target)

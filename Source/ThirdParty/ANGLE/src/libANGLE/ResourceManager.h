@@ -75,6 +75,17 @@ class TypedResourceManager : public ResourceManagerBase
         return GetIDValue(handle) == 0 || mObjectMap.contains(handle);
     }
 
+    void recycleHandle(IDType handle)
+    {
+        if (isHandleGenerated(handle))
+        {
+            return;
+        }
+
+        // Requires an explicit this-> because of C++ template rules.
+        this->mHandleAllocator.release(GetIDValue(handle));
+    }
+
     const ResourceMap<ResourceType, IDType> &getResourcesForCapture() const { return mObjectMap; }
 
   protected:

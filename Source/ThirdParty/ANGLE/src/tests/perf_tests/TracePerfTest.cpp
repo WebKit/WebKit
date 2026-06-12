@@ -1794,8 +1794,12 @@ void TracePerfTest::drawBenchmark()
     }
     else
     {
-        bindFramebuffer(GL_FRAMEBUFFER, 0);
-        saveScreenshotIfEnabled(ScreenshotType::kFrame);
+        // Skip setup and screenshot if upgrading trace
+        if (!gRetraceMode)
+        {
+            bindFramebuffer(GL_FRAMEBUFFER, 0);
+            saveScreenshotIfEnabled(ScreenshotType::kFrame);
+        }
         getGLWindow()->swap();
     }
 

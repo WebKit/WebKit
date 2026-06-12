@@ -780,6 +780,7 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
       mFlipViewportForDrawFramebuffer(false),
       mFlipViewportForReadFramebuffer(false),
       mIsAnyHostVisibleBufferWritten(false),
+      mImageWithTileMemory(nullptr),
       mCurrentQueueSerialIndex(kInvalidQueueSerialIndex),
       mInitialContextPriority(renderer->getDriverPriority(GetContextPriority(state))),
       mCommandState(renderer,
@@ -1162,7 +1163,7 @@ void ContextVk::onDestroy(const gl::Context *context)
 {
     VkDevice device = getDevice();
 
-    ASSERT(mImagesWithTileMemory.empty());
+    ASSERT(mImageWithTileMemory == nullptr);
 
     mCommandState.destroy(device);
 
@@ -1371,11 +1372,6 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
         {
             ANGLE_TRY(vk::GetImpl(context.second)->flushOutsideRenderPassCommands());
         }
-    }
-
-    if (getFeatures().supportsTileMemoryHeap.enabled)
-    {
-        mImagesWithTileMemory.reserve(4);
     }
 
     return angle::Result::Continue;
@@ -2333,7 +2329,7 @@ angle::Result ContextVk::handleDirtyAnySamplePassedQueryEnd(DirtyBits::Iterator 
                                                             DirtyBits dirtyBitMask)
 {
     // If we are using tile memory, don't enable this optimization to prevent fallback.
-    if (mRenderPassCommands->started() && mImagesWithTileMemory.empty())
+    if (mRenderPassCommands->started() && mImageWithTileMemory == nullptr)
     {
         // When we switch from query enabled draw to query disabled draw, we do immediate flush to
         // ensure the query result will be ready early so that application thread calling
@@ -3738,9 +3734,9 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
         mCommandState.flushImagesTransitionToForeign(std::move(mImagesToTransitionToForeign));
     }
 
-    if (!mImagesWithTileMemory.empty())
+    if (mImageWithTileMemory != nullptr)
     {
-        ANGLE_TRY(finalizeImagesWithTileMemory());
+        ANGLE_TRY(finalizeImageWithTileMemory());
     }
 
     ANGLE_TRY(mCommandState.insertSubmitDebugMarker(this, reason));
@@ -3795,7 +3791,7 @@ angle::Result ContextVk::onCopyUpdate(VkDeviceSize size, bool *commandBufferWasF
     // If the copy size exceeds the specified threshold, submit the outside command buffer. When
     // there are images with tile memory in use, avoid submission by trying to avoid triggering tile
     // memory fallback.
-    if (mTotalBufferToImageCopySize >= kMaxBufferToImageCopySize && mImagesWithTileMemory.empty())
+    if (mTotalBufferToImageCopySize >= kMaxBufferToImageCopySize && mImageWithTileMemory == nullptr)
     {
         ANGLE_TRY(flushAndSubmitOutsideRenderPassCommands(
             QueueSubmitReason::BufferToImageUpdateLimitReached));
@@ -5614,7 +5610,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
 
                 // If we are using tile memory, don't enable this optimization to prevent fallback.
                 if ((shouldSubmitAtFBOBoundary || mState.getDrawFramebuffer()->isDefault()) &&
-                    mRenderPassCommands->started() && mImagesWithTileMemory.empty())
+                    mRenderPassCommands->started() && mImageWithTileMemory == nullptr)
                 {
                     // This will behave as if user called glFlush, but the actual flush will be
                     // triggered at endRenderPass time.
@@ -7941,6 +7937,28 @@ angle::Result ContextVk::flushCommandsAndEndRenderPass(RenderPassClosureReason r
 
     ANGLE_TRY(flushCommandsAndEndRenderPassWithoutSubmit(reason));
 
+    // If mImageWithTileMemory does not have any valid data, then there is no worry about data loss
+    // here. Next addImageWithTileMemory will just overwrite the pointer with new pointer.
+    if (mImageWithTileMemory && mImageWithTileMemory->isVkImageContentDefined())
+    {
+        FramebufferVk *drawFramebufferVk = getDrawFramebuffer();
+        const vk::ImageHelper *nextImageWithTileMemory =
+            drawFramebufferVk->getImageWithTileMemory();
+        if (nextImageWithTileMemory && nextImageWithTileMemory != mImageWithTileMemory)
+        {
+            ASSERT(nextImageWithTileMemory->useTileMemory());
+            // Next renderPass also uses image with tileMemory, and it is different from current
+            // mImageWithTileMemory. The vkCmdBindTileMemoryQCOM call of nextImageWithTileMemory
+            // will cause mImageWithTileMemory point to the same memory location. So if
+            // mImageWithTileMemory has valid content, we must fallback to give room for
+            // nextImageWithTileMemory. In theory we could also choose to fallback
+            // nextImageWithTileMemory, but since we know mImageWithTileMemory has valid data, it
+            // likely will eventually fallback anyway. So we choose to fallback mImageWithTileMemory
+            // here.
+            ANGLE_TRY(finalizeImageWithTileMemory());
+        }
+    }
+
     // In some cases, it is recommended to flush and submit the command buffer to boost performance
     // or avoid too much memory allocation.
     QueueSubmitReason submitReason;
@@ -8994,13 +9012,16 @@ angle::Result ContextVk::onVertexArrayChange(const gl::AttributesMask dirtyAttri
 void ContextVk::addImageWithTileMemory(vk::ImageHelper *imageToAdd)
 {
     ASSERT(imageToAdd->useTileMemory());
-    if (std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), imageToAdd) !=
-        mImagesWithTileMemory.end())
+    if (mImageWithTileMemory == imageToAdd)
     {
         // Already added.
         return;
     }
 
+    // We can only support one image with tile memory. So if we are overwriting
+    // mImageWithTileMemory, it must not have any valid content. Otherwise it should have triggered
+    // fallback (see ContextVk::startRenderPass).
+    ASSERT(mImageWithTileMemory == nullptr || !mImageWithTileMemory->isVkImageContentDefined());
     // If this is first time added, it must have no valid data
     ASSERT(!imageToAdd->isVkImageContentDefined());
 
@@ -9010,92 +9031,61 @@ void ContextVk::addImageWithTileMemory(vk::ImageHelper *imageToAdd)
             imageToAdd->getDeviceMemory());
     }
 
-    mImagesWithTileMemory.emplace_back(imageToAdd);
+    mImageWithTileMemory = imageToAdd;
 }
 
 void ContextVk::removeImageWithTileMemory(const vk::ImageHelper *imageToRemove)
 {
     ASSERT(imageToRemove->useTileMemory());
-    auto iter =
-        std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), imageToRemove);
-    if (iter != mImagesWithTileMemory.end())
+    if (mImageWithTileMemory == imageToRemove)
     {
-        mImagesWithTileMemory.erase(iter);
+        mImageWithTileMemory = nullptr;
     }
 }
 
-bool ContextVk::isImageWithTileMemoryFinalized(const vk::ImageHelper *image) const
+angle::Result ContextVk::finalizeImageWithTileMemory()
 {
-    return std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), image) ==
-           mImagesWithTileMemory.end();
-}
+    ASSERT(mImageWithTileMemory != nullptr);
+    // Check image with tile memory to see if they have valid content or not. tile memory is
+    // transient, we must reallocate to keep data valid across command buffer boundary or before
+    // binding to a different VkDeviceMemory.
+    ASSERT(mImageWithTileMemory->useTileMemory());
 
-angle::Result ContextVk::finalizeImagesWithTileMemory()
-{
-    ASSERT(!mImagesWithTileMemory.empty());
-    std::vector<vk::ImageHelper *> imagesToClearForSimulation;
-
-    // Check all images with tile memory to see if they have valid content or not. tile memory are
-    // transient, we must reallocate to keep data valid across command buffer boundary.
-    while (!mImagesWithTileMemory.empty())
+    // Other context may have submitted command buffer and causes it fallback already, so check
+    // again.
+    if (mImageWithTileMemory->isVkImageContentDefined())
     {
-        vk::ImageHelper *image = mImagesWithTileMemory.back();
-        ASSERT(image->useTileMemory());
-        mImagesWithTileMemory.pop_back();
-
-        // Other context may have submitted command buffer and causes it fallback already, so check
-        // again.
-        if (image->isVkImageContentDefined())
-        {
-            ANGLE_TRY(image->fallbackFromTileMemory(this));
-            ASSERT(!image->useTileMemory());
-        }
-        else if (!getFeatures().supportsTileMemoryHeap.enabled)
-        {
-            imagesToClearForSimulation.push_back(image);
-        }
+        ANGLE_TRY(mImageWithTileMemory->fallbackFromTileMemory(this));
+        // fallbackFromTileMemory should set mImageWithTileMemory to nullptr
+        ASSERT(mImageWithTileMemory == nullptr);
     }
-
-    if (!imagesToClearForSimulation.empty())
+    else if (!getFeatures().supportsTileMemoryHeap.enabled)
     {
         ASSERT(getFeatures().simulateTileMemoryForTesting.enabled);
-
         // clear VkImage to simulate the transient nature of tile memory
         UtilsVk::ClearTextureParameters params = {};
         params.level                           = vk::LevelIndex(0);
         params.layer                           = 0;
         params.clearValue                      = {};
         params.clearArea                       = gl::Box(0, 0, 0, 0, 0, 1);
-        for (vk::ImageHelper *image : imagesToClearForSimulation)
-        {
-            // Other context may have triggered fallback already, so check
-            // again.
-            if (image->useTileMemory() && !image->isVkImageContentDefined())
-            {
-                params.aspectFlags      = image->getAspectFlags();
-                params.clearArea.width  = image->getExtents().width;
-                params.clearArea.height = image->getExtents().height;
-                ANGLE_TRY(mUtils.clearTextureNoFlush(this, image, params));
+        params.aspectFlags                     = mImageWithTileMemory->getAspectFlags();
+        params.clearArea.width                 = mImageWithTileMemory->getExtents().width;
+        params.clearArea.height                = mImageWithTileMemory->getExtents().height;
+        ANGLE_TRY(mUtils.clearTextureNoFlush(this, mImageWithTileMemory, params));
 
-                // Since this may called from submitCommands, use no submit version to avoid
-                // recursion.
-                ANGLE_TRY(flushCommandsAndEndRenderPassWithoutSubmit(
-                    RenderPassClosureReason::TileMemorySimulatedClear));
-                ASSERT(mLastFlushedQueueSerial > mLastSubmittedQueueSerial);
+        // Since this may called from submitCommands, use no submit version to avoid
+        // recursion.
+        ANGLE_TRY(flushCommandsAndEndRenderPassWithoutSubmit(
+            RenderPassClosureReason::TileMemorySimulatedClear));
+        ASSERT(mLastFlushedQueueSerial > mLastSubmittedQueueSerial);
 
-                // clearTextureNoFlush may have set content valid again, remove the bits to keep
-                // content as invalid.
-                image->invalidateEntireLevelContent(this, gl::LevelIndex(0));
-                image->invalidateEntireLevelStencilContent(this, gl::LevelIndex(0));
-            }
-        }
-
-        imagesToClearForSimulation.clear();
-        // clearTextureNoFlush will end up add it back to mImagesWithTileMemory.
-        mImagesWithTileMemory.clear();
+        // clearTextureNoFlush may have set content valid again, remove the bits to keep
+        // content as invalid.
+        mImageWithTileMemory->invalidateEntireLevelContent(this, gl::LevelIndex(0));
+        mImageWithTileMemory->invalidateEntireLevelStencilContent(this, gl::LevelIndex(0));
     }
 
-    ASSERT(mImagesWithTileMemory.empty());
+    mImageWithTileMemory = nullptr;
     return angle::Result::Continue;
 }
 

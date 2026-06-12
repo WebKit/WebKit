@@ -221,6 +221,37 @@ TEST_P(PalettedTextureTestES3, TexStorage2DShouldFail)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
+// glCopyTexImage2D with paletted formats should fail.
+TEST_P(PalettedTextureTestES2, CopyTexImageShouldFail)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_compressed_paletted_texture"));
+
+    constexpr GLsizei W = 2;
+    constexpr GLsizei H = 2;
+
+    GLTexture srcTex;
+    glBindTexture(GL_TEXTURE_2D, srcTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture dstTex;
+    glBindTexture(GL_TEXTURE_2D, dstTex);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_PALETTE4_RGBA8_OES, 0, 0, W, H, 0);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_PALETTE4_RGBA8_OES, W, H, 0, sizeof testImage,
+                           &testImage);
+    EXPECT_GL_NO_ERROR();
+
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, W, H);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(PalettedTextureTest);
 
 ANGLE_INSTANTIATE_TEST_ES2(PalettedTextureTestES2);

@@ -1765,6 +1765,7 @@ enum class QueueSubmitReason
     // Others
     DeferredFlush,
     DrawOverlay,
+    TileMemoryFallback,
 
     InvalidEnum,
     EnumCount = InvalidEnum,

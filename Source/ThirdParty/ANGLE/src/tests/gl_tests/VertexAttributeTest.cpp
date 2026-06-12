@@ -8,6 +8,7 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+#include <cmath>
 #include "anglebase/numerics/safe_conversions.h"
 #include "common/mathutil.h"
 #include "test_utils/ANGLETest.h"
@@ -6062,6 +6063,111 @@ void main() {
     glDrawArraysInstancedANGLE(GL_TRIANGLES, first, 6, instanceCount);
     EXPECT_GL_NO_ERROR();
 }
+
+class VertexAttributeUint8Test : public VertexAttributeTestES3
+{};
+
+// Regression test for a bug in emulation of 8-bit indices, when the end of
+// the index buffer is used.
+TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
+{
+    ANGLE_GL_PROGRAM(prog, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(prog2, essl3_shaders::vs::Simple(), essl3_shaders::fs::Blue());
+    glUseProgram(prog);
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    // Vertex buffer: 256 vertices so any uint8 index value is valid for
+    // robust-access vertex fetch (avoids unrelated OOB on the draw side).
+    GLBuffer vbo;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    std::vector<float> verts(256 * 2);
+    for (int i = 0; i < 256; i++)
+    {
+        float x = 0, y = 0;
+        // Vertices 0, 1, 2: cover the right half of the framebuffer
+        // Vertices 3, 4, 5: cover the left half of the framebuffer
+        switch (i % 6)
+        {
+            case 0:
+                x = 0;
+                y = -2;
+                break;
+            case 1:
+                x = 2;
+                y = 0;
+                break;
+            case 2:
+                x = 0;
+                y = 2;
+                break;
+            case 3:
+                x = 0;
+                y = -2;
+                break;
+            case 4:
+                x = 0;
+                y = 2;
+                break;
+            case 5:
+                x = -2;
+                y = 0;
+                break;
+        }
+        verts[i * 2]     = x;
+        verts[i * 2 + 1] = y;
+    }
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), verts.data(), GL_STATIC_DRAW);
+
+    GLint aLoc = glGetAttribLocation(prog, "a_position");
+    glEnableVertexAttribArray(aLoc);
+    glVertexAttribPointer(aLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // Create a large index buffer, contents of which don't really matter.
+    // Filled with low values so any vertex fetch is in-range.
+    const size_t kEboSize = 65536;
+    GLBuffer ebo;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    std::vector<uint8_t> indices(kEboSize);
+    for (size_t i = 0; i < kEboSize - 3; i++)
+    {
+        indices[i] = i % 3;
+    }
+    // Set indices 65533, 65534, 65535 to 3, 4, 5 to cover the left
+    // half of the framebuffer.
+    indices[kEboSize - 3] = 3;
+    indices[kEboSize - 2] = 4;
+    indices[kEboSize - 1] = 5;
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kEboSize, indices.data(), GL_STATIC_DRAW);
+
+    // Draw red to the right half of the framebuffer.  This draw call ensures that the
+    // index buffer is in use by the GPU, so the emulation, if any, would prefer the GPU path.
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, 0);
+
+    // Draw blue to the left half of the framebuffer.  The draw call uses an offset to the
+    // end of the index buffer.  This is a regression test for a bug where the 8-bit index
+    // emulation path miscalculated the range to emulate.
+    const size_t kOffset = 65533;
+    const size_t kCount  = 3;
+    glUseProgram(prog2);
+    GLint aLoc2 = glGetAttribLocation(prog, "a_position");
+    glEnableVertexAttribArray(aLoc2);
+    glVertexAttribPointer(aLoc2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawElements(GL_TRIANGLES, kCount, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(kOffset));
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w / 2 - 2, h, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeUint8Test);
+ANGLE_INSTANTIATE_TEST_ES3_AND(VertexAttributeUint8Test,
+                               ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),
+                               ES3_VULKAN_SWIFTSHADER().disable(Feature::SupportsIndexTypeUint8));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeShiftInstancedArrayDataWithOffsetTest,

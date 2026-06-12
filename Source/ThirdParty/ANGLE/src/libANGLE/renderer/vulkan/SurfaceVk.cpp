@@ -1206,7 +1206,7 @@ egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
         contextVk->getPerfCounters().tileMemoryImages--;
         // ContextVk::onSurfaceUnMakeCurrent must have submitted everything which means all tile
         // images mus have been finalized
-        ASSERT(contextVk->isImageWithTileMemoryFinalized(&mDepthStencilImage));
+        ASSERT(contextVk->getImageWithTileMemory() != &mDepthStencilImage);
     }
 
     return angle::ToEGL(result, EGL_BAD_CURRENT_SURFACE);

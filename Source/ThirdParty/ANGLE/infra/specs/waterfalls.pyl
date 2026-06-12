@@ -95,48 +95,6 @@
           'isolated_scripts': 'isolated_scripts_group_perf',
         },
       },
-      'linux-ir-amd': {
-        'os_type': 'linux',
-        'mixins': [
-          'linux_amd_rx_5500_xt',
-        ],
-        'test_suites': {
-        },
-      },
-      'linux-ir-intel': {
-        'os_type': 'linux',
-        'mixins': [
-          'linux_intel_uhd_630_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'linux_intel_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
-        },
-      },
-      'linux-ir-nvidia': {
-        'os_type': 'linux',
-        'mixins': [
-          'linux_nvidia_gtx_1660_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'linux_nvidia_ir_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
-        },
-      },
-      'linux-ir-swiftshader': {
-        'os_type': 'linux',
-        'mixins': [
-          'gpu-swarming-pool',
-          'no_gpu',
-          'linux-jammy',
-          'timeout_15m',
-          'x86-64',
-        ],
-        'test_suites': {
-          'gtest_tests': 'swangle_gtests',
-          'isolated_scripts': 'swangle_restricted_trace_gold_isolated_scripts',
-        },
-      },
       'linux-nvidia-perf': {
         'os_type': 'linux',
         'mixins': [
@@ -171,24 +129,6 @@
         ],
         'test_suites': {
           'gtest_tests': 'swangle_slow_flaky_gtests',
-        },
-      },
-      'mac-ir-amd': {
-        'os_type': 'mac',
-        'mixins': [
-          'mac_retina_amd_gpu_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'mac_amd_and_intel_gtests',
-        },
-      },
-      'mac-ir-intel': {
-        'os_type': 'mac',
-        'mixins': [
-          'mac_mini_intel_gpu_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'win10-x64-intel-perf': {

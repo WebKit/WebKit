@@ -2226,6 +2226,14 @@ angle::Result UtilsVk::clearTexture(ContextVk *contextVk,
                                     vk::ImageHelper *dst,
                                     const ClearTextureParameters &params)
 {
+    // We can only have one image with tile memory. If new renderPass has a depthBuffer that uses
+    // tile memory, and it is different from the previous renderPass's depth buffer, we force dst
+    // image to fallback the regular device memory.
+    if (dst->useTileMemory() && contextVk->getImageWithTileMemory() != dst)
+    {
+        ANGLE_TRY(dst->fallbackFromTileMemory(contextVk));
+    }
+
     ANGLE_TRY(clearTextureNoFlush(contextVk, dst, params));
 
     // Close the render pass for this temporary framebuffer. If the render pass is not immediately

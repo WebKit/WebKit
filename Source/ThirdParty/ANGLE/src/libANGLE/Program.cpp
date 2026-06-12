@@ -1256,6 +1256,7 @@ void Program::resolveLinkImpl(const Context *context)
         // The above means that it's ok for ANGLE to reset the executable here, but it *may* be
         // helpful to applications if it doesn't.  We do reset it however, the info log should
         // already have enough debug information for the application.
+        waitForPostLinkTasks(context);
         mState.mExecutable->reset();
         return;
     }

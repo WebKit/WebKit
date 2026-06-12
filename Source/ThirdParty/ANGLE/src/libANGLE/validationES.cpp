@@ -3924,7 +3924,7 @@ bool ValidateCopyTexImageParametersBase(const Context *context,
         isSubImage ? *texture->getFormat(target, level).info
                    : GetInternalFormatInfo(internalformat, GL_UNSIGNED_BYTE);
 
-    if (formatInfo.depthBits > 0 || formatInfo.compressed)
+    if (formatInfo.depthBits > 0 || formatInfo.compressed || formatInfo.paletted)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormat);
         return false;

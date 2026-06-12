@@ -753,7 +753,7 @@ class TParseContext : angle::NonCopyable
     bool parseTessControlShaderOutputLayoutQualifier(const TTypeQualifier &typeQualifier);
     bool parseTessEvaluationShaderInputLayoutQualifier(const TTypeQualifier &typeQualifier);
 
-    void checkVariableSize(const TSourceLoc &line,
+    bool checkVariableSize(const TSourceLoc &line,
                            const ImmutableString &identifier,
                            const TType *type);
     void checkVaryingLocations(const TSourceLoc &line, const TVariable *variable);

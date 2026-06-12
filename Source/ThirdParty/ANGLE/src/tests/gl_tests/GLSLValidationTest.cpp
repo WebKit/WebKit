@@ -11,6 +11,8 @@
 #include "test_utils/CompilerTest.h"
 #include "test_utils/angle_test_configs.h"
 
+#include <sstream>
+
 using namespace angle;
 
 namespace
@@ -2750,6 +2752,115 @@ void main() {
 })";
     validateError(GL_FRAGMENT_SHADER, kFS,
                   "'Block' : Size of declared variable exceeds implementation-defined limit");
+}
+
+// Regression test for a 32-bit overflow bug when setting initializer for a large constant.
+TEST_P(WebGL2GLSLValidationTest, LargeConstantVariableWithInitializer)
+{
+    const int N1 = 256;
+    const int N2 = 256;
+    const int N3 = 65537;
+
+    std::ostringstream aInit;
+    const char *delim = "";
+    for (int i = 0; i < N1; i++)
+    {
+        aInit << delim << "1.5";
+        delim = ",";
+    }
+
+    std::ostringstream bInit;
+    delim = "";
+    for (int i = 0; i < N2; i++)
+    {
+        bInit << delim << "sA";
+        delim = ",";
+    }
+
+    std::ostringstream cInit;
+    delim = "";
+    for (int i = 0; i < N3; i++)
+    {
+        cInit << delim << "sB";
+        delim = ",";
+    }
+
+    // Set up a shader with large arrays, overflowing 32-bit math.
+    //
+    // S: 256*sizeof(float) = 1024 bytes
+    // S2: 256*sizeof(S) = 256KB
+    // c: 65537*sizeof(S2) >= 4*4GB
+    std::ostringstream fs;
+    fs << "#version 300 es\n"
+       << "precision highp float;\n"
+       << "struct S { float a[" << N1 << "]; };\n"
+       << "struct S2 { S b[" << N2 << "]; };\n"
+       << "const float a[" << N1 << "] = float[" << N1 << "](" << aInit.str() << ");\n"
+       << "const S sA = S(a);\n"
+       << "const S b[" << N2 << "] = S[" << N2 << "](" << bInit.str() << ");\n"
+       << "const S2 sB = S2(b);\n"
+       << "const S2 c[" << N3 << "] = S2[" << N3 << "](" << cInit.str() << ");\n"
+       << "void main(){}\n";
+
+    validateError(GL_FRAGMENT_SHADER, fs.str().c_str(),
+                  "Size of declared private variable exceeds implementation-defined limit");
+}
+
+// Test using a large constant that is declared inline, without using variable space that would
+// exceed the implementation-defined limit.  Because of the variable limit, the shader would have to
+// either inline an extremely large constant, which would practically take forever to construct and
+// parse, or use near-limit private variables.  In the latter case, the constant array constructor
+// does not cause any 32-bit overflows, so the shader succeeds compilation just fine.  If the large
+// constant is indexed, it can get constant folded, but at that point the constant is small.
+TEST_P(WebGL2GLSLValidationTest, InlineLargeConstant)
+{
+    const int N1 = 256;
+    const int N2 = 32;
+    const int N3 = 65536 * 8 + 1;
+
+    std::ostringstream aInit;
+    const char *delim = "";
+    for (int i = 0; i < N1; i++)
+    {
+        aInit << delim << "1.5";
+        delim = ",";
+    }
+
+    std::ostringstream bInit;
+    delim = "";
+    for (int i = 0; i < N2; i++)
+    {
+        bInit << delim << "sA";
+        delim = ",";
+    }
+
+    std::ostringstream s2;
+    s2 << "S2[" << N3 << "](";
+    delim = "";
+    for (int i = 0; i < N3; i++)
+    {
+        s2 << delim << "sB";
+        delim = ",";
+    }
+    s2 << ")";
+
+    // Set up a shader with large arrays, overflowing 32-bit math.
+    //
+    // S: 256*sizeof(float) = 1024 bytes
+    // S2: 32*sizeof(S) = 32KB
+    // constant: (65536 * 8 + 1)*sizeof(S2) >= 4*4GB
+    std::ostringstream fs;
+    fs << "#version 300 es\n"
+       << "precision highp float;\n"
+       << "struct S { float a[" << N1 << "]; };\n"
+       << "struct S2 { S b[" << N2 << "]; };\n"
+       << "const float a[" << N1 << "] = float[" << N1 << "](" << aInit.str() << ");\n"
+       << "const S sA = S(a);\n"
+       << "const S b[" << N2 << "] = S[" << N2 << "](" << bInit.str() << ");\n"
+       << "const S2 sB = S2(b);\n"
+       << "void main(){ " << s2.str() << "[0].b[0].a[0]; }\n";
+
+    validateSuccess(GL_FRAGMENT_SHADER, fs.str().c_str());
 }
 
 // Test that too large color outputs are rejected

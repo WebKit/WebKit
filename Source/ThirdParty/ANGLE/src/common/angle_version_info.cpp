@@ -20,6 +20,13 @@ const char *GetANGLEVersionString()
     return ANGLE_VERSION_STRING;
 }
 
+// Create a static string out of ANGLE_VERSION_STRING for eglQueryString(EGL_VERSION) to return
+// without having to construct one.
+const char *GetANGLEEGLVersionString()
+{
+    return "1.5 (ANGLE " ANGLE_VERSION_STRING ")";
+}
+
 const char *GetANGLECommitHash()
 {
     return ANGLE_COMMIT_HASH;

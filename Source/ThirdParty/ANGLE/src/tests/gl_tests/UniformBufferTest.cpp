@@ -82,6 +82,38 @@ TEST_P(UniformBufferTest, Simple)
     EXPECT_PIXEL_NEAR(0, 0, 128, 191, 64, 255, 1);
 }
 
+// Test that binding a range larger than the buffer size works when only valid ranges are accessed
+// in the shader.
+TEST_P(UniformBufferTest, BindLargerThanSize)
+{
+    constexpr size_t iterationCount = 10;
+
+    GLint alignment;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+
+    // Buffer filed with 0.5 floats enough for `iterationCount` different multiples of alignment. 4
+    // extra padding values are added since the shader always reads 4 floats.
+    const std::vector<float> floatData((iterationCount * alignment) + 4, 0.5f);
+    const size_t bufferSize = sizeof(float) * floatData.size();
+    glBindBuffer(GL_UNIFORM_BUFFER, mUniformBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, floatData.data(), GL_STATIC_DRAW);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    for (size_t i = 0; i < iterationCount; i++)
+    {
+        // Each iteration, offset further into the buffer and use large (different) binding sizes.
+        size_t offset      = i * alignment * sizeof(float);
+        size_t bindingSize = (i + 1) * bufferSize;
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, mUniformBuffer, offset, bindingSize);
+
+        glUniformBlockBinding(mProgram, mUniformBufferIndex, 0);
+        drawQuad(mProgram, essl3_shaders::PositionAttrib(), 0.5f);
+
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_NEAR(0, 0, 128, 128, 128, 128, 1);
+    }
+}
+
 // Test a scenario that draws then update UBO (using bufferData or bufferSubData or mapBuffer) then
 // draws with updated data.
 TEST_P(UniformBufferTest, DrawThenUpdateThenDraw)

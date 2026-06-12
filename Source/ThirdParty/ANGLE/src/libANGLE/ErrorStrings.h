@@ -389,6 +389,7 @@ inline constexpr const char *kInvalidShadingCombinerOp = "Invalid shading Combin
 inline constexpr const char *kInvalidShadingModel = "Invalid shading model.";
 inline constexpr const char *kInvalidShadingRate = "Invalid shading rate.";
 inline constexpr const char *kInvalidSourceTexture = "Source texture is not a valid texture object.";
+inline constexpr const char *kInvalidSourceTextureSameAsDestTexture = "Source texture and destination texture are the same.";
 inline constexpr const char *kInvalidSourceTextureInternalFormat = "Source texture internal format is invalid.";
 inline constexpr const char *kInvalidSourceTextureLevel = "Invalid source texture level.";
 inline constexpr const char *kInvalidSourceTextureSize = "Invalid source texture height or width.";

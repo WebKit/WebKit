@@ -599,9 +599,7 @@ const char *QueryString(Thread *thread, Display *display, EGLint name)
             break;
         case EGL_VERSION:
         {
-            static const char *sVersionString =
-                MakeStaticString(std::string("1.5 (ANGLE ") + angle::GetANGLEVersionString() + ")");
-            result = sVersionString;
+            result = angle::GetANGLEEGLVersionString();
             break;
         }
         default:

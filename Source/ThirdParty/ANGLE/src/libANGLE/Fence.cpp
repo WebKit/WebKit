@@ -11,6 +11,7 @@
 #include "angle_gl.h"
 
 #include "common/utilities.h"
+#include "libANGLE/Context.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/SyncImpl.h"
@@ -74,6 +75,11 @@ Sync::Sync(rx::GLImplFactory *factory, SyncID id)
 void Sync::onDestroy(const Context *context)
 {
     ASSERT(mFence);
+
+    if (context && context->retainIdUntilObjectDestroyed())
+    {
+        context->onSyncDestroy(this);
+    }
     mFence->onDestroy(context);
 }
 

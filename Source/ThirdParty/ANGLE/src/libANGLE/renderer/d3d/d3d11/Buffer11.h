@@ -152,7 +152,7 @@ class Buffer11 : public BufferD3D
         BufferCacheEntry() : storage(nullptr), lruCount(0) {}
 
         BufferStorage *storage;
-        unsigned int lruCount;
+        uint64_t lruCount;
     };
 
     struct StructuredBufferKey

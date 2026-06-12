@@ -54,6 +54,9 @@ void RenderTargetVk::init(vk::ImageHelper *image,
     ASSERT(image->getUsage() == 0 ||
            (image->getUsage() & (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
                                  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)) != 0);
+    // image and resolveImage can't both uses tile memory.
+    ASSERT(image == nullptr || resolveImage == nullptr || !image->useTileMemory() ||
+           !resolveImage->useTileMemory());
     mImage              = image;
     mImageViews         = imageViews;
     mResolveImage       = resolveImage;

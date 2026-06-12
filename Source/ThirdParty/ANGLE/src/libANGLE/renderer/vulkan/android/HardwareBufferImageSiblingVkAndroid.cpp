@@ -371,11 +371,11 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     mFormat                          = gl::Format(vkFormat->getIntendedGLFormat());
 
     bool externalRenderTargetSupported =
-        renderer->getFeatures().supportsExternalFormatResolve.enabled &&
+        isExternal && renderer->getFeatures().supportsExternalFormatResolve.enabled &&
         bufferFormatResolveProperties.colorAttachmentFormat != VK_FORMAT_UNDEFINED;
     // Can assume based on us getting here already. The supportsYUVSamplerConversion
     // check below should serve as a backup otherwise.
-    bool externalTexturingSupported = true;
+    bool externalTexturingSupported = isExternal;
 
     // Query AHB description and do the following -
     // 1. Derive VkImageTiling mode based on AHB usage flags

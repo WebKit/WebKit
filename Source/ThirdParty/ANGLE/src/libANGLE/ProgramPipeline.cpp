@@ -183,6 +183,11 @@ void ProgramPipeline::onDestroy(const Context *context)
         }
     }
 
+    if (context && context->retainIdUntilObjectDestroyed())
+    {
+        context->onProgramPipelineDestroy(this);
+    }
+
     getImplementation()->destroy(context);
     UninstallExecutable(context, &mState.mExecutable);
 

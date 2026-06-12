@@ -30,6 +30,13 @@ gn_args.config(
 )
 
 gn_args.config(
+    name = "angle_ir",
+    args = {
+        "angle_ir": True,
+    },
+)
+
+gn_args.config(
     name = "arm64",
     args = {
         "target_cpu": "arm64",

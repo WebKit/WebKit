@@ -912,9 +912,9 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     uint32_t getCurrentFrameCount() const { return mShareGroupVk->getCurrentFrameCount(); }
 
-    bool isImageWithTileMemoryFinalized(const vk::ImageHelper *image) const;
     void addImageWithTileMemory(vk::ImageHelper *imageToAdd);
     void removeImageWithTileMemory(const vk::ImageHelper *imageToRemove);
+    const vk::ImageHelper *getImageWithTileMemory() const { return mImageWithTileMemory; }
 
     // Restore all graphics state based on current gl::State.
     void restoreAllGraphicsState();
@@ -1440,7 +1440,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     void generateOutsideRenderPassCommandsQueueSerial();
     void generateRenderPassCommandsQueueSerial(QueueSerial *queueSerialOut);
 
-    angle::Result finalizeImagesWithTileMemory();
+    angle::Result finalizeImageWithTileMemory();
 
     angle::ImageLoadContext mImageLoadContext;
 
@@ -1575,7 +1575,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     gl::AttribArray<vk::DynamicBuffer> mStreamedVertexBuffers;
     gl::AttributesMask mHasInFlightStreamedVertexBuffers;
 
-    std::vector<vk::ImageHelper *> mImagesWithTileMemory;
+    vk::ImageHelper *mImageWithTileMemory;
 
     // We use a single pool for recording commands. We also keep a free list for pool recycling.
     vk::SecondaryCommandPools mCommandPools;

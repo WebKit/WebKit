@@ -112,6 +112,11 @@ void Renderbuffer::onDestroy(const Context *context)
     egl::RefCountObjectReleaser<egl::Image> releaseImage;
     (void)orphanImages(context, &releaseImage);
 
+    if (context && context->retainIdUntilObjectDestroyed())
+    {
+        context->onRenderbufferDestroy(this);
+    }
+
     if (mImplementation)
     {
         mImplementation->onDestroy(context);
