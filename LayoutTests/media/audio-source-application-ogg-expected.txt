@@ -1,0 +1,14 @@
+RUN(audio = document.createElement("audio"))
+RUN(audio.preload = "auto")
+RUN(source = document.createElement("source"))
+RUN(source.type = "application/ogg")
+RUN(source.src = "content/test.oga")
+RUN(audio.appendChild(source))
+RUN(document.body.appendChild(audio))
+EXPECTED (audio.networkState != '3') OK
+EXPECTED (audio.readyState > '0') OK
+EXPECTED (audio.duration > '0') OK
+EXPECTED (audio.error == 'null') OK
+PASS: application/ogg source selected and loaded
+END OF TEST
+

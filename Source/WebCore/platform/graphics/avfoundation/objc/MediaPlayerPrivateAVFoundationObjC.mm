@@ -927,8 +927,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     auto type = player->contentMIMEType();
 
     if (!type.isEmpty() && !player->contentMIMETypeWasInferredFromExtension()) {
-        // FIXME: Remove that check once AVFoundation allows it (rdar://163119790). This should also not be restricted to blobs.
+        // FIXME: Remove that check once AVFoundation allows it (rdar://163119790).
+#if HAVE(OGG_VORBIS_DECODER_SUPPORTS_NON_BLOB_URLS)
+        if (type == "application/ogg"_s)
+#else
         if (type == "application/ogg"_s && url.protocolIsBlob())
+#endif
             type = "audio/ogg"_s;
 
         auto codecs = player->contentTypeCodecs();

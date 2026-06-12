@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-source-application-ogg</title>
+    <script src=video-test.js></script>
+    <script>
+        // Regression test for rdar://40512703 / rdar://163119790.
+        //
+        // <source type="application/ogg"> on an <audio> element should select
+        // the source and load the Ogg Vorbis resource. Before the fix,
+        // AVFoundation would receive AVURLAssetOutOfBandMIMETypeKey set to
+        // "application/ogg" and fail to decode (no error event, just
+        // networkState=NETWORK_NO_SOURCE on completion). The fix in
+        // MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL rewrites
+        // application/ogg to audio/ogg before the asset is created, so the
+        // existing audio/ogg decoder path handles the file.
+
+        window.addEventListener('load', () => {
+            run('audio = document.createElement("audio")');
+            run('audio.preload = "auto"');
+            run('source = document.createElement("source")');
+            run('source.type = "application/ogg"');
+            run('source.src = "content/test.oga"');
+            run('audio.appendChild(source)');
+            run('document.body.appendChild(audio)');
+
+            audio.onerror = () => {
+                consoleWrite(`FAIL: received error event, networkState=${audio.networkState}, readyState=${audio.readyState}`);
+                endTest();
+            };
+            source.onerror = () => {
+                consoleWrite(`FAIL: source error event, networkState=${audio.networkState}, readyState=${audio.readyState}`);
+                endTest();
+            };
+
+            audio.onloadedmetadata = () => {
+                testExpected('audio.networkState', HTMLMediaElement.NETWORK_NO_SOURCE, '!=');
+                testExpected('audio.readyState', HTMLMediaElement.HAVE_NOTHING, '>');
+                testExpected('audio.duration', 0, '>');
+                testExpected('audio.error', null, '==');
+                consoleWrite('PASS: application/ogg source selected and loaded');
+                endTest();
+            };
+
+            // Safety net: if the bug is still present we'd see neither
+            // loadedmetadata nor an error event. Bail out after 5s.
+            setTimeout(() => {
+                if (audio.readyState === HTMLMediaElement.HAVE_NOTHING) {
+                    consoleWrite(`FAIL: timed out with networkState=${audio.networkState}, readyState=${audio.readyState} (silent failure mode of rdar://40512703)`);
+                    endTest();
+                }
+            }, 5000);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
