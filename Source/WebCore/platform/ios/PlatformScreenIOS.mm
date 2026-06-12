@@ -116,7 +116,7 @@ bool screenSupportsHighDynamicRange(Widget*)
     if (auto data = screen->screenData(screen->primaryScreenDisplayID()))
         return data->screenSupportsHighDynamicRange;
 
-#if USE(MEDIATOOLBOX)
+#if USE(MEDIATOOLBOX) && HAVE(SUPPORT_HDR_DISPLAY)
     if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
         return PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo(nullptr);
 #endif
