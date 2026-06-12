@@ -1286,7 +1286,6 @@ webkit.org/b/320652 [ Debug ] imported/w3c/web-platform-tests/css/selectors/inva
 
 webkit.org/b/321279 accessibility/text-alternative-calculation-from-unrendered-table.html [ Crash Pass ]
 webkit.org/b/321282 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-creation-time.https.html [ Failure Pass ]
-webkit.org/b/321283 [ arm64 ] webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count.html [ Crash Pass ]
 webkit.org/b/309266 [ Release x86_64 ] css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Pass Failure ]
 webkit.org/b/252878 [ Debug ] fast/frames/exponential-frames.html [ Pass Timeout ]
 
