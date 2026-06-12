@@ -1302,8 +1302,6 @@ webkit.org/b/314811 imported/w3c/web-platform-tests/css/mediaqueries/test_media_
 
 webkit.org/b/315515 [ arm64 ] imported/w3c/web-platform-tests/gpc/sec-gpc.https.html [ Failure Pass ]
 
-webkit.org/b/315615 media/media-vp8-hiddenframes.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/315825 [ Release arm64 ] editing/spelling/spelling-marker-includes-hyphen.html [ ImageOnlyFailure ]
 
 webkit.org/b/315994 [ x86_64 ] html5lib/generated/run-adoption01-data.html [ Crash Pass ]

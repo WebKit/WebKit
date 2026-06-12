@@ -29,6 +29,7 @@
 #include "GLFence.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayer.h"
+#include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 
 #if USE(SKIA)
@@ -69,6 +70,21 @@ public:
     virtual sk_sp<SkImage> skiaImage() { return nullptr; }
 #endif
 
+    using BufferWasRendered = Function<void()>;
+    void setBufferRenderedCallback(BufferWasRendered&& callback) { m_bufferWasRenderedCallback = WTF::move(callback); }
+    void bufferWasRendered()
+    {
+        if (m_bufferWasRenderedCallback)
+            m_bufferWasRenderedCallback();
+    }
+
+    [[nodiscard]] BufferWasRendered takeBufferRenderedCallback()
+    {
+        BufferWasRendered result;
+        std::swap(m_bufferWasRenderedCallback, result);
+        return result;
+    }
+
 protected:
     CoordinatedPlatformLayerBuffer(Type type, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
         : m_type(type)
@@ -82,6 +98,7 @@ protected:
     IntSize m_size;
     OptionSet<TextureMapperFlags> m_flags;
     std::unique_ptr<GLFence> m_fence;
+    BufferWasRendered m_bufferWasRenderedCallback;
 };
 
 } // namespace WebCore

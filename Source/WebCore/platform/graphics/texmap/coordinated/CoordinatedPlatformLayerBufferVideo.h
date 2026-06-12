@@ -36,11 +36,13 @@ using DMABufFormat = std::pair<uint32_t, uint64_t>;
 
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(Ref<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
-    CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(RefPtr<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    CoordinatedPlatformLayerBufferVideo(RefPtr<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
+
+    void clearVideoFrame();
 
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
@@ -58,8 +60,9 @@ private:
 #endif
     void createBufferFromMappedFrameIfNeeded();
 
-    Ref<VideoFrameGStreamer> m_videoFrame;
-    std::optional<GstMappedFrame> m_mappedVideoFrame;
+    Lock m_videoFrameLock;
+    RefPtr<VideoFrameGStreamer> m_videoFrame WTF_GUARDED_BY_LOCK(m_videoFrameLock);
+    std::optional<GstMappedFrame> m_mappedVideoFrame WTF_GUARDED_BY_LOCK(m_videoFrameLock);
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };

@@ -51,18 +51,21 @@
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(RefPtr<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
 {
     auto size = frame->presentationSize();
     return makeUnique<CoordinatedPlatformLayerBufferVideo>(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags);
 }
 
-CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(RefPtr<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
     : CoordinatedPlatformLayerBuffer(Type::Video, WTF::move(size), flags, nullptr)
-    , m_videoFrame(WTF::move(frame))
     , m_videoDecoderPlatform(videoDecoderPlatform)
-    , m_buffer(createBufferIfNeeded(gstGLEnabled))
 {
+    {
+        Locker lock { m_videoFrameLock };
+        m_videoFrame = WTF::move(frame);
+    }
+    m_buffer = createBufferIfNeeded(gstGLEnabled);
 }
 
 CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo() = default;
@@ -83,8 +86,19 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
 }
 
+void CoordinatedPlatformLayerBufferVideo::clearVideoFrame()
+{
+    Locker lock { m_videoFrameLock };
+    m_mappedVideoFrame.reset();
+    m_videoFrame = nullptr;
+}
+
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
 {
+    Locker lock { m_videoFrameLock };
+    if (!m_videoFrame)
+        return nullptr;
+
     const auto& sample = m_videoFrame->sample();
     auto buffer = gst_sample_get_buffer(sample.get());
     auto memory = gst_buffer_peek_memory(buffer, 0);
@@ -133,6 +147,10 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromDMABufMemory()
 {
+    assertIsHeld(m_videoFrameLock);
+    if (!m_videoFrame)
+        return nullptr;
+
     auto videoInfo = m_videoFrame->info();
     if (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo))
         m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
@@ -179,6 +197,10 @@ static std::optional<CoordinatedPlatformLayerBufferYUV::Format> yuvFormatFromGst
 
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory()
 {
+    assertIsHeld(m_videoFrameLock);
+    if (!m_videoFrame)
+        return nullptr;
+
     const auto& sample = m_videoFrame->sample();
     m_mappedVideoFrame.emplace(GstMappedFrame(sample, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)));
     if (!*m_mappedVideoFrame) {
@@ -247,6 +269,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
 void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
 {
+    Locker lock { m_videoFrameLock };
     if (!m_mappedVideoFrame)
         return;
 
@@ -292,6 +315,7 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
 
     if (m_buffer)
         m_buffer->paintToTextureMapper(textureMapper, targetRect, modelViewMatrix, opacity);
+    bufferWasRendered();
 }
 
 #if USE(SKIA)

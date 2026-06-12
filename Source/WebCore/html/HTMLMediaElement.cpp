@@ -10017,13 +10017,16 @@ MediaElementSession& HTMLMediaElement::mediaSession() const
     return *m_mediaSession;
 }
 
-void HTMLMediaElement::updateMediaPlayer(IntSize presentationSize, bool shouldMaintainAspectRatio)
+void HTMLMediaElement::updateMediaPlayer(IntSize presentationSize, bool shouldMaintainAspectRatio, bool isHidden)
 {
     INFO_LOG(LOGIDENTIFIER);
     RefPtr player = m_player;
     player->setPresentationSize(presentationSize);
     visibilityStateChanged();
-    player->setViewportVisibility(viewportVisibility());
+    if (isHidden)
+        player->setViewportVisibility(HTMLMediaElementEnums::ViewportVisibility::NotVisible);
+    else
+        player->setViewportVisibility(viewportVisibility());
 
     if (protect(document())->quirks().needsVideoShouldMaintainAspectRatioQuirk())
         shouldMaintainAspectRatio = true;

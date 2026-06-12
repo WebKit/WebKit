@@ -65,7 +65,7 @@ void SkiaCompositingLayerImageSetBatch::addImageSet(SkCanvas& canvas, SkiaBackin
         m_imageSet.appendVector(WTF::move(imageSet));
 }
 
-void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const FloatRect& clip, const SkMatrix& ctm, float opacity, bool enableAntialias)
+void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const FloatRect& clip, const SkMatrix& ctm, float opacity, bool enableAntialias, Function<void()>&& callback)
 {
     updateSamplingOptions(canvas, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone));
 
@@ -81,6 +81,7 @@ void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<S
     size_t matrixIndex = m_preViewMatrices.size() - 1;
     unsigned aaFlags = enableAntialias ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
     m_imageSet.append(SkCanvas::ImageSetEntry(image, SkRect::MakeWH(image->width(), image->height()), SkRect(rect), matrixIndex, opacity, aaFlags, !clip.isEmpty()));
+    m_imageDrawnCallbacks.append(WTF::move(callback));
 }
 
 void SkiaCompositingLayerImageSetBatch::flushIfNeeded(SkCanvas& canvas)
@@ -96,6 +97,11 @@ void SkiaCompositingLayerImageSetBatch::flushIfNeeded(SkCanvas& canvas)
 
     canvas.experimental_DrawEdgeAAImageSet(m_imageSet.span().data(), m_imageSet.size(), m_dstClips.span().data(),
         m_preViewMatrices.span().data(), m_samplingOptions, &paint, SkCanvas::kFast_SrcRectConstraint);
+
+    while (!m_imageDrawnCallbacks.isEmpty()) {
+        if (auto callback = m_imageDrawnCallbacks.takeLast())
+            callback();
+    }
 
     m_imageSet.clear();
     m_dstClips.clear();

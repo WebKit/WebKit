@@ -63,6 +63,7 @@ public:
         std::optional<VideoFrameTimeMetadata> timeMetadata;
         bool isMirrored { false };
         VideoFrameContentHint contentHint { VideoFrameContentHint::None };
+        std::optional<double> rvfcPresentationTime;
     };
 
     static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&& = { });
@@ -76,6 +77,8 @@ public:
 
     void setPresentationTime(const MediaTime&);
     void setMetadataAndContentHint(std::optional<VideoFrameTimeMetadata>, VideoFrameContentHint);
+
+    VideoFrameMetadata metadata() const;
 
     RefPtr<VideoFrameGStreamer> resizeTo(const IntSize&);
 
@@ -125,6 +128,7 @@ private:
     Info m_info;
     IntSize m_presentationSize;
     MemoryType m_memoryType;
+    std::optional<double> m_rvfcPresentationTime;
 };
 
 } // namespace WebCore
