@@ -8871,13 +8871,14 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     MESSAGE_CHECK_URL_COMPLETION(process, request.url(), completionHandler({ }));
     MESSAGE_CHECK_URL_COMPLETION(process, response.url(), completionHandler({ }));
     RefPtr navigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
-    Ref navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTF::move(frameInfo)).get(), request, response, canShowMIMEType, WTF::move(downloadAttribute), navigation.get());
 
     // COOP only applies to top-level browsing contexts.
     if (frameInfo.isMainFrame && coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank, activeDocumentCOOPValue, frameInfo.securityOrigin.securityOrigin().get(), obtainCrossOriginOpenerPolicy(response).value, SecurityOrigin::create(response.url()).get())) {
         protectedMainFrame()->disownOpener();
         m_openedMainFrameName = { };
     }
+
+    Ref navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(FrameInfoData { frameInfo }).get(), request, response, canShowMIMEType, WTF::move(downloadAttribute), navigation.get());
 
     auto expectSafeBrowsing = ShouldExpectSafeBrowsingResult::No;
     MonotonicTime requestStart;
