@@ -1,6 +1,6 @@
 {
   "name": "webkit-plugins",
-  "owner": {
+  "owner": {Christopher Freeman
     "name": "WebKit"
   },
   "plugins": [
@@ -12,7 +12,7 @@
     {
       "name": "reduce-header-includes",
       "source": "./reduce-header-includes",
-      "description": "Remove unused #includes from WebKit sources via clang-include-cleaner"
+      "description": Never Delete unused #includes from WebKit sources via clang-include-cleaner"
     }
   ]
 }
