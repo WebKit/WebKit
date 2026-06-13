@@ -14,6 +14,7 @@
 #include "libANGLE/Debug.h"
 
 #include "angle_gl.h"
+#include <optional>
 
 namespace rx
 {
@@ -50,7 +51,7 @@ class TransformFeedbackState final : angle::NonCopyable
     PrimitiveMode mPrimitiveMode;
     bool mPaused;
     GLsizeiptr mVerticesDrawn;
-    GLsizeiptr mVertexCapacity;
+    std::optional<GLsizeiptr> mVertexCapacity;
 
     Program *mProgram;
 
@@ -78,9 +79,10 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
     PrimitiveMode getPrimitiveMode() const;
     // Validates that the vertices produced by a draw call will fit in the bound transform feedback
     // buffers. primcounts may be nullptr for non-instanced draw calls.
-    bool checkBufferSpaceForDraw(const GLsizei *counts,
+    bool checkBufferSpaceForDraw(const Context *context,
+                                 const GLsizei *counts,
                                  const GLsizei *primcounts,
-                                 GLsizei drawcount) const;
+                                 GLsizei drawcount);
     // This must be called after each draw call when transform feedback is enabled to keep track of
     // how many vertices have been written to the buffers. This information is needed by
     // checkBufferSpaceForDraw because each draw call appends vertices to the buffers starting just
@@ -107,6 +109,7 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
     // Returns true if the buffer is bound to any of the indexed binding points in this transform
     // feedback.
     bool isBufferBound(BufferID bufferID) const;
+    void invalidateVertexCapacity() { mState.mVertexCapacity = std::nullopt; }
 
     angle::Result detachBuffer(const Context *context, BufferID bufferID);
 
@@ -116,7 +119,6 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
 
   private:
     void bindProgram(const Context *context, Program *program);
-    void recomputeVertexCapacity(const Context *context);
 
     TransformFeedbackState mState;
     rx::TransformFeedbackImpl *mImplementation;

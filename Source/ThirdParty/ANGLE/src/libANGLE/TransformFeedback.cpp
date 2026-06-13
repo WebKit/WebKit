@@ -52,7 +52,6 @@ TransformFeedbackState::TransformFeedbackState(size_t maxIndexedBuffers)
       mPrimitiveMode(PrimitiveMode::InvalidEnum),
       mPaused(false),
       mVerticesDrawn(0),
-      mVertexCapacity(0),
       mProgram(nullptr),
       mIndexedBuffers(maxIndexedBuffers)
 {}
@@ -149,7 +148,6 @@ angle::Result TransformFeedback::begin(const Context *context,
     mState.mPaused        = false;
     mState.mVerticesDrawn = 0;
     bindProgram(context, program);
-    recomputeVertexCapacity(context);
     return angle::Result::Continue;
 }
 
@@ -160,7 +158,7 @@ angle::Result TransformFeedback::end(const Context *context)
     mState.mPrimitiveMode  = PrimitiveMode::InvalidEnum;
     mState.mPaused         = false;
     mState.mVerticesDrawn  = 0;
-    mState.mVertexCapacity = 0;
+    mState.mVertexCapacity = std::nullopt;
     if (mState.mProgram)
     {
         mState.mProgram->release(context);
@@ -180,7 +178,6 @@ angle::Result TransformFeedback::resume(const Context *context)
 {
     ANGLE_TRY(mImplementation->resume(context));
     mState.mPaused = false;
-    recomputeVertexCapacity(context);
     return angle::Result::Continue;
 }
 
@@ -194,9 +191,10 @@ PrimitiveMode TransformFeedback::getPrimitiveMode() const
     return mState.mPrimitiveMode;
 }
 
-bool TransformFeedback::checkBufferSpaceForDraw(const GLsizei *counts,
+bool TransformFeedback::checkBufferSpaceForDraw(const Context *context,
+                                                const GLsizei *counts,
                                                 const GLsizei *primcounts,
-                                                GLsizei drawcount) const
+                                                GLsizei drawcount)
 {
     auto vertices = angle::CheckedNumeric<GLsizeiptr>(mState.mVerticesDrawn);
     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
@@ -205,7 +203,32 @@ bool TransformFeedback::checkBufferSpaceForDraw(const GLsizei *counts,
         GLsizei count     = ANGLE_UNSAFE_BUFFERS(counts[drawID]);
         vertices += GetVerticesNeededForDraw(mState.mPrimitiveMode, count, primcount);
     }
-    return vertices.IsValid() && vertices.ValueOrDie() <= mState.mVertexCapacity;
+
+    if (!mState.mVertexCapacity.has_value())
+    {
+        const ProgramExecutable *programExecutable = context->getState().getLinkedProgramExecutable(context);
+        if (programExecutable)
+        {
+            // Compute the number of vertices we can draw before overflowing the bound buffers.
+            auto strides = programExecutable->getTransformFeedbackStrides();
+            ASSERT(strides.size() <= mState.mIndexedBuffers.size() && !strides.empty());
+            GLsizeiptr minCapacity = std::numeric_limits<GLsizeiptr>::max();
+            for (size_t index = 0; index < strides.size(); index++)
+            {
+                GLsizeiptr capacity =
+                    GetBoundBufferAvailableSize(mState.mIndexedBuffers[index]) / strides[index];
+                minCapacity = std::min(minCapacity, capacity);
+            }
+            mState.mVertexCapacity = minCapacity;
+        }
+        else
+        {
+            UNREACHABLE();
+            mState.mVertexCapacity = 0;
+        }
+    }
+
+    return vertices.IsValid() && vertices.ValueOrDie() <= *mState.mVertexCapacity;
 }
 
 void TransformFeedback::onVerticesDrawn(const Context *context, GLsizei count, GLsizei primcount)
@@ -238,32 +261,6 @@ void TransformFeedback::bindProgram(const Context *context, Program *program)
         {
             mState.mProgram->addRef();
         }
-    }
-}
-
-void TransformFeedback::recomputeVertexCapacity(const Context *context)
-{
-    // In one of the angle_unittests - "TransformFeedbackTest.SideEffectsOfStartAndStop"
-    // there is a code path where <context> is a nullptr, account for that possibility.
-    const ProgramExecutable *programExecutable =
-        context ? context->getState().getLinkedProgramExecutable(context) : nullptr;
-    if (programExecutable)
-    {
-        // Compute the number of vertices we can draw before overflowing the bound buffers.
-        auto strides = programExecutable->getTransformFeedbackStrides();
-        ASSERT(strides.size() <= mState.mIndexedBuffers.size() && !strides.empty());
-        GLsizeiptr minCapacity = std::numeric_limits<GLsizeiptr>::max();
-        for (size_t index = 0; index < strides.size(); index++)
-        {
-            GLsizeiptr capacity =
-                GetBoundBufferAvailableSize(mState.mIndexedBuffers[index]) / strides[index];
-            minCapacity = std::min(minCapacity, capacity);
-        }
-        mState.mVertexCapacity = minCapacity;
-    }
-    else
-    {
-        mState.mVertexCapacity = 0;
     }
 }
 

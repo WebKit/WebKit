@@ -10219,6 +10219,18 @@ void Context::onProgramPipelineDestroy(const ProgramPipeline *programPipeline) c
     mState.mProgramPipelineManager->recycleHandle(programPipeline->id());
 }
 
+void Context::invalidateTransformFeedbackCapacities(const Buffer *buffer) const
+{
+    for (auto pair : UnsafeResourceMapIter(mTransformFeedbackMap))
+    {
+        TransformFeedback *tf = pair.second;
+        if (tf != nullptr && tf->isBufferBound(buffer->id()))
+        {
+            tf->invalidateVertexCapacity();
+        }
+    }
+}
+
 // ErrorSet implementation.
 ErrorSet::ErrorSet(Debug *debug,
                    const angle::FrontendFeatures &frontendFeatures,

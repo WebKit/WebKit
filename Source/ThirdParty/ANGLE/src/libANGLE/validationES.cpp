@@ -1536,7 +1536,7 @@ bool ValidateDrawArraysTransformFeedbackBufferSize(const Context *context,
     {
         const State &state                      = context->getState();
         TransformFeedback *curTransformFeedback = state.getCurrentTransformFeedback();
-        if (!curTransformFeedback->checkBufferSpaceForDraw(counts, primcounts, drawcount))
+        if (!curTransformFeedback->checkBufferSpaceForDraw(context, counts, primcounts, drawcount))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, err::kTransformFeedbackBufferTooSmall);
             return false;
