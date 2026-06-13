@@ -738,7 +738,7 @@ void UniqueIDBDatabase::createIndexAsync(UniqueIDBDatabaseTransaction& transacti
 
     CheckedPtr manager = m_manager.get();
     if (!manager)
-        transaction.didCreateIndexAsync(IDBError { ExceptionCode::InvalidStateError });
+        return transaction.didCreateIndexAsync(IDBError { ExceptionCode::InvalidStateError });
 
     auto taskSize = defaultWriteOperationCost + estimateSize(indexInfo);
     manager->requestSpace(m_identifier.origin(), taskSize, [weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, indexInfo](bool granted) mutable {
