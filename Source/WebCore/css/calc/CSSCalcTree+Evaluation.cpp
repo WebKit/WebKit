@@ -202,7 +202,7 @@ std::optional<double> evaluate(const IndirectNode<Random>& root, const Evaluatio
         return { };
 
     auto max = evaluate(root->max, options);
-    if (!min)
+    if (!max)
         return { };
 
     auto step = evaluate(root->step, options);
