@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>overflow computed value on table rows</title>
+<link rel="help" href="https://www.w3.org/TR/CSS21/visufx.html#overflow">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#propdef-overflow">
+<meta name="assert" content="The 'overflow' property does not apply to table rows, but its computed value is preserved (computed value: as specified). Only the used value is forced to visible so a table row never becomes a scroll container.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  .scroll { overflow: scroll; }
+  .hidden { overflow: hidden; }
+  .auto   { overflow: auto; }
+  .clip   { overflow: clip; }
+  .as-row { display: table-row; }
+</style>
+<div id="log"></div>
+
+<table>
+  <tbody>
+    <tr id="trScroll" class="scroll"><td>scroll</td></tr>
+    <tr id="trHidden" class="hidden"><td>hidden</td></tr>
+    <tr id="trAuto"   class="auto"><td>auto</td></tr>
+    <tr id="trClip"   class="clip"><td>clip</td></tr>
+  </tbody>
+</table>
+
+<!-- A non-table element forced to display:table-row must behave the same. -->
+<div id="divRow" class="as-row scroll"><span>display:table-row</span></div>
+
+<script>
+function checkComputedOverflow(id, expected) {
+  test(function () {
+    var element = document.getElementById(id);
+    var style = window.getComputedStyle(element);
+    assert_equals(style.display, "table-row", "precondition: element is a table row");
+    assert_equals(style.overflow, expected, "overflow");
+    assert_equals(style.overflowX, expected, "overflow-x");
+    assert_equals(style.overflowY, expected, "overflow-y");
+  }, "Computed value of overflow:" + expected + " is preserved on a table row (" + id + ")");
+}
+
+checkComputedOverflow("trScroll", "scroll");
+checkComputedOverflow("trHidden", "hidden");
+checkComputedOverflow("trAuto", "auto");
+checkComputedOverflow("trClip", "clip");
+checkComputedOverflow("divRow", "scroll");
+
+// The used value must remain "visible": a table row never establishes a
+// scroll container, so it must not have a scrollable area.
+test(function () {
+  var row = document.getElementById("trScroll");
+  assert_equals(row.scrollWidth, row.clientWidth,
+    "table row with overflow:scroll does not scroll horizontally");
+  assert_equals(row.scrollHeight, row.clientHeight,
+    "table row with overflow:scroll does not scroll vertically");
+}, "overflow:scroll on a table row does not create a scroll container (used value is visible)");
+</script>

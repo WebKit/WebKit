@@ -99,11 +99,17 @@ inline bool RenderBox::scrollsOverflowY() const
 
 inline bool RenderBox::isScrollContainerX() const
 {
+    // The overflow property does not apply to table rows (CSS2 11.1.1), so they never scroll even
+    // though the computed value is preserved (see StyleAdjuster and RenderElement::effectiveOverflowX).
+    if (isRenderTableRow())
+        return false;
     return style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Hidden || style().overflowX() == Overflow::Auto;
 }
 
 inline bool RenderBox::isScrollContainerY() const
 {
+    if (isRenderTableRow())
+        return false;
     return style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Hidden || style().overflowY() == Overflow::Auto;
 }
 

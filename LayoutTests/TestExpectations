@@ -2231,7 +2231,6 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/transform.html [ Im
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-lspace-rspace-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/painting-stretchy-operator-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/display-with-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/overflow/computed-value-001.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/floating-inside-mathml-with-block-display.html [ ImageOnlyFailure ]
 mathml/non-core/mathvariant/mathvariant-basic-transforms-with-default-font.html [ ImageOnlyFailure ]
 mathml/non-core/mathvariant/mathvariant-double-struck-font-style-font-weight.html [ ImageOnlyFailure ]

@@ -635,11 +635,11 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
     bool overflowIsClipOrVisible = isOverflowClipOrVisible(style.overflowY()) && isOverflowClipOrVisible(style.overflowX());
 
-    // The overflow property does not apply to table row elements (CSS2 section 11.1.1).
-    if (style.display() == DisplayType::TableRow) {
-        style.setOverflowX(ComputedStyle::initialOverflowX());
-        style.setOverflowY(ComputedStyle::initialOverflowY());
-    } else if (!overflowIsClipOrVisible && style.display().isTableBox()) {
+    // The overflow property does not apply to table row elements (CSS2 section 11.1.1), but this
+    // only affects the used value: rows never become scroll containers (see
+    // RenderElement::effectiveOverflowX/Y), while the computed value is preserved so getComputedStyle()
+    // reports it faithfully. This matches Blink, which does not special-case table rows here.
+    if (!overflowIsClipOrVisible && style.display().isTableBox()) {
         // Tables only support overflow:hidden and overflow:visible and ignore anything else,
         // see https://drafts.csswg.org/css2/#overflow. As a table is not a block
         // container box the rules for resolving conflicting x and y values in CSS Overflow Module
