@@ -290,7 +290,7 @@ void WebSWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier se
 {
     SWServerToContextConnection::workerTerminated(serviceWorkerIdentifier);
 
-    if (--m_processingFunctionalEventCount)
+    if (!--m_processingFunctionalEventCount)
         protectedConnection()->networkProcess().protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 }
 
