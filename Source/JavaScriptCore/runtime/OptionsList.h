@@ -282,6 +282,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useIROOverflowElimination, true, Normal, "IRO: relax provably-non-overflowing CheckOverflow arithmetic to Unchecked"_s) \
     v(Bool, useIROBranchFolding, true, Normal, "IRO: fold branches with a provable direction"_s) \
     v(Bool, useIROShiftMulRanges, true, Normal, "IRO: emit result ranges for right-shift and multiply (feeds overflow-elim)"_s) \
+    v(Unsigned, iroMaxNodeRelationshipsPerNode, 8, Normal, "IRO: cap on node-vs-node relationships kept per node (0 = unlimited); bounds the O(n^2) inequality web while preserving all constant-range facts"_s) \
     v(Bool, usePutStackSinking, true, Normal, nullptr) \
     v(Bool, useObjectAllocationSinking, true, Normal, nullptr) \
     v(Bool, verboseObjectAllocationSinking, false, Normal, nullptr) \

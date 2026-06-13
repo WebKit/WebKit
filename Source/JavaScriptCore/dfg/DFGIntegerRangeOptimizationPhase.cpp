@@ -2575,6 +2575,30 @@ private:
             relationship.left(), Vector<Relationship>());
         Vector<Relationship>& relationships = result.iterator->value;
 
+        // Bound the O(n^2) node-vs-node inequality web. Small-range relevant values
+        // (byte-masked asm.js heap indices, RGBA components) accumulate a dense web of
+        // mutual inequalities that dominates IRO compile time, yet is only consumed by
+        // bounds-check elimination and branch folding — both worth ~0% on JetStream3.
+        // IRO's real win is overflow elimination, which reads node-vs-constant *ranges*;
+        // those are never capped here. Dropping a relationship is always sound (the fact
+        // set is an intersection, so fewer facts only forgo optimization), and a fact
+        // refining an existing same-node pair never grows the list, so it is allowed.
+        if (unsigned cap = Options::iroMaxNodeRelationshipsPerNode();
+            cap && !relationship.right()->isInt32Constant()) {
+            unsigned nodeRelationships = 0;
+            bool refinesExisting = false;
+            for (Relationship& other : relationships) {
+                if (other.sameNodesAs(relationship)) {
+                    refinesExisting = true;
+                    break;
+                }
+                if (!other.right()->isInt32Constant())
+                    ++nodeRelationships;
+            }
+            if (!refinesExisting && nodeRelationships >= cap)
+                return;
+        }
+
         if (relationship.right()->isInt32Constant()) {
             // We want to do some work to refine relationships over constants. This is necessary because
             // when we introduce a constant into the IR, we don't automatically create relationships
