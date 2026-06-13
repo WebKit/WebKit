@@ -423,7 +423,8 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
             return;
         }
 
-        focusedElement->dispatchBlurEvent(nullptr);
+        if (RefPtr focusedElement = document->focusedElement())
+            focusedElement->dispatchBlurEvent(nullptr);
     }
 
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
