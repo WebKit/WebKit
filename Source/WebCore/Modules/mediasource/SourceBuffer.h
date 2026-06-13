@@ -56,6 +56,7 @@ class PlatformTimeRanges;
 class SourceBufferPrivate;
 class TextTrackList;
 class TimeRanges;
+class TrackOpaqueRoot;
 class VideoTrackList;
 class WebCoreOpaqueRoot;
 template<typename> class ExceptionOr;
@@ -234,7 +235,7 @@ private:
     WeakPtr<MediaSource> m_source;
     AppendMode m_mode { AppendMode::Segments };
 
-    const Ref<WTF::Observer<WebCoreOpaqueRoot()>> m_opaqueRootProvider;
+    const Ref<TrackOpaqueRoot> m_trackOpaqueRoot;
 
     RefPtr<SharedBuffer> m_pendingAppendData;
 
