@@ -231,6 +231,7 @@ struct ApplePayAMSUIRequest;
 struct AttributedString;
 struct CharacterRange;
 struct ClientOrigin;
+struct CueMatch;
 struct DocumentSyncSerializationData;
 struct FixedContainerEdges;
 struct ResolvedCaptionDisplaySettingsOptions;
@@ -585,6 +586,10 @@ public:
         std::optional<uint32_t> indexForSelection;
     };
     WEBCORE_EXPORT MatchingRanges findTextMatches(const String&, FindOptions, unsigned maxCount, bool markMatches = true);
+
+#if ENABLE(VIDEO)
+    WEBCORE_EXPORT Vector<CueMatch> findCueMatches(const String&, FindOptions);
+#endif
 
 #if PLATFORM(COCOA)
     void platformInitialize();

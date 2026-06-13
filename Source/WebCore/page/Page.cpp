@@ -55,6 +55,7 @@
 #include "CookieJar.h"
 #include "CredentialRequestCoordinator.h"
 #include "CryptoClient.h"
+#include "CueMatch.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTimer.h"
@@ -1291,6 +1292,28 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 
     return result;
 }
+
+#if ENABLE(VIDEO)
+Vector<CueMatch> Page::findCueMatches(const String& target, FindOptions options)
+{
+    Vector<CueMatch> results;
+    if (target.isEmpty())
+        return results;
+
+    // Walk frames in document order and searches each document independently. Cue ordering is therefore correct within a document
+    // and grouped by frame across documents, matching how DOM text matches are ordered.
+    RefPtr frame { &mainFrame() };
+    do {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get())) {
+            if (RefPtr document = localFrame->document())
+                results.appendVector(document->findCueMatches(target, options));
+        }
+        frame = incrementFrame(frame.get(), true, CanWrap::No);
+    } while (frame);
+
+    return results;
+}
+#endif // ENABLE(VIDEO)
 
 std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::optional<SimpleRange>& referenceRange, FindOptions options)
 {

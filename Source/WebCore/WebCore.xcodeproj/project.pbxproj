@@ -7126,6 +7126,7 @@
 		EB3C29B72729C38C00FB65B4 /* PushSubscriptionChangeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3C29B12729C36D00FB65B4 /* PushSubscriptionChangeEventInit.h */; };
 		EB7CE1272CFBCFBE00BECB13 /* ResourceMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = EB7CE1262CFBCFA300BECB13 /* ResourceMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB83220A2D70DC7F009515DA /* FetchingWorkerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = EB8322092D70DC7F009515DA /* FetchingWorkerIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EB8B7D722FDB23010008B670 /* CueMatch.h in Headers */ = {isa = PBXBuildFile; fileRef = EB8B7D712FDB23010008B670 /* CueMatch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB9AD8CB27646E9400D893A4 /* PushDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = EB9AD8C827646E9000D893A4 /* PushDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBA75C46275EC61A00D6D31C /* PushCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA75C42275EBDAB00D6D31C /* PushCrypto.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBA75C47275EC62100D6D31C /* PushMessageCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA75C40275EBDAA00D6D31C /* PushMessageCrypto.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23151,6 +23152,7 @@
 		EB7CE1252CFBCF9900BECB13 /* ResourceMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceMonitor.cpp; sourceTree = "<group>"; };
 		EB7CE1262CFBCFA300BECB13 /* ResourceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceMonitor.h; sourceTree = "<group>"; };
 		EB8322092D70DC7F009515DA /* FetchingWorkerIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchingWorkerIdentifier.h; sourceTree = "<group>"; };
+		EB8B7D712FDB23010008B670 /* CueMatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CueMatch.h; sourceTree = "<group>"; };
 		EB9AD8C827646E9000D893A4 /* PushDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushDatabase.h; sourceTree = "<group>"; };
 		EB9AD8CA27646E9100D893A4 /* PushDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PushDatabase.cpp; sourceTree = "<group>"; };
 		EBA75C3E275EBDAA00D6D31C /* PushMessageCrypto.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PushMessageCrypto.cpp; sourceTree = "<group>"; };
@@ -30967,6 +30969,7 @@
 				975CA288130365F800E99AD9 /* Crypto.h */,
 				975CA289130365F800E99AD9 /* Crypto.idl */,
 				94077C6F2B92B0570012E357 /* CryptoClient.h */,
+				EB8B7D712FDB23010008B670 /* CueMatch.h */,
 				1ACB2B211A5733F400333392 /* DatabaseProvider.cpp */,
 				1ACB2B221A5733F400333392 /* DatabaseProvider.h */,
 				BC4A532C256056D50028C592 /* DebugOverlayRegions.h */,
@@ -44903,6 +44906,7 @@
 				71ED24B62B1E345300B3EFAB /* CSSViewValue.h in Headers */,
 				BC6AFC412DFC83840065FA1D /* CSSWideKeyword.h in Headers */,
 				BCB272192CC1F21B00265123 /* CSSXywhFunction.h in Headers */,
+				EB8B7D722FDB23010008B670 /* CueMatch.h in Headers */,
 				AEBAFFB52D65D537008311A5 /* CurrentUserDetailsOptions.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				7173694C275E0BAB003ADA9B /* CustomAnimationOptions.h in Headers */,

@@ -61,6 +61,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "CookieJar.h"
 #include "CrossOriginPreflightResultCache.h"
+#include "CueMatch.h"
 #include "Cursor.h"
 #include "DOMAsyncIterator.h"
 #include "DOMPointReadOnly.h"
@@ -3360,6 +3361,24 @@ ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vect
 
     return document->page()->countFindMatches(text, parsedOptions.releaseReturnValue(), 1000);
 }
+
+#if ENABLE(VIDEO)
+ExceptionOr<Vector<double>> Internals::findCueMatches(const String& text, const Vector<String>& findOptions)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto parsedOptions = parseFindOptions(findOptions);
+    if (parsedOptions.hasException())
+        return parsedOptions.releaseException();
+
+    auto matches = document->page()->findCueMatches(text, parsedOptions.releaseReturnValue());
+    return WTF::map(matches, [](const auto& match) -> double {
+        return match.seekTime.toDouble();
+    });
+}
+#endif
 
 unsigned Internals::numberOfIDBTransactions() const
 {

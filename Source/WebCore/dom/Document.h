@@ -36,6 +36,7 @@
 #include <WebCore/DocumentEventTiming.h>
 #include <WebCore/Element.h>
 #include <WebCore/ExceptionOr.h>
+#include <WebCore/FindOptions.h>
 #include <WebCore/FocusControllerTypes.h>
 #include <WebCore/FontSelectorClient.h>
 #include <WebCore/FrameDestructionObserver.h>
@@ -296,6 +297,7 @@ struct BoundaryPoint;
 struct CSSParserContext;
 struct CaretPositionFromPointOptions;
 struct ClientOrigin;
+struct CueMatch;
 struct ElementCreationOptions;
 struct FocusOptions;
 struct ImportNodeOptions;
@@ -1912,6 +1914,7 @@ public:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement&)>&);
+    WEBCORE_EXPORT Vector<CueMatch> findCueMatches(const String&, FindOptions);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

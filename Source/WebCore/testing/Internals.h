@@ -539,6 +539,9 @@ public:
     ExceptionOr<RefPtr<Range>> rangeOfString(const String&, RefPtr<Range>&&, const Vector<String>& findOptions);
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
     ExceptionOr<unsigned> countFindMatches(const String&, const Vector<String>& findOptions);
+#if ENABLE(VIDEO)
+    ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
+#endif
 
     unsigned numberOfScrollableAreas();
 

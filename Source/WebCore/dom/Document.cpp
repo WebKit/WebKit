@@ -82,6 +82,7 @@
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
+#include "DocumentFragment.h"
 #include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
@@ -333,9 +334,13 @@
 #include "SystemPreviewInfo.h"
 #include "TextAutoSizing.h"
 #include "TextEvent.h"
+#include "TextIterator.h"
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"
+#include "TextTrack.h"
+#include "TextTrackCueList.h"
+#include "TextTrackList.h"
 #include "TouchAction.h"
 #include "TransformSource.h"
 #include "TreeScopeInlines.h"
@@ -345,6 +350,7 @@
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
+#include "VTTCue.h"
 #include "ValidationMessage.h"
 #include "ValidationMessageClient.h"
 #include "ViewTransition.h"
@@ -449,6 +455,7 @@
 
 #if ENABLE(VIDEO)
 #include "CaptionUserPreferences.h"
+#include "CueMatch.h"
 #include "LazyLoadVideoObserver.h"
 #endif
 
@@ -2641,6 +2648,73 @@ void Document::forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement
     m_mediaElements.forEach([&](auto& element) {
         function(element);
     });
+}
+
+Vector<CueMatch> Document::findCueMatches(const String& target, FindOptions options)
+{
+    Vector<CueMatch> results;
+    if (target.isEmpty())
+        return results;
+
+    // Order this document's media elements by tree position.
+    Vector<Ref<HTMLMediaElement>> elements;
+    forEachMediaElement([&](HTMLMediaElement& element) {
+        if (element.isConnected())
+            elements.append(element);
+    });
+    std::sort(elements.begin(), elements.end(), [](auto& a, auto& b) {
+        return is_lt(treeOrder<ComposedTree>(a.get(), b.get()));
+    });
+
+    // FIXME: Decisions still need to be made on whether we should only include videos that are paused, that have been interacted with, etc.
+    for (Ref element : elements) {
+        size_t firstMatchForElement = results.size();
+
+        RefPtr tracks = element->textTracks();
+        if (!tracks)
+            continue;
+        MediaTime duration = element->durationMediaTime();
+        for (unsigned i = 0; i < tracks->length(); ++i) {
+            RefPtr track = tracks->item(i);
+            if (!track)
+                continue;
+            // Only search tracks that are currently rendered on screen.
+            if (track->mode() != TextTrack::Mode::Showing)
+                continue;
+            // Only search tracks whose cues carry text the user reads or hears, skip chapters and metadata tracks.
+            switch (track->kind()) {
+            case TextTrack::Kind::Subtitles:
+            case TextTrack::Kind::Captions:
+            case TextTrack::Kind::Descriptions:
+                break;
+            default:
+                continue;
+            }
+            RefPtr cues = track->cues();
+            if (!cues)
+                continue;
+
+            for (unsigned j = 0; j < cues->length(); ++j) {
+                RefPtr cue = cues->item(j);
+                // Only VTTCue carries searchable caption text.
+                RefPtr vttCue = dynamicDowncast<VTTCue>(cue.get());
+                if (!vttCue)
+                    continue;
+                if (duration.isValid() && vttCue->startMediaTime() >= duration)
+                    break;
+                RefPtr cueAsHTML = vttCue->getCueAsHTML();
+                if (cueAsHTML && containsPlainText(cueAsHTML->textContent(), target, options))
+                    results.append({ element.get(), vttCue->startMediaTime() });
+            }
+        }
+
+        // One element can carry several active text tracks (captions, subtitles, etc.), so sort by cue time.
+        std::ranges::stable_sort(results.mutableSubspan(firstMatchForElement), [](auto& a, auto& b) {
+            return a.seekTime < b.seekTime;
+        });
+    }
+
+    return results;
 }
 
 #endif
