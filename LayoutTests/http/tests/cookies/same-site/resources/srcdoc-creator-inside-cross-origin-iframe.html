@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cross-origin iframe that creates a srcdoc</title>
+</head>
+<body>
+<script>
+const fetchURL = "http://127.0.0.1:8000/cookies/resources/echo-json.py";
+const srcdocContent = `<!DOCTYPE html><body><script>
+fetch(${JSON.stringify(fetchURL)}, {credentials: "include", mode: "cors"})
+    .then((response) => response.json())
+    .then((cookies) => {
+        window.top.postMessage({type: "cookies-from-srcdoc", cookies}, "*");
+    })
+    .catch((error) => {
+        window.top.postMessage({type: "cookies-from-srcdoc", cookies: {error: String(error)}}, "*");
+    });
+<\/script></body>`;
+
+let srcdocIframe = document.createElement("iframe");
+srcdocIframe.style.display = "none";
+srcdocIframe.srcdoc = srcdocContent;
+document.body.appendChild(srcdocIframe);
+</script>
+</body>
+</html>
