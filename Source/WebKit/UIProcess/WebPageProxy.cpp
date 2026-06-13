@@ -14643,7 +14643,7 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
                     image = bitmap->createPlatformImage(DontCopyBackingStore);
             }
             , [&image] (MachSendRight& machSendRight) {
-                if (auto surface = WebCore::IOSurface::createFromSendRight(WTF::move(machSendRight)))
+                if (auto surface = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(WTF::move(machSendRight)))
                     image = WebCore::IOSurface::sinkIntoImage(WTF::move(surface));
             }
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

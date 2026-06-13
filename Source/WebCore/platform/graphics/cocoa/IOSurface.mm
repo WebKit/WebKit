@@ -38,6 +38,7 @@
 #import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/EnumTraits.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
@@ -116,6 +117,58 @@ std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight&& 
 
     auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), { });
+}
+
+template <unsigned bytesPerElement>
+static std::unique_ptr<IOSurface> validateAndCreateFromUntrustedSurface(IOSurfaceRef surface)
+{
+    static_assert(bytesPerElement > 0);
+    auto width = IOSurfaceGetWidth(surface);
+    auto height = IOSurfaceGetHeight(surface);
+    auto bytesPerRow = IOSurfaceGetBytesPerRow(surface);
+    if (!width || !height || !bytesPerRow)
+        return nullptr;
+    auto maxSize = IOSurface::maximumSize();
+    if (width > size_t(maxSize.width()) || height > size_t(maxSize.height()))
+        return nullptr;
+    auto rowBytes = CheckedSize { width } * bytesPerElement;
+    if (rowBytes.hasOverflowed() || rowBytes.value() > bytesPerRow)
+        return nullptr;
+    auto totalBytes = CheckedSize { bytesPerRow } * height;
+    auto allocSize = IOSurfaceGetAllocSize(surface);
+    if (totalBytes.hasOverflowed() || totalBytes.value() > allocSize)
+        return nullptr;
+
+    return IOSurface::createFromSurface(surface, { });
+}
+
+std::unique_ptr<IOSurface> IOSurface::createFromUntrustedUncompressedWebKitSendRight(const MachSendRight&& sendRight)
+{
+    ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
+
+    auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
+    if (!surface)
+        return nullptr;
+
+    unsigned pixelFormat = IOSurfaceGetPixelFormat(surface.get());
+    switch (pixelFormat) {
+    case kCVPixelFormatType_32BGRA:
+    case kCVPixelFormatType_32RGBA:
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case kCVPixelFormatType_30RGBLEPackedWideGamut:
+#endif
+        return validateAndCreateFromUntrustedSurface<4>(surface.get());
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case kCVPixelFormatType_64RGBAHalf:
+        return validateAndCreateFromUntrustedSurface<8>(surface.get());
+#endif
+
+    default:
+        break;
+    }
+
+    return { };
 }
 
 std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, std::optional<DestinationColorSpace>&& colorSpace)
