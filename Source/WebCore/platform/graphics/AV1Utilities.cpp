@@ -1311,7 +1311,7 @@ static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
 
         uint8_t dataByte = data[index++];
         uint8_t decodedByte = dataByte & 0x7f;
-        value |= decodedByte << (7 * cptr);
+        value |= static_cast<size_t>(decodedByte) << (7 * cptr);
         if (value >= std::numeric_limits<uint32_t>::max())
             return 0;
         if (!(dataByte & 0x80))
