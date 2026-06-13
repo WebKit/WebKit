@@ -52,10 +52,6 @@ struct ProPhotoRGBTransferFunction {
 
 template<typename T, TransferFunctionMode mode>
 struct Rec2020TransferFunction {
-    static constexpr T alpha = 1.09929682680944;
-    static constexpr T beta = 0.018053968510807;
-    static constexpr T gamma = 0.45;
-
     static T toGammaEncoded(T);
     static T toLinear(T);
 };
