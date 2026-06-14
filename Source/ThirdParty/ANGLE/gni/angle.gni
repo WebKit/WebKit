@@ -15,6 +15,10 @@ if (!defined(checkout_angle_dawn_deps)) {
   checkout_angle_dawn_deps = true
 }
 
+if (!defined(checkout_angle_partition_alloc)) {
+  checkout_angle_partition_alloc = false
+}
+
 declare_args() {
   # Extract native libs in ANGLE apk. Useful for flamegraph generation.
   angle_extract_native_libs = false

@@ -506,6 +506,7 @@ uniform mediump samplerCube tex_cube_sampler3;
 uniform mediump vec4 texture_env_color[kMaxTexUnits];
 uniform mediump float texture_env_rgb_scale[kMaxTexUnits];
 uniform mediump float texture_env_alpha_scale[kMaxTexUnits];
+uniform mediump float texture_env_lod_bias[kMaxTexUnits];
 
 // Vertex attributes////////////////////////////////////////////////////////////
 
@@ -754,11 +755,11 @@ mediump vec4 getTextureColor(uint unit)
         case 0u:
             if (enable_texture_2d[0])
             {
-                res = texture(tex_sampler0, texcoord0_varying.xy);
+                res = texture(tex_sampler0, texcoord0_varying.xy, texture_env_lod_bias[0]);
             }
             else if (enable_texture_cube_map[0])
             {
-                res = texture(tex_cube_sampler0, texcoord0_varying);
+                res = texture(tex_cube_sampler0, texcoord0_varying, texture_env_lod_bias[0]);
             }
             break;
 #endif
@@ -766,11 +767,11 @@ mediump vec4 getTextureColor(uint unit)
         case 1u:
             if (enable_texture_2d[1])
             {
-                res = texture(tex_sampler1, texcoord1_varying.xy);
+                res = texture(tex_sampler1, texcoord1_varying.xy, texture_env_lod_bias[1]);
             }
             else if (enable_texture_cube_map[1])
             {
-                res = texture(tex_cube_sampler1, texcoord1_varying);
+                res = texture(tex_cube_sampler1, texcoord1_varying, texture_env_lod_bias[1]);
             }
             break;
 #endif
@@ -778,11 +779,11 @@ mediump vec4 getTextureColor(uint unit)
         case 2u:
             if (enable_texture_2d[2])
             {
-                res = texture(tex_sampler2, texcoord2_varying.xy);
+                res = texture(tex_sampler2, texcoord2_varying.xy, texture_env_lod_bias[2]);
             }
             else if (enable_texture_cube_map[2])
             {
-                res = texture(tex_cube_sampler2, texcoord2_varying);
+                res = texture(tex_cube_sampler2, texcoord2_varying, texture_env_lod_bias[2]);
             }
             break;
 #endif
@@ -790,7 +791,7 @@ mediump vec4 getTextureColor(uint unit)
         case 3u:
             if (enable_texture_2d[3])
             {
-                res = texture(tex_sampler3, texcoord3_varying.xy);
+                res = texture(tex_sampler3, texcoord3_varying.xy, texture_env_lod_bias[3]);
             }
             else if (enable_texture_cube_map[3])
             {
@@ -815,25 +816,25 @@ mediump vec4 getPointSpriteTextureColor(uint unit)
         case 0u:
             if (enable_texture_2d[0])
             {
-                res = texture(tex_sampler0, gl_PointCoord.xy);
+                res = texture(tex_sampler0, gl_PointCoord.xy, texture_env_lod_bias[0]);
             }
             break;
         case 1u:
             if (enable_texture_2d[1])
             {
-                res = texture(tex_sampler1, gl_PointCoord.xy);
+                res = texture(tex_sampler1, gl_PointCoord.xy, texture_env_lod_bias[1]);
             }
             break;
         case 2u:
             if (enable_texture_2d[2])
             {
-                res = texture(tex_sampler2, gl_PointCoord.xy);
+                res = texture(tex_sampler2, gl_PointCoord.xy, texture_env_lod_bias[2]);
             }
             break;
         case 3u:
             if (enable_texture_2d[3])
             {
-                res = texture(tex_sampler3, gl_PointCoord.xy);
+                res = texture(tex_sampler3, gl_PointCoord.xy, texture_env_lod_bias[3]);
             }
             break;
         default:

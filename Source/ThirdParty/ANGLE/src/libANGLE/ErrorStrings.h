@@ -677,6 +677,7 @@ inline constexpr const char *kViewsExceedMaxArrayLayers = "baseViewIndex+numView
 inline constexpr const char *kWebGLNameLengthLimitExceeded = "Name is longer than %d characters.";
 inline constexpr const char *kYUVOutputMissmatch = "Program and framebuffer YUV output state does not match.";
 inline constexpr const char *kYUVTargetExtensionRequired = "GL_EXT_YUV_target not enabled.";
+inline constexpr const char *kYuvTexSubImage2DOddOffsetOrDimension = "TexSubImage2D with YUV formats requires even offsets and dimensions.";
 inline constexpr const char *kZeroBoundToTarget = "Zero is bound to target.";
 inline constexpr const char *kUnrecognizedShaderStageBit = "Unrecognized shader stage bit.";
 inline constexpr const char *kProgramNotSeparable = "Program object was not linked with its PROGRAM_SEPARABLE status set.";

@@ -716,6 +716,15 @@ bool ValidateES3TexImageParametersBase(const Context *context,
             return false;
         }
 
+        if (gl::IsYuvFormat(actualInternalFormat))
+        {
+            if ((xoffset % 2) != 0 || (yoffset % 2) != 0 || (width % 2) != 0 || (height % 2) != 0)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kYuvTexSubImage2DOddOffsetOrDimension);
+                return false;
+            }
+        }
+
         if (width > 0 && height > 0 && depth > 0 && pixels == nullptr &&
             context->getState().getTargetBuffer(BufferBinding::PixelUnpack) == nullptr)
         {
@@ -1440,8 +1449,7 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
     }
 
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalformat);
-    if (!formatInfo.textureSupport(context->getClientVersion(), context->getExtensions()) ||
-        IsAngleInternalFormat(internalformat))
+    if (!formatInfo.textureSupport(context->getClientVersion(), context->getExtensions()))
     {
         ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kInvalidInternalFormat, internalformat);
         return false;
@@ -1547,6 +1555,13 @@ bool ValidateES3TexStorageParametersBase(const Context *context,
     if (!ValidateES3TexStorageParametersTexObject(context, entryPoint, target))
     {
         // Error already generated.
+        return false;
+    }
+
+    // Forbid use of ANGLE internal formats
+    if (IsAngleInternalFormat(internalformat))
+    {
+        ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kInvalidInternalFormat, internalformat);
         return false;
     }
 

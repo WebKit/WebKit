@@ -4383,6 +4383,92 @@ TEST_P(PixelLocalStorageTest, TiledRenderingInteractions)
     glEndTilingQCOM(GL_COLOR_BUFFER_BIT0_QCOM);
 }
 
+// Regression test for the Metal backend not resetting the MTLRenderPassDesc defaultWidth/Height
+// when switching between PLS and no PLS. Checks the state leak that happens when switching FBOs.
+TEST_P(PixelLocalStorageTest, DefaultRPDescSizeLeak_BetweenFBOs)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    mProgram.compile(R"(
+        layout(binding=0, rgba8) uniform highp pixelLocalANGLE pls;
+        void main()
+        {
+            pixelLocalStoreANGLE(pls, color + pixelLocalLoadANGLE(pls));
+        })");
+
+    // Render to a large-sized PLS.
+    {
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+        PLSTestTexture texture(GL_RGBA8, 8192, 8192);
+        glFramebufferTexturePixelLocalStorageANGLE(0, texture, 0, 0, GL_NONE);
+
+        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+        mProgram.drawBoxes({{FULLSCREEN}});
+        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+    }
+
+    // Render to a small texture. If the state leaks, the Metal debug device complains that the
+    // defaultWidth/Height is larger than the attachment size.
+    {
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 4);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    }
+}
+
+// Regression test for the Metal backend not resetting the MTLRenderPassDesc defaultWidth/Height
+// when switching between PLS and no PLS. Checks the state leak that happens when reusing the same
+// FBO.
+TEST_P(PixelLocalStorageTest, DefaultRPDescSizeLeak_SameFBO)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    mProgram.compile(R"(
+        layout(binding=0, rgba8) uniform highp pixelLocalANGLE pls;
+        void main()
+        {
+            pixelLocalStoreANGLE(pls, color + pixelLocalLoadANGLE(pls));
+        })");
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Render to a large-sized PLS.
+    {
+
+        PLSTestTexture texture(GL_RGBA8, 8192, 8192);
+        glFramebufferTexturePixelLocalStorageANGLE(0, texture, 0, 0, GL_NONE);
+
+        glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+        mProgram.drawBoxes({{FULLSCREEN}});
+        glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+
+        glFramebufferTexturePixelLocalStorageANGLE(0, 0, 0, 0, GL_NONE);
+    }
+
+    // Render to a small texture. If the state leaks, the Metal debug device complains that the
+    // defaultWidth/Height is larger than the attachment size.
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 4);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    }
+}
+
 // Checks that draw commands validate current PLS state against the shader's PLS uniforms.
 class DrawCommandValidationTest
 {

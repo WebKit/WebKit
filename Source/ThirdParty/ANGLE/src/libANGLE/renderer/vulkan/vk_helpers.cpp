@@ -5904,7 +5904,8 @@ angle::Result ImageHelper::initExternal(ErrorContext *context,
         (renderer->getFeatures().simulateTileMemoryForTesting.enabled ||
          renderer->getFeatures().supportsTileMemoryHeap.enabled) &&
         !HasEmulatedImageChannels(angle::Format::Get(mIntendedFormatID),
-                                  angle::Format::Get(mActualFormatID)))
+                                  angle::Format::Get(mActualFormatID)) &&
+        !renderer->getFeatures().allocateNonZeroMemory.enabled)
     {
         ASSERT(initialAccess == ImageAccess::Undefined);
         ASSERT(angle::Format::Get(actualFormatID).hasDepthOrStencilBits());
@@ -6182,6 +6183,8 @@ angle::Result ImageHelper::initializeNonZeroMemory(ErrorContext *context,
         // conversion for VK_IMAGE_ASPECT_COLOR_BIT image views
         return angle::Result::Continue;
     }
+
+    ASSERT(canTransferTo());
 
     // Since we are going to do a one off out of order submission, there shouldn't any pending
     // setEvent.
@@ -6484,9 +6487,24 @@ angle::Result ImageHelper::fallbackFromTileMemory(ContextVk *contextVk)
     // Copy data from the previous image.
     if (prevImage->isVkImageContentDefined())
     {
-        ANGLE_TRY(
-            utilsVk.copyImageFromTileMemory(contextVk, getAspectFlags(), this, prevImage.get()));
-        ASSERT(isVkImageContentDefined());
+        const angle::Format &actualFormat = prevImage->getActualFormat();
+        VkImageAspectFlags aspectFlags    = 0;
+        if (actualFormat.depthBits > 0 &&
+            IsAnySubresourceContentDefined(prevImage->mVkImageContentDefined))
+        {
+            aspectFlags |= VK_IMAGE_ASPECT_DEPTH_BIT;
+        }
+        if (actualFormat.stencilBits > 0 &&
+            IsAnySubresourceContentDefined(prevImage->mVkImageStencilContentDefined))
+        {
+            aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+        ASSERT(aspectFlags != 0);
+        ANGLE_TRY(utilsVk.copyImageFromTileMemory(contextVk, aspectFlags, this, prevImage.get()));
+        ASSERT(IsAnySubresourceContentDefined(mVkImageContentDefined) ==
+               IsAnySubresourceContentDefined(prevImage->mVkImageContentDefined));
+        ASSERT(IsAnySubresourceContentDefined(mVkImageStencilContentDefined) ==
+               IsAnySubresourceContentDefined(prevImage->mVkImageStencilContentDefined));
     }
 
     prevImage->releaseImage(renderer);
@@ -8229,7 +8247,7 @@ void ImageHelper::removeSingleSubresourceStagedUpdates(ContextVk *contextVk,
     for (size_t index = 0; index < levelUpdates->size();)
     {
         auto update = levelUpdates->begin() + index;
-        if (update->matchesLayerRange(layerIndex, layerCount))
+        if (update->matchesLayerRange(layerIndex, layerCount, mLayerCount))
         {
             // Update total staging buffer size
             mTotalStagedBufferUpdateSize -= update->updateSource == UpdateSource::Buffer
@@ -8263,7 +8281,7 @@ void ImageHelper::removeSingleStagedClearAfterInvalidate(gl::LevelIndex levelInd
     {
         auto update = levelUpdates->begin() + index;
         if (update->updateSource == UpdateSource::ClearAfterInvalidate &&
-            update->matchesLayerRange(layerIndex, layerCount))
+            update->matchesLayerRange(layerIndex, layerCount, mLayerCount))
         {
             // It's a clear, so doesn't need to be released.
             levelUpdates->erase(update);
@@ -8489,15 +8507,25 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
         ASSERT(index.getLevelIndex() == 0);
         ASSERT(index.getLayerCount() == 1);
 
+        int hSub = 1, vSub = 1;
+        gl::GetSubSampleFactor(formatInfo.internalFormat, &hSub, &vSub);
+
         for (uint32_t plane = 0; plane < yuvInfo.planeCount; plane++)
         {
+            gl::Offset planeOffset = offset;
+            if (plane > 0)
+            {
+                planeOffset.x = offset.x / hSub;
+                planeOffset.y = offset.y / vSub;
+            }
+
             VkBufferImageCopy copy           = {};
             copy.bufferOffset                = stagingOffset + yuvInfo.planeOffset[plane];
             copy.bufferRowLength             = 0;
             copy.bufferImageHeight           = 0;
             copy.imageSubresource.mipLevel   = 0;
             copy.imageSubresource.layerCount = 1;
-            gl_vk::GetOffset(offset, &copy.imageOffset);
+            gl_vk::GetOffset(planeOffset, &copy.imageOffset);
             gl_vk::GetExtent(yuvInfo.planeExtent[plane], &copy.imageExtent);
             copy.imageSubresource.baseArrayLayer = 0;
             copy.imageSubresource.aspectMask     = kPlaneAspectFlags[plane];
@@ -9837,7 +9865,7 @@ angle::Result ImageHelper::flushSingleSubresourceStagedUpdates(ContextVk *contex
                 // On any data update or the clear does not match exact layer range, we'll need to
                 // do a full upload.
                 const bool isClear = IsClearOfAllChannels(update.updateSource);
-                if (isClear && update.matchesLayerRange(layer, layerCount))
+                if (isClear && update.matchesLayerRange(layer, layerCount, mLayerCount))
                 {
                     foundClear = updateIndex;
                 }
@@ -11768,13 +11796,18 @@ void ImageHelper::SubresourceUpdate::release(Renderer *renderer)
 }
 
 bool ImageHelper::SubresourceUpdate::matchesLayerRange(uint32_t layerIndex,
-                                                       uint32_t layerCount) const
+                                                       uint32_t layerCount,
+                                                       uint32_t imageLayerCount) const
 {
     uint32_t updateBaseLayer, updateLayerCount;
     getDestSubresource(gl::ImageIndex::kEntireLevel, &updateBaseLayer, &updateLayerCount);
 
-    return updateBaseLayer == layerIndex &&
-           (updateLayerCount == layerCount || updateLayerCount == VK_REMAINING_ARRAY_LAYERS);
+    if (updateLayerCount == VK_REMAINING_ARRAY_LAYERS)
+    {
+        updateLayerCount = imageLayerCount;
+    }
+
+    return updateBaseLayer == layerIndex && updateLayerCount == layerCount;
 }
 
 bool ImageHelper::SubresourceUpdate::intersectsLayerRange(uint32_t layerIndex,

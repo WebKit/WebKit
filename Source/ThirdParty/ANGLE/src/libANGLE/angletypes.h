@@ -46,12 +46,24 @@ struct Extents
     Extents(const Extents &other)            = default;
     Extents &operator=(const Extents &other) = default;
 
-    bool empty() const { return (width * height * depth) == 0; }
+    constexpr bool empty() const { return width == 0 || height == 0 || depth == 0; }
 
     T width;
     T height;
     T depth;
 };
+
+static_assert(Extents(0, 0, 0).empty());
+static_assert(Extents(0, 1, 1).empty());
+static_assert(Extents(1, 0, 1).empty());
+static_assert(Extents(1, 1, 0).empty());
+static_assert(!Extents(1, 1, 1).empty());
+static_assert(!Extents<int32_t>(1, 65536, 65536).empty());
+static_assert(!Extents<int32_t>(65536, 1, 65536).empty());
+static_assert(!Extents<int32_t>(65536, 65536, 1).empty());
+static_assert(!Extents<uint32_t>(1, 65536, 65536).empty());
+static_assert(!Extents<uint32_t>(65536, 1, 65536).empty());
+static_assert(!Extents<uint32_t>(65536, 65536, 1).empty());
 
 template <typename T>
 struct Offset

@@ -7152,6 +7152,13 @@ bool ValidateReadPixelsBase(const Context *context,
         return false;
     }
 
+    if (ANGLE_UNLIKELY(!angle::base::CheckAdd<GLint>(x, width).IsValid() ||
+                       !angle::base::CheckAdd<GLint>(y, height).IsValid()))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
+        return false;
+    }
+
     Framebuffer *readFramebuffer = context->getState().getReadFramebuffer();
     ASSERT(readFramebuffer);
 
@@ -7264,18 +7271,11 @@ bool ValidateReadPixelsBase(const Context *context,
     auto getClippedExtent = [](GLint start, GLsizei length, int bufferSize, GLsizei *outExtent) {
         ASSERT(length >= 0);
         ASSERT(bufferSize >= 0);
-
-        angle::CheckedNumeric<int> readExtent = start;
-        readExtent += length;
-        if (!readExtent.IsValid())
-        {
-            return false;
-        }
+        ASSERT(angle::base::CheckAdd<GLint>(start, length).IsValid());
 
         if (outExtent == nullptr)
         {
-            // Only perform integer overflow validation when robust read is not used.
-            return true;
+            return;
         }
 
         int clippedExtent = length;
@@ -7286,7 +7286,8 @@ bool ValidateReadPixelsBase(const Context *context,
             clippedExtent += start;
         }
 
-        const int readExtentValue = readExtent.ValueOrDie();
+        // Integer overflow has been checked earlier.
+        const int readExtentValue = start + length;
         if (readExtentValue > bufferSize)
         {
             ASSERT(readExtentValue > 0);
@@ -7300,7 +7301,6 @@ bool ValidateReadPixelsBase(const Context *context,
         }
 
         *outExtent = std::max<int>(clippedExtent, 0);
-        return true;
     };
 
     Extents readBufferSize;
@@ -7316,17 +7316,9 @@ bool ValidateReadPixelsBase(const Context *context,
         readBufferSize = readBuffer->getSize();
     }
 
-    if (!getClippedExtent(x, width, readBufferSize.width, columns))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
-        return false;
-    }
+    getClippedExtent(x, width, readBufferSize.width, columns);
 
-    if (!getClippedExtent(y, height, readBufferSize.height, rows))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
-        return false;
-    }
+    getClippedExtent(y, height, readBufferSize.height, rows);
 
     return true;
 }

@@ -28,15 +28,6 @@ namespace cl
 namespace
 {
 
-bool IsDeviceTypeMatch(DeviceType select, DeviceType type)
-{
-    // The type 'DeviceType' is a bitfield, so it matches if any selected bit is set.
-    // A custom device is an exception, which only matches if it was explicitely selected, see:
-    // https://www.khronos.org/registry/OpenCL/specs/3.0-unified/html/OpenCL_API.html#clGetDeviceIDs
-    return type == CL_DEVICE_TYPE_CUSTOM ? select == CL_DEVICE_TYPE_CUSTOM
-                                         : type.intersects(select);
-}
-
 Context::PropArray ParseContextProperties(const cl_context_properties *properties,
                                           Platform *&platform,
                                           bool &userSync)
@@ -200,34 +191,55 @@ angle::Result Platform::getDeviceIDs(DeviceType deviceType,
                                      cl_device_id *devices,
                                      cl_uint *numDevices) const
 {
-    cl_uint found = 0u;
+    cl_uint found                = 0u;
+    const bool requestForAll     = deviceType.intersects(CL_DEVICE_TYPE_ALL);
+    const bool requestForDefault = deviceType.intersects(CL_DEVICE_TYPE_DEFAULT);
+
     for (const DevicePtr &device : mDevices)
     {
-        if (IsDeviceTypeMatch(deviceType, device->getInfo().type))
+        // "default" and "all" types are edge cases
+        if (requestForDefault || requestForAll)
         {
             if (devices != nullptr && found < numEntries)
             {
                 devices[found] = device.get();
             }
             ++found;
+            if (requestForDefault)
+            {
+                break;  // just return the 1st device as the "default"
+            }
+        }
+        else
+        {
+            // otherwise, check for type-match
+            if (IsDeviceTypeMatch(deviceType, device->getInfo().type))
+            {
+                if (devices != nullptr && found < numEntries)
+                {
+                    devices[found] = device.get();
+                }
+                ++found;
+            }
         }
     }
+
     if (numDevices != nullptr)
     {
         *numDevices = found;
     }
-
-    // CL_DEVICE_NOT_FOUND if no OpenCL devices that matched device_type were found.
-    if (found == 0u)
-    {
-        ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
-    }
+    ASSERT(found != 0);
 
     return angle::Result::Continue;
 }
 
 bool Platform::hasDeviceType(DeviceType deviceType) const
 {
+    if (deviceType.intersects(CL_DEVICE_TYPE_DEFAULT | CL_DEVICE_TYPE_ALL))
+    {
+        return true;  // query-types are always valid/available
+    }
+
     for (const DevicePtr &device : mDevices)
     {
         if (IsDeviceTypeMatch(deviceType, device->getInfo().type))

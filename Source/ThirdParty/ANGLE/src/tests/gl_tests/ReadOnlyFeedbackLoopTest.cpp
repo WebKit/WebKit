@@ -781,6 +781,102 @@ void main()
     EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::blue);
 }
 
+// Tests that sampling from stencil while simultaneously bound as read-only attachment works.  Depth
+// is cleared but is otherwise not being written to.
+TEST_P(ReadOnlyFeedbackLoopTestES31, SampleStencilWhileReadOnlyAttachmentWithDepthClear)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_read_only_depth_stencil_feedback_loops"));
+
+    constexpr GLsizei kSize = 64;
+
+    // Create FBO with color, depth and stencil
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLTexture depthStencil;
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencil,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize stencil so it can be sampled from later.  Initialize depth too, which will be
+    // overwritten later.
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0xAA, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    drawQuad(red, essl1_shaders::PositionAttrib(), 0.5f);
+    // Close the render pass
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear depth, but otherwise disable depth write.  If the clear is not taken into account,
+    // depth would look like it's in read-only mode, which is not correct.
+    glClearDepthf(0.99f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_FALSE);
+
+    // Put stencil in read-only mode, and bind it for sampling.
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    constexpr char kVS[] = R"(#version 310 es
+precision highp float;
+in vec4 position;
+out vec2 texCoord;
+
+void main()
+{
+    gl_Position = position;
+    texCoord = position.xy * 0.5 + vec2(0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+precision mediump usampler2D;
+
+in vec2 texCoord;
+uniform usampler2D stencil;
+out vec4 color;
+
+void main()
+{
+    bool stencilPass = texture(stencil, texCoord).x == 0xAAu;
+    color = vec4(0, stencilPass, 0, 1);
+}
+)";
+
+    ANGLE_GL_PROGRAM(validateStencil, kVS, kFS);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(validateStencil);
+    glUniform1i(glGetUniformLocation(validateStencil, "stencil"), 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(validateStencil, "position", 0.97);
+    ASSERT_GL_NO_ERROR();
+
+    // Validate depth test passed and stencil was read correctly
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Tests that sampling from depth while simultaneously bound as read-only attachment works.  Stencil
 // is being written at the same time.
 TEST_P(ReadOnlyFeedbackLoopTestES31, SampleDepthWhileReadOnlyAttachment)

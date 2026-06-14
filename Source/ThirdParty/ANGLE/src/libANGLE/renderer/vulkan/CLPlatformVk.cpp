@@ -134,7 +134,7 @@ CLDeviceImpl::CreateDatas CLPlatformVk::createDevices() const
     CLDeviceImpl::CreateDatas createDatas;
 
     // Convert Vk device type to CL equivalent
-    cl_device_type type = CL_DEVICE_TYPE_DEFAULT;
+    cl_device_type type = 0;
     switch (mRenderer->getPhysicalDeviceProperties().deviceType)
     {
         case VK_PHYSICAL_DEVICE_TYPE_CPU:
@@ -178,12 +178,29 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
                                                   CLContextImpl::Ptr *contextOut)
 {
     cl::DevicePtrs devices;
-    for (const auto &platformDevice : mPlatform.getDevices())
+    const bool requestForAll     = deviceType.intersects(CL_DEVICE_TYPE_ALL);
+    const bool requestForDefault = deviceType.intersects(CL_DEVICE_TYPE_DEFAULT);
+
+    if (requestForAll)
     {
-        const auto &platformDeviceInfo = platformDevice->getInfo();
-        if (platformDeviceInfo.type.intersects(deviceType))
+        devices = mPlatform.getDevices();
+    }
+    else if (requestForDefault)
+    {
+        if (!mPlatform.getDevices().empty())
         {
-            devices.push_back(platformDevice);
+            devices.push_back(mPlatform.getDevices().front());
+        }
+    }
+    else
+    {
+        for (const auto &platformDevice : mPlatform.getDevices())
+        {
+            const auto &platformDeviceInfo = platformDevice->getInfo();
+            if (platformDeviceInfo.type.intersects(deviceType))
+            {
+                devices.push_back(platformDevice);
+            }
         }
     }
 

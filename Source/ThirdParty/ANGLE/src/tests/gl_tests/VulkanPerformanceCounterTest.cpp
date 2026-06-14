@@ -394,6 +394,10 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
         return isFeatureEnabled(Feature::SupportsTileMemoryHeap) ||
                isFeatureEnabled(Feature::SimulateTileMemoryForTesting);
     }
+    bool hasSupportsShaderStencilExport() const
+    {
+        return isFeatureEnabled(Feature::SupportsShaderStencilExport);
+    }
 
     // Setup color texture and depth/stencil render buffer
     void setupColorTextureAndDepthBuffer(GLuint colorTexture,
@@ -528,6 +532,55 @@ class VulkanPerformanceCounterTest_DepthStencilLoadStoreOps : public VulkanPerfo
     {
         expected->depthLoadOpLoads   = counters.depthLoadOpLoads + incrementalDepthLoadOpLoads;
         expected->stencilLoadOpLoads = counters.stencilLoadOpLoads + incrementalStencilLoadOpLoads;
+    }
+
+    void setAndIncrementDepthStencilStoreCountersForOpsTest(
+        const angle::VulkanPerfCounters &counters,
+        uint64_t incrementalDepthStoreOpStores,
+        uint64_t incrementalStencilStoreOpStores,
+        angle::VulkanPerfCounters *expected)
+    {
+        expected->depthStoreOpStores = counters.depthStoreOpStores + incrementalDepthStoreOpStores;
+        expected->stencilStoreOpStores =
+            counters.stencilStoreOpStores + incrementalStencilStoreOpStores;
+    }
+
+    void adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(
+        const angle::VulkanPerfCounters &counters,
+        angle::VulkanPerfCounters *expected)
+    {
+        if (counters.fallbackFromTileMemory == 0)
+        {
+            return;
+        }
+
+        bool depthContentDefined =
+            expected->depthStoreOpStores > 0 || expected->depthStoreOpNones > 0;
+        if (depthContentDefined)
+        {
+            // fallbackFromTileMemory adds one load/store op if there is valid depth data.
+            expected->depthLoadOpLoads += counters.fallbackFromTileMemory;
+            expected->depthStoreOpStores += counters.fallbackFromTileMemory;
+        }
+
+        // fallbackFromTileMemory adds one load/store op if there is valid stencil data.
+        if (expected->stencilStoreOpStores > 0 && hasSupportsShaderStencilExport())
+        {
+            // If driver supports shader export, copy is implemented with graphics shader write.
+            expected->stencilLoadOpLoads += counters.fallbackFromTileMemory;
+            expected->stencilStoreOpStores += counters.fallbackFromTileMemory;
+        }
+        else
+        {
+            if (hasLoadOpNoneSupport())
+            {
+                expected->stencilLoadOpNones += counters.fallbackFromTileMemory;
+            }
+            if (hasStoreOpNoneSupport())
+            {
+                expected->stencilStoreOpNones += counters.fallbackFromTileMemory;
+            }
+        }
     }
 };
 
@@ -756,6 +809,10 @@ TEST_P(VulkanPerformanceCounterTest, LargeCubeMapUpdatesSubmitsOutsideCommandBuf
 // current render pass.
 TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotBreakRenderPass)
 {
+    GLTexture tex;
+    GLFramebuffer fbo;
+    setupForColorOpsTest(&fbo, &tex);
+
     constexpr size_t kMaxBufferToImageCopySize = 64 * 1024 * 1024;
     constexpr uint64_t kNumSubmits             = 2;
     uint64_t expectedRenderPassCount           = getPerfCounters().renderPasses + 1;
@@ -812,16 +869,7 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotBreakR
 
     // Verify render pass and submitted frame counts.
     EXPECT_EQ(getPerfCounters().renderPasses, expectedRenderPassCount);
-    if (hasSupportsTileMemoryOrSimulation())
-    {
-        // When tile memory is used we may not submit if depthStencil has valid data.
-        EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal - submitCommandsCountBefore, 0ul);
-    }
-    else
-    {
-        EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal - submitCommandsCountBefore,
-                  kNumSubmits);
-    }
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal - submitCommandsCountBefore, kNumSubmits);
 }
 
 // Tests that submitting the outside command buffer due to texture upload size does not result in
@@ -833,6 +881,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotCollec
     // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
     // submissions.
     ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
+    GLTexture tex;
+    GLFramebuffer fbo;
+    setupForColorOpsTest(&fbo, &tex);
 
     uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
     uint64_t submitCommandsCount     = getPerfCounters().vkQueueSubmitCallsTotal;
@@ -932,6 +984,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferTriggersEndRe
     const int height                 = getWindowHeight();
     uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
     uint64_t submitCommandsCount     = getPerfCounters().vkQueueSubmitCallsTotal;
+
+    GLTexture tex;
+    GLFramebuffer fbo;
+    setupForColorOpsTest(&fbo, &tex);
 
     // Start a new renderpass with red quad on left.
     ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -2844,6 +2900,10 @@ TEST_P(VulkanPerformanceCounterTest_ES31, FramebufferFetchRenderPassThenColorMas
 TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilMaskedDrawThenClear)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
+    // correct.
+    ANGLE_SKIP_TEST_IF(hasSupportsTileMemoryOrSimulation() &&
+                       hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
 
     // This optimization is not implemented when this workaround is in effect.
     ANGLE_SKIP_TEST_IF(hasPreferDrawOverClearAttachments());
@@ -2879,6 +2939,13 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilMasked
 
     // Break the render pass and check how many loads and stores were actually done
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
+    if (hasSupportsTileMemoryOrSimulation())
+    {
+        // If tile memory is used, mid-renderPass clear will use draw instead of clear.
+        expected.depthLoadOpClears   = 0;
+        expected.stencilLoadOpClears = 0;
+    }
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
     EXPECT_CLEAR_ATTACHMENTS_COUNTER(expected.depthClearAttachments,
                                      getPerfCounters().depthClearAttachments);
@@ -3093,9 +3160,11 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DisableDrawInvalid
 
     // Start and end another render pass, to check that the load ops are as expected
     setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 0, 0, &expected);
+    setAndIncrementDepthStencilStoreCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
 }
 
@@ -3135,9 +3204,11 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 
     // Start and end another render pass, to check that the load ops are as expected
     setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 0, 0, &expected);
+    setAndIncrementDepthStencilStoreCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
 }
 
@@ -3177,9 +3248,11 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 
     // Start and end another render pass, to check that the load ops are as expected
     setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 0, 0, &expected);
+    setAndIncrementDepthStencilStoreCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
 }
 
@@ -3188,6 +3261,10 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilPartialInvalidateSub)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
+    // correct.
+    ANGLE_SKIP_TEST_IF(hasSupportsTileMemoryOrSimulation() &&
+                       hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
 
     angle::VulkanPerfCounters expected;
 
@@ -3206,6 +3283,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilPartia
     // Break the render pass so depth/stencil values are stored.
     EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Start a new render pass that is scissored.  Depth/stencil should be loaded.  The draw call is
@@ -3292,14 +3370,16 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 
     // Use swapBuffers and then check how many loads and stores were actually done
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Start and end another render pass, to check that the load ops are as expected
-    setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
-    EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
+    EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 }
 
 // Tests that another case does not break render pass, and that counts are correct:
@@ -3409,9 +3489,11 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Start and end another render pass, to check that the load ops are as expected
     setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 0, 0, &expected);
+    setAndIncrementDepthStencilStoreCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
 }
 
@@ -3422,6 +3504,10 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
        DepthStencilInvalidateDisableDrawEnableDraw)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
+    // correct.
+    ANGLE_SKIP_TEST_IF(hasSupportsTileMemoryOrSimulation() &&
+                       hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
 
     angle::VulkanPerfCounters expected;
 
@@ -3465,6 +3551,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Break the render pass and then check how many loads and stores were actually done
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Start and end another render pass, to check that the load ops are as expected
@@ -3525,14 +3612,17 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Break the render pass and then check how many loads and stores were actually done
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Start and end another render pass, to check that the load ops are as expected
-    setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
+    // setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-    EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
+    EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 }
 
 // Tests that another case does not break render pass, and that counts are correct:
@@ -3591,9 +3681,11 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Start and end another render pass, to check that the load ops are as expected
     setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 0, 0, &expected);
+    setAndIncrementDepthStencilStoreCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
 }
 
@@ -3646,6 +3738,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Draw (since enabled, should result: in storeOp = STORE; mContentDefined = true)
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    setAndIncrementDepthStencilStoreCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
     ASSERT_GL_NO_ERROR();
 
     // Ensure that the render pass wasn't broken
@@ -3653,14 +3746,16 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Use swapBuffers and then check how many loads and stores were actually done
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Start and end another render pass, to check that the load ops are as expected
-    setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
-    EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
+    EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 }
 
 // Tests that another common (dEQP) case does not break render pass, and that counts are correct:
@@ -3711,14 +3806,16 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
 
     // Use swapBuffers and then check how many loads and stores were actually done
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Start and end another render pass, to check that the load ops are as expected
-    setAndIncrementDepthStencilLoadCountersForOpsTest(getPerfCounters(), 1, 0, &expected);
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     swapBuffers();
-    EXPECT_DEPTH_STENCIL_LOAD_OP_COUNTERS(getPerfCounters(), expected);
+    EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 }
 
 // Tests that an in renderpass clear after invalidate keeps content stored.
@@ -3758,7 +3855,13 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 
     // Use swapBuffers and then check how many loads and stores were actually done
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
+    if (getPerfCounters().fallbackFromTileMemory > 0)
+    {
+        // Mid-renderPass clear will use draw instead of clearAttachments
+        expected.depthClearAttachments = 0;
+    }
     EXPECT_CLEAR_ATTACHMENTS_COUNTER(expected.depthClearAttachments,
                                      getPerfCounters().depthClearAttachments);
 
@@ -3785,6 +3888,10 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvalidateAndMaskedClear)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
+    // correct.
+    ANGLE_SKIP_TEST_IF(hasSupportsTileMemoryOrSimulation() &&
+                       hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
 
     angle::VulkanPerfCounters expected;
 
@@ -3822,6 +3929,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthStencilInvali
 
     // Use swapBuffers and then check how many loads and stores were actually done
     swapBuffers();
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Expect rpCount+1, depth(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0),
@@ -3851,6 +3959,10 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
        DepthFuncALWAYSWithDepthMaskDisabledShouldNotLoadStore)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
+    // correct.
+    ANGLE_SKIP_TEST_IF(hasSupportsTileMemoryOrSimulation() &&
+                       hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
 
     angle::VulkanPerfCounters expected;
 
@@ -3878,6 +3990,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
     ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
     drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.95f);
     EXPECT_PIXEL_COLOR_EQ(kOpsTestSize / 2, kOpsTestSize / 2, GLColor::red);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     // Expect rpCount+1, depth(Clears+0, Loads+0, LoadNones+1, Stores+0, StoreNones+1),
@@ -3899,8 +4012,16 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
        DepthFuncALWAYSWithDepthMaskDisabledThenClearShouldNotLoadStore)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
+    // correct.
+    ANGLE_SKIP_TEST_IF(hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
 
     angle::VulkanPerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0),
+    // stencil(Clears+0, Loads+0, LoadNones+1, Stores+0, StoreNones+1)
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 0, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 1, 0, 1, &expected);
 
     GLFramebuffer framebuffer;
     GLTexture texture;
@@ -3914,19 +4035,20 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
     ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
     drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.95f);
     EXPECT_PIXEL_COLOR_EQ(kOpsTestSize / 2, kOpsTestSize / 2, GLColor::red);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
+    EXPECT_DEPTH_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
 
     if (hasPreferDrawOverClearAttachments())
     {
         // Expect rpCount+1, depth(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0),
-        //                 stencil(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
         setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
     }
     else
     {
         // Expect rpCount+1, depth(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0),
-        //                 stencil(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
         setExpectedCountersForDepthOps(getPerfCounters(), 1, 1, 0, 0, 1, 0, &expected);
     }
+    // Expect stencil(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
     setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 0, 1, 0, &expected);
 
     glEnable(GL_DEPTH_TEST);
@@ -4187,6 +4309,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps_ES31,
     // Verify results and check how many loads and stores were actually done.
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_OP_COUNTERS(getPerfCounters(), expected);
     ASSERT_GL_NO_ERROR();
 }
@@ -7286,6 +7409,7 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps, DepthClearThenColo
     // applied to depth should be done as loadOp, not flushed during the blit.
     swapBuffers();
     EXPECT_COLOR_OP_COUNTERS(getPerfCounters(), expected);
+    adjustExpectedDepthStencilLoadStoreOpsForTileMemoryFallback(getPerfCounters(), &expected);
     EXPECT_DEPTH_OP_COUNTERS(getPerfCounters(), expected);
     ASSERT_GL_NO_ERROR();
 
@@ -8568,6 +8692,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferAssertIsOpen)
     // submissions.
     ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
 
+    GLTexture tex;
+    GLFramebuffer fbo;
+    setupForColorOpsTest(&fbo, &tex);
+
     uint64_t submitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal;
 
     ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
@@ -9781,6 +9909,93 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, BlitGradientDepthBuffer)
     EXPECT_EQ(bottomRightTriangleIsBlue, true);
 }
 
+// Similar to OneDSBufferUsedInOneRenderPassThenInvalidate_D24S8, add sample from cubemap texture
+// which on some GPU, it may trigger finishImpl call.
+TEST_P(VulkanPerformanceCounterTest_TileMemory,
+       OneDSBufferUsedInOneRenderPassThenSampleFromCubemapTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::SimulateTileMemoryForTesting) &&
+                       !isFeatureEnabled(Feature::SupportsTileMemoryHeap));
+
+    setupPrograms();
+
+    const char kCubemapTextureFS[] = R"(precision highp float;
+            uniform samplerCube texCube;
+            varying vec2 v_texCoord;
+            void main()
+            {
+                vec3 cubecoord = vec3(1, v_texCoord);
+                gl_FragColor = textureCube(texCube, cubecoord);
+            })";
+
+    constexpr GLsizei kWidth  = 4;
+    constexpr GLsizei kHeight = 4;
+
+    uint64_t tileMemoryImageCountBefore = getPerfCounters().tileMemoryImages;
+    uint64_t renderPassCountBefore      = getPerfCounters().renderPasses;
+
+    // Create a cubemap texture. This will create a texture with mHasBeenBoundAsAttachment=false.
+    GLTexture cubeMapTexture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexStorage2D(GL_TEXTURE_CUBE_MAP, 7, GL_RGB5_A1, 64, 64);
+    std::array<uint16_t, 64 * 64> textureData;
+    textureData.fill(0xF801);
+    for (GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X; target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+         target++)
+    {
+        glTexSubImage2D(target, 0, 0, 0, 64, 64, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
+                        reinterpret_cast<const GLubyte *>(textureData.data()));
+    }
+    // This will make the cubemap texture's mHasBeenBoundAsAttachment=true.
+    GLFramebuffer fboWithCubemapTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboWithCubemapTexture);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                           cubeMapTexture, 0);
+
+    // Create FBO, it's depthStencil buffer should allocated with tile memory.
+    GLTexture colorTexture;
+    GLRenderbuffer depthStencil;
+    setupColorTextureAndDepthBuffer(colorTexture, depthStencil, GL_DEPTH24_STENCIL8, kWidth,
+                                    kHeight);
+    GLFramebuffer fbo;
+    setupFBO(colorTexture, depthStencil, depthStencil, fbo, kWidth, kHeight);
+
+    // Start renderPass
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(0.5f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    drawQuadToVerifyDepthStencilValue(0.0f, 0x55);
+    EXPECT_GL_NO_ERROR();
+
+    // There should be only one render pass.
+    uint64_t renderPassCount = getPerfCounters().renderPasses - renderPassCountBefore;
+    EXPECT_EQ(1u, renderPassCount);
+    EXPECT_EQ(1u, getPerfCounters().tileMemoryImages - tileMemoryImageCountBefore);
+    EXPECT_EQ(0u, getPerfCounters().fallbackFromTileMemory);
+
+    // Sample from cubeMapTexture. This may trigger submitCommands on some GPUs that has to recreate
+    // VkImage for cubemap texture due to mHasBeenBoundAsAttachment==true and trigger a finishImpl
+    // call due to data copy back.
+    ANGLE_GL_PROGRAM(texProgram, essl1_shaders::vs::Texture2D(), kCubemapTextureFS);
+    glUseProgram(texProgram);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
+    glDisable(GL_STENCIL_TEST);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(texProgram, essl1_shaders::PositionAttrib(), 0.6f);
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, 0.6f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+}
+
 class VulkanPerformanceCounterTest_Dither : public VulkanPerformanceCounterTest
 {};
 
@@ -9831,6 +10046,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(
     VulkanPerformanceCounterTest_DepthStencilLoadStoreOps);
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
                        ES3_VULKAN(),
+                       ES3_VULKAN().enable(Feature::SimulateTileMemoryForTesting),
                        ES3_VULKAN_SWIFTSHADER());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_ES31);
@@ -9840,6 +10056,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(
     VulkanPerformanceCounterTest_DepthStencilLoadStoreOps_ES31);
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps_ES31,
                        ES31_VULKAN(),
+                       ES3_VULKAN().enable(Feature::SimulateTileMemoryForTesting),
                        ES31_VULKAN_SWIFTSHADER());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_MSAA);

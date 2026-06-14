@@ -2832,6 +2832,10 @@ void CaptureTextureEnvironmentState(std::vector<CallCapture> *setupCalls,
                            gl::TextureEnvParameter::PointCoordReplace,
                            currentEnv.pointSpriteCoordReplace));
 
+    capIfNe(currentEnv.lodBias, defaultEnv.lodBias,
+            CaptureTexEnvf(*replayState, true, gl::TextureEnvTarget::TextureFilterControl,
+                           gl::TextureEnvParameter::LodBias, currentEnv.lodBias));
+
     // In case of non-default sampler units, the default unit must be set back here.
     capIfNe(currentUnit, defaultUnit, CaptureActiveTexture(*replayState, true, defaultUnit));
 }
@@ -2979,13 +2983,19 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
             {
                 // The last call's index is kept so the call's pointer and offset can be updated if
                 // its corresponding attribute is merged into another attribute later.
-                const size_t currentSetupCallLastIndex = setupCalls->size() - 1;
                 ParamCapture &clientArrayPointerParams =
                     setupCalls->back().params.getClientArrayPointerParameter();
-                clientVACallIndices.push_back(currentSetupCallLastIndex);
-                clientVertexArrayMask.set(clientArrayPointerParams.arrayClientPointerIndex);
-                clientVertexArrayData[clientArrayPointerParams.arrayClientPointerIndex] =
-                    clientArrayPointerParams.value.voidConstPointerVal;
+                const void *clientArrayPointer = clientArrayPointerParams.value.voidConstPointerVal;
+
+                // If the attribute pointer is set to 0 in the setup, it should not be merged.
+                if (clientArrayPointer != nullptr)
+                {
+                    const size_t currentSetupCallLastIndex = setupCalls->size() - 1;
+                    clientVACallIndices.push_back(currentSetupCallLastIndex);
+                    clientVertexArrayMask.set(clientArrayPointerParams.arrayClientPointerIndex);
+                    clientVertexArrayData[clientArrayPointerParams.arrayClientPointerIndex] =
+                        clientArrayPointer;
+                }
             }
         }
     }

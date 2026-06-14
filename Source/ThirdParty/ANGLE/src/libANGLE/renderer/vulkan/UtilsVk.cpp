@@ -2550,8 +2550,33 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
 
     if (clearValue == nullptr)
     {
-        renderPassAttachmentOps.initWithLoadStore(vk::kAttachmentIndexZero, imageAccess,
-                                                  imageAccess);
+        renderPassAttachmentOps.setLayouts(vk::kAttachmentIndexZero, imageAccess, imageAccess);
+        if (aspectFlags == VK_IMAGE_ASPECT_COLOR_BIT ||
+            (aspectFlags & VK_IMAGE_ASPECT_DEPTH_BIT) != 0)
+        {
+            renderPassAttachmentOps.setOps(vk::kAttachmentIndexZero, vk::RenderPassLoadOp::Load,
+                                           vk::RenderPassStoreOp::Store);
+        }
+        else
+        {
+            // We should use None here, but RenderPassAttachment::finalizeLoadStore is not expecting
+            // None. We relying RenderPassAttachment::finalizeLoadStore to turn it to None.
+            renderPassAttachmentOps.setOps(vk::kAttachmentIndexZero, vk::RenderPassLoadOp::DontCare,
+                                           vk::RenderPassStoreOp::DontCare);
+        }
+        if ((aspectFlags & VK_IMAGE_ASPECT_STENCIL_BIT) != 0)
+        {
+            renderPassAttachmentOps.setStencilOps(
+                vk::kAttachmentIndexZero, vk::RenderPassLoadOp::Load, vk::RenderPassStoreOp::Store);
+        }
+        else
+        {
+            // We should use None here, but RenderPassAttachment::finalizeLoadStore is not expecting
+            // None. We relying RenderPassAttachment::finalizeLoadStore to turn it to None.
+            renderPassAttachmentOps.setStencilOps(vk::kAttachmentIndexZero,
+                                                  vk::RenderPassLoadOp::DontCare,
+                                                  vk::RenderPassStoreOp::DontCare);
+        }
     }
     else
     {
@@ -3213,17 +3238,20 @@ angle::Result UtilsVk::depthStencilBlitResolve(
                               contextVk->pipelineProtectedAccess());
 
     vk::ImageAccess srcImagelayout = vk::ImageAccess::DepthReadStencilReadFragmentShaderRead;
+    VkImageAspectFlags aspectFlags = 0;
 
     pipelineDesc.setColorWriteMasks(0, gl::DrawBufferMask(), gl::DrawBufferMask());
     pipelineDesc.setRenderPassDesc(*renderPassDesc);
     if (blitDepth)
     {
         SetDepthStateForWrite(renderer, &pipelineDesc);
+        aspectFlags |= VK_IMAGE_ASPECT_DEPTH_BIT;
     }
 
     if (blitStencil)
     {
         SetStencilStateForWrite(renderer, &pipelineDesc);
+        aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
     }
 
     if (dstImage == srcImage)
@@ -3239,8 +3267,8 @@ angle::Result UtilsVk::depthStencilBlitResolve(
     else
     {
         ANGLE_TRY(startRenderPass(contextVk, &dstImageView, *renderPassDesc, params.renderArea,
-                                  dstImage->getAspectFlags(), nullptr,
-                                  vk::RenderPassSource::InternalUtils, &commandBuffer));
+                                  aspectFlags, nullptr, vk::RenderPassSource::InternalUtils,
+                                  &commandBuffer));
         ASSERT(commandBuffer != nullptr);
 
         contextVk->onDepthStencilDraw(dstImageLevel, dstImageLayer, 1, dstImage, nullptr);
@@ -3417,12 +3445,12 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     {
         resources.onImageComputeShaderRead(srcImage->getAspectFlags(), srcImage);
         resources.onImageTransferWrite(dstLevelIndex, 1, dstLayerIndex, 1,
-                                       dstImage->getAspectFlags(), dstImage);
+                                       VK_IMAGE_ASPECT_STENCIL_BIT, dstImage);
     }
     else
     {
         resources.onImageSelfCopy(dstLevelIndex, 1, dstLayerIndex, 1, dstLevelIndex, 1,
-                                  params.srcLayer, 1, srcImage->getAspectFlags(), srcImage);
+                                  params.srcLayer, 1, VK_IMAGE_ASPECT_STENCIL_BIT, srcImage);
     }
     resources.onBufferComputeShaderWrite(&blitBuffer.get());
 

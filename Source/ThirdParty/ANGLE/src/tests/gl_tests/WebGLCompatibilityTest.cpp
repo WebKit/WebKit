@@ -7437,8 +7437,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     std::vector<GLColor> greenData(8 * 8, GLColor::green);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                    greenData.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, greenData.data());
     ASSERT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
@@ -7451,8 +7450,7 @@ void main()
 
     // In WebGL, drawing with a sampler/texture format mismatch must fail.
     GLubyte texData[8 * 8 * 2] = {};
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT,
-                    texData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, texData);
     ASSERT_GL_NO_ERROR();
 
     drawQuad(program, "a_position", 0.5f, 1.0f, true);

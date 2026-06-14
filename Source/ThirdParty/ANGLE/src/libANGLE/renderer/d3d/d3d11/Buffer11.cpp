@@ -622,6 +622,15 @@ angle::Result Buffer11::checkForDeallocation(const gl::Context *context,
     mIdleness[usage]++;
 
     BufferStorage *&storage = mBufferStorages[usage];
+
+    // TODO(http://anglebug.com/505771894): Add validation that a buffer is not mapped in calls that
+    // use it (draw, etc.). Once fixed, turn this into an assert.
+    if (storage != nullptr && storage == mMappedStorage)
+    {
+        ANGLE_TRY_HR(SafeGetImplAs<Context11>(context), E_FAIL,
+                     "Error deallocating mapped storage");
+    }
+
     if (storage != nullptr && mIdleness[usage] > mDeallocThresholds[usage])
     {
         BufferStorage *latestStorage = nullptr;

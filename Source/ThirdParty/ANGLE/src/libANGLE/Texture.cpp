@@ -1387,7 +1387,15 @@ GLint Texture::getLevelMemorySize(TextureTarget target, GLint level) const
 
 void Texture::signalDirtyStorage(InitState initState)
 {
-    mState.mInitState = initState;
+    // If initState is InitState::Initialized, some subresource is initialized.  Instead of
+    // checking all the subresources to update mState.mInitState appropriately, leave it be until
+    // ensureInitialized() syncs it if needed.
+    //
+    // If initState is InitState::MayNeedInit, then the texture definitely needs initialization.
+    if (initState == InitState::MayNeedInit)
+    {
+        mState.mInitState = InitState::MayNeedInit;
+    }
     invalidateCompletenessCache();
     mState.mCachedSamplerFormatValid = false;
     onStateChange(angle::SubjectMessage::SubjectChanged);
@@ -1656,6 +1664,9 @@ angle::Result Texture::copyRenderbufferSubData(Context *context,
                                                 dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight,
                                                 srcDepth));
 
+    // Incorrect: must set initialized only if the entire subresource is covered, and only for the
+    // corresponding ImageDesc.  Image must be initialized before copy if not writing to entire
+    // subresource.  http://anglebug.com/505317123
     signalDirtyStorage(InitState::Initialized);
 
     return angle::Result::Continue;
@@ -1679,6 +1690,9 @@ angle::Result Texture::copyTextureSubData(Context *context,
                                            dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight,
                                            srcDepth));
 
+    // Incorrect: must set initialized only if the entire subresource is covered, and only for the
+    // corresponding ImageDesc.  Image must be initialized before copy if not writing to entire
+    // subresource.  http://anglebug.com/505317123
     signalDirtyStorage(InitState::Initialized);
 
     return angle::Result::Continue;
@@ -1997,24 +2011,6 @@ angle::Result Texture::generateMipmap(Context *context)
     if (baseImageInfo.size.empty())
     {
         return angle::Result::Continue;
-    }
-
-    // Clear the base image(s) immediately if needed
-    if (context->isRobustResourceInitEnabled())
-    {
-        ImageIndexIterator it =
-            ImageIndexIterator::MakeGeneric(mState.mType, baseLevel, baseLevel + 1,
-                                            ImageIndex::kEntireLevel, ImageIndex::kEntireLevel);
-        while (it.hasNext())
-        {
-            const ImageIndex index = it.next();
-            const ImageDesc &desc  = mState.getImageDesc(index.getTarget(), index.getLevelIndex());
-
-            if (desc.initState == InitState::MayNeedInit)
-            {
-                ANGLE_TRY(initializeContents(context, GL_NONE, index));
-            }
-        }
     }
 
     ANGLE_TRY(syncState(context, Command::GenerateMipmap));
@@ -2474,9 +2470,9 @@ GLuint Texture::getNativeID() const
 angle::Result Texture::syncState(const Context *context, Command source)
 {
     ASSERT(hasAnyDirtyBit() || source == Command::GenerateMipmap);
+    ANGLE_TRY(ensureInitialized(context));
     ANGLE_TRY(mTexture->syncState(context, mDirtyBits, source));
     mDirtyBits.reset();
-    mState.mInitState = InitState::Initialized;
     return angle::Result::Continue;
 }
 

@@ -720,6 +720,54 @@ GLenum ConvertImageAccessToGLImageLayout(vk::Renderer *renderer, vk::ImageAccess
     UNREACHABLE();
     return GL_NONE;
 }
+
+class [[nodiscard]] SaveLoadStorePerfCounters
+{
+  public:
+    SaveLoadStorePerfCounters(ContextVk *contextVk)
+    {
+        mPerfCounters        = &contextVk->getPerfCounters();
+        renderPassCount      = mPerfCounters->renderPasses;
+        depthLoadOpClears    = mPerfCounters->depthLoadOpClears;
+        depthLoadOpLoads     = mPerfCounters->depthLoadOpLoads;
+        depthLoadOpNones     = mPerfCounters->depthLoadOpNones;
+        depthStoreOpStores   = mPerfCounters->depthStoreOpStores;
+        stencilLoadOpClears  = mPerfCounters->stencilLoadOpClears;
+        stencilLoadOpLoads   = mPerfCounters->stencilLoadOpLoads;
+        stencilLoadOpNones   = mPerfCounters->stencilLoadOpNones;
+        stencilStoreOpStores = mPerfCounters->stencilStoreOpStores;
+        depthStoreOpNones    = mPerfCounters->depthStoreOpNones;
+        stencilStoreOpNones  = mPerfCounters->stencilStoreOpNones;
+    }
+    ~SaveLoadStorePerfCounters()
+    {
+        mPerfCounters->renderPasses         = renderPassCount;
+        mPerfCounters->depthLoadOpClears    = depthLoadOpClears;
+        mPerfCounters->depthLoadOpLoads     = depthLoadOpLoads;
+        mPerfCounters->depthLoadOpNones     = depthLoadOpNones;
+        mPerfCounters->depthStoreOpStores   = depthStoreOpStores;
+        mPerfCounters->stencilLoadOpClears  = stencilLoadOpClears;
+        mPerfCounters->stencilLoadOpLoads   = stencilLoadOpLoads;
+        mPerfCounters->stencilLoadOpNones   = stencilLoadOpNones;
+        mPerfCounters->stencilStoreOpStores = stencilStoreOpStores;
+        mPerfCounters->depthStoreOpNones    = depthStoreOpNones;
+        mPerfCounters->stencilStoreOpNones  = stencilStoreOpNones;
+    }
+
+  private:
+    angle::VulkanPerfCounters *mPerfCounters;
+    uint64_t renderPassCount;
+    uint64_t depthLoadOpClears;
+    uint64_t depthLoadOpLoads;
+    uint64_t depthLoadOpNones;
+    uint64_t depthStoreOpStores;
+    uint64_t stencilLoadOpClears;
+    uint64_t stencilLoadOpLoads;
+    uint64_t stencilLoadOpNones;
+    uint64_t stencilStoreOpStores;
+    uint64_t depthStoreOpNones;
+    uint64_t stencilStoreOpNones;
+};
 }  // anonymous namespace
 
 void ContextVk::flushDescriptorSetUpdates()
@@ -1513,11 +1561,14 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
         updateTopology(mode);
     }
 
-    // Submit pending commands if the number of write-commands in the current render pass reaches a
-    // threshold to avoid delaying the submission too much.
+    // Avoid potential tile memory fallback since we can't handle framebuffer change here. Luckily
+    // this will only possible in simulated mode since on qualcomm
+    // getMinRenderPassWriteCommandCountToEarlySubmit is set to UINT32_MAX. Submit pending commands
+    // if the number of write-commands in the current render pass reaches a threshold to avoid
+    // delaying the submission too much.
     if (ANGLE_UNLIKELY(mRenderPassCommands->getCommandBuffer().getRenderPassWriteCommandCount() >
                        mRenderer->getMinRenderPassWriteCommandCountToEarlySubmit()) &&
-        (mCommandsPendingSubmissionCount > 0))
+        mCommandsPendingSubmissionCount > 0 && mImageWithTileMemory == nullptr)
     {
         ANGLE_TRY(
             submitCommands(nullptr, nullptr, QueueSubmitReason::RenderPassCommandLimitReached));
@@ -3741,7 +3792,24 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
 
     if (mImageWithTileMemory != nullptr)
     {
+        // submitCommands may get called from a draw call (for example, Texture::syncState). The
+        // Framebuffer::syncState will not get called for current draw call since
+        // State::syncDirtyObjects already took the dirty bits. Here we try to detect that current
+        // drawFBO is getting affected and invalidate cached object in FramebufferVk so that they
+        // could get recreated. We have to do this detection logic before fallback since fallback
+        // will clear mImageWithTileMemory pointer.
+        const vk::ImageHelper *drawFBOImageWithTileMemory =
+            mState.getDrawFramebuffer() != nullptr ? getDrawFramebuffer()->getImageWithTileMemory()
+                                                   : nullptr;
+        const bool drawFBOImageFallbackFromTileMemory =
+            drawFBOImageWithTileMemory && drawFBOImageWithTileMemory == mImageWithTileMemory;
+
         ANGLE_TRY(finalizeImageWithTileMemory());
+
+        if (drawFBOImageFallbackFromTileMemory)
+        {
+            getDrawFramebuffer()->onTileMemoryFallback(this);
+        }
     }
 
     ANGLE_TRY(mCommandState.insertSubmitDebugMarker(this, reason));
@@ -8447,6 +8515,7 @@ angle::Result ContextVk::switchToReadOnlyDepthStencilMode(gl::Texture *texture,
         return angle::Result::Continue;
     }
 
+    // Switch to read-only depth or stencil feedback loop if not already
     if (isStencilTexture)
     {
         if (mState.isStencilWriteEnabled(mState.getDrawFramebuffer()->getStencilBitCount()))
@@ -8461,18 +8530,19 @@ angle::Result ContextVk::switchToReadOnlyDepthStencilMode(gl::Texture *texture,
             mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::StencilReadOnlyAttachment);
         }
     }
-
-    // Switch to read-only depth feedback loop if not already
-    if (mState.isDepthWriteEnabled())
+    else
     {
-        // This looks like a feedback loop, but we don't issue a warning because the application
-        // may have correctly used BASE and MAX levels to avoid it.  ANGLE doesn't track that.
-        mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::DepthFeedbackLoop);
-    }
-    else if (!mDepthStencilAttachmentFlags[vk::RenderPassUsage::DepthFeedbackLoop])
-    {
-        // If we are not in the actual feedback loop mode, switch to read-only depth mode
-        mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::DepthReadOnlyAttachment);
+        if (mState.isDepthWriteEnabled())
+        {
+            // This looks like a feedback loop, but we don't issue a warning because the application
+            // may have correctly used BASE and MAX levels to avoid it.  ANGLE doesn't track that.
+            mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::DepthFeedbackLoop);
+        }
+        else if (!mDepthStencilAttachmentFlags[vk::RenderPassUsage::DepthFeedbackLoop])
+        {
+            // If we are not in the actual feedback loop mode, switch to read-only depth mode
+            mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::DepthReadOnlyAttachment);
+        }
     }
 
     if ((mDepthStencilAttachmentFlags & vk::kDepthStencilReadOnlyBits).none())
@@ -8555,7 +8625,7 @@ angle::Result ContextVk::onResourceAccess(const vk::CommandResources &resources)
         vk::ImageHelper *image = writeImage.image.image;
         ASSERT(!isRenderPassStartedAndUsesImage(*image));
 
-        image->recordWriteBarrier(this, writeImage.image.aspectFlags, writeImage.image.imageAccess,
+        image->recordWriteBarrier(this, image->getAspectFlags(), writeImage.image.imageAccess,
                                   writeImage.levelStart, writeImage.levelCount,
                                   writeImage.layerStart, writeImage.layerCount,
                                   mOutsideRenderPassCommands);
@@ -9067,6 +9137,8 @@ angle::Result ContextVk::finalizeImageWithTileMemory()
     else if (!getFeatures().supportsTileMemoryHeap.enabled)
     {
         ASSERT(getFeatures().simulateTileMemoryForTesting.enabled);
+        // Don't count load/store ops used for this simulation feature.
+        SaveLoadStorePerfCounters saveLoadStorePerfCounters(this);
         // clear VkImage to simulate the transient nature of tile memory
         UtilsVk::ClearTextureParameters params = {};
         params.level                           = vk::LevelIndex(0);

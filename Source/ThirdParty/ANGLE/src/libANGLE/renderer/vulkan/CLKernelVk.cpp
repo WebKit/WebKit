@@ -90,7 +90,8 @@ CLKernelVk::CLKernelVk(const cl::Kernel &kernel,
       mName(name),
       mAttributes(attributes),
       mArgs(args),
-      mPodBuffer(nullptr)
+      mPodBuffer(nullptr),
+      mLocalMemoryArgSizes(args.size(), 0)
 {
     mShaderProgramHelper.setShader(gl::ShaderType::Compute,
                                    mKernel.getProgram().getImpl<CLProgramVk>().getShaderModule());
@@ -283,6 +284,11 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
                 arg.handleSize = argSize;
                 break;
             case NonSemanticClspvReflectionArgumentWorkgroup:
+                ASSERT(arg.workgroupBufferElemSize != 0);
+                mLocalMemoryArgSizes[argIndex] = argSize;
+                arg.handle                     = const_cast<void *>(argValue);
+                arg.handleSize                 = argSize;
+                break;
             default:
                 // Just store ptr and size (if we end up here)
                 arg.handle     = const_cast<void *>(argValue);
@@ -506,4 +512,18 @@ angle::Result CLKernelVk::allocateDescriptorSet(
 
     return angle::Result::Continue;
 }
+
+size_t CLKernelVk::getLocalMemSizeUsed(const cl::Device &device) const
+{
+    size_t compiledLocalMemSize = 0;
+    if (ANGLE_UNLIKELY(IsError(mKernel.getWorkGroupInfo(
+            const_cast<cl_device_id>(device.getNative()), cl::KernelWorkGroupInfo::LocalMemSize,
+            sizeof(compiledLocalMemSize), &compiledLocalMemSize, nullptr))))
+    {  // TODO (http://anglebug.com/506923958) move to validationCL
+        ASSERT(false);
+    }
+    return compiledLocalMemSize + std::reduce(mLocalMemoryArgSizes.begin(),
+                                              mLocalMemoryArgSizes.end(), 0, std::plus<size_t>());
+}
+
 }  // namespace rx

@@ -860,6 +860,13 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
         objCDesc.renderTargetHeight       = defaultHeight;
         objCDesc.defaultRasterSampleCount = 1;
     }
+    else
+    {
+        objCDesc.renderTargetWidth  = 0;
+        objCDesc.renderTargetHeight = 0;
+        // No need to reset defaultRasterSampleCount as it is only applied when no attachments are
+        // provided.
+    }
 }
 
 // StateCache implementation

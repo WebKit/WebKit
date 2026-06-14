@@ -146,8 +146,6 @@ if (angle_enable_d3d11) {
     "d3d11/IndexBuffer11.h",
     "d3d11/InputLayoutCache.cpp",
     "d3d11/InputLayoutCache.h",
-    "d3d11/MappedSubresourceVerifier11.cpp",
-    "d3d11/MappedSubresourceVerifier11.h",
     "d3d11/NativeWindow11.h",
     "d3d11/PixelTransfer11.cpp",
     "d3d11/PixelTransfer11.h",

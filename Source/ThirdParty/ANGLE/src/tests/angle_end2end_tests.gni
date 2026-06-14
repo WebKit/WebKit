@@ -205,6 +205,7 @@ angle_end2end_tests_sources = [
   "gl_tests/gles1/CurrentNormalTest.cpp",
   "gl_tests/gles1/CurrentTextureCoordsTest.cpp",
   "gl_tests/gles1/DrawTextureTest.cpp",
+  "gl_tests/gles1/EXTTextureLodBiasTest.cpp",
   "gl_tests/gles1/FogTest.cpp",
   "gl_tests/gles1/FramebufferObjectTest.cpp",
   "gl_tests/gles1/LightsTest.cpp",

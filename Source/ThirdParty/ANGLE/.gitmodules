@@ -165,6 +165,10 @@
 	path = third_party/perfetto
 	url = https://android.googlesource.com/platform/external/perfetto
 	gclient-condition = not build_with_chromium and checkout_angle_perfetto
+[submodule "third_party/partition_alloc"]
+    path = third_party/partition_alloc
+    url = https://chromium.googlesource.com/chromium/src/base/allocator/partition_allocator
+    gclient-condition = not build_with_chromium and checkout_angle_partition_alloc
 [submodule "third_party/protobuf"]
 	path = third_party/protobuf
 	url = https://chromium.googlesource.com/chromium/src/third_party/protobuf

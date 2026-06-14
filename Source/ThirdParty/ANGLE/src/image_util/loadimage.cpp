@@ -342,8 +342,8 @@ void LoadLA8ToRGBA4(const ImageLoadContext &context,
             {
                 uint8_t l       = source[2 * x + 0] >> 4;
                 uint8_t a       = source[2 * x + 1] >> 4;
-                dest[4 * x + 0] = l | l << 4;
-                dest[4 * x + 1] = l | a << 4;
+                dest[2 * x + 0] = l | l << 4;
+                dest[2 * x + 1] = l | a << 4;
             }
         }
     }

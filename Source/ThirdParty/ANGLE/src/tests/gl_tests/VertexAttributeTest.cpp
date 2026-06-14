@@ -5862,7 +5862,7 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glUseProgram(program);
 
-    GLint positionLocation = glGetAttribLocation(program, "position");
+    GLint positionLocation   = glGetAttribLocation(program, "position");
     GLint testAttribLocation = glGetAttribLocation(program, "testAttrib");
     ASSERT_NE(-1, positionLocation);
     ASSERT_NE(-1, testAttribLocation);
@@ -5917,7 +5917,7 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glUseProgram(program);
 
-    GLint positionLocation = glGetAttribLocation(program, "position");
+    GLint positionLocation   = glGetAttribLocation(program, "position");
     GLint testAttribLocation = glGetAttribLocation(program, "testAttrib");
     ASSERT_NE(-1, positionLocation);
     ASSERT_NE(-1, testAttribLocation);
@@ -6048,13 +6048,13 @@ void main() {
     std::copy(quadVertices.begin(), quadVertices.end(), posData.begin() + first);
     GLBuffer posBuf;
     glBindBuffer(GL_ARRAY_BUFFER, posBuf);
-    glBufferData(GL_ARRAY_BUFFER, posData.size() * sizeof(Vector3), posData.data(),
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, posData.size() * sizeof(Vector3), posData.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(posLoc);
     glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     constexpr int instanceCount = 1024;
-    struct Inst {
+    struct Inst
+    {
         float v0 = 1.0;
         float v1 = 0.0;
         float v2 = 0.0;

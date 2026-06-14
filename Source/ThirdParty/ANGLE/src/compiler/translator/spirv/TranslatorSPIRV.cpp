@@ -897,6 +897,15 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                     continue;
                 }
 
+                if (inputVarying.name == "gl_SampleID")
+                {
+                    const TVariable *sampleID =
+                        static_cast<const TVariable *>(getSymbolTable().findBuiltIn(
+                            ImmutableString("gl_SampleID"), getShaderVersion()));
+                    assignSpirvId(sampleID->uniqueId(), vk::spirv::kIdSampleID);
+                    break;
+                }
+
                 if (inputVarying.name == "gl_PointCoord")
                 {
                     usesPointCoord = true;

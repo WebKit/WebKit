@@ -152,8 +152,6 @@ if(angle_enable_d3d11)
         "src/libANGLE/renderer/d3d/d3d11/IndexBuffer11.h"
         "src/libANGLE/renderer/d3d/d3d11/InputLayoutCache.cpp"
         "src/libANGLE/renderer/d3d/d3d11/InputLayoutCache.h"
-        "src/libANGLE/renderer/d3d/d3d11/MappedSubresourceVerifier11.cpp"
-        "src/libANGLE/renderer/d3d/d3d11/MappedSubresourceVerifier11.h"
         "src/libANGLE/renderer/d3d/d3d11/NativeWindow11.h"
         "src/libANGLE/renderer/d3d/d3d11/PixelTransfer11.cpp"
         "src/libANGLE/renderer/d3d/d3d11/PixelTransfer11.h"

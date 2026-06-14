@@ -645,22 +645,24 @@ TEST_P(DXT1CompressedTextureTestWebGL2, InitializeTextureContents)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, 4, 4);
+    // Use the RGBA variant as it's directly supported by all backends.
+    // Zero-filled DXT1 RGBA must be sampled as opaque black.
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 4, 4);
     EXPECT_GL_NO_ERROR();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawQuad(mTextureProgram, "position", 0.5f, 1.0f, true);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::black);
 
-    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, 8,
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 8,
                               kGreen.data());
     EXPECT_GL_NO_ERROR();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawQuad(mTextureProgram, "position", 0.5f, 1.0f, true);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DXT1CompressedTextureTest);

@@ -1675,7 +1675,7 @@
           'angle_skia_gold_test',
         ],
         'swarming': {
-          'shards': 6,
+          'shards': 8,
         },
       },
     },

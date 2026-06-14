@@ -547,8 +547,9 @@ angle::Result ContextMtl::drawTriFanElements(const gl::Context *context,
                                                     &genIndicesCount));
 
         ANGLE_TRY(getDisplay()->getUtils().generateTriFanBufferFromElementsArray(
-            this, {type, count, indices, genIdxBuffer.buffer(),
-                   static_cast<uint32_t>(genIdxBuffer.offset()), primitiveRestart},
+            this,
+            {type, count, indices, genIdxBuffer.buffer(),
+             static_cast<uint32_t>(genIdxBuffer.offset()), primitiveRestart},
             &genIndicesCount));
 
         ANGLE_TRY(mTriFanIndexBuffer.commit(this));
@@ -613,12 +614,13 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
         mtl::BufferSlice genIdxBuffer;
         uint32_t reservedIndices = count * 2;
         uint32_t genIndicesCount;
-        ANGLE_TRY(AllocateBufferFromPool(this, reservedIndices, &mLineLoopIndexBuffer,
-                                         &genIdxBuffer));
+        ANGLE_TRY(
+            AllocateBufferFromPool(this, reservedIndices, &mLineLoopIndexBuffer, &genIdxBuffer));
 
         ANGLE_TRY(getDisplay()->getUtils().generateLineLoopBufferFromElementsArray(
-            this, {type, count, indices, genIdxBuffer.buffer(),
-                   static_cast<uint32_t>(genIdxBuffer.offset()), primitiveRestart},
+            this,
+            {type, count, indices, genIdxBuffer.buffer(),
+             static_cast<uint32_t>(genIdxBuffer.offset()), primitiveRestart},
             &genIndicesCount));
 
         ANGLE_TRY(mLineLoopIndexBuffer.commit(this));

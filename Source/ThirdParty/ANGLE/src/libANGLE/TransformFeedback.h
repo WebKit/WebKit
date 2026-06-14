@@ -13,8 +13,8 @@
 #include "common/angleutils.h"
 #include "libANGLE/Debug.h"
 
-#include "angle_gl.h"
 #include <optional>
+#include "angle_gl.h"
 
 namespace rx
 {

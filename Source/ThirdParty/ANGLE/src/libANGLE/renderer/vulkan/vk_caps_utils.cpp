@@ -1380,6 +1380,9 @@ void Renderer::ensureCapsInitialized() const
     // GL_QCOM_texture_lod_bias
     mNativeExtensions.textureLodBiasQCOM = true;
 
+    // GL_EXT_texture_lod_bias
+    mNativeExtensions.textureLodBiasEXT = true;
+
     // GL_ANGLE_shader_pixel_local_storage
     //
     // NOTE:

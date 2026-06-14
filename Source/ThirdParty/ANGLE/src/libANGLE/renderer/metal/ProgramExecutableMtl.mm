@@ -1227,8 +1227,7 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
 
     // This array is only used inside this function and its callees.
     ScopedAutoClearVector<uint32_t> scopeArrayClear(&mArgumentBufferRenderStageUsages);
-    ScopedAutoClearVector<mtl::BufferSlice> scopeArrayClear2(
-        &mLegalizedOffsetedUniformBuffers);
+    ScopedAutoClearVector<mtl::BufferSlice> scopeArrayClear2(&mLegalizedOffsetedUniformBuffers);
     mArgumentBufferRenderStageUsages.resize(blocks.size());
     mLegalizedOffsetedUniformBuffers.resize(blocks.size());
 
@@ -1319,9 +1318,8 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
                     bufferMtl->getBufferDataReadOnly(context, conversion->initialSrcOffset());
 
                 mtl::BufferSlice converted;
-                ANGLE_TRY(ConvertUniformBufferData(
-                    context, conversionInfo, &conversion->data, source.data(), source.size(),
-                    &converted));
+                ANGLE_TRY(ConvertUniformBufferData(context, conversionInfo, &conversion->data,
+                                                   source.data(), source.size(), &converted));
                 conversion->convertedBuffer = converted.buffer();
                 conversion->convertedOffset = converted.offset();
 
@@ -1452,8 +1450,8 @@ angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
     }
 
     // Flush changes made by MTLArgumentEncoder to GPU.
-    argumentBuffer.buffer()->unmapAndFlushSubset(context, argumentBuffer.offset(),
-                                                 bufferEncoder.metalArgBufferEncoder.get().encodedLength);
+    argumentBuffer.buffer()->unmapAndFlushSubset(
+        context, argumentBuffer.offset(), bufferEncoder.metalArgBufferEncoder.get().encodedLength);
 
     cmdEncoder->setBuffer(shaderType, argumentBuffer.buffer(), argumentBuffer.offset(),
                           mtl::kUBOArgumentBufferBindingIndex);

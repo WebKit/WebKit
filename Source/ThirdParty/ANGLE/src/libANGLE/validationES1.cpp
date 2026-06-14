@@ -569,6 +569,22 @@ bool ValidateTexEnvCommon(const PrivateState &state,
                     return false;
             }
             break;
+        case TextureEnvTarget::TextureFilterControl:
+            if (!state.getExtensions().textureLodBiasEXT)
+            {
+                errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidTextureEnvTarget);
+                return false;
+            }
+            switch (pname)
+            {
+                case TextureEnvParameter::LodBias:
+                    break;
+                default:
+                    errors->validationError(entryPoint, GL_INVALID_ENUM,
+                                            kInvalidTextureEnvParameter);
+                    return false;
+            }
+            break;
         default:
             errors->validationError(entryPoint, GL_INVALID_ENUM, kInvalidTextureEnvTarget);
             return false;

@@ -55,6 +55,12 @@
           '--max-processes': '1',
         },
       },
+      # crbug.com/506180945 low capacity in this pool
+      'angle-win-x64-intel-uhd630-rel': {
+        'args': {
+          '--gtest_filter': '-*Vulkan_SwiftShader*:*D3D9*:*WebGPU*',
+        },
+      },
     },
   },
   'angle_perftests': {

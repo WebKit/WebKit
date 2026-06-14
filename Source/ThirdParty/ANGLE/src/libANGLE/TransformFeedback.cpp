@@ -206,7 +206,8 @@ bool TransformFeedback::checkBufferSpaceForDraw(const Context *context,
 
     if (!mState.mVertexCapacity.has_value())
     {
-        const ProgramExecutable *programExecutable = context->getState().getLinkedProgramExecutable(context);
+        const ProgramExecutable *programExecutable =
+            context->getState().getLinkedProgramExecutable(context);
         if (programExecutable)
         {
             // Compute the number of vertices we can draw before overflowing the bound buffers.
