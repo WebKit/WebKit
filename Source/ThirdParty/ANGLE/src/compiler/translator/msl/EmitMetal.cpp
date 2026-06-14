@@ -9,6 +9,7 @@
 #endif
 
 #include <cctype>
+#include <atomic>
 #include <map>
 
 #include "common/system_utils.h"
@@ -2824,7 +2825,7 @@ bool GenMetalTraverser::visitBranch(Visit, TIntermBranch *branchNode)
     return false;
 }
 
-static size_t emitMetalCallCount = 0;
+static std::atomic<size_t> emitMetalCallCount = 0;
 
 bool sh::EmitMetal(TCompiler &compiler,
                    TIntermBlock &root,
