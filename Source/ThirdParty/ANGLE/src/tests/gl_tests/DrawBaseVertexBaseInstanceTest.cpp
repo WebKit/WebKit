@@ -7,6 +7,10 @@
 // DrawBaseVertexBaseInstanceTest: Tests of GL_ANGLE_base_vertex_base_instance
 // DrawBaseInstanceTest: Tests of GL_EXT_base_instance
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
+
 #include "gpu_info_util/SystemInfo.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -1306,6 +1310,111 @@ void main()
                                                        1, 2, 0);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
     ASSERT_GL_NO_ERROR();
+}
+
+TEST_P(DrawBaseVertexBaseInstanceTest_ES3, BaseInstanceDivisorIndexing)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
+
+    // Vertex shader: pass per-instance integer value through a flat varying.
+    constexpr char kVS[] = R"(#version 300 es
+#extension GL_ANGLE_base_vertex_base_instance_shader_builtin : require
+in vec4 a_position;
+in int a_instValue;
+flat out int v_instValue;
+flat out int v_instanceID;
+flat out int v_baseInstance;
+void main()
+{
+    v_instValue = a_instValue;
+    v_instanceID = gl_InstanceID;
+    v_baseInstance = gl_BaseInstance;
+    gl_Position = a_position;
+})";
+
+    // Fragment shader: output the instanced value as an integer.
+    constexpr char kFS[] = R"(#version 300 es
+precision highp int;
+flat in int v_instValue;
+flat in int v_instanceID;
+flat in int v_baseInstance;
+out ivec4 o_color;
+void main()
+{
+    o_color = ivec4(v_instValue, v_instanceID, v_baseInstance, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint posLoc  = glGetAttribLocation(program, "a_position");
+    GLint instLoc = glGetAttribLocation(program, "a_instValue");
+    ASSERT_NE(-1, posLoc);
+    ASSERT_NE(-1, instLoc);
+
+    // Render to a GL_RGBA32I texture via FBO for exact integer readback.
+    GLTexture intTex;
+    glBindTexture(GL_TEXTURE_2D, intTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32I, getWindowWidth(), getWindowHeight(), 0,
+                 GL_RGBA_INTEGER, GL_INT, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, intTex, 0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    // Position: a full-viewport triangle strip (4 vertices).
+    const float positions[] = {
+        -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f,
+        -1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+    };
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posLoc);
+    glVertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    // Per-instance attribute: 8 distinct integer values, divisor = 3.
+    // Each value is a unique identifier for its buffer index.
+    const GLint instValues[] = {0, 1, 2, 3, 4, 5, 6, 7};
+    GLBuffer instBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, instBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(instValues), instValues, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(instLoc);
+    glVertexAttribIPointer(instLoc, 1, GL_INT, 0, nullptr);
+    glVertexAttribDivisor(instLoc, 3);
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+    struct Subcase
+    {
+        GLsizei instanceCount;
+        GLuint baseInstance;
+    } subcases[]{
+        {.instanceCount = 1, .baseInstance = 0},
+        {.instanceCount = 1, .baseInstance = 4},
+        {.instanceCount = 1, .baseInstance = 7},
+        {.instanceCount = 6, .baseInstance = 3},
+    };
+
+    for (auto const &subcase : subcases)
+    {
+        SCOPED_TRACE(testing::Message()
+                     << "Subcase subcase{.instanceCount = " << subcase.instanceCount
+                     << ", .baseInstance = " << subcase.baseInstance << "}");
+        const GLint clearValue[] = {0, 0, 0, 0};
+        glClearBufferiv(GL_COLOR, 0, clearValue);
+        glDrawArraysInstancedBaseInstanceANGLE(GL_TRIANGLE_STRIP, 0, 4, subcase.instanceCount,
+                                               subcase.baseInstance);
+        ASSERT_GL_NO_ERROR();
+        GLint lastInstanceAttrIndex = subcase.baseInstance + (subcase.instanceCount - 1) / 3;
+        GLint lastInstValue         = instValues[lastInstanceAttrIndex];
+        GLint lastInstanceID        = subcase.instanceCount - 1;
+        // R == instValue (per-instance attribute), G == gl_InstanceID, B == gl_BaseInstance.
+        GLColor32I expected(lastInstValue, lastInstanceID, static_cast<GLint>(subcase.baseInstance),
+                            1);
+        EXPECT_PIXEL_32I_COLOR(0, 0, expected);
+    }
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
