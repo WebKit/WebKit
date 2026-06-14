@@ -7459,6 +7459,113 @@ void main()
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Test that drawing GL_POINTS without setting gl_PointSize in the vertex shader
+// renders points with a default size of 1.0 pixel.
+TEST_P(WebGLCompatibilityTest, PointSizeDefaultWhenNotSet)
+{
+    constexpr char kVSWithoutPointSize[] =
+        R"(attribute vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kVSWithPointSize[] =
+        R"(attribute vec2 a_position;
+void main()
+{
+    gl_PointSize = 1.0;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+    constexpr char kVSWithPointSize0[] =
+        R"(attribute vec2 a_position;
+void main()
+{
+    gl_PointSize = 0.0;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+    constexpr char kVSWithPointSizeVarying[] =
+        R"(attribute vec2 a_position;
+varying float p;
+void main()
+{
+    gl_PointSize = p;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] =
+        R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(programWithoutPointSize, kVSWithoutPointSize, kFS);
+    ANGLE_GL_PROGRAM(programWithPointSize, kVSWithPointSize, kFS);
+    ANGLE_GL_PROGRAM(programWithPointSize0, kVSWithPointSize0, kFS);
+    ANGLE_GL_PROGRAM(programWithPointSizeVarying, kVSWithPointSizeVarying, kFS);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Place points at pixels (1,1), (w-2,1), (1,h-2), (w-2,h-2).
+    // NDC for pixel center: (pixel + 0.5) / size * 2.0 - 1.0.
+    const int px0 = 1;
+    const int py0 = 1;
+    const int px1 = w - 2;
+    const int py1 = h - 2;
+
+    const GLfloat vertices[] = {
+        (px0 + 0.5f) / w * 2.0f - 1.0f, (py0 + 0.5f) / h * 2.0f - 1.0f,
+        (px1 + 0.5f) / w * 2.0f - 1.0f, (py0 + 0.5f) / h * 2.0f - 1.0f,
+        (px0 + 0.5f) / w * 2.0f - 1.0f, (py1 + 0.5f) / h * 2.0f - 1.0f,
+        (px1 + 0.5f) / w * 2.0f - 1.0f, (py1 + 0.5f) / h * 2.0f - 1.0f,
+    };
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    struct Subcase
+    {
+        GLuint program;
+        const char *description;
+    } subcases[] = {
+        {programWithoutPointSize, "without gl_PointSize"},
+        {programWithPointSize, "with gl_PointSize = 1.0"},
+        {programWithPointSize0, "with gl_PointSize = 0.0"},
+        {programWithPointSizeVarying, "with gl_PointSize = v (unassigned varying == 0.0)"}};
+
+    for (const auto &subcase : subcases)
+    {
+        SCOPED_TRACE(testing::Message() << subcase.description);
+        glUseProgram(subcase.program);
+
+        GLint posLocation = glGetAttribLocation(subcase.program, "a_position");
+        ASSERT_NE(-1, posLocation);
+        glVertexAttribPointer(posLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(posLocation);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_POINTS, 0, 4);
+        EXPECT_GL_NO_ERROR();
+
+        // Each point should be exactly 1 pixel.
+        EXPECT_PIXEL_COLOR_EQ(px0, py0, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(px1, py0, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(px0, py1, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(px1, py1, GLColor::green);
+
+        // Neighbors should be black, confirming point size is 1.
+        EXPECT_PIXEL_COLOR_EQ(px0 - 1, py0, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(px0 + 1, py0, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(px0, py0 - 1, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(px0, py0 + 1, GLColor::black);
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
