@@ -14,7 +14,9 @@
 #    pragma allow_unsafe_buffers
 #endif
 
-#if !defined(NDEBUG)
+#if defined(ANGLE_WITH_ASAN) || defined(ANGLE_WITH_TSAN)
+#    define ANGLE_DISABLE_POOL_ALLOC  // Use system allocator under sanitizers for accurate detection
+#elif !defined(NDEBUG)
 #    define ANGLE_POOL_ALLOC_GUARD_BLOCKS  // define to enable guard block checking
 #endif
 
@@ -79,8 +81,8 @@ class PoolAllocator : angle::NonCopyable
     class Segment;
     std::vector<Segment> mSingleObjectSegments;  // Large objects.
 
-#if !defined(ANGLE_DISABLE_POOL_ALLOC)
     static constexpr size_t kSegmentSize = 32768;
+#if !defined(ANGLE_DISABLE_POOL_ALLOC)
     bool allocateNewPoolSegment();
 
     Span<uint8_t> mCurrentPool;  // The unused part of memory in last entry of mPoolSegments.
