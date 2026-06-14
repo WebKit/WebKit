@@ -955,8 +955,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/can
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-component-transfer.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-convolve-matrix.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-turbulence.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-animation-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-transition-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
 
 # Cross-Origin-Embedder-Policy: credentialless is not supported.

@@ -3083,7 +3083,16 @@ static bool paintTextAreaOrTextField(const RenderElement& box, const PaintInfo& 
 #endif
 
     const auto styleColorOptions = box.styleColorOptions();
-    auto backgroundColor = style->visitedDependentBackgroundColor();
+
+    // Only honor the renderer's background-color for autofill (forced via an !important UA rule); otherwise
+    // animation/transition backgrounds would bleed into the native control (author backgrounds devolve it first).
+    auto isAutofilled = [&] {
+        RefPtr input = dynamicDowncast<HTMLInputElement>(box.element());
+        return input && (input->autofilled() || input->autofilledAndViewable() || input->autofilledAndObscured());
+    };
+    auto backgroundColor = isAutofilled()
+        ? style->visitedDependentBackgroundColor()
+        : RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
 #if PLATFORM(MAC)
     const auto prefersContrast = Theme::singleton().userPrefersContrast();
     auto borderColor = prefersContrast ? highContrastOutlineColor(styleColorOptions) : RenderTheme::singleton().systemColor(CSSValueAppleSystemContainerBorder, styleColorOptions);
