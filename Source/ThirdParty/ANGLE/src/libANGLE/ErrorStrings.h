@@ -243,6 +243,7 @@ inline constexpr const char *kInsufficientBufferSize = "Insufficient buffer size
 inline constexpr const char *kInsufficientParamCount = "The paramCount is less than the number of returned values.";
 inline constexpr const char *kInsufficientVertexBufferSize = "Vertex buffer is not big enough for the draw call.";
 inline constexpr const char *kIntegerOverflow = "Integer overflow.";
+inline constexpr const char *kInstanceIdOverflow = "Implementation does not support baseinstance + primcount - 1 overflowing GLuint.";
 inline constexpr const char *kInternalError = "Internal error.";
 inline constexpr const char *kInternalErrorFormatNotFound = "Internal error: unknown internal format.";
 inline constexpr const char *kInternalFormatRequiresTexture2D = "internalformat is an ETC1 or PVRTC1 format.";

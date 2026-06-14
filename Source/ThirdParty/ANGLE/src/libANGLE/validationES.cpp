@@ -1014,6 +1014,11 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
         return true;
     }
 
+    if (!ValidateDrawInstancedCounts(context, entryPoint, primcount, baseinstance))
+    {
+        return false;
+    }
+
     return ValidateDrawInstancedAttribs(context, entryPoint, primcount, baseinstance);
 }
 
@@ -1046,6 +1051,11 @@ bool ValidateDrawArraysInstancedBase(const Context *context,
     {
         // Early exit.
         return true;
+    }
+
+    if (!ValidateDrawInstancedCounts(context, entryPoint, primcount, baseinstance))
+    {
+        return false;
     }
 
     return ValidateDrawInstancedAttribs(context, entryPoint, primcount, baseinstance);

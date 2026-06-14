@@ -919,6 +919,10 @@ void DisplayMtl::ensureCapsInitialized() const
     // Apple platforms require PVRTC1 textures to be squares.
     mNativeLimitations.squarePvrtc1 = true;
 
+    // MSL `uint32 instance_id = baseInstance + count`, so GLES baseinstance + primcount
+    // must not overflow GLuint.
+    mNativeLimitations.instanceIdMayOverflow = true;
+
     if (mFeatures.disableProgrammableBlending.enabled || !supportsAppleGPUFamily(1))
     {
         const MTLReadWriteTextureTier readWriteTextureTier = [mMetalDevice readWriteTextureSupport];

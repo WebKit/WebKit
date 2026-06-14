@@ -592,6 +592,11 @@ class ANGLETestBase : public ::testing::Test
                mCurrentParams->isSwiftshader();
     }
 
+    bool isMetalRenderer() const
+    {
+        return mCurrentParams->getRenderer() == EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
+    }
+
     bool isDriverSystemEgl() const
     {
         return mCurrentParams->driver == angle::GLESDriverType::SystemEGL;

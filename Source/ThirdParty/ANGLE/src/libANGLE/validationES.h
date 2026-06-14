@@ -922,6 +922,28 @@ ANGLE_INLINE bool ValidateDrawInstancedAttribs(const Context *context,
     return true;
 }
 
+ANGLE_INLINE bool ValidateDrawInstancedCounts(const Context *context,
+                                              angle::EntryPoint entryPoint,
+                                              GLsizei primcount,
+                                              GLuint baseinstance)
+{
+    if (ANGLE_UNLIKELY(!context->getLimitations().instanceIdMayOverflow))
+    {
+        return true;
+    }
+
+    angle::CheckedNumeric<GLuint> checkedSum = baseinstance;
+    checkedSum += primcount - 1;
+
+    if (ANGLE_UNLIKELY(!checkedSum.IsValid()))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, err::kInstanceIdOverflow);
+        return false;
+    }
+
+    return true;
+}
+
 ANGLE_INLINE bool ValidateDrawArraysCommon(const Context *context,
                                            angle::EntryPoint entryPoint,
                                            PrimitiveMode mode,
