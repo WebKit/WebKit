@@ -24568,6 +24568,27 @@ TEST_P(WebGLGLSLTest, ComplexExpression)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 127, 127, 127), 1);
     ASSERT_GL_NO_ERROR();
 }
+
+// Regression test for a transformation bug where a function has |return| only in dead code.
+TEST_P(GLSLTest_ES3, EmptyBodyAfterPrunedIfWithReturn)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+
+int foo() {
+    if (false) { return 1; }
+}
+
+void main() {
+    color = vec4(float(foo()), 0, 1, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_ES32(

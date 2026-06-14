@@ -22,6 +22,10 @@
 # https://chromium.googlesource.com/chromium/src/+/refs/heads/main/testing/buildbot/gn_isolate_map.pyl
 
 {
+  "all": {
+    "label": "//:all",
+    "type": "additional_compile_target",
+  },
   "angle_apks": {
     "label": "//:angle_apks",
     "type": "additional_compile_target",

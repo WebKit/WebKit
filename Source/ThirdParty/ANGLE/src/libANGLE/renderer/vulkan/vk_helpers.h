@@ -2569,7 +2569,7 @@ class ImageHelper final : public Resource, public angle::Subject
                                     const gl::Box &clearArea,
                                     const ClearTextureMode clearMode,
                                     gl::TextureType textureType,
-                                    uint32_t levelIndex,
+                                    uint32_t levelIndexGL,
                                     uint32_t layerIndex,
                                     uint32_t layerCount,
                                     GLenum type,
@@ -3000,6 +3000,7 @@ class ImageHelper final : public Resource, public angle::Subject
         }
         VkImageAspectFlags aspectFlags;
         VkClearValue value;
+        // Note: The level index is a GL level (gl::LevelIndex)
         uint32_t levelIndex;
         uint32_t layerIndex;
         uint32_t layerCount;
@@ -3016,6 +3017,7 @@ class ImageHelper final : public Resource, public angle::Subject
         }
         VkImageAspectFlags aspectFlags;
         VkClearValue clearValue;
+        // Note: The level index is a GL level (gl::LevelIndex)
         uint32_t levelIndex;
         uint32_t layerIndex;
         uint32_t layerCount;
@@ -3028,11 +3030,13 @@ class ImageHelper final : public Resource, public angle::Subject
     struct BufferUpdate
     {
         BufferHelper *bufferHelper;
+        // Note: copyRegion.imageSubresource.mipLevel is a GL level (gl::LevelIndex)
         VkBufferImageCopy copyRegion;
         angle::FormatID formatID;
     };
     struct ImageUpdate
     {
+        // Note: copyRegion.src/dstSubresource.mipLevel are GL levels (gl::LevelIndex)
         VkImageCopy copyRegion;
         angle::FormatID formatID;
     };

@@ -26,7 +26,6 @@ constexpr char kSimpleTextureVertexShader[] =
     "    texcoord = vec2(position.xy * 0.5 - 0.5);\n"
     "}";
 
-// TODO(jmadill): Would be useful in a shared place in a utils folder.
 void UncompressDXTBlock(int destX,
                         int destY,
                         int destWidth,
@@ -1192,20 +1191,18 @@ TEST_P(RobustResourceInitTest, DrawWithTexture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    constexpr char kVS[] =
-        "attribute vec2 position;\n"
-        "varying vec2 texCoord;\n"
-        "void main() {\n"
-        "    gl_Position = vec4(position, 0, 1);\n"
-        "    texCoord = (position * 0.5) + 0.5;\n"
-        "}";
-    constexpr char kFS[] =
-        "precision mediump float;\n"
-        "varying vec2 texCoord;\n"
-        "uniform sampler2D tex;\n"
-        "void main() {\n"
-        "    gl_FragColor = texture2D(tex, texCoord);\n"
-        "}";
+    constexpr char kVS[] = R"(attribute vec2 position;
+varying vec2 texCoord;
+void main() {
+    gl_Position = vec4(position, 0, 1);
+    texCoord = (position * 0.5) + 0.5;
+})";
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec2 texCoord;
+uniform sampler2D tex;
+void main() {
+    gl_FragColor = texture2D(tex, texCoord);
+})";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     drawQuad(program, "position", 0.5f);
@@ -1234,25 +1231,89 @@ TEST_P(RobustResourceInitTestES3, DrawWithMippedTexture)
 
     EXPECT_GL_NO_ERROR();
 
-    constexpr char kVS[] =
-        "attribute vec2 position;\n"
-        "varying vec2 texCoord;\n"
-        "void main() {\n"
-        "    gl_Position = vec4(position, 0, 1);\n"
-        "    texCoord = (position * 0.5) + 0.5;\n"
-        "}";
-    constexpr char kFS[] =
-        "precision mediump float;\n"
-        "varying vec2 texCoord;\n"
-        "uniform sampler2D tex;\n"
-        "void main() {\n"
-        "    gl_FragColor = texture2D(tex, texCoord);\n"
-        "}";
+    constexpr char kVS[] = R"(attribute vec2 position;
+varying vec2 texCoord;
+void main() {
+    gl_Position = vec4(position, 0, 1);
+    texCoord = (position * 0.5) + 0.5;
+})";
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec2 texCoord;
+uniform sampler2D tex;
+void main() {
+    gl_FragColor = texture2D(tex, texCoord);
+})";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     drawQuad(program, "position", 0.5f);
 
     checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
+}
+
+// Test that readback of uninitialized mipped texture works as expected.
+TEST_P(RobustResourceInitTestES3, ReadbackWithMippedTexture)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture tex;
+    setupTexture(&tex);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA, kWidth >> 1, kHeight >> 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 3, GL_RGBA, kWidth >> 2, kHeight >> 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // Read back all the levels, verify that all levels are cleared to transparent black.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 3);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 2, kHeight >> 2, GLColor::transparentBlack);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 2);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::transparentBlack);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that robust init works for a mutable texture with non-zero base, if some of the levels are
+// initialized through other means.  Regression test for a bug where the base level was not
+// accounted for when determining which levels need initialization
+TEST_P(RobustResourceInitTestES3, PartiallyInitializedTextureWithNonZeroBase)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture tex;
+    setupTexture(&tex);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA, kWidth >> 1, kHeight >> 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 3, GL_RGBA, kWidth >> 2, kHeight >> 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+
+    // Draw to level 3.  Given base level, this would be level 2 of the backing image.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 3);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0f);
+
+    // Read back all the levels, verify that levels 1 and 2 are cleared to transparent black.
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 2, kHeight >> 2, GLColor::red);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 2);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> 1, kHeight >> 1, GLColor::transparentBlack);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Reading a partially initialized texture (texImage2D) should succeed with all uninitialized bytes

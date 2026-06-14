@@ -4913,6 +4913,81 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that reusing the same uniform buffer for two different programs where the Metal
+// layout results in different sizes (e.g. mat2[64] vs row_major mat4[32]) works correctly.
+// See crbug.com/500472605 for more details.
+// Both have std140 size of 2048 bytes.
+// mat2[64]: std140 is 64 * 32 = 2048 bytes, Metal is 64 * 16 = 1024 bytes.
+// mat4[32]: std140 is 32 * 64 = 2048 bytes, Metal is 32 * 64 = 2048 bytes.
+TEST_P(UniformBufferTest, SameBufferDifferentMetalSize)
+{
+    // Program A: mat2[64] (stdSize 2048, metalSize 1024)
+    const char *kVS  = essl3_shaders::vs::Simple();
+    const char *kFSA = R"(#version 300 es
+precision highp float;
+layout(std140) uniform block {
+    mat2 m[64];
+} ubo;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(ubo.m[63][0], 0.0, 1.0);
+})";
+
+    // Program B: row_major mat4[32] (stdSize 2048, metalSize 2048)
+    const char *kFSB = R"(#version 300 es
+precision highp float;
+layout(std140, row_major) uniform block {
+    mat4 m[32];
+} ubo;
+out vec4 fragColor;
+void main()
+{
+    fragColor = ubo.m[30][0];
+})";
+
+    ANGLE_GL_PROGRAM(programA, kVS, kFSA);
+    ANGLE_GL_PROGRAM(programB, kVS, kFSB);
+
+    glUniformBlockBinding(programA, glGetUniformBlockIndex(programA, "block"), 0);
+    glUniformBlockBinding(programB, glGetUniformBlockIndex(programB, "block"), 0);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+
+    // 2048 bytes of data. (512 floats)
+    std::vector<float> data(512, 0.0f);
+    // Program A: m[63][0] is at offset 63 * 32 = 2016. (r0c0, r1c0)
+    // float index = 2016 / 4 = 504.
+    data[504] = 1.0f;
+    data[505] = 0.5f;
+
+    // Program B: m[30] starts at offset 30 * 64 = 1920.
+    // m[30][0] is the first column of the 31st matrix.
+    // In row-major, m[30][0] = (r0c0, r1c0, r2c0, r3c0) of m[30].
+    // Float indices (offset / 4):
+    // r0c0: 1920 / 4 = 480
+    // r1c0: 1936 / 4 = 484
+    // r2c0: 1952 / 4 = 488
+    // r3c0: 1968 / 4 = 492
+    data[480] = 0.2f;
+    data[484] = 0.1f;
+    data[488] = 0.7f;
+    data[492] = 0.4f;
+
+    glBufferData(GL_UNIFORM_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, buffer);
+
+    // Program A: mat2[64]. Should see m[63][0] = (1.0, 0.5)
+    drawQuad(programA, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 127, 0, 255), 1);
+
+    // Program B: row_major mat4[32]. Should see m[30][0] = (0.2, 0.1, 0.7, 0.4)
+    // If it incorrectly reuses Program A's 1024-byte buffer, it will go OOB.
+    drawQuad(programB, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(51, 25, 178, 102), 1);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferTest);
 ANGLE_INSTANTIATE_TEST_ES3(UniformBufferTest);
 

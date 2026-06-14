@@ -2965,6 +2965,11 @@
     ]
   },
   "angle-linux-x64-amd-rx5500xt-rel": {},
+  "angle-linux-x64-builder-dbg": {
+    "additional_compile_targets": [
+      "all"
+    ]
+  },
   "angle-linux-x64-intel-uhd630-exp-rel": {},
   "angle-linux-x64-intel-uhd630-rel": {
     "gtest_tests": [

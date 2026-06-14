@@ -113,6 +113,15 @@ angle_linux_functional_cq_tester(
 )
 
 angle_linux_functional_cq_tester(
+    name = "angle-cq-linux-x64-dbg",
+    description_html = "Compiles all debug ANGLE targets for Linux/x64. Blocks CL submission.",
+    mirrors = [
+        "ci/angle-linux-x64-builder-dbg",
+    ],
+    gn_args = "ci/angle-linux-x64-builder-dbg",
+)
+
+angle_linux_functional_cq_tester(
     name = "angle-cq-linux-x64-rel",
     description_html = "Tests release ANGLE on Linux/x64 on multiple hardware configs. Blocks CL submission.",
     mirrors = [
@@ -243,6 +252,33 @@ def angle_win_manual_builder(*, name, **kwargs):
     )
 
 ## Functional testers
+
+# This is effectively a copy of angle-cq-android-arm64-rel, but manual-only and
+# with the angle_ir GN arg config set. Mirroring is done in this way instead
+# of having CI builders because we do not have a need for the CI builders and
+# this keeps the tests in sync between the IR and non-IR builders.
+angle_linux_manual_builder(
+    name = "angle-try-android-arm64-ir-rel",
+    description_html = ("Tests release ANGLE on Android/arm64 on multiple hardware configs using " +
+                        "ANGLE's new intermediate representation for shaders. Manual only."),
+    mirrors = [
+        "ci/angle-android-arm64-builder-rel",
+        "ci/angle-android-arm64-google-pixel4-rel",
+        "ci/angle-android-arm64-google-pixel6-rel",
+    ],
+    gn_args = gn_args.config(
+        configs = [
+            "android_clang",
+            "android_static_analysis",
+            "angle_ir",
+            "arm64",
+            "capture",
+            "component",
+            "opencl",
+            "release_with_dchecks",
+        ],
+    ),
+)
 
 angle_linux_manual_builder(
     name = "angle-try-android-arm64-google-pixel4-rel",
@@ -465,6 +501,32 @@ angle_mac_manual_builder(
         "ci/angle-mac-x64-intel-uhd630-rel",
     ],
     gn_args = "ci/angle-mac-x64-builder-rel",
+)
+
+# This is effectively a copy of angle-cq-win-x64-rel, but manual-only and
+# with the angle_ir GN arg config set. Mirroring is done in this way instead
+# of having CI builders because we do not have a need for the CI builders and
+# this keeps the tests in sync between the IR and non-IR builders.
+angle_win_manual_builder(
+    name = "angle-try-win-x64-ir-rel",
+    description_html = ("Tests release ANGLE on Win/x64 on multiple hardware configs using " +
+                        "ANGLE's new intermediate representation for shaders. Manual only."),
+    mirrors = [
+        "ci/angle-win-x64-builder-rel",
+        "ci/angle-win-x64-intel-uhd630-rel",
+        "ci/angle-win-x64-nvidia-gtx1660-rel",
+    ],
+    gn_args = gn_args.config(
+        configs = [
+            "angle_ir",
+            "capture",
+            "component",
+            "opencl",
+            "release_with_dchecks",
+            "win_clang",
+            "x64",
+        ],
+    ),
 )
 
 angle_win_manual_builder(

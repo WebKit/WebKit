@@ -4260,6 +4260,90 @@ TEST_P(WebGLCompatibilityTest, DepthStencilAttachment)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
+// Test the WebGL buffer binding rules. Index buffers cannot be bound to GPU writeable bindings and
+// vice versa
+TEST_P(WebGLCompatibilityTest, BufferBindingTypeRules)
+{
+    {
+        GLBuffer buffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+        EXPECT_GL_NO_ERROR();
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        if (getClientMajorVersion() > 2)
+        {
+            glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buffer);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, buffer);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            // CopyRead and CopyWrite are allowed
+            glBindBuffer(GL_COPY_READ_BUFFER, buffer);
+            EXPECT_GL_NO_ERROR();
+
+            glBindBuffer(GL_COPY_WRITE_BUFFER, buffer);
+            EXPECT_GL_NO_ERROR();
+        }
+    }
+
+    {
+        GLBuffer buffer;
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        EXPECT_GL_NO_ERROR();
+
+        if (getClientMajorVersion() > 2)
+        {
+            // Other buffer types can be bound freely
+            glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+            EXPECT_GL_NO_ERROR();
+
+            glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, buffer);
+            EXPECT_GL_NO_ERROR();
+        }
+
+        // ... except to element array buffer bindings
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
+// Cannot copy between buffers of different WebGL types
+TEST_P(WebGL2CompatibilityTest, CopyBufferSubDataBufferTypeRules)
+{
+    GLBuffer elementArrayBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 128, nullptr, GL_STATIC_DRAW);
+
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 128, nullptr, GL_STATIC_DRAW);
+
+    GLBuffer uniformBuffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STATIC_DRAW);
+
+    glCopyBufferSubData(GL_ELEMENT_ARRAY_BUFFER, GL_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify framebuffer attachments return expected types when in an inconsistant state.
 TEST_P(WebGLCompatibilityTest, FramebufferAttachmentConsistancy)
 {
@@ -4306,6 +4390,45 @@ TEST_P(WebGLCompatibilityTest, FramebufferAttachmentConsistancy)
 
     EXPECT_GL_NO_ERROR();
     EXPECT_GLENUM_EQ(GL_RENDERBUFFER, attachmentType);
+}
+
+// The WebGL javascript API has no map functionality but ANGLE still exposes the Map entrypoints
+// since they can be used for other internal operations. Verify you cannot draw with a mapped
+// buffer.
+TEST_P(WebGL2CompatibilityTest, MappedArrayBufferValidation)
+{
+    constexpr char kVS[] =
+        R"(attribute float a_pos;
+void main()
+{
+    gl_Position = vec4(a_pos, a_pos, a_pos, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
+    GLint posLocation = glGetAttribLocation(program, "a_pos");
+    ASSERT_NE(-1, posLocation);
+    glUseProgram(program);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, 16, nullptr, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(12));
+    glDrawArrays(GL_POINTS, 0, 4);
+    ASSERT_GL_NO_ERROR();
+
+    glMapBufferRange(GL_ARRAY_BUFFER, 0, 16, GL_MAP_READ_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_POINTS, 0, 4);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 4);
+    EXPECT_GL_NO_ERROR();
 }
 
 // This tests that rendering feedback loops works as expected with WebGL 2.

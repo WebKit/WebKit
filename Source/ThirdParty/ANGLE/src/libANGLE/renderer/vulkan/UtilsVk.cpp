@@ -356,6 +356,9 @@ uint32_t GetUnresolveFlags(uint32_t colorAttachmentCount,
         flags |= 1 << kDepthUnresolveFlagBit;
     }
 
+    // Note: regardless of whether unresolve of stencil happens via VK_EXT_shader_stencil_export or
+    // a special path, the shader is different if stencil is unresolved or not; the input attachment
+    // index of the color attachments is placed after the stencil attachment if any.
     if (unresolveStencil)
     {
         flags |= 1 << kStencilUnresolveFlagBit;
@@ -4834,7 +4837,7 @@ angle::Result UtilsVk::unresolve(ContextVk *contextVk,
 
         gl::DrawBuffersArray<UnresolveColorAttachmentType> colorAttachmentTypes;
         uint32_t flags = GetUnresolveFlags(colorAttachmentCount, colorSrc, params.unresolveDepth,
-                                           unresolveStencilWithShaderExport, &colorAttachmentTypes);
+                                           params.unresolveStencil, &colorAttachmentTypes);
 
         vk::ShaderModulePtr &fragmentShader = mUnresolveFragShaders[flags];
         ANGLE_TRY(GetUnresolveFrag(contextVk, colorAttachmentCount, colorAttachmentTypes,

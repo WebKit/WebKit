@@ -292,6 +292,10 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     uint32_t mShadowCompareModes[mtl::kMaxShaderSamplers];
 
     gl::ShaderMap<std::unique_ptr<mtl::BufferPool>> mDefaultUniformBufferPools;
+
+    // A unique ID to identify this program executable across its lifetime. It's guaranteed that
+    // there is no duplicated ID ever even if the program is deleted.
+    Serial mProgramSerialId;
 };
 
 angle::Result CreateMslShaderLib(mtl::Context *context,

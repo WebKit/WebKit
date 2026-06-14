@@ -1664,6 +1664,11 @@ void Context::bindImageTexture(GLuint unit,
                                GLenum format)
 {
     Texture *tex = mState.mTextureManager->getTexture(texture);
+    // For robust init, make sure the texture is initialized before storage writes.
+    if (tex != nullptr)
+    {
+        ANGLE_CONTEXT_TRY(tex->ensureInitialized(this));
+    }
     mState.setImageUnit(this, unit, tex, level, layered, layer, access, format);
     mImageObserverBindings[unit].bind(tex);
 }
@@ -4182,7 +4187,19 @@ void Context::initCaps()
     *caps      = mImplementation->getNativeCaps();
 
     // Update limitations before evaluating extension support
-    *mState.getMutableLimitations() = mImplementation->getNativeLimitations();
+    {
+        gl::Limitations implementationLimitations = mImplementation->getNativeLimitations();
+
+        if (mDisplay->getFrontendFeatures().limitMaxBufferBytesTo1MB.enabled)
+        {
+            implementationLimitations.maxBufferBytes = 1 << 20;
+        }
+        if (mDisplay->getFrontendFeatures().limitMaxTextureBytesTo1MB.enabled)
+        {
+            implementationLimitations.maxTextureBytes = 1 << 20;
+        }
+        *mState.getMutableLimitations() = implementationLimitations;
+    }
 
     // TODO (http://anglebug.com/42264543): mSupportedExtensions should not be modified here
     mSupportedExtensions = generateSupportedExtensions();

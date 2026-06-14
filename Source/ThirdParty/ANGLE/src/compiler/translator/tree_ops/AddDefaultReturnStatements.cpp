@@ -19,6 +19,22 @@ namespace sh
 
 namespace
 {
+bool EndsInReturn(TIntermBlock *body)
+{
+    if (body->getSequence()->empty())
+    {
+        return false;
+    }
+
+    TIntermNode *lastStatement = body->getSequence()->back();
+    if (lastStatement->getAsBlock())
+    {
+        return EndsInReturn(lastStatement->getAsBlock());
+    }
+
+    TIntermBranch *returnNode = lastStatement->getAsBranchNode();
+    return returnNode != nullptr && returnNode->getFlowOp() == EOpReturn;
+}
 
 bool NeedsReturnStatement(TIntermFunctionDefinition *node, TType *returnType)
 {
@@ -28,14 +44,8 @@ bool NeedsReturnStatement(TIntermFunctionDefinition *node, TType *returnType)
         return false;
     }
 
-    TIntermBlock *bodyNode    = node->getBody();
-    TIntermBranch *returnNode = bodyNode->getSequence()->back()->getAsBranchNode();
-    if (returnNode != nullptr && returnNode->getFlowOp() == EOpReturn)
-    {
-        return false;
-    }
-
-    return true;
+    TIntermBlock *bodyNode = node->getBody();
+    return !EndsInReturn(bodyNode);
 }
 
 }  // anonymous namespace

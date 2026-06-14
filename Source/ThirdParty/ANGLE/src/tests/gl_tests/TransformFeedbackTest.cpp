@@ -2527,7 +2527,7 @@ TEST_P(TransformFeedbackTest, BufferOutOfMemory)
 
     // It's not spec guaranteed to return OOM here.
     GLenum err = glGetError();
-    EXPECT_TRUE(err == GL_NO_ERROR || err == GL_OUT_OF_MEMORY);
+    EXPECT_TRUE(err == GL_NO_ERROR || err == GL_OUT_OF_MEMORY || err == GL_INVALID_OPERATION);
 
     glBeginTransformFeedback(GL_POINTS);
     glDrawArrays(GL_POINTS, 0, 5);
@@ -4949,7 +4949,7 @@ TEST_P(WebGLTransformFeedbackTest, TooSmallBuffersMultiDrawInstanced)
 }
 
 // Test that deleting a buffer bound to a transform feedback slot that is not used by the current
-// program.
+// program doesn't crash.
 TEST_P(TransformFeedbackTest, StaleBufferBinding)
 {
     std::vector<std::string> tfVaryings = {"gl_Position"};
@@ -4982,6 +4982,37 @@ TEST_P(TransformFeedbackTest, StaleBufferBinding)
     glDrawArrays(GL_POINTS, 0, 1);
     glEndTransformFeedback();
 
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that deleting a buffer bound to a transform feedback slot that is no longer active doesn't
+// crash.
+TEST_P(TransformFeedbackTest, StaleBufferBindingInactiveXfb)
+{
+    std::vector<std::string> tfVaryings = {"gl_Position"};
+    mProgram                            = CompileProgramWithTransformFeedback(
+        essl3_shaders::vs::Simple(), essl3_shaders::fs::Red(), tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_NE(0u, mProgram);
+    glUseProgram(mProgram);
+
+    GLBuffer buf0;
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buf0);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 1024, nullptr, GL_DYNAMIC_COPY);
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf0);
+
+    // Draw once with the buffers, syncs initial state.
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+
+    // Unbind and delete the buffer
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+    buf0.reset();
+
+    // Regular draw while TF inactive, but still using a program that was compiled with transform
+    // feedback.  It shouldn't crash.
+    glDrawArrays(GL_POINTS, 0, 1);
     ASSERT_GL_NO_ERROR();
 }
 

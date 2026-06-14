@@ -1688,7 +1688,7 @@ void TracePerfTest::drawBenchmark()
 
     if (mParams->surfaceType == SurfaceType::Offscreen)
     {
-        if (gMinimizeGPUWork)
+        if (gMinimizeGPUWork || gSkipBlitInOffscreen)
         {
             // To keep GPU work minimum, we skip the blit.
             glFlush();

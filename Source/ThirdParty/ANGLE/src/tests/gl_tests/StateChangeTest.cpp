@@ -6644,14 +6644,14 @@ void main()
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     // Bind transform feedback buffer to another binding point. Should cause a conflict.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, transformFeedbackBuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, transformFeedbackBuffer);
     ASSERT_GL_NO_ERROR();
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEndTransformFeedback();
     EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "Simultaneous element buffer binding should fail";
 
     // Reset to valid state.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBeginTransformFeedback(GL_TRIANGLES);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEndTransformFeedback();
@@ -11632,6 +11632,87 @@ TEST_P(StateChangeTest, ScissorChangeWithinRenderPass)
     // Verify that the first draw is covered by the second "full" draw
     EXPECT_PIXEL_COLOR_EQ(5, 5, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(12, 12, GLColor::blue);
+}
+
+// Test draw after draw with uint8 index type and a non-zero offset.
+TEST_P(StateChangeTestES3, Uint8IndexIdenticalDrawsNonZeroOffset)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    GLint posAttrib = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_EQ(0, posAttrib);
+
+    // Arrange the vertices as such:
+    //
+    //     1      3      5
+    //      +-----+-----+
+    //      |     |     |
+    //      |     |     |
+    //      |     |     |
+    //      |     |     |
+    //      |     |     |
+    //      |     |     |
+    //      +-----+-----+
+    //     0      2      4
+    //
+    // Drawing a triangle strip with offset 2, the right half of the framebuffer is rendered.
+    std::vector<Vector3> positionData(256, {0, 0, 0});
+
+    positionData[0] = Vector3(-1, -1, 0);
+    positionData[1] = Vector3(-1, 1, 0);
+    positionData[2] = Vector3(0, -1, 0);
+    positionData[3] = Vector3(0, 1, 0);
+    positionData[4] = Vector3(1, -1, 0);
+    positionData[5] = Vector3(1, 1, 0);
+
+    constexpr std::array<GLubyte, 6> indices = {0, 1, 2, 3, 4, 5};
+
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(positionData[0]),
+                 positionData.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posAttrib);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(), GL_STATIC_DRAW);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw red to the right half of the framebuffer
+    glUniform4f(colorLoc, 1, 0, 0, 1);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(2));
+
+    // Trigger a render pass change.  In the Vulkan backend, the render pass is not actually closed
+    // until some processing is done, including the index buffer emulation.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw again with the same offset, this time green
+    glUniform4f(colorLoc, 0, 1, 0, 1);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(2));
+
+    // Verify results
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w / 2 - 1, h, GLColor::green);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w / 2 - 1, h, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
 }
 
 }  // anonymous namespace

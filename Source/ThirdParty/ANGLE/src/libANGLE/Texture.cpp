@@ -2727,10 +2727,6 @@ void Texture::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
             }
         }
         break;
-        case angle::SubjectMessage::InitializationComplete:
-            ASSERT(index == rx::kTextureImageImplObserverMessageIndex);
-            setInitState(InitState::Initialized);
-            break;
         case angle::SubjectMessage::InternalMemoryAllocationChanged:
             // Need to mark the texture dirty to give the back end a chance to handle the new
             // buffer. For example, the Vulkan back end needs to create a new buffer view that

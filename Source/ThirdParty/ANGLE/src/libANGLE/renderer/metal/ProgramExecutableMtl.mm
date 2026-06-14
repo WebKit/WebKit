@@ -24,6 +24,12 @@ namespace
 {
 #define SHADER_ENTRY_NAME @"main0"
 
+Serial GenerateProgramSerialId()
+{
+    static AtomicSerialFactory gProgramSerialFactory;
+    return gProgramSerialFactory.generate();
+}
+
 bool CompareBlockInfo(const sh::BlockMemberInfo &a, const sh::BlockMemberInfo &b)
 {
     return a.offset < b.offset;
@@ -376,7 +382,10 @@ DefaultUniformBlockMtl::DefaultUniformBlockMtl() {}
 DefaultUniformBlockMtl::~DefaultUniformBlockMtl() = default;
 
 ProgramExecutableMtl::ProgramExecutableMtl(const gl::ProgramExecutable *executable)
-    : ProgramExecutableImpl(executable), mProgramHasFlatAttributes(false), mShadowCompareModes{}
+    : ProgramExecutableImpl(executable),
+      mProgramHasFlatAttributes(false),
+      mShadowCompareModes{},
+      mProgramSerialId(GenerateProgramSerialId())
 {
     mCurrentShaderVariants.fill(nullptr);
 
@@ -1301,8 +1310,8 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
 
             UniformConversionBufferMtl *conversion =
                 (UniformConversionBufferMtl *)bufferMtl->getUniformConversionBuffer(
-                    context, std::pair<size_t, size_t>(bufferIndex, srcOffset),
-                    conversionInfo.stdSize());
+                    context, mProgramSerialId.getValue(),
+                    std::pair<size_t, size_t>(bufferIndex, srcOffset), conversionInfo.stdSize());
             // Has the content of the buffer has changed since last conversion?
             if (conversion->dirty)
             {

@@ -3418,11 +3418,37 @@ index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32c
  #endif
  
  
+diff --git a/src/libANGLE/Buffer.cpp b/src/libANGLE/Buffer.cpp
+index 82eed7deb38f7abc82885d1a9e9ff6bbe8391633..2fc6e094e7c30c9aa552efef8e1ae179d62a1d3b 100644
+--- a/src/libANGLE/Buffer.cpp
++++ b/src/libANGLE/Buffer.cpp
+@@ -555,7 +555,9 @@ void Buffer::onStateChange(const Context *context, angle::SubjectMessage message
+ 
+     // Apply the change directly on current context's current vertex array. All other vertex arrays
+     // requires a buffer rebind in order to pick up the change.
+-    context->onBufferChanged(this, message,
++    bool isUsedInTransformFeedback = mState.mTransformFeedbackGenericBindingCount > 0 ||
++                                     mState.mTransformFeedbackIndexedBindingCount > 0;
++    context->onBufferChanged(this, message, isUsedInTransformFeedback,
+                              mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context));
+ }
+ 
+@@ -567,7 +569,10 @@ void Buffer::onContentsChange(const Context *context)
+         static_cast<Texture *>(contentsObserver.observer)->onBufferContentsChange();
+     }
+ 
++    bool isUsedInTransformFeedback = mState.mTransformFeedbackGenericBindingCount > 0 ||
++                                     mState.mTransformFeedbackIndexedBindingCount > 0;
+     context->onBufferChanged(this, angle::SubjectMessage::ContentsChanged,
++                             isUsedInTransformFeedback,
+                              mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context));
+ }
+ 
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 36cd567569da4c4905bc1c664a51974445352805..fa85ac2155fd9b3e1d04f5e1bc98f6a7ef46a331 100644
+index 9d5a6a94620191f8fe60612dcde84f67c239caeb..e6b1d17ed01f5e7212456119717260a74c8d32ad 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9955,6 +9955,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -9972,6 +9972,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -3456,7 +3482,7 @@ index 36cd567569da4c4905bc1c664a51974445352805..fa85ac2155fd9b3e1d04f5e1bc98f6a7
  void Context::endTiling(GLbitfield preserveMask)
  {
      ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
-@@ -10029,6 +10056,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
+@@ -10046,6 +10073,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
      mState.getBlobCacheCallbacks() = {set, get, userParam};
  }
  
@@ -3473,6 +3499,56 @@ index 36cd567569da4c4905bc1c664a51974445352805..fa85ac2155fd9b3e1d04f5e1bc98f6a7
  void Context::texStorageAttribs2D(GLenum target,
                                    GLsizei levels,
                                    GLenum internalFormat,
+@@ -10199,6 +10236,18 @@ void Context::onProgramPipelineDestroy(const ProgramPipeline *programPipeline) c
+     mState.mProgramPipelineManager->recycleHandle(programPipeline->id());
+ }
+ 
++void Context::invalidateTransformFeedbackCapacities(const Buffer *buffer) const
++{
++    for (auto pair : UnsafeResourceMapIter(mTransformFeedbackMap))
++    {
++        TransformFeedback *tf = pair.second;
++        if (tf != nullptr && tf->isBufferBound(buffer->id()))
++        {
++            tf->invalidateVertexCapacity();
++        }
++    }
++}
++
+ // ErrorSet implementation.
+ ErrorSet::ErrorSet(Debug *debug,
+                    const angle::FrontendFeatures &frontendFeatures,
+diff --git a/src/libANGLE/Context.h b/src/libANGLE/Context.h
+index 0d0b4732fb0b2bd3bbba585cef94f5817fa9cab0..10a8359e1d4f4e27d271f63ee19ea2bea6fc15b7 100644
+--- a/src/libANGLE/Context.h
++++ b/src/libANGLE/Context.h
+@@ -957,6 +957,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
+     void onSwapChainImageChanged() const { mDefaultFramebuffer->onSwapChainImageChanged(); }
+     void onBufferChanged(const Buffer *buffer,
+                          const angle::SubjectMessage message,
++                         bool isUsedInTransformFeedback,
+                          VertexArrayBufferBindingMask vertexArrayBufferBindingMask) const
+     {
+         // Notify current vertex array of the buffer changed. Note that other vertex arrays of this
+@@ -968,6 +969,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
+             mState.mVertexArray->onBufferChanged(this, buffer, message,
+                                                  vertexArrayBufferBindingMask);
+         }
++        if (isUsedInTransformFeedback && message == angle::SubjectMessage::SubjectChanged)
++        {
++            invalidateTransformFeedbackCapacities(buffer);
++        }
+     }
+ 
+     AttributesMask getActiveBufferedAttribsMask() const;
+@@ -1052,6 +1057,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
+     void updateActiveAttribsMaskIfNeeded() const;
+ 
+     void endTilingImplicit();
++    void invalidateTransformFeedbackCapacities(const Buffer *buffer) const;
+ 
+     State mState;
+     bool mShared;
 diff --git a/src/libANGLE/Context_gles_ext_autogen.h b/src/libANGLE/Context_gles_ext_autogen.h
 index 86b5d800f764f9f19164b0e464a901d4295a0e16..a020ea81355564df5128929b661d7c8ac4ebfe51 100644
 --- a/src/libANGLE/Context_gles_ext_autogen.h
@@ -4074,6 +4150,173 @@ index 67bc68df4686a23ed1c254cbc95e0a9236187321..4ca5f50beafbb3f569f48ee1ae9b55cf
      // GLES1 emulation: state specific to GLES1
      GLES1State mGLES1State;
  
+diff --git a/src/libANGLE/TransformFeedback.cpp b/src/libANGLE/TransformFeedback.cpp
+index 05608a2eafa5cb7a5a257e47d5efcd6e0a7d353f..2df80ef8402e75836d70635865f291156e96b9c2 100644
+--- a/src/libANGLE/TransformFeedback.cpp
++++ b/src/libANGLE/TransformFeedback.cpp
+@@ -52,7 +52,6 @@ TransformFeedbackState::TransformFeedbackState(size_t maxIndexedBuffers)
+       mPrimitiveMode(PrimitiveMode::InvalidEnum),
+       mPaused(false),
+       mVerticesDrawn(0),
+-      mVertexCapacity(0),
+       mProgram(nullptr),
+       mIndexedBuffers(maxIndexedBuffers)
+ {}
+@@ -149,7 +148,6 @@ angle::Result TransformFeedback::begin(const Context *context,
+     mState.mPaused        = false;
+     mState.mVerticesDrawn = 0;
+     bindProgram(context, program);
+-    recomputeVertexCapacity(context);
+     return angle::Result::Continue;
+ }
+ 
+@@ -160,7 +158,7 @@ angle::Result TransformFeedback::end(const Context *context)
+     mState.mPrimitiveMode  = PrimitiveMode::InvalidEnum;
+     mState.mPaused         = false;
+     mState.mVerticesDrawn  = 0;
+-    mState.mVertexCapacity = 0;
++    mState.mVertexCapacity = std::nullopt;
+     if (mState.mProgram)
+     {
+         mState.mProgram->release(context);
+@@ -180,7 +178,6 @@ angle::Result TransformFeedback::resume(const Context *context)
+ {
+     ANGLE_TRY(mImplementation->resume(context));
+     mState.mPaused = false;
+-    recomputeVertexCapacity(context);
+     return angle::Result::Continue;
+ }
+ 
+@@ -194,9 +191,10 @@ PrimitiveMode TransformFeedback::getPrimitiveMode() const
+     return mState.mPrimitiveMode;
+ }
+ 
+-bool TransformFeedback::checkBufferSpaceForDraw(const GLsizei *counts,
++bool TransformFeedback::checkBufferSpaceForDraw(const Context *context,
++                                                const GLsizei *counts,
+                                                 const GLsizei *primcounts,
+-                                                GLsizei drawcount) const
++                                                GLsizei drawcount)
+ {
+     auto vertices = angle::CheckedNumeric<GLsizeiptr>(mState.mVerticesDrawn);
+     for (GLsizei drawID = 0; drawID < drawcount; ++drawID)
+@@ -205,7 +203,32 @@ bool TransformFeedback::checkBufferSpaceForDraw(const GLsizei *counts,
+         GLsizei count     = ANGLE_UNSAFE_BUFFERS(counts[drawID]);
+         vertices += GetVerticesNeededForDraw(mState.mPrimitiveMode, count, primcount);
+     }
+-    return vertices.IsValid() && vertices.ValueOrDie() <= mState.mVertexCapacity;
++
++    if (!mState.mVertexCapacity.has_value())
++    {
++        const ProgramExecutable *programExecutable = context->getState().getLinkedProgramExecutable(context);
++        if (programExecutable)
++        {
++            // Compute the number of vertices we can draw before overflowing the bound buffers.
++            auto strides = programExecutable->getTransformFeedbackStrides();
++            ASSERT(strides.size() <= mState.mIndexedBuffers.size() && !strides.empty());
++            GLsizeiptr minCapacity = std::numeric_limits<GLsizeiptr>::max();
++            for (size_t index = 0; index < strides.size(); index++)
++            {
++                GLsizeiptr capacity =
++                    GetBoundBufferAvailableSize(mState.mIndexedBuffers[index]) / strides[index];
++                minCapacity = std::min(minCapacity, capacity);
++            }
++            mState.mVertexCapacity = minCapacity;
++        }
++        else
++        {
++            UNREACHABLE();
++            mState.mVertexCapacity = 0;
++        }
++    }
++
++    return vertices.IsValid() && vertices.ValueOrDie() <= *mState.mVertexCapacity;
+ }
+ 
+ void TransformFeedback::onVerticesDrawn(const Context *context, GLsizei count, GLsizei primcount)
+@@ -241,32 +264,6 @@ void TransformFeedback::bindProgram(const Context *context, Program *program)
+     }
+ }
+ 
+-void TransformFeedback::recomputeVertexCapacity(const Context *context)
+-{
+-    // In one of the angle_unittests - "TransformFeedbackTest.SideEffectsOfStartAndStop"
+-    // there is a code path where <context> is a nullptr, account for that possibility.
+-    const ProgramExecutable *programExecutable =
+-        context ? context->getState().getLinkedProgramExecutable(context) : nullptr;
+-    if (programExecutable)
+-    {
+-        // Compute the number of vertices we can draw before overflowing the bound buffers.
+-        auto strides = programExecutable->getTransformFeedbackStrides();
+-        ASSERT(strides.size() <= mState.mIndexedBuffers.size() && !strides.empty());
+-        GLsizeiptr minCapacity = std::numeric_limits<GLsizeiptr>::max();
+-        for (size_t index = 0; index < strides.size(); index++)
+-        {
+-            GLsizeiptr capacity =
+-                GetBoundBufferAvailableSize(mState.mIndexedBuffers[index]) / strides[index];
+-            minCapacity = std::min(minCapacity, capacity);
+-        }
+-        mState.mVertexCapacity = minCapacity;
+-    }
+-    else
+-    {
+-        mState.mVertexCapacity = 0;
+-    }
+-}
+-
+ bool TransformFeedback::hasBoundProgram(ShaderProgramID program) const
+ {
+     return mState.mProgram != nullptr && mState.mProgram->id().value == program.value;
+diff --git a/src/libANGLE/TransformFeedback.h b/src/libANGLE/TransformFeedback.h
+index a56c62e05216ad2c3c2d6d56bee0446d8c6425dc..cc7a05af64f64e939476d1372e2bf91cd8ea3749 100644
+--- a/src/libANGLE/TransformFeedback.h
++++ b/src/libANGLE/TransformFeedback.h
+@@ -14,6 +14,7 @@
+ #include "libANGLE/Debug.h"
+ 
+ #include "angle_gl.h"
++#include <optional>
+ 
+ namespace rx
+ {
+@@ -50,7 +51,7 @@ class TransformFeedbackState final : angle::NonCopyable
+     PrimitiveMode mPrimitiveMode;
+     bool mPaused;
+     GLsizeiptr mVerticesDrawn;
+-    GLsizeiptr mVertexCapacity;
++    std::optional<GLsizeiptr> mVertexCapacity;
+ 
+     Program *mProgram;
+ 
+@@ -78,9 +79,10 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
+     PrimitiveMode getPrimitiveMode() const;
+     // Validates that the vertices produced by a draw call will fit in the bound transform feedback
+     // buffers. primcounts may be nullptr for non-instanced draw calls.
+-    bool checkBufferSpaceForDraw(const GLsizei *counts,
++    bool checkBufferSpaceForDraw(const Context *context,
++                                 const GLsizei *counts,
+                                  const GLsizei *primcounts,
+-                                 GLsizei drawcount) const;
++                                 GLsizei drawcount);
+     // This must be called after each draw call when transform feedback is enabled to keep track of
+     // how many vertices have been written to the buffers. This information is needed by
+     // checkBufferSpaceForDraw because each draw call appends vertices to the buffers starting just
+@@ -107,6 +109,7 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
+     // Returns true if the buffer is bound to any of the indexed binding points in this transform
+     // feedback.
+     bool isBufferBound(BufferID bufferID) const;
++    void invalidateVertexCapacity() { mState.mVertexCapacity = std::nullopt; }
+ 
+     angle::Result detachBuffer(const Context *context, BufferID bufferID);
+ 
+@@ -116,7 +119,6 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
+ 
+   private:
+     void bindProgram(const Context *context, Program *program);
+-    void recomputeVertexCapacity(const Context *context);
+ 
+     TransformFeedbackState mState;
+     rx::TransformFeedbackImpl *mImplementation;
 diff --git a/src/libANGLE/capture/capture_gles_2_0_params.cpp b/src/libANGLE/capture/capture_gles_2_0_params.cpp
 index f2d1d6872f9f1fdffe218c00c3321f15f08e62ff..a5e2d5d4ad2688c7222a74db4d2ebc6f2dfe7e16 100644
 --- a/src/libANGLE/capture/capture_gles_2_0_params.cpp
@@ -4194,7 +4437,7 @@ index a6fe076c72d043dba3fc347bf020ebf8ec895f51..add46e99c91d19bbd790d2de0d8768b8
 +
  #endif  // LIBANGLE_FEATURES_H_
 diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
-index e9bb2dfcccdaa69a3a0ddc5dd43df15d37549a9b..0f54c9c84124d8bdf17f04141832e0c74ad2762a 100644
+index 1ec1e20ae757fac4a44fdff0a99bfc44d522418a..13afb2f6cf852ab24c7382e33a4e21e8d271fbc7 100644
 --- a/src/libANGLE/formatutils.cpp
 +++ b/src/libANGLE/formatutils.cpp
 @@ -576,6 +576,7 @@ static GLenum EquivalentBlitInternalFormat(GLenum internalformat)
@@ -4205,7 +4448,7 @@ index e9bb2dfcccdaa69a3a0ddc5dd43df15d37549a9b..0f54c9c84124d8bdf17f04141832e0c7
          internalformat == GL_BGRA8_SRGB_ANGLEX)
      {
          return GL_RGBA8;
-@@ -1753,6 +1754,66 @@ bool InternalFormat::computePalettedImageRowPitch(GLsizei width, GLuint *resultO
+@@ -1831,6 +1832,66 @@ bool InternalFormat::computePalettedImageRowPitch(GLsizei width, GLuint *resultO
      }
  }
  
@@ -4272,7 +4515,7 @@ index e9bb2dfcccdaa69a3a0ddc5dd43df15d37549a9b..0f54c9c84124d8bdf17f04141832e0c7
  bool InternalFormat::computeRowPitch(GLenum formatType,
                                       GLsizei width,
                                       GLint alignment,
-@@ -1923,23 +1984,14 @@ std::pair<GLuint, GLuint> InternalFormat::getCompressedImageMinBlocks() const
+@@ -2020,23 +2081,14 @@ std::pair<GLuint, GLuint> InternalFormat::getCompressedImageMinBlocks() const
  bool InternalFormat::computeSkipBytes(GLenum formatType,
                                        GLuint rowPitch,
                                        GLuint depthPitch,
@@ -4302,7 +4545,7 @@ index e9bb2dfcccdaa69a3a0ddc5dd43df15d37549a9b..0f54c9c84124d8bdf17f04141832e0c7
      return CheckedMathResult(skipBytes, resultOut);
  }
  
-@@ -1950,13 +2002,10 @@ bool InternalFormat::computePackUnpackEndByte(GLenum formatType,
+@@ -2047,13 +2099,10 @@ bool InternalFormat::computePackUnpackEndByte(GLenum formatType,
                                                GLuint *resultOut) const
  {
      GLuint rowPitch = 0;
@@ -4319,7 +4562,7 @@ index e9bb2dfcccdaa69a3a0ddc5dd43df15d37549a9b..0f54c9c84124d8bdf17f04141832e0c7
      {
          return false;
      }
-@@ -1986,12 +2035,6 @@ bool InternalFormat::computePackUnpackEndByte(GLenum formatType,
+@@ -2083,12 +2132,6 @@ bool InternalFormat::computePackUnpackEndByte(GLenum formatType,
          }
      }
  
@@ -4333,7 +4576,7 @@ index e9bb2dfcccdaa69a3a0ddc5dd43df15d37549a9b..0f54c9c84124d8bdf17f04141832e0c7
  
      return CheckedMathResult(endByte, resultOut);
 diff --git a/src/libANGLE/formatutils.h b/src/libANGLE/formatutils.h
-index 22078b65d6f002935025191e5c6a6edf376d0d0d..7a24fb9d0c418089e0e58ccf435396d6ad634328 100644
+index dcf50618d159fdf1203471e7b0b06ada0e9109b9..cf9f0cb1b42981521137d1b5a4686e42da0d5109 100644
 --- a/src/libANGLE/formatutils.h
 +++ b/src/libANGLE/formatutils.h
 @@ -180,7 +180,20 @@ struct InternalFormat
@@ -4358,8 +4601,8 @@ index 22078b65d6f002935025191e5c6a6edf376d0d0d..7a24fb9d0c418089e0e58ccf435396d6
      [[nodiscard]] bool computeRowPitch(GLenum formatType,
                                         GLsizei width,
                                         GLint alignment,
-@@ -209,12 +222,12 @@ struct InternalFormat
-     [[nodiscard]] bool computeCompressedImageSize(const Extents &size, GLuint *resultOut) const;
+@@ -213,12 +226,12 @@ struct InternalFormat
+                                         GLuint *resultOut) const;
  
      [[nodiscard]] std::pair<GLuint, GLuint> getCompressedImageMinBlocks() const;
 -
@@ -4538,10 +4781,10 @@ index 2088634434db9636e6f559b20f0db82ecb684bd5..d6f252c2bf7e70590a39c7c8630be173
      const d3d11::Format &d3d11Format =
          d3d11::Format::Get(image->getInternalFormat(), mRenderer->getRenderer11DeviceCaps());
 diff --git a/src/libANGLE/renderer/gl/FramebufferGL.cpp b/src/libANGLE/renderer/gl/FramebufferGL.cpp
-index ecea51f64e2a1dab3dba6b8ec29dc6de9cfe9f00..5b385c7b0b8289d296707265f5007eaee3818a95 100644
+index 6889e4cd8d18dd7381157316a45e812f40b3a285..cda9325eedc9d8cf19c8e66ec178702ee306ff8f 100644
 --- a/src/libANGLE/renderer/gl/FramebufferGL.cpp
 +++ b/src/libANGLE/renderer/gl/FramebufferGL.cpp
-@@ -374,13 +374,10 @@ angle::Result RearrangeEXTTextureNorm16Pixels(const gl::Context *context,
+@@ -376,13 +376,10 @@ angle::Result RearrangeEXTTextureNorm16Pixels(const gl::Context *context,
          gl::GetInternalFormatInfo(originalReadFormat, type);
  
      GLuint originalReadFormatRowBytes = 0;
@@ -4558,7 +4801,7 @@ index ecea51f64e2a1dab3dba6b8ec29dc6de9cfe9f00..5b385c7b0b8289d296707265f5007eae
  
      GLuint originalReadFormatPixelBytes = glFormatOriginal.computePixelBytes(type);
      GLuint alphaChannelBytes            = glFormatOriginal.alphaBits / 8;
-@@ -1607,11 +1604,9 @@ angle::Result FramebufferGL::readPixelsRowByRow(const gl::Context *context,
+@@ -1609,11 +1606,9 @@ angle::Result FramebufferGL::readPixelsRowByRow(const gl::Context *context,
      const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(format, type);
  
      GLuint rowBytes = 0;
@@ -4572,7 +4815,7 @@ index ecea51f64e2a1dab3dba6b8ec29dc6de9cfe9f00..5b385c7b0b8289d296707265f5007eae
  
      ScopedEXTTextureNorm16ReadbackWorkaround workaround;
      angle::Result result =
-@@ -1662,11 +1657,9 @@ angle::Result FramebufferGL::readPixelsAllAtOnce(const gl::Context *context,
+@@ -1664,11 +1659,9 @@ angle::Result FramebufferGL::readPixelsAllAtOnce(const gl::Context *context,
      const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(format, type);
  
      GLuint rowBytes = 0;
@@ -4604,10 +4847,10 @@ index c85ef6270cb1f10b6e17c179b0e5195042b4a039..11de2386287c32d94a8c79c0ea2ee28f
  
      return result;
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index c0dea0110abcefe22f3e4380ba63364a5b504359..2756d3c0deda6c73712ce2c7a49e01ac17f8063e 100644
+index 0d2bf2a565a6a2178838d9aa8cbd1107e18de6f4..23b67464b2e270d187e98320cc93e59715e32313 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
 +++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-@@ -2520,6 +2520,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
+@@ -2522,6 +2522,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
                              break;
@@ -6124,7 +6367,7 @@ index 29f8f59906801cf6218a1517f9b749ce0b1e1d3e..fe46dfb83c88da315557aba10b607eac
      {
          size_t resourceSize = EstimateTextureSizeInBytes(
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.h b/src/libANGLE/renderer/metal/ProgramExecutableMtl.h
-index d5843a04522efe23914ebd163bf27f0e68b6c108..cc21d8d2a6e8e02d7d5298735c4f7b35b36790a7 100644
+index 77353c00006a2ea6db458493628836f6f7b24953..062092b3f430987d6138abfb89bf96e3aeba7804 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.h
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.h
 @@ -284,7 +284,7 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
@@ -6137,7 +6380,7 @@ index d5843a04522efe23914ebd163bf27f0e68b6c108..cc21d8d2a6e8e02d7d5298735c4f7b35
      // into an argument buffer.
      std::vector<uint32_t> mArgumentBufferRenderStageUsages;
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index ceac4b0211f637b4dfc9aa5834548c8456d83d28..57513a5335ee6445dfe31f34d58445942e5d15b6 100644
+index 4435b2f958dc3b6caa48d4d09acf6e87effc2ff4..2d1bf0b7743d99579539b421366c6b8d7c3832b4 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 @@ -137,8 +137,7 @@ inline void copy_matrix_row_major(void *dst,
@@ -8361,324 +8604,7 @@ index 0000000000000000000000000000000000000000..206919fab7f6d791cbfe87fbf70e9eca
 +        gl::DrawElementsType::UnsignedByte, static_cast<GLint>(indices.size()), indices.data());
 +}
 +
-+// ===================== Simple types (mode == drawMode, no expansion) =====================
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_NoRestart)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 3, 4, 5});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 6, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_SingleRestartMiddle)
-+{
-+    // Buffer: 0 1 2 ff 3 4 5 → DrawIndexRanges: (0,2), (4,6)
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff, 3, 4, 5});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 7, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(3u, cmds[1].count);
-+    EXPECT_EQ(8u, cmds[1].offset);  // index 4 * 2
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_RestartAtBegin)
-+{
-+    // Buffer: ff 0 1 2 → DrawIndexRanges: (1,3)
-+    auto ranges = MakeDrawIndexRanges({0xff, 0, 1, 2});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 4, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(2u, cmds[0].offset);  // index 1 * 2
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_RestartAtEnd)
-+{
-+    // Buffer: 0 1 2 ff → DrawIndexRanges: (0,2)
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 4, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_ConsecutiveRestarts)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff, 0xff, 3, 4, 5});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 8, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(3u, cmds[1].count);
-+    EXPECT_EQ(10u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_IncompletePrimitiveDropped)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 0xff, 2, 3, 4});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 6, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(6u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_WithOffset)
-+{
-+    auto ranges = MakeDrawIndexRanges({9, 0, 1, 2, 0xff, 3, 4, 5});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 7, 1, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(2u, cmds[0].offset);
-+    EXPECT_EQ(3u, cmds[1].count);
-+    EXPECT_EQ(10u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Lines_WithRestart)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 0xff, 2, 3, 4});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Lines, 6, 0, ranges, gl::PrimitiveMode::Lines,
-+                                 gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(2u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(2u, cmds[1].count);
-+    EXPECT_EQ(6u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Points_WithRestart)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 0xff, 1});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Points, 3, 0, ranges, gl::PrimitiveMode::Points,
-+                                 gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(1u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(1u, cmds[1].count);
-+    EXPECT_EQ(4u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, EmptyBuffer)
-+{
-+    std::vector<DrawIndexRange> ranges;
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 0, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    EXPECT_EQ(0u, cmds.size());
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, AllRestarts)
-+{
-+    auto ranges = MakeDrawIndexRanges({0xff, 0xff, 0xff});
-+    EXPECT_EQ(0u, ranges.size());
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_Uint32IndexType)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff, 3, 4, 5});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 7, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedInt);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(3u, cmds[1].count);
-+    EXPECT_EQ(16u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_CountLimitsWindow)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 3, 4, 5});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 4, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_SplitContentWithRestartAtBegin)
-+{
-+    auto ranges = MakeDrawIndexRanges({0xff, 0, 1, 2, 0xff, 2, 1, 3});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 8, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(2u, cmds[0].offset);
-+    EXPECT_EQ(3u, cmds[1].count);
-+    EXPECT_EQ(10u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_SplitContentWithRestartAtEnd)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff, 2, 1, 3, 0xff});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 8, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(3u, cmds[1].count);
-+    EXPECT_EQ(8u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_DegenerateBeforeContent)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 0xff, 0, 1, 2, 2, 1, 3});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 8, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(4u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, Triangles_WithAddOffsetDegenerateAndRestartAtBegin)
-+{
-+    auto ranges = MakeDrawIndexRanges({9, 0xff, 0, 0xff, 0, 1, 2, 2, 1, 3});
-+    ASSERT_EQ(3u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::Triangles, 9, 1, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(8u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, TriangleStrip_NoRestart)
-+{
-+    // 4 source → (4-2)*3 = 6 draw indices
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 3});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::TriangleStrip, 4, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, TriangleStrip_WithRestart)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 3, 0xff, 4, 5, 6, 7});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::TriangleStrip, 9, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(6u, cmds[1].count);
-+    EXPECT_EQ(30u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, TriangleStrip_TooFewIndices)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 0xff, 2, 3, 4});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::TriangleStrip, 6, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(3u, cmds[0].count);
-+    EXPECT_EQ(18u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, TriangleStrip_RestartAtBeginAndEnd)
-+{
-+    auto ranges = MakeDrawIndexRanges({0xff, 0, 1, 2, 3, 0xff});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::TriangleStrip, 6, 0, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(6u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, LineStrip_NoRestart)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 3});
-+    ASSERT_EQ(1u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::LineStrip, 4, 0, ranges,
-+                                 gl::PrimitiveMode::Lines, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, LineStrip_WithRestart)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 1, 2, 0xff, 3, 4, 5});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::LineStrip, 7, 0, ranges,
-+                                 gl::PrimitiveMode::Lines, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(2u, cmds.size());
-+    EXPECT_EQ(4u, cmds[0].count);
-+    EXPECT_EQ(0u, cmds[0].offset);
-+    EXPECT_EQ(4u, cmds[1].count);
-+    EXPECT_EQ(16u, cmds[1].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, LineStrip_TooFewIndices)
-+{
-+    auto ranges = MakeDrawIndexRanges({0, 0xff, 1, 2});
-+    ASSERT_EQ(2u, ranges.size());
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::LineStrip, 4, 0, ranges,
-+                                 gl::PrimitiveMode::Lines, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(2u, cmds[0].count);
-+    EXPECT_EQ(8u, cmds[0].offset);
-+}
-+
-+TEST(ComputeDrawCommandRangesTest, TriangleStrip_WithBufferOffset)
-+{
-+    auto ranges = MakeDrawIndexRanges({9, 0, 1, 2, 3});
-+    auto cmds =
-+        ComputeDrawCommandRanges(gl::PrimitiveMode::TriangleStrip, 4, 1, ranges,
-+                                 gl::PrimitiveMode::Triangles, gl::DrawElementsType::UnsignedShort);
-+    ASSERT_EQ(1u, cmds.size());
-+    EXPECT_EQ(6u, cmds[0].count);
-+    EXPECT_EQ(6u, cmds[0].offset);
-+}
-+
-+}  // namespace
-diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
++// ===================== Simple types (mode == drawMode, no expansion) ==============diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index 3ce237604867c47514e74d377e3dc1f0f2b06f27..d3b8323db26201593f23695922324f8459a90e99 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 +++ b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -8961,8 +8887,2599 @@ index a84b094ff3c338a46ec3567661ce2b9dc7c169c0..cd6248de9e74c5b302e49e4e0010de65
  void RenderCommandEncoder::setLabel(NSString *label)
  {
      mLabel = std::move(label);
+diff --git a/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm b/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm
+index fe74e971188c798d39ec26eab7b2eae8b41593e8..e0fea5c540c0a4263f9577d516cb6144f376c9a5 100644
+--- a/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm
++++ b/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm
+@@ -3850,635 +3850,1988 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
+     bool supportDepthStencilAutoResolve = supportDepthAutoResolve && supportStencilAutoResolve;
+ 
+     // Source: https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
+-    setFormatCaps(MTLPixelFormatA8Unorm, /** filterable*/ true, /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatBGR10A2Unorm, /** filterable*/ true,
+-                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ true,
+-                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatBGRA8Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatBGRA8Unorm_sRGB, /** filterable*/ true,
+-                  /** writable*/ display->supportsAppleGPUFamily(2) && !display->isSimulator(),
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
++    // clang-format off
++    setFormatCaps(MTLPixelFormatA8Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 1,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatBGR10A2Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = display->supportsEitherGPUFamily(3, 1),
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatBGRA8Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatBGRA8Unorm_sRGB,
++                  {
++                      .filterable      = true,
++                      .writable        = display->supportsAppleGPUFamily(2) && !display->isSimulator(),
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
+     setFormatCaps(MTLPixelFormatDepth32Float,
+-                  /** filterable*/ display->supports32BitFloatFiltering(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ true,
+-                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+-                  /** depthRenderable*/ true);
+-
++                  {
++                      .filterable      = display->supports32BitFloatFiltering(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = true,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = supportDepthAutoResolve,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 0,
++                      .alignment       = 4
++                  });
+     setFormatCaps(MTLPixelFormatDepth32Float_Stencil8,
+-                  /** filterable*/ display->supports32BitFloatFiltering(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ true,
+-                  /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false,
+-                  /** depthRenderable*/ true);
+-
+-    setFormatCaps(MTLPixelFormatR16Float, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR16Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR16Snorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR16Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR16Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(
+-        MTLPixelFormatR32Float,
+-        /** filterable*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** writable*/ true, /** blendable*/ true, /** multisample*/ true,
+-        /** resolve*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR32Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+-                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR32Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+-                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR8Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR8Snorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsEitherGPUFamily(2, 1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR8Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatR8Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG11B10Float, /** filterable*/ true,
+-                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ true,
+-                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG16Float, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG16Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG16Snorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG16Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG16Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(
+-        MTLPixelFormatRG32Float,
+-        /** filterable*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** writable*/ true, /** blendable*/ true,
+-        /** multisample*/ display->supportsEitherGPUFamily(7, 1),
+-        /** resolve*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG32Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ display->supportsEitherGPUFamily(7, 1),
+-                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG32Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ display->supportsEitherGPUFamily(7, 1),
+-                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG8Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG8Snorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsEitherGPUFamily(2, 1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG8Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG8Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGB10A2Uint, /** filterable*/ false,
+-                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ false,
+-                  /** multisample*/ true, /** resolve*/ false, /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGB10A2Unorm, /** filterable*/ true,
+-                  /** writable*/ display->supportsEitherGPUFamily(3, 1), /** blendable*/ true,
+-                  /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(
+-        MTLPixelFormatRGB9E5Float, /** filterable*/ true,
+-        /** writable*/ display->supportsAppleGPUFamily(3),
+-        /** blendable*/ display->supportsAppleGPUFamily(1),
+-        /** multisample*/ display->supportsAppleGPUFamily(1),
+-        /** resolve*/ display->supportsAppleGPUFamily(1),
+-        /** colorRenderable*/ display->supportsAppleGPUFamily(1) && !display->isSimulator(),
+-        /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA16Float, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA16Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA16Snorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA16Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA16Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(
+-        MTLPixelFormatRGBA32Float,
+-        /** filterable*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** writable*/ true,
+-        /** blendable*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** multisample*/ display->supportsEitherGPUFamily(7, 1),
+-        /** resolve*/ display->supportsMacGPUFamily(1) ||
+-            (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
+-        /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA32Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+-                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA32Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ display->supportsMacGPUFamily(1),
+-                  /** resolve*/ false, /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA8Sint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA8Snorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true,
+-                  /** resolve*/ display->supportsEitherGPUFamily(2, 1), /** colorRenderable*/ true,
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA8Uint, /** filterable*/ false, /** writable*/ true,
+-                  /** blendable*/ false, /** multisample*/ true, /** resolve*/ false,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA8Unorm, /** filterable*/ true, /** writable*/ true,
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRGBA8Unorm_sRGB, /** filterable*/ true,
+-                  /** writable*/ display->supportsAppleGPUFamily(2) && !display->isSimulator(),
+-                  /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,
+-                  /** colorRenderable*/ true, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatStencil8, /** filterable*/ false, /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ true,
+-                  /** resolve*/ supportStencilAutoResolve, /** colorRenderable*/ false,
+-                  /** depthRenderable*/ true);
+-
+-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST ||                       \
+-    (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400) || \
++                  {
++                      .filterable      = display->supports32BitFloatFiltering(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = true,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = supportDepthStencilAutoResolve,
++                      .compressed      = false,
++                      .pixelBytes      = 5,
++                      .pixelBytesMSAA  = 5,
++                      .channels        = 0,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatR16Float,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 1,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatR16Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 1,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatR16Snorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 1,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatR16Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 1,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatR16Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 1,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatR32Float,
++                  {
++                      .filterable      = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 1,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatR32Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = display->supportsMacGPUFamily(1),
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 1,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatR32Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = display->supportsMacGPUFamily(1),
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 1,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatR8Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 1,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatR8Snorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsEitherGPUFamily(2, 1),
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 1,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatR8Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 1,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatR8Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 1,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRG11B10Float,
++                  {
++                      .filterable      = true,
++                      .writable        = display->supportsEitherGPUFamily(3, 1),
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 3,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRG16Float,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 2,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRG16Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 2,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRG16Snorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 2,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRG16Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 2,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRG16Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 2,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRG32Float,
++                  {
++                      .filterable      = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = display->supportsEitherGPUFamily(7, 1),
++                      .resolve         = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 2,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRG32Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = display->supportsEitherGPUFamily(7, 1),
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 2,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRG32Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = display->supportsEitherGPUFamily(7, 1),
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 2,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRG8Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 2,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRG8Snorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsEitherGPUFamily(2, 1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 2,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRG8Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 2,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRG8Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 2,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRGB10A2Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = display->supportsEitherGPUFamily(3, 1),
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRGB10A2Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = display->supportsEitherGPUFamily(3, 1),
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRGB9E5Float,
++                  {
++                      .filterable      = true,
++                      .writable        = display->supportsAppleGPUFamily(3),
++                      .colorRenderable = display->supportsAppleGPUFamily(1) && !display->isSimulator(),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 3,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRGBA16Float,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRGBA16Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRGBA16Snorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRGBA16Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRGBA16Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsMacGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 8,
++                      .pixelBytesMSAA  = 8,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatRGBA32Float,
++                  {
++                      .filterable      = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .multisample     = display->supportsEitherGPUFamily(7, 1),
++                      .resolve         = display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering()),
++                      .compressed      = false,
++                      .pixelBytes      = 16,
++                      .pixelBytesMSAA  = 16,
++                      .channels        = 4,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRGBA32Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = display->supportsMacGPUFamily(1),
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 16,
++                      .pixelBytesMSAA  = 16,
++                      .channels        = 4,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRGBA32Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = display->supportsMacGPUFamily(1),
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 16,
++                      .pixelBytesMSAA  = 16,
++                      .channels        = 4,
++                      .alignment       = 4
++                  });
++    setFormatCaps(MTLPixelFormatRGBA8Sint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRGBA8Snorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = display->supportsEitherGPUFamily(2, 1),
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRGBA8Uint,
++                  {
++                      .filterable      = false,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = false,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRGBA8Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = true,
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRGBA8Unorm_sRGB,
++                  {
++                      .filterable      = true,
++                      .writable        = display->supportsAppleGPUFamily(2) && !display->isSimulator(),
++                      .colorRenderable = true,
++                      .depthRenderable = false,
++                      .blendable       = true,
++                      .multisample     = true,
++                      .resolve         = true,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 4,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatStencil8,
++                  {
++                      .filterable      = false,
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = true,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = supportStencilAutoResolve,
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 0,
++                      .alignment       = 1
++                  });
++#if TARGET_OS_OSX || TARGET_OS_MACCATALYST ||\
++    (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400) ||\
+     (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160400) || TARGET_OS_VISION
+-    setFormatCaps(MTLPixelFormatBC1_RGBA, /** filterable*/ display->supportsBCTextureCompression(),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++    setFormatCaps(MTLPixelFormatBC1_RGBA,
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC1_RGBA_sRGB,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatBC2_RGBA, /** filterable*/ display->supportsBCTextureCompression(),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatBC2_RGBA,
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC2_RGBA_sRGB,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatBC3_RGBA, /** filterable*/ display->supportsBCTextureCompression(),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatBC3_RGBA,
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC3_RGBA_sRGB,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC4_RSnorm,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC4_RUnorm,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC5_RGSnorm,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC5_RGUnorm,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC6H_RGBFloat,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC6H_RGBUfloat,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC7_RGBAUnorm,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatBC7_RGBAUnorm_sRGB,
+-                  /** filterable*/ display->supportsBCTextureCompression(), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsBCTextureCompression(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+ #endif  // BC formats
+ #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+-    setFormatCaps(MTLPixelFormatDepth16Unorm, /** filterable*/ true, /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ true,
+-                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+-                  /** depthRenderable*/ true);
+-
++    setFormatCaps(MTLPixelFormatDepth16Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = true,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = supportDepthAutoResolve,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 0,
++                      .alignment       = 2
++                  });
+     setFormatCaps(MTLPixelFormatDepth24Unorm_Stencil8,
+-                  /** filterable*/ display->supportsMacGPUFamily(1) &&
+-                      display->supportsDepth24Stencil8PixelFormat(),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ true,
+-                  /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false,
+-                  /** depthRenderable*/ display->supportsMacGPUFamily(1) &&
+-                      display->supportsDepth24Stencil8PixelFormat());
+-
++                  {
++                      .filterable      = display->supportsMacGPUFamily(1) && display->supportsDepth24Stencil8PixelFormat(),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = display->supportsMacGPUFamily(1) && display->supportsDepth24Stencil8PixelFormat(),
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = supportDepthStencilAutoResolve,
++                      .compressed      = false,
++                      .pixelBytes      = 4,
++                      .pixelBytesMSAA  = 4,
++                      .channels        = 0,
++                      .alignment       = 4
++                  });
+ #endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
+ #if (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST) || \
+     (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))
+-    setFormatCaps(MTLPixelFormatA1BGR5Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ display->supportsAppleGPUFamily(1),
+-                  /** multisample*/ display->supportsAppleGPUFamily(1),
+-                  /** resolve*/ display->supportsAppleGPUFamily(1),
+-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatABGR4Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ display->supportsAppleGPUFamily(1),
+-                  /** multisample*/ display->supportsAppleGPUFamily(1),
+-                  /** resolve*/ display->supportsAppleGPUFamily(1),
+-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x10_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++    setFormatCaps(MTLPixelFormatA1BGR5Unorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = display->supportsAppleGPUFamily(1),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatABGR4Unorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = display->supportsAppleGPUFamily(1),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x10_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatASTC_10x10_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(2), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x5_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x6_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x6_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x8_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x8_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_12x10_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x5_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x5_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x6_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x6_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x8_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x8_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_12x10_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatASTC_12x10_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(2), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_12x12_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_12x12_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatASTC_12x12_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(2), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_4x4_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_4x4_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_5x4_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_5x4_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_5x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_5x5_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_6x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_6x5_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_6x6_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_6x6_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x5_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x6_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x6_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x8_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x8_sRGB, /** filterable*/ display->supportsAppleGPUFamily(2),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatB5G6R5Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ display->supportsAppleGPUFamily(1),
+-                  /** multisample*/ display->supportsAppleGPUFamily(1),
+-                  /** resolve*/ display->supportsAppleGPUFamily(1),
+-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatBGR5A1Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ display->supportsAppleGPUFamily(1),
+-                  /** multisample*/ display->supportsAppleGPUFamily(1),
+-                  /** resolve*/ display->supportsAppleGPUFamily(1),
+-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatDepth16Unorm, /** filterable*/ true, /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ true,
+-                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+-                  /** depthRenderable*/ true);
+-
+-    setFormatCaps(MTLPixelFormatEAC_R11Snorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatEAC_R11Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatEAC_RG11Snorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatEAC_RG11Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatEAC_RGBA8, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatEAC_RGBA8_sRGB, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatETC2_RGB8, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatETC2_RGB8A1, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_4x4_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_4x4_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_5x4_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_5x4_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_5x5_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_5x5_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_6x5_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_6x5_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_6x6_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_6x6_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x5_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x5_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x6_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x6_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x8_LDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x8_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(2),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatB5G6R5Unorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = display->supportsAppleGPUFamily(1),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 3,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatBGR5A1Unorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = display->supportsAppleGPUFamily(1),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 4,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatDepth16Unorm,
++                  {
++                      .filterable      = true,
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = true,
++                      .blendable       = false,
++                      .multisample     = true,
++                      .resolve         = supportDepthAutoResolve,
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 0,
++                      .alignment       = 2
++                  });
++    setFormatCaps(MTLPixelFormatEAC_R11Snorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatEAC_R11Unorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatEAC_RG11Snorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatEAC_RG11Unorm,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatEAC_RGBA8,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatEAC_RGBA8_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatETC2_RGB8,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatETC2_RGB8A1,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatETC2_RGB8A1_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatETC2_RGB8_sRGB, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-#    pragma clang diagnostic push
+-#    pragma clang diagnostic ignored "-Wdeprecated-declarations"
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatETC2_RGB8_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+     setFormatCaps(MTLPixelFormatPVRTC_RGBA_2BPP,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatPVRTC_RGBA_2BPP_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatPVRTC_RGBA_4BPP,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatPVRTC_RGBA_4BPP_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatPVRTC_RGB_2BPP, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatPVRTC_RGB_2BPP,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatPVRTC_RGB_2BPP_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatPVRTC_RGB_4BPP, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatPVRTC_RGB_4BPP,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
+     setFormatCaps(MTLPixelFormatPVRTC_RGB_4BPP_sRGB,
+-                  /** filterable*/ display->supportsAppleGPUFamily(1), /** writable*/ false,
+-                  /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
+-                  /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-#    pragma clang diagnostic pop
+-    setFormatCaps(MTLPixelFormatR8Unorm_sRGB, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ display->supportsAppleGPUFamily(2),
+-                  /** blendable*/ display->supportsAppleGPUFamily(1),
+-                  /** multisample*/ display->supportsAppleGPUFamily(1),
+-                  /** resolve*/ display->supportsAppleGPUFamily(1),
+-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
+-                  /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatRG8Unorm_sRGB, /** filterable*/ display->supportsAppleGPUFamily(1),
+-                  /** writable*/ display->supportsAppleGPUFamily(2),
+-                  /** blendable*/ display->supportsAppleGPUFamily(1),
+-                  /** multisample*/ display->supportsAppleGPUFamily(1),
+-                  /** resolve*/ display->supportsAppleGPUFamily(1),
+-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
+-                  /** depthRenderable*/ false);
+-
+-#    if TARGET_OS_IOS || TARGET_OS_OSX || TARGET_OS_VISION
+-    setFormatCaps(MTLPixelFormatASTC_10x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_10x8_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_12x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_12x12_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_4x4_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_5x4_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_5x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_6x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_6x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-    setFormatCaps(MTLPixelFormatASTC_8x8_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
+-                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
+-                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
+-
+-#    endif  // TARGET_OS_IOS || mac 11.0+ || TARGET_OS_VISION
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++#pragma clang diagnostic pop
++    setFormatCaps(MTLPixelFormatR8Unorm_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = display->supportsAppleGPUFamily(2),
++                      .colorRenderable = display->supportsAppleGPUFamily(1),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 1,
++                      .pixelBytesMSAA  = 1,
++                      .channels        = 1,
++                      .alignment       = 1
++                  });
++    setFormatCaps(MTLPixelFormatRG8Unorm_sRGB,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(1),
++                      .writable        = display->supportsAppleGPUFamily(2),
++                      .colorRenderable = display->supportsAppleGPUFamily(1),
++                      .depthRenderable = false,
++                      .blendable       = display->supportsAppleGPUFamily(1),
++                      .multisample     = display->supportsAppleGPUFamily(1),
++                      .resolve         = display->supportsAppleGPUFamily(1),
++                      .compressed      = false,
++                      .pixelBytes      = 2,
++                      .pixelBytesMSAA  = 2,
++                      .channels        = 2,
++                      .alignment       = 1
++                  });
++#if TARGET_OS_IOS || TARGET_OS_OSX || TARGET_OS_VISION
++    setFormatCaps(MTLPixelFormatASTC_10x10_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x5_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x6_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_10x8_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_12x10_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_12x12_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_4x4_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_5x4_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_5x5_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_6x5_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_6x6_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x5_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x6_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++    setFormatCaps(MTLPixelFormatASTC_8x8_HDR,
++                  {
++                      .filterable      = display->supportsAppleGPUFamily(6),
++                      .writable        = false,
++                      .colorRenderable = false,
++                      .depthRenderable = false,
++                      .blendable       = false,
++                      .multisample     = false,
++                      .resolve         = false,
++                      .compressed      = true,
++                      .pixelBytes      = 0,
++                      .pixelBytesMSAA  = 0,
++                      .channels        = 0,
++                      .alignment       = 0
++                  });
++#endif // TARGET_OS_IOS || mac 11.0+ || TARGET_OS_VISION
+ #endif // TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST || mac 11.0+
++
++    // clang-format on
+ }
+ 
+ }  // namespace mtl
 diff --git a/src/libANGLE/renderer/metal/mtl_format_utils.h b/src/libANGLE/renderer/metal/mtl_format_utils.h
-index db95298598177500cebd0eb81cfcb845656031b2..8cbd1014b7dd9c2886272df3ae0923ccec49b512 100644
+index db95298598177500cebd0eb81cfcb845656031b2..5ae83f7ec480b7560aca40083d7528842101d458 100644
 --- a/src/libANGLE/renderer/metal/mtl_format_utils.h
 +++ b/src/libANGLE/renderer/metal/mtl_format_utils.h
 @@ -89,6 +89,10 @@ struct Format : public FormatBase
@@ -8976,8 +11493,55 @@ index db95298598177500cebd0eb81cfcb845656031b2..8cbd1014b7dd9c2886272df3ae0923cc
      MTLPixelFormat metalFormat = MTLPixelFormatInvalid;
  
      LoadFunctionMap textureLoadFunctions       = nullptr;
+@@ -150,45 +154,7 @@ class FormatTable final : angle::NonCopyable
+     void initNativeFormatCapsAutogen(const DisplayMtl *display);
+     void initNativeFormatCaps(const DisplayMtl *display);
+ 
+-    void setFormatCaps(MTLPixelFormat formatId,
+-                       bool filterable,
+-                       bool writable,
+-                       bool blendable,
+-                       bool multisample,
+-                       bool resolve,
+-                       bool colorRenderable);
+-
+-    void setFormatCaps(MTLPixelFormat formatId,
+-                       bool filterable,
+-                       bool writable,
+-                       bool blendable,
+-                       bool multisample,
+-                       bool resolve,
+-                       bool colorRenderable,
+-                       NSUInteger bytesPerChannel,
+-                       NSUInteger channels);
+-
+-    void setFormatCaps(MTLPixelFormat formatId,
+-                       bool filterable,
+-                       bool writable,
+-                       bool blendable,
+-                       bool multisample,
+-                       bool resolve,
+-                       bool colorRenderable,
+-                       bool depthRenderable);
+-
+-    void setFormatCaps(MTLPixelFormat formatId,
+-                       bool filterable,
+-                       bool writable,
+-                       bool blendable,
+-                       bool multisample,
+-                       bool resolve,
+-                       bool colorRenderable,
+-                       bool depthRenderable,
+-                       NSUInteger bytesPerChannel,
+-                       NSUInteger channels);
+-
+-    void setCompressedFormatCaps(MTLPixelFormat formatId, bool filterable);
++    void setFormatCaps(MTLPixelFormat formatId, const FormatCaps &caps);
+ 
+     void adjustFormatCapsForDevice(const mtl::ContextDevice &device,
+                                    MTLPixelFormat id,
 diff --git a/src/libANGLE/renderer/metal/mtl_format_utils.mm b/src/libANGLE/renderer/metal/mtl_format_utils.mm
-index 64e0be79f52b70b35f107080424490955c0e0e4b..6abb7faf0a2cb3ea72688c69e0fd98f2a1b3376a 100644
+index 64e0be79f52b70b35f107080424490955c0e0e4b..58904113fd2cc3bf1a0aefc0d73c3364ea363c68 100644
 --- a/src/libANGLE/renderer/metal/mtl_format_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_format_utils.mm
 @@ -165,6 +165,34 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
@@ -10388,10 +12952,10 @@ index cab5e56ae928431771ea1ffd8e2db92121d84798..7520ee4ef485a0037fb27c15b2218d96
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 8cbf2a588fdc83f06c32a93add57d2b7bb9686d4..7113634e6061cb0caf19aa5311549004d5b5c3c8 100644
+index 85886a6eaec298d775b12f1fa00a92730f6ff953..770cb1168c19f507f003662eeb782f8b906e447e 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5937,6 +5937,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5942,6 +5942,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -10416,7 +12980,7 @@ index 1525f198f0bab9c503826ce462c345c5e531ed79..e975e956ffc6105f218df52ec37283cf
          ASSERT(false);
          return angle::FormatID::NONE;
 diff --git a/src/libANGLE/renderer/vulkan/vk_helpers.cpp b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-index 0b6eeb6e5b75de93b5cfc5d721b74af36681e94e..74818390847a9b696d44d569b5611fbdf82d350a 100644
+index ad1d5881b36983931ab139c8d80e1d1e28840bc9..4e845677062a6ff74531238e08c4b5de1213fc74 100644
 --- a/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 @@ -8868,18 +8868,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
@@ -10440,7 +13004,7 @@ index 0b6eeb6e5b75de93b5cfc5d721b74af36681e94e..74818390847a9b696d44d569b5611fbd
      return angle::Result::Continue;
  }
  
-@@ -10923,11 +10914,8 @@ angle::Result ImageHelper::GetReadPixelsParams(ContextVk *contextVk,
+@@ -10924,11 +10915,8 @@ angle::Result ImageHelper::GetReadPixelsParams(ContextVk *contextVk,
      const gl::InternalFormat &sizedFormatInfo = gl::GetInternalFormatInfo(format, type);
  
      GLuint outputPitch = 0;
@@ -10455,10 +13019,10 @@ index 0b6eeb6e5b75de93b5cfc5d721b74af36681e94e..74818390847a9b696d44d569b5611fbd
      ANGLE_TRY(GetPackPixelsParams(sizedFormatInfo, outputPitch, packState, packBuffer, area,
                                    clippedArea, paramsOut, skipBytesOut));
 diff --git a/src/libANGLE/renderer/wgpu/TextureWgpu.cpp b/src/libANGLE/renderer/wgpu/TextureWgpu.cpp
-index 98a3d20574b47c8b73a8bd0f7c22f89e5db7b4ef..f1a89472841f55d7c89495fd496f0e4ab4cc2981 100644
+index 09126ecd50e376928cfd3e0e4a6ab56f8f2fa61e..b2414c27a27f6d326cdd54efe03e9b6483bdf89b 100644
 --- a/src/libANGLE/renderer/wgpu/TextureWgpu.cpp
 +++ b/src/libANGLE/renderer/wgpu/TextureWgpu.cpp
-@@ -723,14 +723,11 @@ angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
+@@ -721,14 +721,11 @@ angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
      gl::Extents glExtents                 = gl::Extents(area.width, area.height, area.depth);
  
      GLuint inputRowPitch = 0;
@@ -10478,10 +13042,10 @@ index 98a3d20574b47c8b73a8bd0f7c22f89e5db7b4ef..f1a89472841f55d7c89495fd496f0e4a
      const angle::Format &actualFormat = webgpuFormat.getActualImageFormat();
      uint32_t outputRowPitch           = roundUp(actualFormat.pixelBytes * glExtents.width,
 diff --git a/src/libANGLE/renderer/wgpu/wgpu_helpers.cpp b/src/libANGLE/renderer/wgpu/wgpu_helpers.cpp
-index 8b698ab2b4f27fd91532e3f61e718f6e49be7538..cd097ef472dabe7442a1afc840b012cf745fc456 100644
+index d3f240523906977038d6e3f76203aa142245adc6..63832ab36551b73d4bc0a933fc5616be9c82c392 100644
 --- a/src/libANGLE/renderer/wgpu/wgpu_helpers.cpp
 +++ b/src/libANGLE/renderer/wgpu/wgpu_helpers.cpp
-@@ -543,11 +543,8 @@ angle::Result ImageHelper::getReadPixelsParams(rx::ContextWgpu *contextWgpu,
+@@ -541,11 +541,8 @@ angle::Result ImageHelper::getReadPixelsParams(rx::ContextWgpu *contextWgpu,
      const gl::InternalFormat &sizedFormatInfo = gl::GetInternalFormatInfo(format, type);
  
      GLuint outputPitch = 0;
@@ -10543,7 +13107,7 @@ index 4eaad41f83aa2fa824872060994565fc039e49f3..bf0e366735da841e0bc391e646731e2f
                  return false;
              }
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index 3fa34acf37f1625c01e6a7b490a5bd8a127d3679..c5fa74bcc4427cb6f130f51bda34bbbebca82777 100644
+index 2537b3a2ce48dad201012aa4b72418d8d80cf9d3..08cdd911a44dca4df9912e021248431b242df8da 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
 @@ -724,6 +724,9 @@ bool ValidCapUncommon(const PrivateState &state, ErrorSet *errors, GLenum cap, b
@@ -10556,7 +13120,7 @@ index 3fa34acf37f1625c01e6a7b490a5bd8a127d3679..c5fa74bcc4427cb6f130f51bda34bbbe
          default:
              break;
      }
-@@ -5923,6 +5926,19 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
+@@ -5939,6 +5942,19 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
      return true;
  }
  
@@ -10615,7 +13179,7 @@ index 8d8478f292e1597eef9f2bc90ba39741519d4244..3d6533cb673f62af2cf0569859c70930
  }
  
 diff --git a/src/libANGLE/validationESEXT.cpp b/src/libANGLE/validationESEXT.cpp
-index 255e49f88468c5841be7160cf80549c38a4b476f..3c5cbf9ed4ffdcb00aa8c8c81dbe6155ba3b526a 100644
+index 40e1b9e3cc5e6ffe9717b5ecbb9d2d337a37b8ee..27e4595e6525297e0505235d3bc0186f8790445d 100644
 --- a/src/libANGLE/validationESEXT.cpp
 +++ b/src/libANGLE/validationESEXT.cpp
 @@ -3994,6 +3994,29 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
@@ -11004,10 +13568,10 @@ index 43ed0011803bb39c33ad49e47ea7ececefd6a24f..6d0ab220c0cc7855e0a4729d58fad3df
    "gl_tests/GeometryShaderTest.cpp",
    "gl_tests/GetImageTest.cpp",
 diff --git a/src/tests/angle_end2end_tests_expectations.txt b/src/tests/angle_end2end_tests_expectations.txt
-index 003d9b36b44bd5b1003b0699765b5df55d3a3088..28324122c3c36b54367bdd5cc84dff05ca4b3fef 100644
+index ec891647e421c02ef736c948b75eaacb8be61a51..b6c341e5b78f51f7efc4c27be4bf661f0244dc25 100644
 --- a/src/tests/angle_end2end_tests_expectations.txt
 +++ b/src/tests/angle_end2end_tests_expectations.txt
-@@ -524,6 +524,10 @@
+@@ -526,6 +526,10 @@
  351275980 MAC METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  351275980 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  
@@ -11235,6 +13799,79 @@ index 45a3fc6381546af27e5b8e393e8600da2405e0ef..cedd36092c827e4c52066974e38cc5c5
                   GL_STATIC_DRAW);
  
      GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+diff --git a/src/tests/gl_tests/BufferPoolTestMetal.mm b/src/tests/gl_tests/BufferPoolTestMetal.mm
+index bf26671f935d42c66df055ba389447bfa8b88741..219272b9a20e9b54277a9d0d49f17bc15351a61a 100644
+--- a/src/tests/gl_tests/BufferPoolTestMetal.mm
++++ b/src/tests/gl_tests/BufferPoolTestMetal.mm
+@@ -74,16 +74,15 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
+ 
+     // Perform first allocation
+     uint8_t *ptr1       = nullptr;
+-    mtl::BufferRef buf1 = nullptr;
+-    size_t offset1      = 0;
++    mtl::BufferSlice buf1;
+     bool newBuffer1     = false;
+ 
+-    ASSERT_EQ(bufferPool.allocate(contextMtl, kLargeSize, &ptr1, &buf1, &offset1, &newBuffer1),
++    ASSERT_EQ(bufferPool.allocate(contextMtl, kLargeSize, &ptr1, &buf1, &newBuffer1),
+               angle::Result::Continue);
+     EXPECT_TRUE(newBuffer1);
+-    EXPECT_EQ(offset1, 0u);
++    EXPECT_EQ(buf1.offset(), 0u);
+     EXPECT_NE(ptr1, nullptr);
+-    EXPECT_NE(buf1, nullptr);
++    EXPECT_NE(buf1.buffer(), nullptr);
+ 
+     // Fill first allocation with a known pattern (0xAA)
+     // We only fill the first 4KB to avoid spending too much time on this test
+@@ -95,11 +94,10 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
+ 
+     // Perform second allocation
+     uint8_t *ptr2       = nullptr;
+-    mtl::BufferRef buf2 = nullptr;
+-    size_t offset2      = 0;
++    mtl::BufferSlice buf2;
+     bool newBuffer2     = false;
+ 
+-    ASSERT_EQ(bufferPool.allocate(contextMtl, kSmallSize, &ptr2, &buf2, &offset2, &newBuffer2),
++    ASSERT_EQ(bufferPool.allocate(contextMtl, kSmallSize, &ptr2, &buf2, &newBuffer2),
+               angle::Result::Continue);
+ 
+     // With the fix (size_t), a new buffer should be allocated since the calculated offset
+@@ -108,12 +106,12 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
+     EXPECT_TRUE(newBuffer2);
+ 
+     // The offset should be 0 in the new buffer (not a truncated large value)
+-    EXPECT_EQ(offset2, 0u);
++    EXPECT_EQ(buf2.offset(), 0u);
+     EXPECT_NE(ptr2, nullptr);
+-    EXPECT_NE(buf2, nullptr);
++    EXPECT_NE(buf2.buffer(), nullptr);
+ 
+     // Buffers should be different
+-    EXPECT_NE(buf1.get(), buf2.get());
++    EXPECT_NE(buf1.buffer().get(), buf2.buffer().get());
+ 
+     // Fill second allocation with a different pattern (0xBB)
+     memset(ptr2, 0xBB, kSmallSize);
+@@ -125,7 +123,7 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
+     // With the uint32_t bug, ptr2 would have overwritten ptr1's data at offset 0
+     // because the offset wrapped around to 0 or a small value.
+     // Map the first buffer again to verify its contents
+-    angle::Span<const uint8_t> verifyPtr1 = buf1->mapReadOnly(contextMtl);
++    angle::Span<const uint8_t> verifyPtr1 = buf1.buffer()->mapReadOnly(contextMtl);
+     ASSERT_FALSE(verifyPtr1.empty());
+ 
+     // Check that the first pattern (0xAA) is still intact
+@@ -137,7 +135,7 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
+             << " - uint32_t truncation bug likely caused second allocation to overlap!";
+     }
+ 
+-    buf1->unmap(contextMtl);
++    buf1.buffer()->unmap(contextMtl);
+     bufferPool.destroy(contextMtl);
+ }
+ 
 diff --git a/src/tests/gl_tests/ContextLostTest.cpp b/src/tests/gl_tests/ContextLostTest.cpp
 index 1192e7e7828b69347983ead73f848240f4f73c64..3daa4a2cf708810462b04281822da20f42189a16 100644
 --- a/src/tests/gl_tests/ContextLostTest.cpp
@@ -15334,7 +17971,7 @@ index fc5fb4aff5d85f7e998ef1908bfa041596dfa117..6a259cf4b022fd6eae58284831d9efcf
  TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
  {
 diff --git a/src/tests/gl_tests/RobustResourceInitTest.cpp b/src/tests/gl_tests/RobustResourceInitTest.cpp
-index 9faedd6bf5c635da25e246de66c068fa202e7b5d..62693e6bcaf6cd3e0639c41192828fb44ba4dfd9 100644
+index 763ba8258e091a23593106b4003a9016d40bcd15..943ad324f1dc85841dc72d61f6ab236f02ab6220 100644
 --- a/src/tests/gl_tests/RobustResourceInitTest.cpp
 +++ b/src/tests/gl_tests/RobustResourceInitTest.cpp
 @@ -13,7 +13,6 @@
@@ -15361,7 +17998,7 @@ diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest
 index e756a93276b200187a8cf168f48f0787e25c5cfc..4ce2e7263e70916c5564bf3f48dcf5bb135314e3 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
-@@ -2010,6 +2010,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
+@@ -2009,6 +2009,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
              break;
          default:
              UNREACHABLE();
@@ -16371,7 +19008,7 @@ index 03e9037aaca4df6de668fac7ed2819b76dc2d936..28b076380cc304c6fd52af0ad0d23c95
      }
  
 diff --git a/src/tests/test_utils/angle_test_instantiate.cpp b/src/tests/test_utils/angle_test_instantiate.cpp
-index 7c802b176a9cc0d2048f712b3ec1a096e8828b04..4b4272241b76ac664a12d8bcc2b85b95eb8e3d05 100644
+index 43d7ec6539e3ea5e15fd18724241ec64dd580e65..7e3bb67e2bfd6029dd249f46da6be6ea2392018d 100644
 --- a/src/tests/test_utils/angle_test_instantiate.cpp
 +++ b/src/tests/test_utils/angle_test_instantiate.cpp
 @@ -197,6 +197,8 @@ bool gEnableRenderDocCapture = true;
@@ -16409,7 +19046,7 @@ index 739d3f6c2c00c080b8901e5c83cb2cf761ec2a61..25dbbcd7857e64756152beae90220646
  `--isolated-script-test-output` and `--isolated-script-perf-test-output` mirror `--results-file`
  and `--histogram-json-file` respectively.
 diff --git a/src/tests/test_utils/runner/TestSuite.cpp b/src/tests/test_utils/runner/TestSuite.cpp
-index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5af3aff72 100644
+index ac031f0fcb901848ac1b3f1c1a024aa95c23f132..e7fbdeae7b447b43dd979d4716dc35827cb2f084 100644
 --- a/src/tests/test_utils/runner/TestSuite.cpp
 +++ b/src/tests/test_utils/runner/TestSuite.cpp
 @@ -28,16 +28,20 @@
@@ -16493,7 +19130,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
  
  bool MergeTestResults(TestResults *input, TestResults *output, int flakyRetries)
  {
-@@ -1047,7 +1058,7 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+@@ -1132,7 +1143,7 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
      Optional<int> filterArgIndex;
      bool alsoRunDisabledTests = false;
  
@@ -16502,7 +19139,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
      // By default, we should hook file API functions on macOS to avoid slow Metal shader caching
      // file access.
      angle::InitMetalFileAPIHooking(*argc, argv);
-@@ -1116,6 +1127,16 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+@@ -1201,6 +1212,16 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
          mCrashCallback = [this]() { onCrashOrTimeout(TestResultType::Crash); };
          InitCrashHandler(&mCrashCallback);
      }
@@ -16519,7 +19156,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
  
  #if defined(ANGLE_PLATFORM_WINDOWS) || defined(ANGLE_PLATFORM_LINUX)
      if (IsASan())
-@@ -1124,7 +1145,6 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+@@ -1209,7 +1230,6 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
          SetEnvironmentVar(kVkLoaderDisableDLLUnloadingEnvVar, "1");
      }
  #endif
@@ -16527,7 +19164,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
      registerTestsCallback();
  
      std::string envShardIndex = angle::GetEnvironmentVar("GTEST_SHARD_INDEX");
-@@ -1380,7 +1400,8 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
+@@ -1466,7 +1486,8 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
             ParseFlag("--gtest_list_tests", argc, argv, argIndex, &mGTestListTests) ||
             ParseFlag("--list-tests", argc, argv, argIndex, &mListTests) ||
             ParseFlag("--print-test-stdout", argc, argv, argIndex, &mPrintTestStdout) ||
@@ -16537,7 +19174,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
  }
  
  void TestSuite::onCrashOrTimeout(TestResultType crashOrTimeout)
-@@ -1945,7 +1966,9 @@ void TestSuite::addHistogramSample(const std::string &measurement,
+@@ -2037,7 +2058,9 @@ void TestSuite::addHistogramSample(const std::string &measurement,
                                     double value,
                                     const std::string &units)
  {
@@ -16547,7 +19184,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
  }
  
  bool TestSuite::hasTestArtifactsDirectory() const
-@@ -1969,6 +1992,7 @@ std::string TestSuite::reserveTestArtifactPath(const std::string &artifactName)
+@@ -2061,6 +2084,7 @@ std::string TestSuite::reserveTestArtifactPath(const std::string &artifactName)
  
  bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
  {
@@ -16555,7 +19192,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
      std::ifstream ifs(fileName);
      if (!ifs.is_open())
      {
-@@ -1993,6 +2017,9 @@ bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
+@@ -2085,6 +2109,9 @@ bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
      }
  
      return true;
@@ -16565,7 +19202,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
  }
  
  void TestSuite::dumpTestExpectationsErrorMessages()
-@@ -2073,6 +2100,7 @@ int TestSuite::getSlowTestTimeout() const
+@@ -2165,6 +2192,7 @@ int TestSuite::getSlowTestTimeout() const
  
  void TestSuite::writeOutputFiles(bool interrupted)
  {
@@ -16573,7 +19210,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
      if (!mResultsFile.empty())
      {
          WriteResultsFile(interrupted, mTestResults, mResultsFile);
-@@ -2082,6 +2110,7 @@ void TestSuite::writeOutputFiles(bool interrupted)
+@@ -2174,6 +2202,7 @@ void TestSuite::writeOutputFiles(bool interrupted)
      {
          WriteHistogramJson(mHistogramWriter, mHistogramJsonFile);
      }
@@ -16582,7 +19219,7 @@ index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..0bb992b5188cb7b05817708497ee94f5
      mMetricWriter.close();
  }
 diff --git a/src/tests/test_utils/runner/TestSuite.h b/src/tests/test_utils/runner/TestSuite.h
-index 20f1f6ce1a8cb50f29d848413a02f535cb6246b2..e59deddf49184535a15a5ff58eb0aba303ea7c53 100644
+index 43108d062545d2bd52e2adcec26615c263c93d1a..eff93edbc71c18a793ff0db6c0ba962f7f8d8c7d 100644
 --- a/src/tests/test_utils/runner/TestSuite.h
 +++ b/src/tests/test_utils/runner/TestSuite.h
 @@ -16,10 +16,13 @@
@@ -16600,7 +19237,7 @@ index 20f1f6ce1a8cb50f29d848413a02f535cb6246b2..e59deddf49184535a15a5ff58eb0aba3
  namespace angle
  {
  struct TestIdentifier
-@@ -215,6 +218,7 @@ class TestSuite
+@@ -217,6 +220,7 @@ class TestSuite
      bool mListTests;
      bool mPrintTestStdout;
      bool mDisableCrashHandler;
@@ -16608,7 +19245,7 @@ index 20f1f6ce1a8cb50f29d848413a02f535cb6246b2..e59deddf49184535a15a5ff58eb0aba3
      int mBatchSize;
      int mCurrentResultCount;
      int mTotalResultCount;
-@@ -230,7 +234,9 @@ class TestSuite
+@@ -232,7 +236,9 @@ class TestSuite
      std::map<TestIdentifier, FileLine> mTestFileLines;
      std::vector<ProcessInfo> mCurrentProcesses;
      std::thread mWatchdogThread;
@@ -16794,7 +19431,7 @@ index b57eea26ad74086c536b03727be9ea5ef7bd5ea8..fed3100959ee24a2fd14ecb83feceec8
  
      for (const std::string &path : searchPaths)
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 55d66e99a29e4b3e89cc1a3ac21171e15f086c68..dc2ac5927ddb203a845f181b74446322ad3a51ea 100644
+index 761a8b99f681c02e9f6684e74f635036621ff790..b10a284c8f4c8a2a18ac832113fd359356974d6a 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -224,6 +224,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -16806,7 +19443,7 @@ index 55d66e99a29e4b3e89cc1a3ac21171e15f086c68..dc2ac5927ddb203a845f181b74446322
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 9708a2c35473579c60f607380e336acee998a5d4..a2d7dce7cf78164412076ff8398ae822ea66e8b4 100644
+index 7aa29ac126d88554a367aa730f383b7b437902f9..17cebab611196acd08b94d03da8686ee9b4ec6ff 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -224,6 +224,7 @@ enum class Feature

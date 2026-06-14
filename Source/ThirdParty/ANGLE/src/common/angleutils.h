@@ -337,6 +337,8 @@ inline bool IsLittleEndian()
 #    define snprintf _snprintf
 #endif
 
+// Note: when adding internal formats, update IsAngleInternalFormat() so they aren't accidentally
+// accessible by the application.
 #define GL_A1RGB5_ANGLEX 0x6AC5
 #define GL_BGRX8_ANGLEX 0x6ABA
 #define GL_BGR565_ANGLEX 0x6ABB

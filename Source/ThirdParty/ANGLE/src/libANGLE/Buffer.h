@@ -183,6 +183,8 @@ class Buffer final : public ThreadSafeRefCountObject<BufferID>,
     GLboolean isImmutable() const { return mState.mImmutable; }
     GLbitfield getStorageExtUsageFlags() const { return mState.mStorageExtUsageFlags; }
 
+    WebGLBufferType getWebGLType() const { return mState.mWebGLType; }
+
     // Buffers are always initialized immediately when allocated
     InitState initState() const { return InitState::Initialized; }
 

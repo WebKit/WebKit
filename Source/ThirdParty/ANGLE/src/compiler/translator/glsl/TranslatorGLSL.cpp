@@ -12,6 +12,7 @@
 #include "compiler/translator/glsl/ExtensionGLSL.h"
 #include "compiler/translator/glsl/OutputGLSL.h"
 #include "compiler/translator/glsl/VersionGLSL.h"
+#include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
 #include "compiler/translator/tree_ops/PreTransformTextureCubeGradDerivatives.h"
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
@@ -97,6 +98,11 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
 
     if (!compileOptions.useIR)
     {
+        if (!sh::AddDefaultReturnStatements(this, root))
+        {
+            return false;
+        }
+
         // anglebug.com/42265954: The ESSL spec has a bug with images as function arguments. The
         // recommended workaround is to inline functions that accept image arguments.
         if (getShaderVersion() >= 310 &&

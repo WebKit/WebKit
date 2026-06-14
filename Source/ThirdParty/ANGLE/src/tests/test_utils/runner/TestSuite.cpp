@@ -883,6 +883,91 @@ bool UsesExternalBatching()
 }
 }  // namespace
 
+// Mimics GTest's PrintJsonTestList() to satisfy Chromium's ParseGTestListTestsJSON.
+// Simplifies the format by omitting counts and line numbers, providing only what Chromium needs.
+// Duplicated here because ANGLE bypasses GTest's slow test listing (see GTestListTests).
+// Needs update if GTest changes its schema and Chromium updates its parser.
+//
+// Generated on device at path specified by --gtest_output=json:<path>.
+// Example test command:
+//   out/Android/angle_end2end_tests --gtest_filter="GLSLTest_ES3.FragmentShaderOutputArray/*"
+//   --gtest_list_tests --gtest_output=json:/sdcard/Download/test_list.json --verbose --local-output
+//
+// Sample JSON output:
+// {
+//   "testsuites": [
+//     {
+//       "name": "GLSLTest_ES3",
+//       "testsuite": [
+//         {
+//           "name": "FragmentShaderOutputArray/ES3_OpenGLES",
+//           "file": "../../src/tests/gl_tests/GLSLTest.cpp"
+//         },
+//         ...
+//         {
+//           "name": "FragmentShaderOutputArray/ES3_Vulkan_NoSupportsSPIRV14",
+//           "file": "../../src/tests/gl_tests/GLSLTest.cpp"
+//         }
+//       ]
+//     }
+//   ]
+// }
+void TestSuite::WriteTestListJSON(const std::string &path) const
+{
+    FILE *file = fopen(path.c_str(), "w");
+    if (!file)
+    {
+        printf("Error opening file for JSON output: %s\n", path.c_str());
+        return;
+    }
+
+    fprintf(file, "{\n");
+    fprintf(file, "  \"testsuites\": [\n");
+
+    std::map<std::string, std::vector<std::pair<TestIdentifier, std::string>>> suites;
+    for (const auto &pair : mTestFileLines)
+    {
+        const TestIdentifier &id = pair.first;
+        suites[id.testSuiteName].push_back({id, pair.second.file});
+    }
+
+    bool firstSuite = true;
+    for (const auto &suiteIt : suites)
+    {
+        if (!firstSuite)
+        {
+            fprintf(file, ",\n");
+        }
+        firstSuite = false;
+
+        fprintf(file, "    {\n");
+        fprintf(file, "      \"name\": \"%s\",\n", suiteIt.first.c_str());
+        fprintf(file, "      \"testsuite\": [\n");
+
+        bool firstTest = true;
+        for (const auto &testPair : suiteIt.second)
+        {
+            if (!firstTest)
+            {
+                fprintf(file, ",\n");
+            }
+            firstTest = false;
+
+            fprintf(file, "        {\n");
+            fprintf(file, "          \"name\": \"%s\",\n", testPair.first.testName.c_str());
+            fprintf(file, "          \"file\": \"%s\"\n", testPair.second.c_str());
+            fprintf(file, "        }");
+        }
+        fprintf(file, "\n      ]\n");
+        fprintf(file, "    }");
+    }
+
+    fprintf(file, "\n  ]\n");
+    fprintf(file, "}\n");
+
+    fclose(file);
+}
+
 void MetricWriter::enable(const std::string &testArtifactDirectory)
 {
     mPath = testArtifactDirectory + GetPathSeparator() + "angle_metrics";
@@ -1394,6 +1479,7 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
            ParseStringArg("--render-test-output-dir", argc, argv, argIndex,
                           &mTestArtifactDirectory) ||
            ParseStringArg("--isolated-outdir", argc, argv, argIndex, &mTestArtifactDirectory) ||
+           ParseStringArg("--gtest_output", argc, argv, argIndex, &mGTestOutput) ||
            ParseFlag("--test-launcher-bot-mode", argc, argv, argIndex, &mBotMode) ||
            ParseFlag("--bot-mode", argc, argv, argIndex, &mBotMode) ||
            ParseFlag("--debug-test-groups", argc, argv, argIndex, &mDebugTestGroups) ||
@@ -1745,6 +1831,12 @@ int TestSuite::run()
     if (mGTestListTests)
     {
         GTestListTests(mTestResults.results);
+        const char kJsonPrefix[] = "json:";
+        if (!mGTestOutput.empty() && mGTestOutput.find(kJsonPrefix) == 0)
+        {
+            std::string path = mGTestOutput.substr(strlen(kJsonPrefix));
+            WriteTestListJSON(path);
+        }
         return EXIT_SUCCESS;
     }
 

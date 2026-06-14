@@ -79,7 +79,8 @@ TEST_P(ReadPixelsTest, LargeTexture)
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 16384, 8193, 0, GL_RGBA, GL_FLOAT, nullptr);
-    ANGLE_SKIP_TEST_IF(glGetError() == GL_OUT_OF_MEMORY);
+    GLenum err = glGetError();
+    ANGLE_SKIP_TEST_IF(err == GL_OUT_OF_MEMORY || err == GL_INVALID_OPERATION);
     EXPECT_GL_NO_ERROR();
 
     GLFramebuffer fbo;

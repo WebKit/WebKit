@@ -689,6 +689,9 @@
 		7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */; };
 		7BED6F852F99FE0700A240A7 /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD0029227449D1D002BE3BC /* FrameCapture_mock.cpp */; };
 		7BED6F862F99FE2E00A240A7 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C67022923766600FEDF46 /* serialize_mock.cpp */; };
+		7BED8E022F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
+		7BED8E042F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
+		7BED8E052F9A493200F15B70 /* AddDefaultReturnStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */; };
 		7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */; };
 		7BF554C42C81EF29002B101E /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		7BF554C52C81EF4D002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
@@ -2233,6 +2236,8 @@
 		7BED4E092F98E35C00A240A7 /* CompilerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerTest.h; sourceTree = "<group>"; };
 		7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilerTest.cpp; sourceTree = "<group>"; };
 		7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedback_unittest.cpp; sourceTree = "<group>"; };
+		7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDefaultReturnStatements.h; sourceTree = "<group>"; };
+		7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddDefaultReturnStatements.cpp; sourceTree = "<group>"; };
 		7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilities_unittest.cpp; sourceTree = "<group>"; };
 		7BF5549B2C81EDE0002B101E /* libtranslator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtranslator.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzer.cpp; path = WebKit/TranslatorFuzzer.cpp; sourceTree = "<group>"; };
@@ -3450,8 +3455,8 @@
 			children = (
 				7B359D5F2A7CED180016DC59 /* glsl */,
 				7B359D7B2A7CED8C0016DC59 /* msl */,
-				6C0BCA1F2F28170700B09D24 /* AddDefaultReturnStatements.cpp */,
-				6C0BCA1E2F28170700B09D24 /* AddDefaultReturnStatements.h */,
+				7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */,
+				7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */,
 				7B359DBC2A7CEDE10016DC59 /* ClampFragDepth.cpp */,
 				7B359DBD2A7CEDE10016DC59 /* ClampFragDepth.h */,
 				FF194FDE27432CC3006A97A3 /* ClampIndirectIndices.cpp */,
@@ -4544,7 +4549,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C0BCA202F281EC000B09D24 /* AddDefaultReturnStatements.h in Headers */,
+				7BED8E052F9A493200F15B70 /* AddDefaultReturnStatements.h in Headers */,
 				7B359DBA2A7CEDAA0016DC59 /* AddExplicitTypeCasts.h in Headers */,
 				31CDFF5C2491848C00486F27 /* aligned_memory.h in Headers */,
 				7B19599326C3C22000C09322 /* android_util.h in Headers */,
@@ -5364,7 +5369,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C0BCA212F281EC000B09D24 /* AddDefaultReturnStatements.cpp in Sources */,
+				7BED8E042F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */,
 				7B359DB52A7CEDAA0016DC59 /* AddExplicitTypeCasts.cpp in Sources */,
 				DF83E2162639FC74000825EF /* aligned_memory.cpp in Sources */,
 				7B19599426C3C22000C09322 /* android_util.cpp in Sources */,
@@ -6086,7 +6091,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C0BCA232F281EC000B09D24 /* AddDefaultReturnStatements.cpp in Sources */,
+				7BED8E022F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */,
 				7BF554E22C81F198002B101E /* AddExplicitTypeCasts.cpp in Sources */,
 				7BF554E32C81F198002B101E /* aligned_memory.cpp in Sources */,
 				7BF5556F2C81F198002B101E /* angle_version_info.cpp in Sources */,

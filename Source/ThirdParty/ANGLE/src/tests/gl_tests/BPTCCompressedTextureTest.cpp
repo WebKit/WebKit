@@ -486,9 +486,9 @@ TEST_P(BPTCCompressedTextureTestES3WebGL, DeferredInit3DOverflow)
     }
     GLenum err = glGetError();
     // Allow GL_OUT_OF_MEMORY as the texture is large.
-    ASSERT_TRUE(err == GL_NO_ERROR || err == GL_OUT_OF_MEMORY);
+    ASSERT_TRUE(err == GL_NO_ERROR || err == GL_OUT_OF_MEMORY || err == GL_INVALID_OPERATION);
 
-    if (err != GL_OUT_OF_MEMORY)
+    if (err != GL_OUT_OF_MEMORY && err != GL_INVALID_OPERATION)
     {
         // Trigger deferred initialization by updating a small sub-region.
         std::vector<GLubyte> data(16, 0);

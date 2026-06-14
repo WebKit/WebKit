@@ -32,6 +32,7 @@ extern int gSleepBetweenTrialMs;
 extern bool gNoFinish;
 extern bool gRetraceMode;
 extern bool gMinimizeGPUWork;
+extern bool gSkipBlitInOffscreen;
 extern bool gTraceTestValidation;
 extern const char *gTraceInterpreter;
 extern const char *gPerfCounters;
