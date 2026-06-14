@@ -431,8 +431,8 @@ bool ValidateGetTexImageANGLE(const Context *context,
 
     GLsizei width  = static_cast<GLsizei>(texture->getWidth(target, level));
     GLsizei height = static_cast<GLsizei>(texture->getHeight(target, level));
-    if (!ValidatePixelPack(context, entryPoint, format, type, 0, 0, width, height, -1, nullptr,
-                           pixels))
+    if (!ValidatePixelPack(context, entryPoint, format, type, width, height,
+                           std::numeric_limits<GLsizei>::max(), pixels))
     {
         return false;
     }
@@ -489,8 +489,8 @@ bool ValidateGetRenderbufferImageANGLE(const Context *context,
 
     GLsizei width  = renderbuffer->getWidth();
     GLsizei height = renderbuffer->getHeight();
-    if (!ValidatePixelPack(context, entryPoint, format, type, 0, 0, width, height, -1, nullptr,
-                           pixels))
+    if (!ValidatePixelPack(context, entryPoint, format, type, width, height,
+                           std::numeric_limits<GLsizei>::max(), pixels))
     {
         return false;
     }
@@ -883,20 +883,8 @@ bool ValidateReadnPixelsKHR(const Context *context,
                             GLsizei bufSize,
                             const void *data)
 {
-    if (context->getClientVersion() < ES_2_0)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES2Required);
-        return false;
-    }
-
-    if (bufSize < 0)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
-        return false;
-    }
-
     return ValidateReadPixelsBase(context, entryPoint, x, y, width, height, format, type, bufSize,
-                                  nullptr, nullptr, nullptr, data);
+                                  data);
 }
 
 bool ValidateBlendEquationOES(const PrivateState &state,

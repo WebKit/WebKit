@@ -17,6 +17,7 @@ namespace angle
 enum class Feature
 {
     AddAndTrueToLoopCondition,
+    AddFramebufferFetchBarrierOnUseMidRenderPass,
     AddMockTextureNoRenderTarget,
     AdjustClearColorPrecision,
     AdjustSrcDstRegionForBlitFramebuffer,
@@ -27,6 +28,7 @@ enum class Feature
     AllowCompressedFormats,
     AllowES3OnFL100,
     AllowETCFormats,
+    AllowExtensionDisableAfterNonPpTokens,
     AllowGenerateMipmapWithCompute,
     AllowGenMultipleMipsPerPass,
     AllowHostImageCopyAfterInitialUpload,
@@ -169,6 +171,7 @@ enum class Feature
     EnableTranslatedShaderSubstitution,
     EnsureLoopForwardProgress,
     EnsureNonEmptyBufferIsBoundForDraw,
+    ExpandFragmentOutputsToVec4,
     ExpandIntegerPowExpressions,
     ExplicitFragmentLocations,
     ExplicitlyEnablePerSampleShading,

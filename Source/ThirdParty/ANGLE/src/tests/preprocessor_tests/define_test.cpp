@@ -1190,7 +1190,7 @@ TEST_F(DefineTest, LongMacroInvocationChain)
     EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_MACRO_INVOCATION_CHAIN_TOO_DEEP,
                                     pp::SourceLocation(0, 22), _));
 
-    pp::PreprocessorSettings settings(SH_GLES2_SPEC);
+    pp::PreprocessorSettings settings(SH_GLES2_SPEC, pp::WebGLExtensionDisableBehavior::Standard);
     settings.maxMacroExpansionDepth = 19;
     EXPECT_CALL(mDirectiveHandler, handleVersion(pp::SourceLocation(0, 1), 100, SH_GLES2_SPEC, _))
         .Times(1);

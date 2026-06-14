@@ -139,7 +139,7 @@ GLintptr ComputeVertexAttributeOffset(const VertexAttribute &attrib, const Verte
     return attrib.relativeOffset + binding.getOffset();
 }
 
-size_t ComputeVertexBindingElementCount(GLuint divisor, size_t drawCount, size_t instanceCount)
+size_t ComputeVertexBindingElementCount(GLuint divisor, uint64_t drawCount, size_t instanceCount)
 {
     // For instanced rendering, we draw "instanceDrawCount" sets of "vertexDrawCount" vertices.
     //
@@ -154,7 +154,9 @@ size_t ComputeVertexBindingElementCount(GLuint divisor, size_t drawCount, size_t
         return (instanceCount + divisor - 1u) / divisor;
     }
 
-    return drawCount;
+    // Ensure that drawCount can always fit into a size_t. This should also be validated by
+    // maxElementIndex.
+    return angle::CheckedNumeric<size_t>(drawCount).ValueOrDie();
 }
 
 }  // namespace gl

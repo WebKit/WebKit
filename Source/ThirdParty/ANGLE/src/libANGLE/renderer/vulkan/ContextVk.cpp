@@ -5330,7 +5330,7 @@ angle::Result ContextVk::invalidateProgramExecutableHelper(const gl::Context *co
             // sets |mCurrentGraphicsPipeline| to nullptr.
             mGraphicsPipelineDesc->setRenderPassFramebufferFetchMode(framebufferFetchMode);
 
-            if (framebufferFetchMode != vk::FramebufferFetchMode::None)
+            if (hasColorFramebufferFetch)
             {
                 onFramebufferFetchUse(framebufferFetchMode);
             }
@@ -8940,12 +8940,27 @@ void ContextVk::onFramebufferFetchUse(vk::FramebufferFetchMode framebufferFetchM
 
     if (mRenderPassCommands->started())
     {
+        const bool wasFramebufferFetchDisabled =
+            mRenderPassCommands->getRenderPassDesc().framebufferFetchMode() ==
+            vk::FramebufferFetchMode::None;
+
         // Accumulate framebuffer fetch mode to allow multiple draw calls in the same render pass
         // where some use color framebuffer fetch and some depth/stencil
         const vk::FramebufferFetchMode mergedMode = vk::FramebufferFetchModeMerge(
             mRenderPassCommands->getRenderPassDesc().framebufferFetchMode(), framebufferFetchMode);
 
         mRenderPassCommands->setFramebufferFetchMode(mergedMode);
+
+        // If the render pass was already started without framebuffer fetch, prior draws would have
+        // written to the color attachments without rasterization order access enabled on the
+        // pipeline. Some drivers require a manual barrier between these draw calls and do not
+        // synchronize automatically. This is likely a driver bug.
+        if (getFeatures().addFramebufferFetchBarrierOnUseMidRenderPass.enabled &&
+            wasFramebufferFetchDisabled &&
+            mRenderPassCommands->getCommandBuffer().getRenderPassWriteCommandCount() > 0)
+        {
+            mGraphicsDirtyBits.set(DIRTY_BIT_FRAMEBUFFER_FETCH_BARRIER);
+        }
 
         // When framebuffer fetch is enabled, attachments can be read from even if output is
         // masked, so update their access.

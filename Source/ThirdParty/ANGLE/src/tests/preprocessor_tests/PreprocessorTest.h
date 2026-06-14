@@ -21,7 +21,10 @@ class PreprocessorTest : public testing::Test
 {
   protected:
     PreprocessorTest(ShShaderSpec shaderSpec)
-        : mPreprocessor(&mDiagnostics, &mDirectiveHandler, pp::PreprocessorSettings(shaderSpec))
+        : mPreprocessor(
+              &mDiagnostics,
+              &mDirectiveHandler,
+              pp::PreprocessorSettings(shaderSpec, pp::WebGLExtensionDisableBehavior::Standard))
     {}
 
     MockDiagnostics mDiagnostics;

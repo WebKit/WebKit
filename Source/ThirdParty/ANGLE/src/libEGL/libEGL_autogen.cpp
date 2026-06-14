@@ -629,7 +629,6 @@ EGLBoolean EGLAPIENTRY eglStreamPostD3DTextureANGLE(EGLDisplay dpy,
     return EGL_StreamPostD3DTextureANGLE(dpy, stream, texture, attrib_list);
 }
 
-
 // EGL_ANGLE_sync_control_rate
 EGLBoolean EGLAPIENTRY eglGetMscRateANGLE(EGLDisplay dpy,
                                           EGLSurface surface,

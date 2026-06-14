@@ -6006,16 +6006,14 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // -
     // VK_PIPELINE_DEPTH_STENCIL_STATE_CREATE_RASTERIZATION_ORDER_ATTACHMENT_STENCIL_ACCESS_BIT_EXT
     //
-    // But the check for framebuffer fetch is not accurate enough and those bits can have great
-    // impact on Qualcomm (it only affects the open source driver because the proprietary driver
-    // does not expose the extension).  Let's disable it on Qualcomm.
-    //
-    // https://issuetracker.google.com/issues/255837430
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsRasterizationOrderAttachmentAccess,
-        !isQualcomm &&
-            mRasterizationOrderAttachmentAccessFeatures.rasterizationOrderColorAttachmentAccess ==
-                VK_TRUE);
+        mRasterizationOrderAttachmentAccessFeatures.rasterizationOrderColorAttachmentAccess ==
+            VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, addFramebufferFetchBarrierOnUseMidRenderPass,
+        mFeatures.supportsRasterizationOrderAttachmentAccess.enabled && isQualcomm);
 
     // The VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 extensions are used for a
     // variety of improvements:

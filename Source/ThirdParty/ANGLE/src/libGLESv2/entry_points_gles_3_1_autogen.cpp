@@ -1114,7 +1114,7 @@ void GL_APIENTRY GL_GetTexLevelParameterfv(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
+        TextureTarget targetPacked        = PackParam<TextureTarget>(target);
         TextureImageParameter pnamePacked = PackParam<TextureImageParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -1163,7 +1163,7 @@ void GL_APIENTRY GL_GetTexLevelParameteriv(GLenum target, GLint level, GLenum pn
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
+        TextureTarget targetPacked        = PackParam<TextureTarget>(target);
         TextureImageParameter pnamePacked = PackParam<TextureImageParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -3268,7 +3268,7 @@ void GL_APIENTRY GL_VertexAttribFormat(GLuint attribindex,
     if (ANGLE_LIKELY(context != nullptr))
     {
         VertexAttribType typePacked = PackParam<VertexAttribType>(type);
-        bool isCallValid = context->skipValidation();
+        bool isCallValid            = context->skipValidation();
         if (!isCallValid)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_3_1))
@@ -3321,7 +3321,7 @@ void GL_APIENTRY GL_VertexAttribIFormat(GLuint attribindex,
     if (ANGLE_LIKELY(context != nullptr))
     {
         VertexAttribType typePacked = PackParam<VertexAttribType>(type);
-        bool isCallValid = context->skipValidation();
+        bool isCallValid            = context->skipValidation();
         if (!isCallValid)
         {
             if (ANGLE_LIKELY(context->getClientVersion() >= ES_3_1))

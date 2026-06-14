@@ -201,6 +201,7 @@ bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
     ASSERT(visit == PreVisit);
 
     TIntermSequence &statements = *node->getSequence();
+    size_t writeIndex           = 0;
 
     // Visit each statement in the block one by one.  Once a branch is visited (break, continue,
     // return or discard), drop the rest of the statements.
@@ -217,8 +218,6 @@ bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
         // If a branch is visited, prune the statement.  If the statement is a no-op, also prune it.
         if (mIsBranchVisited || IsNoOp(statement))
         {
-            TIntermSequence emptyReplacement;
-            mMultiReplacements.emplace_back(node, statement, std::move(emptyReplacement));
             continue;
         }
 
@@ -230,17 +229,15 @@ bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
             statement = pruneNoOpCommaExpressions(statement->getAsBinaryNode());
             if (statement == nullptr)
             {
-                TIntermSequence emptyReplacement;
-                mMultiReplacements.emplace_back(node, statement, std::move(emptyReplacement));
                 continue;
             }
-
-            statements[statementIndex] = statement;
         }
 
         // Visit the statement if not pruned.
+        statements[writeIndex++] = statement;
         statement->traverse(this);
     }
+    statements.resize(writeIndex);
 
     // If the parent is a block and mIsBranchVisited is set, this is a nested block without any
     // condition (like if, loop or switch), so the rest of the parent block should also be pruned.

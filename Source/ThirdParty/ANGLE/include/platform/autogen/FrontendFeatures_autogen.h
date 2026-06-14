@@ -219,6 +219,12 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo allowExtensionDisableAfterNonPpTokens = {
+        "allowExtensionDisableAfterNonPpTokens",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

@@ -169,6 +169,7 @@ class FramebufferVk : public FramebufferImpl
         // recreated from Framebuffer::startNewRenderPass.
         mCachedAttachmentsInfo.clear();
         releaseCurrentFramebuffer(contextVk);
+        updateDepthStencilAttachmentSerial(contextVk);
     }
 
   private:

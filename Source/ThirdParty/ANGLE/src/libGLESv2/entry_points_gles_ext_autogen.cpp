@@ -1339,7 +1339,7 @@ void GL_APIENTRY GL_GetTexLevelParameterivANGLE(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
+        TextureTarget targetPacked        = PackParam<TextureTarget>(target);
         TextureImageParameter pnamePacked = PackParam<TextureImageParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -1392,7 +1392,7 @@ void GL_APIENTRY GL_GetTexLevelParameterfvANGLE(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
+        TextureTarget targetPacked        = PackParam<TextureTarget>(target);
         TextureImageParameter pnamePacked = PackParam<TextureImageParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -2336,7 +2336,6 @@ void GL_APIENTRY GL_RequestExtensionANGLE(const GLchar *name)
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
-
 
 // GL_ANGLE_rgbx_internal_format
 
@@ -3599,7 +3598,7 @@ void GL_APIENTRY GL_GetQueryivRobustANGLE(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryType targetPacked = PackParam<QueryType>(target);
+        QueryType targetPacked     = PackParam<QueryType>(target);
         QueryParameter pnamePacked = PackParam<QueryParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -3663,7 +3662,7 @@ void GL_APIENTRY GL_GetQueryObjectuivRobustANGLE(GLuint id,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4356,7 +4355,7 @@ void GL_APIENTRY GL_SamplerParameterivRobustANGLE(GLuint sampler,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4418,7 +4417,7 @@ void GL_APIENTRY GL_SamplerParameterfvRobustANGLE(GLuint sampler,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4482,7 +4481,7 @@ void GL_APIENTRY GL_GetSamplerParameterivRobustANGLE(GLuint sampler,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4547,7 +4546,7 @@ void GL_APIENTRY GL_GetSamplerParameterfvRobustANGLE(GLuint sampler,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4675,7 +4674,7 @@ void GL_APIENTRY GL_GetTexLevelParameterivRobustANGLE(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
+        TextureTarget targetPacked        = PackParam<TextureTarget>(target);
         TextureImageParameter pnamePacked = PackParam<TextureImageParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4742,7 +4741,7 @@ void GL_APIENTRY GL_GetTexLevelParameterfvRobustANGLE(GLenum target,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        TextureTarget targetPacked = PackParam<TextureTarget>(target);
+        TextureTarget targetPacked        = PackParam<TextureTarget>(target);
         TextureImageParameter pnamePacked = PackParam<TextureImageParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4808,7 +4807,7 @@ void GL_APIENTRY GL_GetQueryObjectivRobustANGLE(GLuint id,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4869,7 +4868,7 @@ void GL_APIENTRY GL_GetQueryObjecti64vRobustANGLE(GLuint id,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -4931,7 +4930,7 @@ void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -6162,7 +6161,6 @@ void GL_APIENTRY GL_SampleMaskiANGLE(GLuint maskNumber, GLbitfield mask)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
-
 // GL_ANGLE_texture_usage
 
 // GL_ANGLE_translated_shader_source
@@ -6760,7 +6758,6 @@ void GL_APIENTRY GL_EGLImageTargetTexStorageEXT(GLenum target,
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
-
 
 // GL_EXT_EGL_image_storage_compression
 
@@ -7963,7 +7960,7 @@ void GL_APIENTRY GL_GetQueryObjecti64vEXT(GLuint id, GLenum pname, GLint64 *para
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -8010,7 +8007,7 @@ void GL_APIENTRY GL_GetQueryObjectivEXT(GLuint id, GLenum pname, GLint *params)
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -8056,7 +8053,7 @@ void GL_APIENTRY GL_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64 *pa
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -8103,7 +8100,7 @@ void GL_APIENTRY GL_GetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryID idPacked = PackParam<QueryID>(id);
+        QueryID idPacked                 = PackParam<QueryID>(id);
         QueryObjectParameter pnamePacked = PackParam<QueryObjectParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -8151,7 +8148,7 @@ void GL_APIENTRY GL_GetQueryivEXT(GLenum target, GLenum pname, GLint *params)
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        QueryType targetPacked = PackParam<QueryType>(target);
+        QueryType targetPacked     = PackParam<QueryType>(target);
         QueryParameter pnamePacked = PackParam<QueryParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -9214,7 +9211,7 @@ void GL_APIENTRY GL_ShadingRateEXT(GLenum rate)
     if (ANGLE_LIKELY(context != nullptr))
     {
         ShadingRate ratePacked = PackParam<ShadingRate>(rate);
-        bool isCallValid = context->skipValidation();
+        bool isCallValid       = context->skipValidation();
         if (!isCallValid)
         {
             if (ANGLE_LIKELY(context->getExtensions().fragmentShadingRateEXT))
@@ -9261,7 +9258,7 @@ void GL_APIENTRY GL_ShadingRateCombinerOpsEXT(GLenum combinerOp0, GLenum combine
     {
         CombinerOp combinerOp0Packed = PackParam<CombinerOp>(combinerOp0);
         CombinerOp combinerOp1Packed = PackParam<CombinerOp>(combinerOp1);
-        bool isCallValid = context->skipValidation();
+        bool isCallValid             = context->skipValidation();
         if (!isCallValid)
         {
             if (ANGLE_LIKELY(context->getExtensions().fragmentShadingRateEXT))
@@ -13605,7 +13602,7 @@ void GL_APIENTRY GL_GetSamplerParameterIivEXT(GLuint sampler, GLenum pname, GLin
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -13654,7 +13651,7 @@ void GL_APIENTRY GL_GetSamplerParameterIuivEXT(GLuint sampler, GLenum pname, GLu
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -13797,7 +13794,7 @@ void GL_APIENTRY GL_SamplerParameterIivEXT(GLuint sampler, GLenum pname, const G
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -13845,7 +13842,7 @@ void GL_APIENTRY GL_SamplerParameterIuivEXT(GLuint sampler, GLenum pname, const 
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -18763,7 +18760,7 @@ void GL_APIENTRY GL_GetSamplerParameterIivOES(GLuint sampler, GLenum pname, GLin
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -18812,7 +18809,7 @@ void GL_APIENTRY GL_GetSamplerParameterIuivOES(GLuint sampler, GLenum pname, GLu
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -18955,7 +18952,7 @@ void GL_APIENTRY GL_SamplerParameterIivOES(GLuint sampler, GLenum pname, const G
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -19003,7 +19000,7 @@ void GL_APIENTRY GL_SamplerParameterIuivOES(GLuint sampler, GLenum pname, const 
 
     if (ANGLE_LIKELY(context != nullptr))
     {
-        SamplerID samplerPacked = PackParam<SamplerID>(sampler);
+        SamplerID samplerPacked      = PackParam<SamplerID>(sampler);
         SamplerParameter pnamePacked = PackParam<SamplerParameter>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
@@ -19854,7 +19851,7 @@ GLboolean GL_APIENTRY GL_IsVertexArrayOES(GLuint array)
     if (ANGLE_LIKELY(context != nullptr))
     {
         VertexArrayID arrayPacked = PackParam<VertexArrayID>(array);
-        bool isCallValid = context->skipValidation();
+        bool isCallValid          = context->skipValidation();
         if (!isCallValid)
         {
             if (ANGLE_LIKELY(context->getExtensions().vertexArrayObjectOES))
@@ -20154,7 +20151,7 @@ void GL_APIENTRY GL_ShadingRateQCOM(GLenum rate)
     if (ANGLE_LIKELY(context != nullptr))
     {
         ShadingRate ratePacked = PackParam<ShadingRate>(rate);
-        bool isCallValid = context->skipValidation();
+        bool isCallValid       = context->skipValidation();
         if (!isCallValid)
         {
             if (ANGLE_LIKELY(context->getExtensions().shadingRateQCOM))

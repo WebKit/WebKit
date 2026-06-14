@@ -263,6 +263,13 @@
             "description": [
                 "Force a max image size of 1MB for testing."
             ]
+        },
+        {
+            "name": "allow_extension_disable_after_non_pp_tokens",
+            "category": "Features",
+            "description": [
+                "Allow #extension ... : disable after non preprocessor tokens in WebGL."
+            ]
         }
     ]
 }

@@ -2687,6 +2687,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // match the base level in their original shape, hidden from ANGLE and its validation.
     ANGLE_FEATURE_CONDITION(features, recreateMipmapLevelsBeforeGenerate, isMesa);
 
+    // http://crbug.com/498828605
+    ANGLE_FEATURE_CONDITION(features, expandFragmentOutputsToVec4, isAMD && isMesa);
+
     // https://github.com/flutter/flutter/issues/47164
     // https://github.com/flutter/flutter/issues/47804
     // Some devices expose the QCOM tiled memory extension string but don't actually provide the

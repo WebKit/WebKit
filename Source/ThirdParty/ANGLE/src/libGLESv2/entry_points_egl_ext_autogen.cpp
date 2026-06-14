@@ -1197,7 +1197,6 @@ EGLBoolean EGLAPIENTRY EGL_StreamPostD3DTextureANGLE(EGLDisplay dpy,
     return returnValue;
 }
 
-
 // EGL_ANGLE_sync_control_rate
 EGLBoolean EGLAPIENTRY EGL_GetMscRateANGLE(EGLDisplay dpy,
                                            EGLSurface surface,

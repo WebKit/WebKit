@@ -49,6 +49,23 @@ bool AreEmptyBlocks(const TIntermSequence *statements)
     return true;
 }
 
+bool EndsInBranch(const TIntermSequence &statements)
+{
+    if (statements.empty())
+    {
+        return false;
+    }
+
+    TIntermNode *lastStatement = statements.back();
+    if (lastStatement->getAsBlock())
+    {
+        return EndsInBranch(*lastStatement->getAsBlock()->getSequence());
+    }
+
+    TIntermBranch *branchNode = lastStatement->getAsBranchNode();
+    return branchNode != nullptr;
+}
+
 class PruneEmptyCasesTraverser : private TIntermTraverser
 {
   public:
@@ -56,6 +73,7 @@ class PruneEmptyCasesTraverser : private TIntermTraverser
 
   private:
     PruneEmptyCasesTraverser();
+    bool visitBlock(Visit visit, TIntermBlock *node) override;
     bool visitSwitch(Visit visit, TIntermSwitch *node) override;
 };
 
@@ -67,6 +85,47 @@ bool PruneEmptyCasesTraverser::apply(TCompiler *compiler, TIntermBlock *root)
 }
 
 PruneEmptyCasesTraverser::PruneEmptyCasesTraverser() : TIntermTraverser(true, false, false) {}
+
+bool PruneEmptyCasesTraverser::visitBlock(Visit visit, TIntermBlock *node)
+{
+    TIntermSequence &statements = *node->getSequence();
+    size_t writeIndex           = 0;
+
+    for (size_t statementIndex = 0; statementIndex < statements.size(); ++statementIndex)
+    {
+        TIntermNode *statement = statements[statementIndex];
+
+        // Visit the statement first.  If it's a switch that is no-op, it will clear its statements,
+        // read to be removed from this block.
+        statement->traverse(this);
+
+        // Remove the switch if it's pruned.
+        TIntermSwitch *asSwitch = statement->getAsSwitchNode();
+        if (asSwitch != nullptr && asSwitch->getStatementList()->getSequence()->empty())
+        {
+            // If switch's init condition has a side effect (like |switch(a++)|), preserve that.
+            TIntermTyped *init = asSwitch->getInit();
+            if (!init->hasSideEffects())
+            {
+                continue;
+            }
+            statement = init;
+        }
+
+        statements[writeIndex++] = statement;
+    }
+    statements.resize(writeIndex);
+
+    // If the parent block is a switch and the block doesn't end in a branch, add an implicit
+    // |break|.
+    if (getParentNode() != nullptr && getParentNode()->getAsSwitchNode() != nullptr &&
+        !EndsInBranch(statements))
+    {
+        statements.push_back(new TIntermBranch(EOpBreak, nullptr));
+    }
+
+    return false;
+}
 
 bool PruneEmptyCasesTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
 {
@@ -100,23 +159,6 @@ bool PruneEmptyCasesTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
             break;
         }
     }
-    if (lastNoOpInStatementList == 0)
-    {
-        // Remove the entire switch statement, extracting the init expression if needed.
-        TIntermTyped *init = node->getInit();
-        if (init->hasSideEffects())
-        {
-            queueReplacement(init, OriginalNode::IS_DROPPED);
-        }
-        else
-        {
-            TIntermSequence emptyReplacement;
-            ASSERT(getParentNode()->getAsBlock());
-            mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), node,
-                                            std::move(emptyReplacement));
-        }
-        return false;
-    }
     if (lastNoOpInStatementList < statements->size())
     {
         // The extra cases can only be removed if there is no |default|, otherwise dropping them
@@ -139,7 +181,7 @@ bool PruneEmptyCasesTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
         }
     }
 
-    return true;
+    return !statements->empty();
 }
 
 }  // namespace

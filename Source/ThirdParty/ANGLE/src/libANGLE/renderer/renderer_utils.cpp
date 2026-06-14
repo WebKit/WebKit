@@ -1613,7 +1613,15 @@ angle::Result GetVertexRangeInfo(const gl::Context *context,
             context->getState().isPrimitiveRestartEnabled(), &indexRange));
         ANGLE_TRY(ComputeStartVertex(context->getImplementation(), indexRange, baseVertex,
                                      startVertexOut));
-        *vertexCountOut = indexRange.vertexCount();
+
+        // Protect against requiring 64-bits to store a draw count. Most math is done in size_t and
+        // not safe on 32-bit systems. This would require a UINT_MAX index when primitive restart is
+        // disabled.
+        uint64_t vertexCount = indexRange.vertexCount();
+        ANGLE_CHECK_GL_MATH(context->getImplementation(),
+                            vertexCount <= std::numeric_limits<GLuint>::max());
+
+        *vertexCountOut = static_cast<size_t>(vertexCount);
     }
     else
     {

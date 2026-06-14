@@ -209,7 +209,7 @@ def main():
     all_old_hashes = load_hashes()
     all_new_hashes = {}
     any_dirty = False
-    full_formats = []
+    dirty_generator_outputs = []
 
     parser = argparse.ArgumentParser(description='Generate ANGLE internal code.')
     parser.add_argument(
@@ -248,7 +248,7 @@ def main():
             all_old_hashes[fname] = {}
         if any_hash_dirty(name, filenames, new_hashes, all_old_hashes[fname]):
             any_dirty = True
-            full_formats += [fn for fn in filenames if '_tab_' in fn or '_lex_' in fn]
+            dirty_generator_outputs += info['outputs']
 
 
             if not args.verify_only:
@@ -282,18 +282,19 @@ def main():
         return int(any_dirty or hashless_generators_dirty)
 
     if any_dirty:
-        args = ['git.bat'] if os.name == 'nt' else ['git']
-        args += ['cl', 'format']
-        print('Calling git cl format')
-        subprocess.check_call(args)
+        git = 'git.bat' if os.name == 'nt' else 'git'
 
-        if full_formats:
-            # Some formattings fail, and thus we can never submit such a cl because
-            # of vicious circle of needing clean formatting but formatting not generating
-            # clean formatting.
-            print('Calling git cl format --full' % full_formats)
-            args += ['--full'] + full_formats
-            subprocess.check_call(args)
+        # Format dirty generator outputs in `--full` mode so the resulting files
+        # are identical regardless of platform. This also avoids a Windows
+        # failure mode where diff-based `git cl format` invokes clang-format
+        # with one --lines argument per diff hunk; large auto-generated files
+        # can produce enough hunks to exceed the OS command-line length limit
+        # (~32K), failing with "The filename or extension is too long" and
+        # leaving generated files unformatted.
+        if dirty_generator_outputs:
+            full_format_files = sorted(dirty_generator_outputs)
+            print('Calling git cl format --full on %d generated file(s)' % len(full_format_files))
+            subprocess.check_call([git, 'cl', 'format', '--full'] + full_format_files)
 
 
         # Update the output hashes again since they can be formatted.

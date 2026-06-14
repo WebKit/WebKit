@@ -135,6 +135,8 @@ constexpr size_t kCubeFaceCount             = 6;
 constexpr int AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM  = 1;
 constexpr int AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM  = 2;
 constexpr int AHARDWAREBUFFER_FORMAT_R8G8B8_UNORM    = 3;
+constexpr int AHARDWAREBUFFER_FORMAT_R16_UINT        = 0x39;
+constexpr int AHARDWAREBUFFER_FORMAT_R16G16_UINT     = 0x3a;
 constexpr int AHARDWAREBUFFER_FORMAT_D24_UNORM       = 0x31;
 constexpr int AHARDWAREBUFFER_FORMAT_Y8Cr8Cb8_420_SP = 0x11;
 constexpr int AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420    = 0x23;
@@ -10577,6 +10579,66 @@ void main()
 
     ASSERT_EGL_SUCCESS();
     ASSERT_GL_NO_ERROR();
+}
+
+// Testing source AHB EGL image with R16_UINT format, target 2D external texture
+TEST_P(ImageTest, BindExternalTextureAsImage_R16_UINT)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        1, 1, 1, AHARDWAREBUFFER_FORMAT_R16_UINT, kDefaultAHBUsage));
+
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R16_UINT,
+                                              kDefaultAHBUsage, kDefaultAttribs, {}, &source,
+                                              &image);
+
+    // If format is not supported, image creation will fail
+    if (image == EGL_NO_IMAGE_KHR)
+    {
+        destroyAndroidHardwareBuffer(source);
+        return;
+    }
+
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+}
+
+// Testing source AHB EGL image with R16G16_UINT format, target 2D external texture
+TEST_P(ImageTest, BindExternalTextureAsImage_R16G16_UINT)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        1, 1, 1, AHARDWAREBUFFER_FORMAT_R16G16_UINT, kDefaultAHBUsage));
+
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R16G16_UINT,
+                                              kDefaultAHBUsage, kDefaultAttribs, {}, &source,
+                                              &image);
+
+    // If format is not supported, image creation will fail
+    if (image == EGL_NO_IMAGE_KHR)
+    {
+        destroyAndroidHardwareBuffer(source);
+        return;
+    }
+
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(ImageTest,

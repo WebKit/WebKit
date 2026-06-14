@@ -618,6 +618,8 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     vk::DescriptorSetLayoutDesc mShaderResourceSetDesc;
     vk::DescriptorSetLayoutDesc mTextureSetDesc;
     vk::DescriptorSetLayoutDesc mDefaultUniformAndXfbSetDesc;
+
+    gl::AttachmentsMask mCurrentInputAttachmentsMask;
 };
 
 }  // namespace rx

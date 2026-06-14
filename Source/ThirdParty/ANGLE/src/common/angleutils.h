@@ -293,8 +293,6 @@ inline bool IsMaskFlagSet(T mask, T flag)
     return (mask & flag) == flag;
 }
 
-const char *MakeStaticString(const std::string &str);
-
 std::string ArrayString(unsigned int i);
 
 // Indices are stored in vectors with the outermost index in the back. In the output of the function

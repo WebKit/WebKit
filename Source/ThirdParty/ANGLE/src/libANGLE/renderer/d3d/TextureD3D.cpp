@@ -135,6 +135,8 @@ angle::Result TextureD3D::handleCopyImageSelfCopyRedefine(
     gl::Rectangle clippedArea;
     if (!ClipRectangle(sourceArea, gl::Rectangle(0, 0, fbSize.width, fbSize.height), &clippedArea))
     {
+        // We won't be copying, but redefine the destination texture in case sourceArea is larger
+        ANGLE_TRY(redefineDest(destExtents));
         return angle::Result::Continue;
     }
 
@@ -975,7 +977,7 @@ angle::Result TextureD3D::initializeContents(const gl::Context *context,
     gl::PixelUnpackState zeroDataUnpackState;
     zeroDataUnpackState.alignment = 1;
 
-    angle::MemoryBuffer *zeroBuffer = nullptr;
+    const angle::MemoryBuffer *zeroBuffer = nullptr;
     ANGLE_CHECK_GL_ALLOC(contextD3D, context->getZeroFilledBuffer(imageBytes, &zeroBuffer));
 
     if (shouldUseSetData(image))

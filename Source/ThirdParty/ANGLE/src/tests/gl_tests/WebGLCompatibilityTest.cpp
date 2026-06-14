@@ -1823,12 +1823,17 @@ void main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STREAM_DRAW);
     glVertexAttribPointer(posLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+    GLuint positionLocation = glGetAttribLocation(program, "a_Position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+
     constexpr GLuint kMaxIntAsGLuint = static_cast<GLuint>(std::numeric_limits<GLint>::max());
+    constexpr GLuint kMaxGLuint      = std::numeric_limits<GLuint>::max();
     constexpr GLuint kIndexData[]    = {
+        0,
         kMaxIntAsGLuint,
         kMaxIntAsGLuint + 1,
-        kMaxIntAsGLuint + 2,
-        kMaxIntAsGLuint + 3,
+        kMaxGLuint,
     };
 
     GLBuffer indexBuffer;
@@ -1838,11 +1843,11 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     // First index is representable as 32-bit int but second is not
-    glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, 0);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Neither index is representable as 32-bit int
-    glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, reinterpret_cast<void *>(sizeof(GLuint) * 2));
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, reinterpret_cast<void *>(sizeof(GLuint) * 2));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     constexpr GLuint kIndexData2[] = {
@@ -6272,6 +6277,42 @@ void main()
 
     GLuint program = CompileProgram(essl3_shaders::vs::Simple(), kFSArrayBlockTooLarge);
     EXPECT_EQ(0u, program);
+
+    destroyHardenedContext(hardenedContext);
+}
+
+// Similar to WebGL2GLSLTest.InitUninitializedLocals, but ensure the same validation is done in
+// non-webgl contexts with the EGL_CONTEXT_HARDENED_ANGLE flag.
+TEST_P(HardenedContextTest, InitUninitializedLocals)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 my_FragColor;
+int result = 0;
+void main()
+{
+    int u;
+    result += u;
+    int k = 0;
+    for (int i[2], j = i[0] + 1; k < 2; ++k)
+    {
+        result += j;
+    }
+    if (result == 2)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+    else
+    {
+        my_FragColor = vec4(1, 0, 0, 1);
+    }
+})";
+
+    EGLContext hardenedContext = setupHardenedContext();
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     destroyHardenedContext(hardenedContext);
 }

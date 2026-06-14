@@ -3434,4 +3434,81 @@ ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(CopyTextureTestES3);
 
+class BasicCopyTextureTest : public ANGLETest<>
+{
+  protected:
+    BasicCopyTextureTest()
+    {
+        setWindowWidth(64);
+        setWindowHeight(64);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Test that self-copying a cube map face with an OOB source rectangle doesn't cause lead to an OOB
+// write in texSubImage2D. See https:crbug.com/506377574
+TEST_P(BasicCopyTextureTest, SelfCopyOOBWrite)
+{
+    const int kSmallSize = 8;
+    const int kBigSize   = 4096;
+    GLenum faces[]       = {
+        GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+    };
+    // Cube texture with all six faces at kSmallSize x kSmallSize.
+    // Initialize with data so each face's ImageDesc.initState == Initialized.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+    std::vector<GLubyte> initData(kSmallSize * kSmallSize * 4, 0x11);
+    for (GLenum f : faces)
+    {
+        glTexImage2D(f, 0, GL_RGBA, kSmallSize, kSmallSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     initData.data());
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Attach NEGATIVE_X as the read FBO color attachment.
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                           tex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Self-copy NEGATIVE_X -> NEGATIVE_X with source rect entirely outside
+    // the kSmallSize x kSmallSize framebuffer.
+    //
+    // The bug that was found was happening because when handleCopyImageSelfCopyRedefine was called,
+    // it would early return when 'ClipRectangle' returned false, without making sure to redefine
+    // the destination texture to fit the larger kBigSize x kBigSize, while 'setImageDesc' would get
+    // called and update it's supposed size to kBigSize x kBigSize, desyncing the values between the
+    // frontend and backend. When the call to glTexSubImage2D below would attempt to copy a kBigSize
+    // x kBigSize buffer to this texture via a memory-mapped buffer, it would map the smaller buffer
+    // and write beyond its bounds.
+    glCopyTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, 1000, 1000, kBigSize, kBigSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Force the Image11::loadData path: redefine a *different* face at a mismatched size. In the
+    // D3D11 backend, this releases the storage and marks all images as dirty. The stale NEGATIVE_X
+    // Image11 is not resized.
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Potential OOB write: this is where Image11::loadData would map the kSmallSize x kSmallSize
+    // staging texture, and memcpy kBigSize x kBigSize data to it, writing OOB.
+    std::vector<GLubyte> payload(kBigSize * kBigSize * 4, 0x41);
+    glTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, kBigSize, kBigSize, GL_RGBA,
+                    GL_UNSIGNED_BYTE, payload.data());
+
+    ASSERT_GL_NO_ERROR();
+}
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(BasicCopyTextureTest);
+
 }  // namespace angle

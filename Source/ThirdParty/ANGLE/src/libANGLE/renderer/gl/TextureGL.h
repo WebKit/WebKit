@@ -288,6 +288,15 @@ class TextureGL : public TextureImpl
     const LevelInfoGL &getLevelInfo(gl::TextureTarget target, size_t level) const;
     const LevelInfoGL &getBaseLevelInfo() const;
 
+    angle::Result handleCopyImageSelfCopyRedefine(const gl::Context *context,
+                                                  GLenum internalFormat,
+                                                  GLenum initTexFormat,
+                                                  GLenum initTexType,
+                                                  const gl::Rectangle &sourceArea,
+                                                  bool outside,
+                                                  const gl::ImageIndex &destIndex,
+                                                  gl::Framebuffer *source);
+
     std::vector<LevelInfoGL> mLevelInfo;
     gl::Texture::DirtyBits mLocalDirtyBits;
 

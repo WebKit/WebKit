@@ -1189,6 +1189,15 @@
             "issue": "https://anglebug.com/42266070"
         },
         {
+            "name": "add_framebuffer_fetch_barrier_on_use_mid_render_pass",
+            "category": "Workarounds",
+            "description": [
+                "When framebuffer fetch is used during the render pass, a barrier ",
+                "is added to ensure correctness"
+            ],
+            "issue": "https://issuetracker.google.com/423086584"
+        },
+        {
             "name": "egl_colorspace_attribute_passthrough",
             "category": "Features",
             "description": [

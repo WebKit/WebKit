@@ -67,18 +67,3 @@ size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>
     ASSERT(len >= 0);
     return static_cast<size_t>(len);
 }
-
-const char *MakeStaticString(const std::string &str)
-{
-    // On the heap so that no destructor runs on application exit.
-    static std::set<std::string> *strings = new std::set<std::string>;
-    static angle::SimpleMutex *mutex      = new angle::SimpleMutex;
-    std::lock_guard<angle::SimpleMutex> lock(*mutex);
-    std::set<std::string>::iterator it = strings->find(str);
-    if (it != strings->end())
-    {
-        return it->c_str();
-    }
-
-    return strings->insert(str).first->c_str();
-}

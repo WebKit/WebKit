@@ -42,6 +42,7 @@ generate_changes_diff() {
         ':(exclude)third_party/r8/custom_d8.jar' \
         ':(exclude)third_party/googletest' \
         ':(exclude)parsetab.py' \
+        ':(exclude)infra' \
         > changes.diff
 }
 

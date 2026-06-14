@@ -977,6 +977,7 @@ class TParseContext : angle::NonCopyable
     TVector<VariableAndLocation> mFragmentOutputsYuv;
     bool mFragmentOutputIndex1Used;
     bool mFragmentOutputFragDepthUsed;
+    int mMaxFragDataArrayIndexUsed;
 
     // Track the geometry shader global parameters declared in layout.
     TLayoutPrimitiveType mGeometryShaderInputPrimitiveType;

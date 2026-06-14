@@ -1,9 +1,0 @@
-{
-    "angle": {
-        "exclusions": [
-            ".vpython3",
-            "DEPS",
-            "infra/specs/.*"
-        ]
-    }
-}

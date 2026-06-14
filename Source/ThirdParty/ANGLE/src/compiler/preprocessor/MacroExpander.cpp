@@ -436,7 +436,7 @@ bool MacroExpander::collectMacroArgs(const Macro &macro,
                                  token.text);
             return false;
         }
-        PreprocessorSettings nestedSettings(mSettings.shaderSpec);
+        PreprocessorSettings nestedSettings(mSettings);
         nestedSettings.maxMacroExpansionDepth = mSettings.maxMacroExpansionDepth - 1;
         MacroExpander expander(&lexer, mMacroSet, mDiagnostics, nestedSettings, mParseDefined);
 

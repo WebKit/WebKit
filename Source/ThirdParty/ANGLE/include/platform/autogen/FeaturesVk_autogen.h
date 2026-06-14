@@ -914,6 +914,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo addFramebufferFetchBarrierOnUseMidRenderPass = {
+        "addFramebufferFetchBarrierOnUseMidRenderPass",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo eglColorspaceAttributePassthrough = {
         "eglColorspaceAttributePassthrough",
         FeatureCategory::VulkanFeatures,

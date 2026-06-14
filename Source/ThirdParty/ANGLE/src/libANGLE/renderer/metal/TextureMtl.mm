@@ -955,10 +955,30 @@ void TextureMtl::deallocateNativeStorage(bool keepImages)
     }
 }
 
-angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context)
+angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context, bool keepImages)
 {
+    auto clearImagesAssociatedWithStorage = [&]() {
+        ASSERT(mNativeTextureStorage);
+        GLuint mips      = mState.getMipmapMaxLevel() - mState.getEffectiveBaseLevel() + 1;
+        int numCubeFaces = static_cast<int>(mNativeTextureStorage->cubeFaces());
+        for (int face = 0; face < numCubeFaces; ++face)
+        {
+            for (mtl::MipmapNativeLevel actualMip = mtl::kZeroNativeMipLevel;
+                 actualMip.get() < mips; ++actualMip)
+            {
+                GLuint imageMipLevel = mNativeTextureStorage->getGLLevel(actualMip);
+                mTexImageDefs[face][imageMipLevel].image = nullptr;
+            }
+        }
+    };
+
     if (mNativeTextureStorage)
     {
+        // Storage exists, deallocate images associated with the storage.
+        if (!keepImages)
+        {
+            clearImagesAssociatedWithStorage();
+        }
         return angle::Result::Continue;
     }
 
@@ -1009,6 +1029,11 @@ angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context)
                 mTexImageDefs[face][imageMipLevel] = {};
             }
         }
+    }
+
+    if (!keepImages)
+    {
+        clearImagesAssociatedWithStorage();
     }
 
     return angle::Result::Continue;
@@ -1651,7 +1676,7 @@ angle::Result TextureMtl::setImageExternal(const gl::Context *context,
 
 angle::Result TextureMtl::generateMipmap(const gl::Context *context)
 {
-    ANGLE_TRY(ensureNativeStorageCreated(context));
+    ANGLE_TRY(ensureNativeStorageCreated(context, false));
 
     int numCubeFaces = static_cast<int>(mNativeTextureStorage->cubeFaces());
     for (int face = 0; face < numCubeFaces; ++face)
@@ -1814,7 +1839,7 @@ angle::Result TextureMtl::getAttachmentRenderTarget(const gl::Context *context,
                                                     GLsizei samples,
                                                     FramebufferAttachmentRenderTarget **rtOut)
 {
-    ANGLE_TRY(ensureNativeStorageCreated(context));
+    ANGLE_TRY(ensureNativeStorageCreated(context, true));
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
     ANGLE_CHECK(contextMtl, mNativeTextureStorage, gl::err::kInternalError, GL_INVALID_OPERATION);
@@ -1875,7 +1900,7 @@ angle::Result TextureMtl::syncState(const gl::Context *context,
         }
     }
 
-    ANGLE_TRY(ensureNativeStorageCreated(context));
+    ANGLE_TRY(ensureNativeStorageCreated(context, true));
     ANGLE_TRY(ensureSamplerStateCreated(context));
 
     return angle::Result::Continue;

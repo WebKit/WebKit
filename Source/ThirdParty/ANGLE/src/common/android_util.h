@@ -201,6 +201,22 @@ enum {
      *   OpenGL ES: GL_R8
      */
     ANGLE_AHB_FORMAT_R8_UNORM   = 0x38,
+
+    /**
+     * Corresponding formats:
+     *   Android: AHARDWAREBUFFER_FORMAT_R16_UINT
+     *   Vulkan: VK_FORMAT_R16_UINT
+     *   OpenGL ES: GL_R16UI
+     */
+    ANGLE_AHB_FORMAT_R16_UINT   = 0x39,
+
+    /**
+     * Corresponding formats:
+     *   Android: AHARDWAREBUFFER_FORMAT_R16G16_UINT
+     *   Vulkan: VK_FORMAT_R16G16_UINT
+     *   OpenGL ES: GL_RG16UI
+     */
+    ANGLE_AHB_FORMAT_R16G16_UINT = 0x3a,
 };
 // clang-format on
 

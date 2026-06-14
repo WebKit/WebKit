@@ -491,8 +491,8 @@ ANGLE_INLINE bool ValidateReadPixels(const Context *context,
                                      GLenum type,
                                      const void *pixels)
 {
-    return ValidateReadPixelsBase(context, entryPoint, x, y, width, height, format, type, -1,
-                                  nullptr, nullptr, nullptr, pixels);
+    return ValidateReadPixelsBase(context, entryPoint, x, y, width, height, format, type,
+                                  std::numeric_limits<GLsizei>::max(), pixels);
 }
 
 ANGLE_INLINE bool ValidateTexParameterf(const Context *context,

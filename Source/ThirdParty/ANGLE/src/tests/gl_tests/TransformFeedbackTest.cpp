@@ -250,6 +250,253 @@ TEST_P(TransformFeedbackTest, QueryActiveNoXfbDrawThenXfbBeginEnd)
     EXPECT_EQ(primitivesWritten, 0u);
 }
 
+// Test that resuming transform feedback with a different program results in validation error.
+TEST_P(TransformFeedbackTest, ProgramSwitchDuringPauseAndResume)
+{
+    constexpr char kVS1[] = R"(#version 300 es
+out float tfVarying10;
+out float tfVarying11;
+out float tfVarying12;
+out float tfVarying13;
+void main() {
+    tfVarying10 = 1.0;
+    tfVarying11 = 2.0;
+    tfVarying12 = 3.0;
+    tfVarying13 = 4.0;
+    gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+})";
+    constexpr char kVS2[] = R"(#version 300 es
+out float tfVarying20;
+out float tfVarying21;
+void main() {
+    tfVarying20 = -1.0;
+    tfVarying21 = -2.0;
+    gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+})";
+    constexpr char kFS[]  = R"(#version 300 es
+precision mediump float;
+out vec4 fragOut;
+void main() {
+    fragOut = vec4(1.0, 1.0, 1.0, 1.0);
+})";
+
+    std::vector<std::string> tfVaryings1 = {"tfVarying10", "tfVarying11", "tfVarying12",
+                                            "tfVarying13"};
+    std::vector<std::string> tfVaryings2 = {"tfVarying20", "tfVarying21"};
+    GLuint program1 =
+        CompileProgramWithTransformFeedback(kVS1, kFS, tfVaryings1, GL_SEPARATE_ATTRIBS);
+    ASSERT_NE(0u, program1);
+    GLuint program2 =
+        CompileProgramWithTransformFeedback(kVS2, kFS, tfVaryings2, GL_SEPARATE_ATTRIBS);
+    ASSERT_NE(0u, program2);
+
+    // XFB buffers
+    GLBuffer xfbBuffers[4];
+    constexpr GLsizei kInitSize = 4 * 1024;
+    for (int i = 0; i < 4; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Use the first program which uses four buffers.
+    glUseProgram(program1);
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Validate the XFB values for the first program.
+    for (int i = 0; i < 4; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        const float *bufferData = reinterpret_cast<float *>(
+            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
+        ASSERT_NE(nullptr, bufferData);
+        EXPECT_EQ(*bufferData, 1.0f + static_cast<float>(i));
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+
+    // Use the second program which only uses the first two buffers.
+    glUseProgram(program2);
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Resuming transform feedback with another program should result in validation error.
+    glUseProgram(program1);
+    ASSERT_GL_NO_ERROR();
+    glResumeTransformFeedback();
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Resuming transform feedback with the same program from the beginning is OK.
+    glUseProgram(program2);
+    ASSERT_GL_NO_ERROR();
+    glResumeTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Validate the XFB values for the second program.
+    for (int i = 0; i < 2; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        const float *bufferData = reinterpret_cast<float *>(
+            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
+        ASSERT_NE(nullptr, bufferData);
+        EXPECT_EQ(*bufferData, -(1.0f + static_cast<float>(i)));
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+
+    glDeleteProgram(program1);
+    glDeleteProgram(program2);
+}
+
+// Test that resuming transform feedback with a different program results in validation error, and
+// using the original program after updating the size of one of its buffers works.
+TEST_P(TransformFeedbackTest, ProgramSwitchDuringPauseAndResumeWithBufferChange)
+{
+    constexpr char kVS1[] = R"(#version 300 es
+out float tfVarying10;
+out float tfVarying11;
+out float tfVarying12;
+out float tfVarying13;
+void main() {
+    tfVarying10 = 1.0;
+    tfVarying11 = 2.0;
+    tfVarying12 = 3.0;
+    tfVarying13 = 4.0;
+    gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+})";
+    constexpr char kVS2[] = R"(#version 300 es
+out float tfVarying20;
+out float tfVarying21;
+void main() {
+    tfVarying20 = -1.0;
+    tfVarying21 = -2.0;
+    gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+})";
+    constexpr char kFS[]  = R"(#version 300 es
+precision mediump float;
+out vec4 fragOut;
+void main() {
+    fragOut = vec4(1.0, 1.0, 1.0, 1.0);
+})";
+
+    std::vector<std::string> tfVaryings1 = {"tfVarying10", "tfVarying11", "tfVarying12",
+                                            "tfVarying13"};
+    std::vector<std::string> tfVaryings2 = {"tfVarying20", "tfVarying21"};
+    GLuint program1 =
+        CompileProgramWithTransformFeedback(kVS1, kFS, tfVaryings1, GL_SEPARATE_ATTRIBS);
+    ASSERT_NE(0u, program1);
+    GLuint program2 =
+        CompileProgramWithTransformFeedback(kVS2, kFS, tfVaryings2, GL_SEPARATE_ATTRIBS);
+    ASSERT_NE(0u, program2);
+
+    // XFB buffers
+    GLBuffer xfbBuffers[4];
+    constexpr GLsizei kInitSize = 4 * 1024;
+    for (int i = 0; i < 4; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Use the first program which uses four buffers.
+    glUseProgram(program1);
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Validate the XFB values for the first program.
+    for (int i = 0; i < 4; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        const float *bufferData = reinterpret_cast<float *>(
+            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
+        ASSERT_NE(nullptr, bufferData);
+        EXPECT_EQ(*bufferData, 1.0f + static_cast<float>(i));
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+
+    // One of the buffers that will not be used in the second program is expanded.
+    constexpr GLsizei kLargeSize = 8 * 1024 * 1024;
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[2]);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kLargeSize, nullptr, GL_DYNAMIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // Use the second program which only uses the first two buffers.
+    glUseProgram(program2);
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Resuming transform feedback with another program should result in validation error.
+    glUseProgram(program1);
+    ASSERT_GL_NO_ERROR();
+    glResumeTransformFeedback();
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Resuming transform feedback with the same program from the beginning is OK.
+    glUseProgram(program2);
+    ASSERT_GL_NO_ERROR();
+    glResumeTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Validate the XFB values for the second program.
+    for (int i = 0; i < 2; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        const float *bufferData = reinterpret_cast<float *>(
+            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
+        ASSERT_NE(nullptr, bufferData);
+        EXPECT_EQ(*bufferData, -(1.0f + static_cast<float>(i)));
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+
+    // Use the first program again with the updated buffer.
+    glUseProgram(program1);
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Validate the XFB values for the first program again.
+    for (int i = 0; i < 4; ++i)
+    {
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
+        const float *bufferData = reinterpret_cast<float *>(
+            glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
+        ASSERT_NE(nullptr, bufferData);
+        EXPECT_EQ(*bufferData, 1.0f + static_cast<float>(i));
+        glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    }
+
+    glDeleteProgram(program1);
+    glDeleteProgram(program2);
+}
+
 // Test that rebinding a buffer with the same offset resets the offset (no longer appending from the
 // old position)
 TEST_P(TransformFeedbackTest, BufferRebinding)

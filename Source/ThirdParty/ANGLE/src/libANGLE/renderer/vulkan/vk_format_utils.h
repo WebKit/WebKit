@@ -265,6 +265,13 @@ VkImageCreateFlags GetMinimalImageCreateFlags(Renderer *renderer,
 bool HasFullTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID);
 // Checks if a Vulkan format supports all the features except rendering.
 bool HasNonRenderableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID);
+// Checks if a Vulkan format supports all the features needed for a non-filterable texture.
+bool HasNonFilterableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID);
+// Checks if a Vulkan format supports all the features needed for a sample-only (no filtering, no
+// rendering) texture.
+bool HasSampleOnlyTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID);
+// Checks if a format supports filtering.
+bool IsFilterableFormat(const angle::Format &format);
 // Checks if it is a ETC texture format
 bool IsETCFormat(angle::FormatID formatID);
 // Checks if it is an ASTC texture format

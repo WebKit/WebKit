@@ -178,10 +178,27 @@ void CheckFormatSupport(
     else
     {
         angle::FormatID formatID = vk::GetFormatIDFromVkFormat(bufferFormatProperties.format);
-        *formatHasNecessaryFormatSupport =
-            (ahbUsage & AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER) != 0
-                ? HasFullTextureFormatSupport(renderer, formatID)
-                : HasNonRenderableTextureFormatSupport(renderer, formatID);
+        const angle::Format &format = angle::Format::Get(formatID);
+
+        // For filterable formats, standard texture support checks are used (which include linear
+        // filtering). For non-filterable formats (e.g. integer or 32-bit float), filtering bits
+        // are omitted from the requirements.
+        //
+        // If the AHB is intended for a framebuffer, color attachment support is also required.
+        if (IsFilterableFormat(format))
+        {
+            *formatHasNecessaryFormatSupport =
+                (ahbUsage & AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER) != 0
+                    ? HasFullTextureFormatSupport(renderer, formatID)
+                    : HasNonRenderableTextureFormatSupport(renderer, formatID);
+        }
+        else
+        {
+            *formatHasNecessaryFormatSupport =
+                (ahbUsage & AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER) != 0
+                    ? HasNonFilterableTextureFormatSupport(renderer, formatID)
+                    : HasSampleOnlyTextureFormatSupport(renderer, formatID);
+        }
     }
 }
 
@@ -566,10 +583,15 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
                                                           kColorRenderableRequiredBits) ||
                       renderer->hasImageFormatFeatureBits(actualRenderableFormatID,
                                                           kDepthStencilRenderableRequiredBits);
-        constexpr uint32_t kTextureableRequiredBits =
-            VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
+        uint32_t textureableRequiredBits = VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT;
+
+        // For filterable formats, require linear filtering support.
+        if (IsFilterableFormat(imageFormat))
+        {
+            textureableRequiredBits |= VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
+        }
         mTextureable =
-            renderer->hasImageFormatFeatureBits(actualRenderableFormatID, kTextureableRequiredBits);
+            renderer->hasImageFormatFeatureBits(actualRenderableFormatID, textureableRequiredBits);
     }
 
     return angle::Result::Continue;

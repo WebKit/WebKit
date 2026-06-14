@@ -97,6 +97,9 @@ struct ValidateASTOptions
     // If PruneNoOps has been run, check that no statements are ever added after branches in the
     // same block.  Those statements would be dead code.
     bool validateNoStatementsAfterBranch = true;
+    // Check that a switch block does not end in `case FOO:`, which is not valid GLSL and trips up
+    // many backends.
+    bool validateNoCaseAtEndOfSwitchBlock = true;
     // Check that swizzle is not applied to swizzle.  Swizzles of swizzles are folded in
     // TIntermSwizzle::fold.
     bool validateNoSwizzleOfSwizzle = true;

@@ -119,6 +119,9 @@ const char *Diagnostics::message(ID id)
             return "extension directive must occur before any non-preprocessor tokens in ESSL1";
         case PP_NON_PP_TOKEN_BEFORE_EXTENSION_ESSL3:
             return "extension directive must occur before any non-preprocessor tokens in ESSL3";
+        case PP_NON_PP_TOKEN_BEFORE_EXTENSION_DISABLE_WEBGL:
+            return "extension directive with disable behavior must occur before any "
+                   "non-preprocessor tokens";
         case PP_UNDEFINED_SHIFT:
             return "shift exponent is negative or undefined";
         case PP_TOKENIZER_ERROR:

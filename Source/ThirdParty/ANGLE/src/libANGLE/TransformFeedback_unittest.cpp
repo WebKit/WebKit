@@ -74,7 +74,7 @@ TEST_F(TransformFeedbackTest, SideEffectsOfStartAndStop)
     EXPECT_FALSE(mFeedback->isActive());
     EXPECT_CALL(*mImpl, begin(nullptr, gl::PrimitiveMode::Triangles));
     EXPECT_EQ(angle::Result::Continue,
-              mFeedback->begin(nullptr, gl::PrimitiveMode::Triangles, nullptr));
+              mFeedback->begin(nullptr, gl::PrimitiveMode::Triangles, nullptr, nullptr));
     EXPECT_TRUE(mFeedback->isActive());
     EXPECT_EQ(gl::PrimitiveMode::Triangles, mFeedback->getPrimitiveMode());
     EXPECT_CALL(*mImpl, end(nullptr));
@@ -89,7 +89,7 @@ TEST_F(TransformFeedbackTest, SideEffectsOfPauseAndResume)
     EXPECT_FALSE(mFeedback->isActive());
     EXPECT_CALL(*mImpl, begin(nullptr, gl::PrimitiveMode::Triangles));
     EXPECT_EQ(angle::Result::Continue,
-              mFeedback->begin(nullptr, gl::PrimitiveMode::Triangles, nullptr));
+              mFeedback->begin(nullptr, gl::PrimitiveMode::Triangles, nullptr, nullptr));
     EXPECT_FALSE(mFeedback->isPaused());
     EXPECT_CALL(*mImpl, pause(nullptr));
     EXPECT_EQ(angle::Result::Continue, mFeedback->pause(nullptr));

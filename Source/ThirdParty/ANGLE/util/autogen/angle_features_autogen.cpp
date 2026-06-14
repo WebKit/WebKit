@@ -17,6 +17,7 @@ namespace
 {
 constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::AddAndTrueToLoopCondition, "addAndTrueToLoopCondition"},
+    {Feature::AddFramebufferFetchBarrierOnUseMidRenderPass, "addFramebufferFetchBarrierOnUseMidRenderPass"},
     {Feature::AddMockTextureNoRenderTarget, "addMockTextureNoRenderTarget"},
     {Feature::AdjustClearColorPrecision, "adjustClearColorPrecision"},
     {Feature::AdjustSrcDstRegionForBlitFramebuffer, "adjustSrcDstRegionForBlitFramebuffer"},
@@ -27,6 +28,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::AllowCompressedFormats, "allowCompressedFormats"},
     {Feature::AllowES3OnFL100, "allowES3OnFL100"},
     {Feature::AllowETCFormats, "allowETCFormats"},
+    {Feature::AllowExtensionDisableAfterNonPpTokens, "allowExtensionDisableAfterNonPpTokens"},
     {Feature::AllowGenerateMipmapWithCompute, "allowGenerateMipmapWithCompute"},
     {Feature::AllowGenMultipleMipsPerPass, "allowGenMultipleMipsPerPass"},
     {Feature::AllowHostImageCopyAfterInitialUpload, "allowHostImageCopyAfterInitialUpload"},
@@ -169,6 +171,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::EnableTranslatedShaderSubstitution, "enableTranslatedShaderSubstitution"},
     {Feature::EnsureLoopForwardProgress, "ensureLoopForwardProgress"},
     {Feature::EnsureNonEmptyBufferIsBoundForDraw, "ensureNonEmptyBufferIsBoundForDraw"},
+    {Feature::ExpandFragmentOutputsToVec4, "expandFragmentOutputsToVec4"},
     {Feature::ExpandIntegerPowExpressions, "expandIntegerPowExpressions"},
     {Feature::ExplicitFragmentLocations, "explicitFragmentLocations"},
     {Feature::ExplicitlyEnablePerSampleShading, "explicitlyEnablePerSampleShading"},

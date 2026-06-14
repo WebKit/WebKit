@@ -38,20 +38,6 @@ class ParallelShaderCompileTest : public ANGLETest<>
         setConfigAlphaBits(8);
     }
 
-    bool ensureParallelShaderCompileExtensionAvailable()
-    {
-        if (IsGLExtensionRequestable("GL_KHR_parallel_shader_compile"))
-        {
-            glRequestExtensionANGLE("GL_KHR_parallel_shader_compile");
-        }
-
-        if (!IsGLExtensionEnabled("GL_KHR_parallel_shader_compile"))
-        {
-            return false;
-        }
-        return true;
-    }
-
     class Task
     {
       public:
@@ -388,7 +374,7 @@ void main()
 // Test basic functionality of GL_KHR_parallel_shader_compile
 TEST_P(ParallelShaderCompileTest, Basic)
 {
-    ANGLE_SKIP_TEST_IF(!ensureParallelShaderCompileExtensionAvailable());
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_parallel_shader_compile"));
 
     GLint count = 0;
     glMaxShaderCompilerThreadsKHR(8);
@@ -401,7 +387,7 @@ TEST_P(ParallelShaderCompileTest, Basic)
 // Test to compile and link many programs in parallel.
 TEST_P(ParallelShaderCompileTest, LinkAndDrawManyPrograms)
 {
-    ANGLE_SKIP_TEST_IF(!ensureParallelShaderCompileExtensionAvailable());
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_parallel_shader_compile"));
 
     TaskRunner<ClearColorWithDraw> runner;
     runner.run(this, kPollInterval);
@@ -412,10 +398,84 @@ TEST_P(ParallelShaderCompileTest, LinkAndDrawManyPrograms)
 // crbug.com/1317673
 TEST_P(ParallelShaderCompileTest, LinkProgramAndRecompileShader)
 {
-    ANGLE_SKIP_TEST_IF(!ensureParallelShaderCompileExtensionAvailable());
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_parallel_shader_compile"));
 
     TaskRunner<ClearColorWithDrawRecompile> runner;
     runner.run(this, 0);
+}
+
+// Tests no crash in case the program is being linked, is not current, and the context that spawned
+// the task is destroyed.
+TEST_P(ParallelShaderCompileTest, DestroyContextWhileLinkIsInProgress)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_parallel_shader_compile"));
+
+    // Create a context shared with the current one
+    EGLWindow *window          = getEGLWindow();
+    EGLDisplay display         = window->getDisplay();
+    EGLConfig config           = window->getConfig();
+    EGLSurface surface         = window->getSurface();
+    EGLint contextAttributes[] = {
+        EGL_CONTEXT_MAJOR_VERSION_KHR,
+        GetParam().majorVersion,
+        EGL_CONTEXT_MINOR_VERSION_KHR,
+        GetParam().minorVersion,
+        EGL_NONE,
+    };
+    EGLContext context1 = eglGetCurrentContext();
+    EGLContext context2 = eglCreateContext(display, config, context1, contextAttributes);
+    ASSERT_NE(context2, EGL_NO_CONTEXT);
+    eglMakeCurrent(display, surface, surface, context2);
+
+    constexpr char kVS[] = R"(precision mediump float;
+uniform vec4 u;
+attribute vec4 a;
+varying vec4 b;
+void main()
+{
+    gl_Position = a;
+    b = u;
+})";
+    constexpr char kFS[] = R"(precision mediump float;
+uniform sampler2D s;
+varying vec4 b;
+void main()
+{
+    gl_FragColor = texture2D(s, vec2(0)) + b;
+})";
+
+    GLuint program = glCreateProgram();
+
+    GLuint vs = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, fs);
+
+    glAttachShader(program, vs);
+    glDeleteShader(vs);
+
+    glAttachShader(program, fs);
+    glDeleteShader(fs);
+
+    // Start the link job, but don't wait for it to finish.  Don't bind the program to the context.
+    glLinkProgram(program);
+
+    // Make context1 current again.
+    eglMakeCurrent(display, surface, surface, context1);
+
+    // Destroy the context that spawned the link job
+    eglDestroyContext(display, context2);
+
+    // Destroy the shader
+    glDetachShader(program, vs);
+    glDetachShader(program, fs);
+
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_TRUE(linkStatus);
+
+    EXPECT_GL_NO_ERROR();
 }
 
 class ParallelShaderCompileTestES31 : public ParallelShaderCompileTest
@@ -431,7 +491,7 @@ TEST_P(ParallelShaderCompileTestES31, LinkAndDispatchManyPrograms)
     // TODO(http://anglebug.com/42264192): Fails on Linux+Intel+OpenGL
     ANGLE_SKIP_TEST_IF(IsLinux() && IsIntel() && IsOpenGL());
 
-    ANGLE_SKIP_TEST_IF(!ensureParallelShaderCompileExtensionAvailable());
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_parallel_shader_compile"));
 
     TaskRunner<ImageLoadStore> runner;
     runner.run(this, kPollInterval);

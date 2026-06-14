@@ -572,4 +572,32 @@ TIntermNode *CastScalar(const TType &type, TIntermTyped *scalar)
     return TIntermAggregate::CreateConstructor(castDestType, {scalar});
 }
 
+void MoveDeclarationsBeforeFunctions(TIntermBlock *root)
+{
+    TIntermSequence *original = root->getSequence();
+
+    TIntermSequence replacement;
+    TIntermSequence functionDefs;
+
+    // Accumulate non-function-definition declarations in |replacement| and function definitions in
+    // |functionDefs|.
+    for (TIntermNode *node : *original)
+    {
+        if (node->getAsFunctionDefinition() || node->getAsFunctionPrototypeNode())
+        {
+            functionDefs.push_back(node);
+        }
+        else
+        {
+            replacement.push_back(node);
+        }
+    }
+
+    // Append function definitions to |replacement|.
+    replacement.insert(replacement.end(), functionDefs.begin(), functionDefs.end());
+
+    // Replace root's sequence with |replacement|.
+    root->replaceAllChildren(std::move(replacement));
+}
+
 }  // namespace sh

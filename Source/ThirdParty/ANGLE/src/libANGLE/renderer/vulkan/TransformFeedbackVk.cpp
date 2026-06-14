@@ -52,6 +52,18 @@ void TransformFeedbackVk::onDestroy(const gl::Context *context)
     releaseCounterBuffers(contextVk);
 }
 
+void TransformFeedbackVk::clearCachedBufferData()
+{
+    for (VkDeviceSize &offset : mBufferOffsets)
+    {
+        offset = 0;
+    }
+    for (VkDeviceSize &size : mBufferSizes)
+    {
+        size = 0;
+    }
+}
+
 void TransformFeedbackVk::releaseCounterBuffers(vk::Context *context)
 {
     for (vk::BufferHelper &bufferHelper : mCounterBufferHelpers)
@@ -156,6 +168,9 @@ angle::Result TransformFeedbackVk::end(const gl::Context *context)
 
     contextVk->onEndTransformFeedback();
 
+    // The buffer data are cleared to avoid reusing outdated info when binding transform feedback
+    // buffers (via vkCmdBindTransformFeedbackBuffersEXT()).
+    clearCachedBufferData();
     releaseCounterBuffers(contextVk);
 
     return angle::Result::Continue;

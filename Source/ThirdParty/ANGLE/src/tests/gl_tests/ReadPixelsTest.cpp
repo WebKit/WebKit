@@ -1591,6 +1591,22 @@ TEST_P(ReadPixelsErrorTest, Overflow)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// The test verifies internal limits on the number of read bytes.
+TEST_P(ReadPixelsErrorTest, MemoryLimit)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+    std::vector<GLubyte> pixels(4);
+    ASSERT_GL_NO_ERROR();
+
+    // Params overflow UINT32 used for data length computations
+    glReadPixels(0, 0, 32768, 32768, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Params overflow INT32 used for buffer size
+    glReadPixels(0, 0, 16384, 32768, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 // The test verifies that glReadPixels generates a GL_INVALID_OPERATION
 // error when reading signed 8-bit color buffers using incompatible types.
 TEST_P(ReadPixelsErrorTest, ColorBufferSnorm8)

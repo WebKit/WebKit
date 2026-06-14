@@ -562,6 +562,25 @@ class VulkanPerformanceCounterTest_DepthStencilLoadStoreOps : public VulkanPerfo
             expected->depthLoadOpLoads += counters.fallbackFromTileMemory;
             expected->depthStoreOpStores += counters.fallbackFromTileMemory;
         }
+        else
+        {
+            if (hasLoadOpNoneSupport())
+            {
+                expected->depthLoadOpNones += counters.fallbackFromTileMemory;
+            }
+            else
+            {
+                expected->depthLoadOpLoads += counters.fallbackFromTileMemory;
+            }
+            if (hasStoreOpNoneSupport())
+            {
+                expected->depthStoreOpNones += counters.fallbackFromTileMemory;
+            }
+            else
+            {
+                expected->depthStoreOpStores += counters.fallbackFromTileMemory;
+            }
+        }
 
         // fallbackFromTileMemory adds one load/store op if there is valid stencil data.
         if (expected->stencilStoreOpStores > 0 && hasSupportsShaderStencilExport())
@@ -576,9 +595,17 @@ class VulkanPerformanceCounterTest_DepthStencilLoadStoreOps : public VulkanPerfo
             {
                 expected->stencilLoadOpNones += counters.fallbackFromTileMemory;
             }
+            else
+            {
+                expected->stencilLoadOpLoads += counters.fallbackFromTileMemory;
+            }
             if (hasStoreOpNoneSupport())
             {
                 expected->stencilStoreOpNones += counters.fallbackFromTileMemory;
+            }
+            else
+            {
+                expected->stencilStoreOpStores += counters.fallbackFromTileMemory;
             }
         }
     }
@@ -4015,6 +4042,9 @@ TEST_P(VulkanPerformanceCounterTest_DepthStencilLoadStoreOps,
     // disallowMixedDepthStencilLoadOpNoneAndLoad makes it quite complicated to set expectations
     // correct.
     ANGLE_SKIP_TEST_IF(hasDisallowMixedDepthStencilLoadOpNoneAndLoad());
+    // This test is tricky to get expectations right with combination of nones and tile memory
+    // support.
+    ANGLE_SKIP_TEST_IF(hasSupportsTileMemoryOrSimulation() && !hasLoadOpNoneSupport());
 
     angle::VulkanPerfCounters expected;
 
@@ -10097,6 +10127,9 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_TileM
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_TileMemory,
                        ES3_VULKAN(),
                        ES3_VULKAN().enable(Feature::SimulateTileMemoryForTesting),
+                       ES3_VULKAN()
+                           .enable(Feature::SimulateTileMemoryForTesting)
+                           .disable(Feature::SupportsImagelessFramebuffer),
                        ES3_VULKAN_SWIFTSHADER().enable(Feature::SimulateTileMemoryForTesting));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_Dither);

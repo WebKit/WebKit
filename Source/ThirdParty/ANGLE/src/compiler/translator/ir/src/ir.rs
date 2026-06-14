@@ -3473,9 +3473,9 @@ impl IR {
 
 // Helper macro to run validation on the IR
 macro_rules! validate {
-    ($ir:expr) => {
+    ($ir:expr, $previous_operation:expr) => {
         #[cfg(debug_assertions)]
-        $crate::validator::validate($ir);
+        $crate::validator::validate($ir, $previous_operation);
     };
 }
 pub(crate) use validate;

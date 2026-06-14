@@ -40,7 +40,8 @@ void SimplePreprocessorTest::preprocess(const char *input, const pp::Preprocesso
 
 void SimplePreprocessorTest::preprocess(const char *input)
 {
-    preprocess(input, pp::PreprocessorSettings(SH_GLES2_SPEC));
+    preprocess(input, pp::PreprocessorSettings(SH_GLES2_SPEC,
+                                               pp::WebGLExtensionDisableBehavior::Standard));
 }
 
 void SimplePreprocessorTest::preprocess(const char *input, const char *expected)
@@ -50,8 +51,9 @@ void SimplePreprocessorTest::preprocess(const char *input, const char *expected)
 
 void SimplePreprocessorTest::preprocess(const char *input, const char *expected, ShShaderSpec spec)
 {
-    pp::Preprocessor preprocessor(&mDiagnostics, &mDirectiveHandler,
-                                  pp::PreprocessorSettings(spec));
+    pp::Preprocessor preprocessor(
+        &mDiagnostics, &mDirectiveHandler,
+        pp::PreprocessorSettings(spec, pp::WebGLExtensionDisableBehavior::Standard));
     std::stringstream output;
     preprocess(input, &output, &preprocessor);
 
@@ -61,8 +63,9 @@ void SimplePreprocessorTest::preprocess(const char *input, const char *expected,
 
 void SimplePreprocessorTest::lexSingleToken(const char *input, pp::Token *token)
 {
-    pp::Preprocessor preprocessor(&mDiagnostics, &mDirectiveHandler,
-                                  pp::PreprocessorSettings(SH_GLES2_SPEC));
+    pp::Preprocessor preprocessor(
+        &mDiagnostics, &mDirectiveHandler,
+        pp::PreprocessorSettings(SH_GLES2_SPEC, pp::WebGLExtensionDisableBehavior::Standard));
     ASSERT_TRUE(preprocessor.init(1, &input, nullptr));
     preprocessor.lex(token);
 }
@@ -71,8 +74,9 @@ void SimplePreprocessorTest::lexSingleToken(size_t count,
                                             const char *const input[],
                                             pp::Token *token)
 {
-    pp::Preprocessor preprocessor(&mDiagnostics, &mDirectiveHandler,
-                                  pp::PreprocessorSettings(SH_GLES2_SPEC));
+    pp::Preprocessor preprocessor(
+        &mDiagnostics, &mDirectiveHandler,
+        pp::PreprocessorSettings(SH_GLES2_SPEC, pp::WebGLExtensionDisableBehavior::Standard));
     ASSERT_TRUE(preprocessor.init(count, input, nullptr));
     preprocessor.lex(token);
 }

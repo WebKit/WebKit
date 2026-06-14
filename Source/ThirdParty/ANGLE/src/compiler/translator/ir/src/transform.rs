@@ -44,7 +44,7 @@ macro_rules! run {
     ($func:ident $(::$path:ident)*, $ir:expr $(, $params:expr)*$(,)*) => {
         {
             let result = $crate::transform::$func$(::$path)*::run($ir $(, $params)*);
-            $crate::ir::validate!($ir);
+            $crate::ir::validate!($ir, stringify!($func$(::$path)*));
             result
         }
     };

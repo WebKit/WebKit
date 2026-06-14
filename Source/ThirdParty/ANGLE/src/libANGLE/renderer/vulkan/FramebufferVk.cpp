@@ -1579,6 +1579,20 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
                     AllowAddingResolveAttachmentsToSubpass(renderPassDesc);
             }
 
+            // Additionally, if not using dynamic rendering, the framebuffer attachments must
+            // all be at least as large as the framebuffer extent.  So the resolve attachment
+            // cannot be smaller even if it matches the (scissored) render area.
+            if (canResolveWithSubpass && !contextVk->getFeatures().preferDynamicRendering.enabled)
+            {
+                uint32_t drawColorIndexGL =
+                    static_cast<uint32_t>(*mState.getEnabledDrawBuffers().begin());
+                RenderTargetVk *drawRenderTarget = mRenderTargetCache.getColors()[drawColorIndexGL];
+                const gl::Extents drawExtents    = drawRenderTarget->getExtents();
+                const gl::Extents readExtents    = readRenderTarget->getExtents();
+                canResolveWithSubpass            = drawExtents.width >= readExtents.width &&
+                                        drawExtents.height >= readExtents.height;
+            }
+
             if (canResolveWithSubpass)
             {
                 ANGLE_TRY(resolveColorWithSubpass(contextVk, params));

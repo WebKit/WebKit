@@ -830,8 +830,8 @@ void RenderPassAttachment::finalizeLoadStore(ErrorContext *context,
                     // loadOp=DontCare should be covered by storeOp=DontCare below.
                     break;
                 case RenderPassLoadOp::None:
+                    break;
                 default:
-                    // loadOp=None is never decided upfront.
                     UNREACHABLE();
                     break;
             }
@@ -6501,10 +6501,16 @@ angle::Result ImageHelper::fallbackFromTileMemory(ContextVk *contextVk)
         }
         ASSERT(aspectFlags != 0);
         ANGLE_TRY(utilsVk.copyImageFromTileMemory(contextVk, aspectFlags, this, prevImage.get()));
-        ASSERT(IsAnySubresourceContentDefined(mVkImageContentDefined) ==
-               IsAnySubresourceContentDefined(prevImage->mVkImageContentDefined));
-        ASSERT(IsAnySubresourceContentDefined(mVkImageStencilContentDefined) ==
-               IsAnySubresourceContentDefined(prevImage->mVkImageStencilContentDefined));
+
+        // If RenderPassLoadStoreOpNone is not supported, load/store will be used and it will result
+        // in both aspect data being valid. It is less optimal, but most driver supports it already.
+        if (contextVk->getFeatures().supportsRenderPassLoadStoreOpNone.enabled)
+        {
+            ASSERT(IsAnySubresourceContentDefined(mVkImageContentDefined) ==
+                   IsAnySubresourceContentDefined(prevImage->mVkImageContentDefined));
+            ASSERT(IsAnySubresourceContentDefined(mVkImageStencilContentDefined) ==
+                   IsAnySubresourceContentDefined(prevImage->mVkImageStencilContentDefined));
+        }
     }
 
     prevImage->releaseImage(renderer);

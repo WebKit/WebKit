@@ -58,6 +58,9 @@ TEST_P(BufferPoolTest, AllocationOffsetNoTruncation)
 {
     ANGLE_SKIP_TEST_IF(!IsMetalRendererAvailable());
 
+    // http://anglebug.com/500280351
+    ANGLE_SKIP_TEST_IF(IsIOS());
+
     ContextMtl *contextMtl = getContextMtl();
     ASSERT_NE(contextMtl, nullptr);
 

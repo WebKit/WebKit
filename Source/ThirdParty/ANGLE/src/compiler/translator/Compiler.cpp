@@ -55,6 +55,7 @@
 #include "compiler/translator/tree_ops/msl/EnsureLoopForwardProgress.h"
 #include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNodePatternMatcher.h"
+#include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/ReplaceShadowingVariables.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/util.h"
@@ -1062,6 +1063,9 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     }
     mValidateASTOptions.validateMultiDeclarations = true;
 
+    // Move declarations before functions to simplify transformations.
+    MoveDeclarationsBeforeFunctions(root);
+
     if (!SplitSequenceOperator(this, root, IntermNodePatternMatcher::kArrayLengthMethod,
                                &getSymbolTable()))
     {
@@ -1258,6 +1262,7 @@ ShCompileOptions TCompiler::adjustOptions(const ShCompileOptions &compileOptions
     {
         compileOptions.clampFragDepth = false;
         compileOptions.retainInactiveFragmentOutputs = false;
+        compileOptions.expandFragmentOutputsToVec4   = false;
     }
 
 #if !defined(ANGLE_IR)

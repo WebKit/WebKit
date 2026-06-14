@@ -92,6 +92,7 @@ class Context : public ErrorContext
     void onForeignImageUse(ImageHelper *image);
     void finalizeForeignImage(ImageHelper *image);
     void finalizeAllForeignImages();
+    void forgetAllForeignImagesOnError() { mForeignImagesInUse.clear(); }
 
     bool hasForeignImagesToTransition() const
     {
@@ -1023,9 +1024,19 @@ class BufferHelper : public ReadWriteResource
 
     void initializeBarrierTracker(ErrorContext *context);
 
-    bool isLastAccessShaderWriteOnly() const
+    // There is only one case we can skip barrier for shader SSBO write barrier: when prior access
+    // is also shader write and both are same type of shaders, i.e. both are graphics or both are
+    // compute. GLES spec requires app to issue glMemoryBarrier if needed.
+    bool canShaderWriteBarrierSkipped(const gl::ShaderBitSet newShaderWriteStages) const
     {
-        return mCurrentReadAccess == 0 && (mCurrentWriteAccess & VK_ACCESS_SHADER_WRITE_BIT) != 0;
+        if (mCurrentReadAccess == 0 && (mCurrentWriteAccess & VK_ACCESS_SHADER_WRITE_BIT) != 0)
+        {
+            bool isCurrentWriteComputeShader =
+                mCurrentWriteStages & VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+            bool isNewWriteComputeShader = newShaderWriteStages.test(gl::ShaderType::Compute);
+            return isCurrentWriteComputeShader == isNewWriteComputeShader;
+        }
+        return false;
     }
 
   private:

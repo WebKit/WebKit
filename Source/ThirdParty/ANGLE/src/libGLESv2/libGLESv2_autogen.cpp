@@ -3141,7 +3141,6 @@ void GL_APIENTRY glRequestExtensionANGLE(const GLchar *name)
     return GL_RequestExtensionANGLE(name);
 }
 
-
 // GL_ANGLE_rgbx_internal_format
 
 // GL_ANGLE_robust_client_memory
@@ -3863,7 +3862,6 @@ void GL_APIENTRY glEGLImageTargetTexStorageEXT(GLenum target,
     return GL_EGLImageTargetTexStorageEXT(target, image, attrib_list);
 }
 
-
 // GL_EXT_EGL_image_storage_compression
 
 // GL_EXT_YUV_target
@@ -4213,7 +4211,6 @@ void GL_APIENTRY glBufferStorageExternalEXT(GLenum target,
 {
     return GL_BufferStorageExternalEXT(target, offset, size, clientBuffer, flags);
 }
-
 
 // GL_EXT_float_blend
 

@@ -876,7 +876,11 @@ const TConstantUnion *TIntermAggregate::getConstantValue() const
     if (isArray())
     {
         size_t elementSize = mArguments.front()->getAsTyped()->getType().getObjectSize();
-        constArray         = new TConstantUnion[elementSize * getOutermostArraySize()];
+        // Overflow should never happen due to parser validation, but hardened here just in case.
+        // http://crbug.com/498400132
+        angle::base::CheckedNumeric<size_t> checkedArraySize = elementSize;
+        checkedArraySize *= getOutermostArraySize();
+        constArray = new TConstantUnion[static_cast<size_t>(checkedArraySize.ValueOrDie())];
 
         size_t elementOffset = 0u;
         for (TIntermNode *constructorArg : mArguments)

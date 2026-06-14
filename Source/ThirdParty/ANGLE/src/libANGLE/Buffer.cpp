@@ -234,7 +234,7 @@ angle::Result Buffer::bufferDataImpl(Context *context,
     // TODO(jmadill): Investigate lazier clearing.
     if (context && context->isRobustResourceInitEnabled() && !data && size > 0)
     {
-        angle::MemoryBuffer *scratchBuffer = nullptr;
+        const angle::MemoryBuffer *scratchBuffer = nullptr;
         ANGLE_CHECK_GL_ALLOC(
             context, context->getZeroFilledBuffer(static_cast<size_t>(size), &scratchBuffer));
         dataForImpl = scratchBuffer->data();

@@ -82,17 +82,86 @@ SYNCED_CIPD_DEPS = {
 
 # DEPS entries which have dep_type = gcs. In the Chromium DEPS file, these will
 # be prefixed with src/.
+# TODO(anglebug.com/485785261): Handle tools/clang as a GCS dependency like
+# Chromium does.
 SYNCED_GCS_DEPS = set()
 
 # Repos that are independently synced by Chromium and ANGLE. A map from ANGLE
 # names to Chromium names. None means that the names are identical. In the
 # Chromium DEPS file, these will be prefixed with src/.
-SYNCED_REPOS = {}
+# The following DEPS entries would go in here except that they are synced
+# separately from Chromium:
+#   * third_party/SwiftShader
+#   * third_party/vulkan-deps
+#   * third_party/glslang/src
+#   * third_party/spirv-cross/src
+#   * third_party/spirv-headers/src
+#   * third_party/spirv-tools/src
+#   * third_party/vulkan-headers/src
+#   * third_party/vulkan-loader/src
+#   * third_party/vulkan-tools/src
+#   * third_party/vulkan-utility-libraries/src
+#   * third_party/vulkan-validation-layers/src
+#   * third_party/vulkan_memory_allocator
+#   * third_party/wayland
+SYNCED_REPOS = {
+    'third_party/catapult': None,
+    'third_party/clang-format/script': None,
+    'third_party/colorama/src': None,
+    'third_party/cpu_features/src': None,
+    # third_party/dawn is synced manually due to a circular dependency.
+    'third_party/depot_tools': None,
+    'third_party/flatbuffers/src': None,
+    'third_party/googletest/src': None,
+    'third_party/libdrm/src': None,
+    'third_party/libjpeg_turbo': None,
+    'third_party/libc++/src': None,
+    'third_party/libc++abi/src': None,
+    'third_party/llvm-libc/src': None,
+    'third_party/libunwind/src': None,
+    'third_party/nasm': None,
+    'third_party/perfetto': None,
+    'third_party/re2/src': None,
+    'third_party/requests/src': None,
+}
 
 # Chromium directories that are exported as pseudo-repos in
 # chromium.googlesource.com under chromium/src/. Mapping of ANGLE path to
 # Chromium src-relative path. None means that the names are identical.
-EXPORTED_CHROMIUM_REPOS = {}
+EXPORTED_CHROMIUM_REPOS = {
+    'build': None,
+    'buildtools': None,
+    'testing': None,
+    'third_party/abseil-cpp': None,
+    'third_party/android_build_tools': None,
+    'third_party/android_deps': None,
+    'third_party/android_platform': None,
+    'third_party/android_sdk': None,
+    'third_party/ijar': None,
+    'third_party/jinja2': None,
+    # TODO(anglebug.com/40041909): Add third_party/jsoncpp/src once jsoncpp's
+    # BUILD.gn is copied into ANGLE and the source can be rolled without relying
+    # on recursedeps.
+    'third_party/markupsafe': None,
+    'third_party/protobuf': None,
+    'third_party/Python-Markdown': None,
+    'third_party/rust': None,
+    'third_party/six': None,
+    'third_party/zlib': None,
+    'tools/android': None,
+    # TODO(anglebug.com/485785261): Remove tools/clang when clang is handled as
+    # a GCS dependency like is done in Chromium.
+    'tools/clang': None,
+    'tools/mb': None,
+    'tools/md_browser': None,
+    'tools/memory': None,
+    'tools/perf': None,
+    'tools/protoc_wrapper': None,
+    'tools/python': None,
+    'tools/rust': None,
+    'tools/valgrind': None,
+    'tools/win': None,
+}
 
 
 @dataclasses.dataclass
@@ -1067,11 +1136,7 @@ def main() -> None:
     # We want these entries to be in the commit message, but we do not want them
     # to be present for _apply_changed_deps() since they are not actually DEPS
     # entries.
-    # TODO(anglebug.com/485785261): Re-add this call and remove the no-op
-    # `changed_packages` assignment once Starlark packages can be synced in
-    # ANGLE.
-    # changed_packages = _sync_starlark_packages(revision_range.new_revision)
-    changed_packages = []
+    changed_packages = _sync_starlark_packages(revision_range.new_revision)
     entries_for_commit_message = changed_entries + changed_packages
 
     # Create the commit message before adding the entry for the Chromium

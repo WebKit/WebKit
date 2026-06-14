@@ -2557,25 +2557,33 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
             renderPassAttachmentOps.setOps(vk::kAttachmentIndexZero, vk::RenderPassLoadOp::Load,
                                            vk::RenderPassStoreOp::Store);
         }
+        else if (contextVk->getFeatures().supportsRenderPassLoadStoreOpNone.enabled)
+        {
+            renderPassAttachmentOps.setOps(vk::kAttachmentIndexZero, vk::RenderPassLoadOp::None,
+                                           vk::RenderPassStoreOp::None);
+        }
         else
         {
-            // We should use None here, but RenderPassAttachment::finalizeLoadStore is not expecting
-            // None. We relying RenderPassAttachment::finalizeLoadStore to turn it to None.
-            renderPassAttachmentOps.setOps(vk::kAttachmentIndexZero, vk::RenderPassLoadOp::DontCare,
-                                           vk::RenderPassStoreOp::DontCare);
+            // DontCare is destructive, use Load/Store here to preserve the original data.
+            renderPassAttachmentOps.setOps(vk::kAttachmentIndexZero, vk::RenderPassLoadOp::Load,
+                                           vk::RenderPassStoreOp::Store);
         }
+
         if ((aspectFlags & VK_IMAGE_ASPECT_STENCIL_BIT) != 0)
         {
             renderPassAttachmentOps.setStencilOps(
                 vk::kAttachmentIndexZero, vk::RenderPassLoadOp::Load, vk::RenderPassStoreOp::Store);
         }
+        else if (contextVk->getFeatures().supportsRenderPassLoadStoreOpNone.enabled)
+        {
+            renderPassAttachmentOps.setStencilOps(
+                vk::kAttachmentIndexZero, vk::RenderPassLoadOp::None, vk::RenderPassStoreOp::None);
+        }
         else
         {
-            // We should use None here, but RenderPassAttachment::finalizeLoadStore is not expecting
-            // None. We relying RenderPassAttachment::finalizeLoadStore to turn it to None.
-            renderPassAttachmentOps.setStencilOps(vk::kAttachmentIndexZero,
-                                                  vk::RenderPassLoadOp::DontCare,
-                                                  vk::RenderPassStoreOp::DontCare);
+            // DontCare is destructive, use Load/Store here to preserve the original data.
+            renderPassAttachmentOps.setStencilOps(
+                vk::kAttachmentIndexZero, vk::RenderPassLoadOp::Load, vk::RenderPassStoreOp::Store);
         }
     }
     else

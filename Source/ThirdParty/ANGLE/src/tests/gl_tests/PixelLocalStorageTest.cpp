@@ -4469,6 +4469,85 @@ TEST_P(PixelLocalStorageTest, DefaultRPDescSizeLeak_SameFBO)
     }
 }
 
+// Test potential UAF when delete a texture while attached to FBO and used as input attachment.
+TEST_P(PixelLocalStorageTest, DeleteTextureUsedAsInputAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    const char kVSSource[] = R"( #version 300 es
+        void main() {
+          vec2 p = vec2(float((gl_VertexID & 1) * 2 - 1),
+                        float((gl_VertexID & 2) - 1));
+          gl_Position = vec4(p, 0.0, 1.0);
+        })";
+
+    const char kFSSource[] = R"(#version 300 es
+        #extension GL_ANGLE_shader_pixel_local_storage : require
+        precision mediump float;
+        layout(binding=0, rgba8) uniform lowp pixelLocalANGLE plane0;
+        layout(location=0) out lowp vec4 o0;
+        layout(location=1) out lowp vec4 o1;
+        void main() {
+          vec4 v = pixelLocalLoadANGLE(plane0);
+          pixelLocalStoreANGLE(plane0, v + vec4(0.1));
+          o0 = vec4(1.0, 0.0, 0.0, 1.0);
+          o1 = vec4(0.0, 1.0, 0.0, 1.0);
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVSSource, kFSSource);
+    glUseProgram(program);
+
+    const int kWdith = 16, kHeight = 16;
+    glViewport(0, 0, kWdith, kHeight);
+    glDisable(GL_DITHER);
+
+    // ---- Textures -----------------------------------------------------------
+    PLSTestTexture tc0a(GL_RGBA8, kWdith, kHeight);
+    PLSTestTexture tc0b(GL_RGBA8, kWdith, kHeight);
+    PLSTestTexture tc1(GL_RGBA8, kWdith, kHeight);
+    PLSTestTexture tpls(GL_RGBA8, kWdith, kHeight);
+
+    // ---- FBO setup ----------------------------------------------------------
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tc0a, 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tc1, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glFramebufferTexturePixelLocalStorageANGLE(0, tpls, 0, 0, GL_NONE);
+    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, drawBuffers);
+
+    // ---- Draw 1: populate input-attachment descriptors for {0, 1, plsSlot} --
+    GLenum loadOpZero = GL_LOAD_OP_ZERO_ANGLE;
+    glBeginPixelLocalStorageANGLE(1, &loadOpZero);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    GLenum storeOpStore = GL_STORE_OP_STORE_ANGLE;
+    glEndPixelLocalStorageANGLE(1, &storeOpStore);
+
+    // ---- Detach + delete the victim, then force ANGLE finishImpl ------------
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, 0, 0);
+    tc1.reset();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 1, 1, GLColor::red);
+
+    // ---- Replace COLOR_ATTACHMENT0 to force a descriptor-set cache miss -----
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tc0b, 0);
+    GLenum singleDrawBuffer[] = {GL_COLOR_ATTACHMENT0};
+    glDrawBuffers(1, singleDrawBuffer);
+
+    // ---- Draw 2: stale slot for color1 is emitted to vkUpdateDescriptorSets -
+    GLenum loadOpLoad = GL_LOAD_OP_LOAD_ANGLE;
+    glBeginPixelLocalStorageANGLE(1, &loadOpLoad);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glEndPixelLocalStorageANGLE(1, &storeOpStore);
+
+    // Force render-pass end + flushDescriptorSetUpdates
+    EXPECT_PIXEL_RECT_EQ(0, 0, 1, 1, GLColor::red);
+}
+
 // Checks that draw commands validate current PLS state against the shader's PLS uniforms.
 class DrawCommandValidationTest
 {

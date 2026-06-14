@@ -1636,8 +1636,10 @@ angle::Result Buffer11::PackStorage::packPixels(const gl::Context *context,
 
     gl::Extents srcTextureSize(params.area.width, params.area.height, 1);
     if (!mStagingTexture.get() || mStagingTexture.getFormat() != srcTexture->getFormat() ||
-        mStagingTexture.getExtents() != srcTextureSize)
+        mStagingTexture.getExtents() != srcTextureSize ||
+        mStagingTexture.getTextureType() != srcTexture->getTextureType())
     {
+        mStagingTexture.reset();
         ANGLE_TRY(mRenderer->createStagingTexture(context, srcTexture->getTextureType(),
                                                   srcTexture->getFormatSet(), srcTextureSize,
                                                   StagingAccess::READ, &mStagingTexture));
@@ -1652,7 +1654,7 @@ angle::Result Buffer11::PackStorage::packPixels(const gl::Context *context,
 
     // Select the correct layer from a 3D attachment
     srcBox.front = 0;
-    if (mStagingTexture.is3D())
+    if (srcTexture->is3D())
     {
         srcBox.front = static_cast<UINT>(readAttachment.layer());
     }

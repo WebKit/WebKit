@@ -997,7 +997,8 @@ TEST_F(IfTest, DefinedOperatorInvalidAfterMacroExpansionInWebGL)
     EXPECT_CALL(mDiagnostics, print(pp::Diagnostics::PP_CONDITIONAL_UNEXPECTED_TOKEN,
                                     pp::SourceLocation(0, 2), "bar"));
 
-    preprocess(str, pp::PreprocessorSettings(SH_WEBGL_SPEC));
+    preprocess(
+        str, pp::PreprocessorSettings(SH_WEBGL_SPEC, pp::WebGLExtensionDisableBehavior::Standard));
 }
 
 // Defined operator produced by macro expansion has undefined behavior according to C++ spec,

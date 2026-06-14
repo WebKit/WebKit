@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 407
+#define ANGLE_SH_VERSION 409
 
 enum ShShaderSpec
 {
@@ -410,10 +410,10 @@ struct ShCompileOptions
     // ceil()ed instead.
     uint64_t roundOutputAfterDithering : 1;
 
-    // placeholder bit for removed castMediumpFloatTo16Bit option. This is needed because chromium
-    // fuzzer needs the ShCompileOptions memory layout remains unchanged to be able to map the bugs
-    // filed.
-    uint64_t unused3 : 1;
+    // Whether |#extension ... : disable| is allowed after non-preprocessor tokens in WebGL.
+    // WebGL1 deviates from GLSL by allowing |#extension| directives after non-preprocessor tokens.
+    // This option restricts this deviation to non-disable behaviors.
+    uint64_t allowExtensionDisableAfterNonPPTokensInWebGL : 1;
 
     // anglebug.com/42265995: packUnorm4x8 fails on Pixel 4 if it is not passed a highp vec4.
     // TODO(anglebug.com/42265995): This workaround is currently only applied for pixel local
@@ -479,6 +479,9 @@ struct ShCompileOptions
 
     // Whether the ANGLE IR should be used.  Ineffective if ANGLE is built without IR support.
     uint64_t useIR : 1;
+
+    // Whether ESSL300 fragment outputs should be expanded to vec4s.
+    uint64_t expandFragmentOutputsToVec4 : 1;
 
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;

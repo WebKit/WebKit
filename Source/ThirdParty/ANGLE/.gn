@@ -73,3 +73,7 @@ default_args = {
 }
 
 no_check_targets = [ "third_party/dawn/*" ]
+
+# Export compile_commands.json to build dir for all generated targets.
+# Useful for editors that parse the compilation database for symbol lookup.
+export_compile_commands = [ "*" ]

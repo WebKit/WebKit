@@ -878,6 +878,14 @@
             "issue": "http://crbug.com/475877320"
         },
         {
+            "name": "expand_fragment_outputs_to_vec4",
+            "category": "Workarounds",
+            "description": [
+                "Expand fragment shader outputs to 4 components to work around compiler bugs."
+            ],
+            "issue": "http://crbug.com/491732188"
+        },
+        {
             "name": "recreate_mipmap_levels_before_generate",
             "category": "Workarounds",
             "description": [

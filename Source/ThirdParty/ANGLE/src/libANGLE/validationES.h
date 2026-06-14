@@ -42,7 +42,6 @@ class Shader;
     ANGLE_UNSAFE_TODO(context->getMutableErrorSetForValidation()->validationErrorF( \
         entryPoint, errorCode, __VA_ARGS__))
 
-void SetRobustLengthParam(const GLsizei *length, GLsizei value);
 bool ValidTextureTarget(const Context *context, TextureType type);
 bool ValidTexture2DTarget(const Context *context, TextureType type);
 bool ValidTexture3DTarget(const Context *context, TextureType target);
@@ -187,12 +186,9 @@ bool ValidatePixelPack(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLenum format,
                        GLenum type,
-                       GLint x,
-                       GLint y,
                        GLsizei width,
                        GLsizei height,
                        GLsizei bufSize,
-                       GLsizei *length,
                        const void *pixels);
 
 bool ValidateReadPixelsBase(const Context *context,
@@ -204,9 +200,6 @@ bool ValidateReadPixelsBase(const Context *context,
                             GLenum format,
                             GLenum type,
                             GLsizei bufSize,
-                            GLsizei *length,
-                            GLsizei *columns,
-                            GLsizei *rows,
                             const void *pixels);
 bool ValidateBeginQueryBase(const Context *context,
                             angle::EntryPoint entryPoint,
@@ -500,10 +493,6 @@ bool ValidateGenOrDelete(ErrorSet *errors, angle::EntryPoint entryPoint, GLint n
 bool ValidateRobustEntryPoint(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLsizei bufSize);
-bool ValidateRobustBufferSize(const Context *context,
-                              angle::EntryPoint entryPoint,
-                              GLsizei bufSize,
-                              GLsizei numParams);
 bool ValidateRobustParamCount(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLsizei paramCount,
@@ -1204,7 +1193,7 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
                 return false;
             }
 
-            if (!ValidateDrawAttribs(context, entryPoint, indexRange.end()))
+            if (!ValidateDrawAttribs(context, entryPoint, static_cast<GLint64>(indexRange.end())))
             {
                 return false;
             }

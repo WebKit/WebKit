@@ -87,8 +87,8 @@ use crate::ir::*;
 use crate::*;
 use std::fmt;
 
-pub fn validate(ir: &IR) {
-    let validator = Validator::new(ir);
+pub fn validate(ir: &IR, previous_operation: &'static str) {
+    let validator = Validator::new(ir, previous_operation);
     validator.validate();
 }
 
@@ -245,6 +245,9 @@ impl BlockMetaData {
 // object
 struct Validator<'a> {
     ir: &'a IR,
+    // The name of the operation that was performed before validation was run.  If validation
+    // fails, that name makes it easier to blame the transformation that introduced the error.
+    operation_before_validate: &'static str,
     max_type_count: u32,
     max_variable_count: u32,
     max_constant_count: u32,
@@ -253,9 +256,10 @@ struct Validator<'a> {
 
 impl<'a> Validator<'a> {
     // Validator constructor
-    fn new(ir: &'a IR) -> Validator<'a> {
+    fn new(ir: &'a IR, previous_operation: &'static str) -> Validator<'a> {
         Validator {
             ir,
+            operation_before_validate: previous_operation,
             max_type_count: ir.meta.all_types().len() as u32,
             max_variable_count: ir.meta.all_variables().len() as u32,
             max_constant_count: ir.meta.all_constants().len() as u32,
@@ -859,7 +863,10 @@ impl<'a> Validator<'a> {
 
     // Helper Function to print the invalid IR and then panic!
     fn on_error(&self, validation_error_msg: fmt::Arguments) {
-        println!("Internal error: Invalid ANGLE IR! {}", validation_error_msg);
+        println!(
+            "Internal error: Invalid ANGLE IR after '{}'! {}",
+            self.operation_before_validate, validation_error_msg
+        );
         debug::dump(self.ir);
         panic!();
     }

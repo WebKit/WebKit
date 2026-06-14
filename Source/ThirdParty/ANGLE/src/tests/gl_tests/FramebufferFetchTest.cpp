@@ -1684,6 +1684,126 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    void DrawNonFetchFetchTest(GLProgram &programNonFetch, GLProgram &programFetch)
+    {
+        // Initialize framebuffer to black.
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        std::vector<GLColor> blackBlock(kViewportWidth * kViewportHeight, GLColor::black);
+        GLTexture colorBufferTex;
+        glBindTexture(GL_TEXTURE_2D, colorBufferTex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kViewportWidth, kViewportHeight, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, blackBlock.data());
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferTex,
+                               0);
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::black);
+        ASSERT_GL_NO_ERROR();
+
+        // In this test, a render pass is started with a non-framebuffer-fetch draw, and then,
+        // without breaking it, a program with framebuffer fetch is used to draw. This is repeated
+        // multiple times.
+        GLint positionLocationNonFetch = glGetAttribLocation(programNonFetch, "a_position");
+        GLint colorLocationNonFetch    = glGetUniformLocation(programNonFetch, "u_color");
+
+        GLint positionLocationFetch = glGetAttribLocation(programFetch, "a_position");
+        GLint colorLocationFetch    = glGetUniformLocation(programFetch, "u_color");
+
+        float colorRed[4]   = {1.0f, 0.0f, 0.0f, 1.0f};
+        float colorGreen[4] = {0.0f, 1.0f, 0.0f, 1.0f};
+        float colorBlue[4]  = {0.0f, 0.0f, 1.0f, 1.0f};
+
+        // Use non-fetch and draw with red.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorRed);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+        // For the purpose of this test, the render pass has not been broken.
+        // Use fetch and draw with green.
+        glUseProgram(programFetch);
+        glUniform4fv(colorLocationFetch, 1, colorGreen);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::yellow);
+
+        // Use non-fetch and draw with blue.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorBlue);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+        // Use fetch and draw with red.
+        glUseProgram(programFetch);
+        glUniform4fv(colorLocationFetch, 1, colorRed);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::magenta);
+
+        // Use non-fetch and draw with green.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorGreen);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+        // Use fetch and draw with blue.
+        glUseProgram(programFetch);
+        glUniform4fv(colorLocationFetch, 1, colorBlue);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::cyan);
+
+        // Use non-fetch and draw with red, and read back.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorRed);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::red);
+
+        // Use non-fetch and draw with blue.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorBlue);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+        // Use fetch and draw with green and red.
+        glUseProgram(programFetch);
+        glUniform4fv(colorLocationFetch, 1, colorGreen);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+        glUniform4fv(colorLocationFetch, 1, colorRed);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::white);
+
+        // Use non-fetch and draw with green, and read back.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorGreen);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::green);
+
+        // Alternate between non-fetch and fetch draws multiple times.
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorBlue);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+
+        glUseProgram(programFetch);
+        glUniform4fv(colorLocationFetch, 1, colorGreen);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+
+        glUseProgram(programNonFetch);
+        glUniform4fv(colorLocationNonFetch, 1, colorRed);
+        render(positionLocationNonFetch, GL_FALSE);
+        ASSERT_GL_NO_ERROR();
+
+        glUseProgram(programFetch);
+        glUniform4fv(colorLocationFetch, 1, colorBlue);
+        render(positionLocationFetch, !mCoherentExtension);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::magenta);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     void makeProgramPipeline(GLProgramPipeline &pipeline, const char *vs, const char *fs)
     {
         GLProgram programVS, programFS;
@@ -2763,6 +2883,34 @@ TEST_P(FramebufferFetchES31, ProgramPipeline_NonCoherent)
 
     ProgramPipelineTest(k310VS, getFragmentShader(GLSL310_NO_FETCH_1ATTACHMENT),
                         getFragmentShader(GLSL310_1ATTACHMENT));
+}
+
+// Testing coherent extension with non-fetch-then-fetch program order
+TEST_P(FramebufferFetchES31, DrawNonFetchFetch_Coherent)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+    setWhichExtension(COHERENT);
+
+    GLProgram programNonFetch, programFetch;
+    programNonFetch.makeRaster(k310VS, getFragmentShader(GLSL310_NO_FETCH_1ATTACHMENT));
+    programFetch.makeRaster(k310VS, getFragmentShader(GLSL310_1ATTACHMENT));
+    ASSERT_GL_NO_ERROR();
+
+    DrawNonFetchFetchTest(programNonFetch, programFetch);
+}
+
+// Testing non-coherent extension with non-fetch-then-fetch program order
+TEST_P(FramebufferFetchES31, DrawNonFetchFetch_NonCoherent)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+    setWhichExtension(NON_COHERENT);
+
+    GLProgram programNonFetch, programFetch;
+    programNonFetch.makeRaster(k310VS, getFragmentShader(GLSL310_NO_FETCH_1ATTACHMENT));
+    programFetch.makeRaster(k310VS, getFragmentShader(GLSL310_1ATTACHMENT));
+    ASSERT_GL_NO_ERROR();
+
+    DrawNonFetchFetchTest(programNonFetch, programFetch);
 }
 
 // Verify that sample shading is automatically enabled when framebuffer fetch is used with

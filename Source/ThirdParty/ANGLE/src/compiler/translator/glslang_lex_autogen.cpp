@@ -1520,6 +1520,10 @@ YY_DECL
                 case 29:
                     YY_RULE_SETUP
                     {
+                        if (IsWebGLBasedSpec(context->getShaderSpec()))
+                        {
+                            return reserved_word(yyscanner);
+                        }
                         return ES3_1_keyword(context, SHARED);
                     }
                     YY_BREAK
@@ -2222,7 +2226,8 @@ YY_DECL
                 case 151:
                     YY_RULE_SETUP
                     {
-                        if (context->getShaderVersion() >= 300)
+                        if (context->getShaderVersion() >= 300 &&
+                            !IsWebGLBasedSpec(context->getShaderSpec()))
                         {
                             yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
                             return check_type(yyscanner);

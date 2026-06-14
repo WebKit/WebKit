@@ -23,16 +23,25 @@ class DirectiveHandler;
 struct PreprocessorImpl;
 struct Token;
 
+enum class WebGLExtensionDisableBehavior
+{
+    Standard,
+    AnywhereInShader,
+};
+
 struct PreprocessorSettings final
 {
-    PreprocessorSettings(ShShaderSpec shaderSpec)
-        : maxMacroExpansionDepth(1000), shaderSpec(shaderSpec)
+    PreprocessorSettings(ShShaderSpec shaderSpec, WebGLExtensionDisableBehavior disableBehavior)
+        : maxMacroExpansionDepth(1000),
+          shaderSpec(shaderSpec),
+          webglExtensionDisableBehavior(disableBehavior)
     {}
 
     PreprocessorSettings(const PreprocessorSettings &other) = default;
 
     int maxMacroExpansionDepth;
     ShShaderSpec shaderSpec;
+    WebGLExtensionDisableBehavior webglExtensionDisableBehavior;
 };
 
 class Preprocessor : angle::NonCopyable

@@ -436,8 +436,14 @@ void ShareGroupVk::finalizeImageLayoutInAllSharedContexts(vk::ImageHelper *image
                 // out so that VVL will not complain. Note that one image used in two contexts
                 // simultaneously is a bit tricky, this is not rock solid to avoid image layout VVL,
                 // but should solve some usage cases at least.
-                (void)sharedContextVk->flushAndSubmitCommands(
+                const angle::Result result = sharedContextVk->flushAndSubmitCommands(
                     nullptr, nullptr, QueueSubmitReason::ForeignImageRelease);
+
+                // In case of failure, remove the dangling image pointer to avoid UAF
+                if (result != angle::Result::Continue)
+                {
+                    sharedContextVk->forgetAllForeignImagesOnError();
+                }
                 ASSERT(!sharedContextVk->hasForeignImagesToTransition());
             }
         }

@@ -147,7 +147,7 @@ angle::Result GLES1Renderer::prepareForDraw(PrimitiveMode mode,
         if (texCubeEnables[i] && currCubeTexture &&
             IsMipmapFiltered(currCubeTexture->getMinFilter()))
         {
-            texCubeEnables[i] = curr2DTexture->isMipmapComplete();
+            texCubeEnables[i] = currCubeTexture->isMipmapComplete();
         }
     }
 
@@ -315,6 +315,23 @@ angle::Result GLES1Renderer::prepareForDraw(PrimitiveMode mode,
     }
     setUniform4fv(&executable, programState.drawTextureNormalizedCropRectLoc, kTexUnitCount,
                   reinterpret_cast<GLfloat *>(cropRectBuffer));
+
+    for (int i = 0; i < kTexUnitCount; i++)
+    {
+        // To avoid GL_INVALID_OPERATION caused by samplers of different types pointing to the same
+        // texture unit, the inactive sampler is shifted to a dummy unit (i + kTexUnitCount).
+        if (texCubeEnables[i])
+        {
+            setUniform1i(context, &executable, programState.tex2DSamplerLocs[i], i + kTexUnitCount);
+            setUniform1i(context, &executable, programState.texCubeSamplerLocs[i], i);
+        }
+        else
+        {
+            setUniform1i(context, &executable, programState.tex2DSamplerLocs[i], i);
+            setUniform1i(context, &executable, programState.texCubeSamplerLocs[i],
+                         i + kTexUnitCount);
+        }
+    }
 
     if (gles1State->isDirty(GLES1State::DIRTY_GLES1_LOGIC_OP) && hasLogicOpANGLE)
     {
@@ -1126,6 +1143,8 @@ angle::Result GLES1Renderer::initializeRendererProgram(Context *context,
 
     for (int i = 0; i < kTexUnitCount; i++)
     {
+        // To avoid GL_INVALID_OPERATION caused by samplers of different types pointing to the same
+        // texture unit, the inactive sampler is shifted to a dummy unit (i + kTexUnitCount).
         setUniform1i(context, &executable, programState.tex2DSamplerLocs[i], i);
         setUniform1i(context, &executable, programState.texCubeSamplerLocs[i], i + kTexUnitCount);
     }

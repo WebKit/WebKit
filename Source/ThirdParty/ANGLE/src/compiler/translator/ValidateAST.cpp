@@ -135,6 +135,9 @@ class ValidateAST : public TIntermTraverser
     bool mIsBranchVisitedInBlock        = false;
     bool mNoStatementsAfterBranchFailed = false;
 
+    // For validateNoCaseAtEndOfSwitchBlock:
+    bool mNoCaseAtEndOfSwitchBlockFailed = false;
+
     bool mVariableNamingFailed = false;
 };
 
@@ -914,6 +917,17 @@ bool ValidateAST::visitSwitch(Visit visit, TIntermSwitch *node)
         validateExpressionTypeSwitch(node);
     }
 
+    if (mOptions.validateNoCaseAtEndOfSwitchBlock && visit == PreVisit)
+    {
+        const TIntermSequence &statements = *node->getStatementList()->getSequence();
+        if (!statements.empty() && statements.back()->getAsCaseNode() != nullptr)
+        {
+            mDiagnostics->error(node->getLine(), "Found switch block that ends in a case statement",
+                                "<validateNoCaseAtEndOfSwitchBlock>");
+            mNoCaseAtEndOfSwitchBlockFailed = true;
+        }
+    }
+
     return true;
 }
 
@@ -1319,7 +1333,7 @@ bool ValidateAST::validateInternal()
            !mNullNodesFailed && !mQualifiersFailed && !mPrecisionFailed && !mStructUsageFailed &&
            !mExpressionTypesFailed && !mMultiDeclarationsFailed && !mNoSwizzleOfSwizzleFailed &&
            !mNoQualifiersOnConstructorsFailed && !mNoStatementsAfterBranchFailed &&
-           !mVariableNamingFailed;
+           !mNoCaseAtEndOfSwitchBlockFailed && !mVariableNamingFailed;
 }
 
 bool ValidateAST::isInDeclaration() const

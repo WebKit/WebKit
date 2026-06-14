@@ -803,17 +803,6 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
 }
 }  // anonymous namespace
 
-void SetRobustLengthParam(const GLsizei *length, GLsizei value)
-{
-    if (length)
-    {
-        // Currently we modify robust length parameters in the validation layer. We should be only
-        // doing this in the Context instead.
-        // TODO(http://anglebug.com/42263032): Remove when possible.
-        *const_cast<GLsizei *>(length) = value;
-    }
-}
-
 bool ValidTextureTarget(const Context *context, TextureType type)
 {
     switch (type)
@@ -2396,31 +2385,14 @@ bool ValidateReadPixelsRobustANGLE(const Context *context,
                                    const GLsizei *rows,
                                    const void *pixels)
 {
-    if (!ValidateRobustEntryPoint(context, entryPoint, bufSize))
-    {
-        return false;
-    }
+    // The ANGLE-specific variant of this command explicitly ignores the bufSize
+    // value when a pixel pack buffer is bound for increased client robustness.
+    // Negative bufSize values are still invalid.
+    const bool hasPBO  = context->getState().getTargetBuffer(BufferBinding::PixelPack) != nullptr;
+    const GLsizei size = (bufSize >= 0 && hasPBO) ? std::numeric_limits<GLsizei>::max() : bufSize;
 
-    GLsizei writeLength  = 0;
-    GLsizei writeColumns = 0;
-    GLsizei writeRows    = 0;
-
-    if (!ValidateReadPixelsBase(context, entryPoint, x, y, width, height, format, type, bufSize,
-                                &writeLength, &writeColumns, &writeRows, pixels))
-    {
-        return false;
-    }
-
-    if (!ValidateRobustBufferSize(context, entryPoint, bufSize, writeLength))
-    {
-        return false;
-    }
-
-    SetRobustLengthParam(length, writeLength);
-    SetRobustLengthParam(columns, writeColumns);
-    SetRobustLengthParam(rows, writeRows);
-
-    return true;
+    return ValidateReadPixelsBase(context, entryPoint, x, y, width, height, format, type, size,
+                                  pixels);
 }
 
 bool ValidateReadnPixelsEXT(const Context *context,
@@ -2434,14 +2406,8 @@ bool ValidateReadnPixelsEXT(const Context *context,
                             GLsizei bufSize,
                             const void *pixels)
 {
-    if (bufSize < 0)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
-        return false;
-    }
-
     return ValidateReadPixelsBase(context, entryPoint, x, y, width, height, format, type, bufSize,
-                                  nullptr, nullptr, nullptr, pixels);
+                                  pixels);
 }
 
 bool ValidateGenQueriesEXT(const Context *context,
@@ -5422,20 +5388,6 @@ bool ValidateRobustEntryPoint(const Context *context, angle::EntryPoint entryPoi
     return true;
 }
 
-bool ValidateRobustBufferSize(const Context *context,
-                              angle::EntryPoint entryPoint,
-                              GLsizei bufSize,
-                              GLsizei numParams)
-{
-    if (bufSize < numParams)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInsufficientParamCount);
-        return false;
-    }
-
-    return true;
-}
-
 bool ValidateRobustParamCount(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLsizei paramCount,
@@ -7030,12 +6982,9 @@ bool ValidatePixelPack(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLenum format,
                        GLenum type,
-                       GLint x,
-                       GLint y,
                        GLsizei width,
                        GLsizei height,
                        GLsizei bufSize,
-                       GLsizei *length,
                        const void *pixels)
 {
     // Check for pixel pack buffer related API errors
@@ -7061,19 +7010,18 @@ bool ValidatePixelPack(const Context *context,
     const auto &pack = context->getState().getPackState();
 
     GLuint endByte = 0;
-    if (!formatInfo.computePackUnpackEndByte(type, size, pack, false, &endByte))
+    if (ANGLE_UNLIKELY(!formatInfo.computePackUnpackEndByte(type, size, pack, false, &endByte) ||
+                       endByte > static_cast<GLuint>(std::numeric_limits<GLsizei>::max())))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
         return false;
     }
 
-    if (bufSize >= 0)
+    ASSERT(bufSize >= 0);
+    if (ANGLE_UNLIKELY(static_cast<GLuint>(bufSize) < endByte))
     {
-        if (static_cast<size_t>(bufSize) < endByte)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInsufficientBufferSize);
-            return false;
-        }
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInsufficientBufferSize);
+        return false;
     }
 
     if (pixelPackBuffer != nullptr)
@@ -7099,17 +7047,6 @@ bool ValidatePixelPack(const Context *context,
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferOffsetNotAligned);
             return false;
         }
-    }
-
-    if (pixelPackBuffer == nullptr && length != nullptr)
-    {
-        if (endByte > static_cast<size_t>(std::numeric_limits<GLsizei>::max()))
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
-            return false;
-        }
-
-        *length = static_cast<GLsizei>(endByte);
     }
 
     if (context->isWebGL())
@@ -7140,22 +7077,8 @@ bool ValidateReadPixelsBase(const Context *context,
                             GLenum format,
                             GLenum type,
                             GLsizei bufSize,
-                            GLsizei *length,
-                            GLsizei *columns,
-                            GLsizei *rows,
                             const void *pixels)
 {
-    ASSERT((length == nullptr && columns == nullptr && rows == nullptr) ||
-           (length != nullptr && columns != nullptr && rows != nullptr));
-    const bool isRobust = (length != nullptr);
-
-    if (isRobust)
-    {
-        *length  = 0;
-        *rows    = 0;
-        *columns = 0;
-    }
-
     if (width < 0 || height < 0)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeSize);
@@ -7272,63 +7195,16 @@ bool ValidateReadPixelsBase(const Context *context,
         return false;
     }
 
-    if (!ValidatePixelPack(context, entryPoint, format, type, x, y, width, height, bufSize, length,
-                           pixels))
+    if (ANGLE_UNLIKELY(bufSize < 0))
     {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
-    auto getClippedExtent = [](GLint start, GLsizei length, int bufferSize, GLsizei *outExtent) {
-        ASSERT(length >= 0);
-        ASSERT(bufferSize >= 0);
-        ASSERT(angle::base::CheckAdd<GLint>(start, length).IsValid());
-
-        if (outExtent == nullptr)
-        {
-            return;
-        }
-
-        int clippedExtent = length;
-        if (start < 0)
-        {
-            // "subtract" the area that is less than 0
-            // Can't cause the overflow since |length| can't be negative.
-            clippedExtent += start;
-        }
-
-        // Integer overflow has been checked earlier.
-        const int readExtentValue = start + length;
-        if (readExtentValue > bufferSize)
-        {
-            ASSERT(readExtentValue > 0);
-            ASSERT((start <= 0 && clippedExtent == readExtentValue) ||
-                   (start > 0 && clippedExtent == length && readExtentValue == start + length));
-            // Subtract the region to the right of the read buffer
-            clippedExtent -= (readExtentValue - bufferSize);
-            // Integer overflow is not possible.
-            ASSERT((start <= 0 && clippedExtent == bufferSize) ||
-                   (start > 0 && clippedExtent >= -start));
-        }
-
-        *outExtent = std::max<int>(clippedExtent, 0);
-    };
-
-    Extents readBufferSize;
-    if (isRobust)
+    if (!ValidatePixelPack(context, entryPoint, format, type, width, height, bufSize, pixels))
     {
-        // Only get size when robust read is used, since buffer size does not affect the integer
-        // overflow validation part of getClippedExtent() lambda.
-        if (readBuffer->ensureSizeResolved(context) == angle::Result::Stop)
-        {
-            // Context error must be generated by the failed call itself.
-            return false;
-        }
-        readBufferSize = readBuffer->getSize();
+        return false;
     }
-
-    getClippedExtent(x, width, readBufferSize.width, columns);
-
-    getClippedExtent(y, height, readBufferSize.height, rows);
 
     return true;
 }

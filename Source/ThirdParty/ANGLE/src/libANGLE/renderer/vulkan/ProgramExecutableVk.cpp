@@ -1438,8 +1438,13 @@ void ProgramExecutableVk::initializeWriteDescriptorDesc(vk::ErrorContext *contex
     mShaderResourceWriteDescriptorDescs.updateAtomicCounters(
         mVariableInfoMap, mExecutable->getAtomicCounterBuffers());
     mShaderResourceWriteDescriptorDescs.updateImages(*mExecutable, mVariableInfoMap);
+
+    mShaderResourceWriteDescriptorDescs.initInputAttachments(
+        *mExecutable, mVariableInfoMap, context->getRenderer()->getMaxColorInputAttachmentCount());
     mShaderResourceDescriptorDescBuilder.resize(
         mShaderResourceWriteDescriptorDescs.getTotalDescriptorCount());
+
+    mCurrentInputAttachmentsMask.reset();
 
     // Update mTextureWriteDescriptors and its builder
     mTextureWriteDescriptorDescs.reset();
@@ -2242,18 +2247,9 @@ angle::Result ProgramExecutableVk::updateShaderResourcesDescInfo(
     // Update input attachments first since it could change descriptor counts
     if (hasFramebufferFetch)
     {
-        // Update writeDescriptorDescs with inputAttachments
-        mShaderResourceWriteDescriptorDescs.updateInputAttachments(*executable, mVariableInfoMap,
-                                                                   framebufferVk);
-
-        // Total descriptor count could have changed, resize DescriptorSetDescBuilder
-        mShaderResourceDescriptorDescBuilder.resize(
-            mShaderResourceWriteDescriptorDescs.getTotalDescriptorCount());
-
-        // Update DescriptorSetDescBuilder with inputAttachments
         ANGLE_TRY(mShaderResourceDescriptorDescBuilder.updateInputAttachments(
             contextVk, *executable, mVariableInfoMap, framebufferVk,
-            mShaderResourceWriteDescriptorDescs));
+            mShaderResourceWriteDescriptorDescs, &mCurrentInputAttachmentsMask));
     }
 
     if (hasStorageBuffers)

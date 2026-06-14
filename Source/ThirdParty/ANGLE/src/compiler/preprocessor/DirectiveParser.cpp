@@ -693,8 +693,14 @@ void DirectiveParser::parseExtension(Token *token)
         {
             if (mSettings.shaderSpec == SH_WEBGL_SPEC)
             {
-                mDiagnostics->report(Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL,
-                                     token->location, token->text);
+                // Can't disable extensions late, the shader might have already used them and passed
+                // validation.
+                valid = behavior != "disable" || (mSettings.webglExtensionDisableBehavior ==
+                                                  WebGLExtensionDisableBehavior::AnywhereInShader);
+                mDiagnostics->report(
+                    valid ? Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_WEBGL
+                          : Diagnostics::PP_NON_PP_TOKEN_BEFORE_EXTENSION_DISABLE_WEBGL,
+                    token->location, token->text);
             }
             else
             {

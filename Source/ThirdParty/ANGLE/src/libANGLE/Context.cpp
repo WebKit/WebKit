@@ -167,6 +167,13 @@ constexpr state::DirtyObjects kTilingDirtyObjectsBase{state::DIRTY_OBJECT_DRAW_F
 
 constexpr bool kEnableAEPRequirementLogging = false;
 
+// A helper to return strings as const GLubyte *, adding safety that the reinterpret_cast is applied
+// only to const char *.
+const GLubyte *AsGLubytePtr(const char *str)
+{
+    return reinterpret_cast<const GLubyte *>(str);
+}
+
 egl::ShareGroup *AllocateOrGetShareGroup(egl::Display *display, const gl::Context *shareContext)
 {
     if (shareContext)
@@ -3561,6 +3568,17 @@ void Context::programParameteri(ShaderProgramID program, GLenum pname, GLint val
     SetProgramParameteri(this, programObject, pname, value);
 }
 
+const char *Context::makeStaticString(const std::string &str)
+{
+    auto it = mStaticStrings.find(str);
+    if (it != mStaticStrings.end())
+    {
+        return it->c_str();
+    }
+
+    return mStaticStrings.insert(str).first->c_str();
+}
+
 void Context::initRendererString()
 {
     std::ostringstream frontendRendererString;
@@ -3596,7 +3614,7 @@ void Context::initRendererString()
         frontendRendererString << ")";
     }
 
-    mRendererString = MakeStaticString(frontendRendererString.str());
+    mRendererString = makeStaticString(frontendRendererString.str());
 }
 
 void Context::initVendorString()
@@ -3618,7 +3636,7 @@ void Context::initVendorString()
         vendorString << mDisplay->getVendorString();
     }
 
-    mVendorString = MakeStaticString(vendorString.str());
+    mVendorString = makeStaticString(vendorString.str());
 }
 
 void Context::initVersionStrings()
@@ -3644,29 +3662,29 @@ void Context::initVersionStrings()
                       << angle::GetANGLEVersionString() << ")";
     }
 
-    mVersionString = MakeStaticString(versionString.str());
+    mVersionString = makeStaticString(versionString.str());
 
     std::ostringstream shadingLanguageVersionString;
     shadingLanguageVersionString << "OpenGL ES GLSL ES ";
     shadingLanguageVersionString << (clientVersion.getMajor() == 2 ? 1 : clientVersion.getMajor())
                                  << "." << clientVersion.getMinor() << "0 (ANGLE "
                                  << angle::GetANGLEVersionString() << ")";
-    mShadingLanguageString = MakeStaticString(shadingLanguageVersionString.str());
+    mShadingLanguageString = makeStaticString(shadingLanguageVersionString.str());
 }
 
 void Context::initExtensionStrings()
 {
-    auto mergeExtensionStrings = [](const std::vector<const char *> &strings) {
+    auto mergeExtensionStrings = [this](const std::vector<const char *> &strings) {
         std::ostringstream combinedStringStream;
         std::copy(strings.begin(), strings.end(),
                   std::ostream_iterator<const char *>(combinedStringStream, " "));
-        return MakeStaticString(combinedStringStream.str());
+        return makeStaticString(combinedStringStream.str());
     };
 
     mExtensionStrings.clear();
     for (const auto &extensionString : mState.getExtensions().getStrings())
     {
-        mExtensionStrings.push_back(MakeStaticString(extensionString));
+        mExtensionStrings.push_back(makeStaticString(extensionString));
     }
     mExtensionString = mergeExtensionStrings(mExtensionStrings);
 
@@ -3677,7 +3695,7 @@ void Context::initExtensionStrings()
             !(mState.getExtensions().*(extensionInfo.second.ExtensionsMember)) &&
             mSupportedExtensions.*(extensionInfo.second.ExtensionsMember))
         {
-            mRequestableExtensionStrings.push_back(MakeStaticString(extensionInfo.first));
+            mRequestableExtensionStrings.push_back(makeStaticString(extensionInfo.first));
         }
     }
     mRequestableExtensionString = mergeExtensionStrings(mRequestableExtensionStrings);
@@ -3698,28 +3716,28 @@ const GLubyte *Context::getString(GLenum name) const
     switch (name)
     {
         case GL_VENDOR:
-            return reinterpret_cast<const GLubyte *>(mVendorString);
+            return AsGLubytePtr(mVendorString);
 
         case GL_RENDERER:
-            return reinterpret_cast<const GLubyte *>(mRendererString);
+            return AsGLubytePtr(mRendererString);
 
         case GL_VERSION:
-            return reinterpret_cast<const GLubyte *>(mVersionString);
+            return AsGLubytePtr(mVersionString);
 
         case GL_SHADING_LANGUAGE_VERSION:
-            return reinterpret_cast<const GLubyte *>(mShadingLanguageString);
+            return AsGLubytePtr(mShadingLanguageString);
 
         case GL_EXTENSIONS:
-            return reinterpret_cast<const GLubyte *>(mExtensionString);
+            return AsGLubytePtr(mExtensionString);
 
         case GL_REQUESTABLE_EXTENSIONS_ANGLE:
-            return reinterpret_cast<const GLubyte *>(mRequestableExtensionString);
+            return AsGLubytePtr(mRequestableExtensionString);
 
         case GL_SERIALIZED_CONTEXT_STRING_ANGLE:
             if (angle::SerializeContextToString(this, &mCachedSerializedStateString) ==
                 angle::Result::Continue)
             {
-                return reinterpret_cast<const GLubyte *>(mCachedSerializedStateString.c_str());
+                return AsGLubytePtr(mCachedSerializedStateString.c_str());
             }
             else
             {
@@ -3737,10 +3755,10 @@ const GLubyte *Context::getStringi(GLenum name, GLuint index) const
     switch (name)
     {
         case GL_EXTENSIONS:
-            return reinterpret_cast<const GLubyte *>(mExtensionStrings[index]);
+            return AsGLubytePtr(mExtensionStrings[index]);
 
         case GL_REQUESTABLE_EXTENSIONS_ANGLE:
-            return reinterpret_cast<const GLubyte *>(mRequestableExtensionStrings[index]);
+            return AsGLubytePtr(mRequestableExtensionStrings[index]);
 
         default:
             UNREACHABLE();
@@ -3851,7 +3869,11 @@ void Context::beginTransformFeedback(PrimitiveMode primitiveMode)
     ASSERT(!transformFeedback->isPaused());
 
     // TODO: http://anglebug.com/42265705: Handle PPOs
-    ANGLE_CONTEXT_TRY(transformFeedback->begin(this, primitiveMode, mState.getProgram()));
+    // Since programs should override PPOs, no PPO is passed to the transform feedback if a program
+    // is active.
+    Program *program                 = mState.getProgram();
+    ProgramPipeline *programPipeline = program == nullptr ? mState.getProgramPipeline() : nullptr;
+    ANGLE_CONTEXT_TRY(transformFeedback->begin(this, primitiveMode, program, programPipeline));
     onActiveTransformFeedbackChange();
 }
 
@@ -4410,6 +4432,11 @@ void Context::initCaps()
     ANGLE_LIMIT_CAP(caps->maxViews, IMPLEMENTATION_ANGLE_MULTIVIEW_MAX_VIEWS);
 
     ANGLE_LIMIT_CAP(caps->maxDualSourceDrawBuffers, IMPLEMENTATION_MAX_DUAL_SOURCE_DRAW_BUFFERS);
+
+    // Disallow using UINT_MAX as an index. This would allow for a draw count of UINT_MAX + 1,
+    // overflowing a 32-bit integer.
+    constexpr GLint64 kMaxElementIndex = std::numeric_limits<GLuint>::max() - 1;
+    ANGLE_LIMIT_CAP(caps->maxElementIndex, kMaxElementIndex);
 
     // WebGL compatibility
     extensions->webglCompatibilityANGLE = mWebGLContext;
@@ -5142,6 +5169,34 @@ void Context::clearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLin
         framebufferObject->clearBufferfi(this, buffer, drawbuffer, clamp01(depth), stencil));
 }
 
+ANGLE_INLINE angle::Result Context::readPixelsImpl(GLint x,
+                                                   GLint y,
+                                                   GLsizei width,
+                                                   GLsizei height,
+                                                   GLenum format,
+                                                   GLenum type,
+                                                   void *pixels)
+{
+    // Zero dimensions are no-ops and negative dimensions must be blocked by validation.
+    // Exit early in both cases to avoid backend failures when validation is disabled.
+    if (ANGLE_UNLIKELY(width <= 0 || height <= 0))
+    {
+        return angle::Result::Continue;
+    }
+
+    ANGLE_TRY(syncStateForReadPixels());
+
+    Framebuffer *readFBO = mState.getReadFramebuffer();
+    ASSERT(readFBO);
+
+    Rectangle area(x, y, width, height);
+    PixelPackState packState = mState.getPackState();
+    Buffer *packBuffer       = mState.getTargetBuffer(gl::BufferBinding::PixelPack);
+    ANGLE_TRY(readFBO->readPixels(this, area, format, type, packState, packBuffer, pixels));
+
+    return angle::Result::Continue;
+}
+
 void Context::readPixels(GLint x,
                          GLint y,
                          GLsizei width,
@@ -5150,20 +5205,7 @@ void Context::readPixels(GLint x,
                          GLenum type,
                          void *pixels)
 {
-    if (width == 0 || height == 0)
-    {
-        return;
-    }
-
-    ANGLE_CONTEXT_TRY(syncStateForReadPixels());
-
-    Framebuffer *readFBO = mState.getReadFramebuffer();
-    ASSERT(readFBO);
-
-    Rectangle area(x, y, width, height);
-    PixelPackState packState = mState.getPackState();
-    Buffer *packBuffer       = mState.getTargetBuffer(gl::BufferBinding::PixelPack);
-    ANGLE_CONTEXT_TRY(readFBO->readPixels(this, area, format, type, packState, packBuffer, pixels));
+    ANGLE_CONTEXT_TRY(readPixelsImpl(x, y, width, height, format, type, pixels));
 }
 
 void Context::readPixelsRobust(GLint x,
@@ -5178,7 +5220,63 @@ void Context::readPixelsRobust(GLint x,
                                GLsizei *rows,
                                void *pixels)
 {
-    readPixels(x, y, width, height, format, type, pixels);
+    ANGLE_CONTEXT_TRY(readPixelsImpl(x, y, width, height, format, type, pixels));
+
+    if (length != nullptr)
+    {
+        if (mState.getTargetBuffer(BufferBinding::PixelPack) == nullptr)
+        {
+            const InternalFormat &formatInfo = GetInternalFormatInfo(format, type);
+
+            GLuint endByte   = 0;
+            const bool valid = formatInfo.computePackUnpackEndByte(
+                type, Extents(width, height, 1), mState.getPackState(), false, &endByte);
+            ASSERT(valid);
+            ASSERT(endByte <= static_cast<GLuint>(std::numeric_limits<GLsizei>::max()));
+
+            *length = static_cast<GLsizei>(endByte);
+        }
+        else
+        {
+            *length = 0;
+        }
+    }
+
+    GLsizei columnsValue = 0;
+    GLsizei rowsValue    = 0;
+    // If the call above exited early due to width or height being zero,
+    // the read buffer dimensions might remain unresolved at this point.
+    // There is no need to compute output dimensions in that case.
+    if (ANGLE_LIKELY(width > 0 && height > 0))
+    {
+        const Extents readBufferSize =
+            mState.getReadFramebuffer()->getState().getReadPixelsAttachment(format)->getSize();
+        ASSERT(readBufferSize.width >= 0 && readBufferSize.height >= 0);
+        ASSERT(angle::base::CheckAdd<GLint>(x, width).IsValid());
+        ASSERT(angle::base::CheckAdd<GLint>(y, height).IsValid());
+
+        // These expressions cannot overflow with the assertions above.
+        // Minuend is the clipped end; subtrahend is the clipped start.
+        columnsValue = std::min<GLsizei>(x + width, readBufferSize.width) - std::max(0, x);
+        rowsValue    = std::min<GLsizei>(y + height, readBufferSize.height) - std::max(0, y);
+
+        // If any computed dimension is not positive, the intersection is empty.
+        if (columnsValue <= 0 || rowsValue <= 0)
+        {
+            columnsValue = 0;
+            rowsValue    = 0;
+        }
+    }
+
+    if (columns != nullptr)
+    {
+        *columns = columnsValue;
+    }
+
+    if (rows != nullptr)
+    {
+        *rows = rowsValue;
+    }
 }
 
 void Context::copyTexImage2D(TextureTarget target,
@@ -6703,7 +6801,7 @@ angle::ScratchBuffer *Context::getScratchBuffer() const
 }
 
 bool Context::getZeroFilledBuffer(size_t requstedSizeBytes,
-                                  angle::MemoryBuffer **zeroBufferOut) const
+                                  const angle::MemoryBuffer **zeroBufferOut) const
 {
     if (!mZeroFilledBuffer.valid())
     {
@@ -6711,7 +6809,15 @@ bool Context::getZeroFilledBuffer(size_t requstedSizeBytes,
     }
 
     ASSERT(mZeroFilledBuffer.valid());
-    return mZeroFilledBuffer.value().getInitialized(requstedSizeBytes, zeroBufferOut, 0);
+
+    angle::MemoryBuffer *memoryBuffer = nullptr;
+    if (!mZeroFilledBuffer.value().getInitialized(requstedSizeBytes, &memoryBuffer, 0))
+    {
+        return false;
+    }
+
+    *zeroBufferOut = memoryBuffer;
+    return true;
 }
 
 void Context::dispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ)
