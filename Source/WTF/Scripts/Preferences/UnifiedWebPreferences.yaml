@@ -3160,7 +3160,7 @@ FlexFormattingContextIntegrationEnabled:
 
 FocusableScrollableOverflowContainersEnabled:
   type: bool
-  status: testable
+  status: unstable
   category: css
   humanReadableName: "Focusable Scrollable Overflow Containers"
   humanReadableDescription: "Enable focusable scrollable overflow containers"
