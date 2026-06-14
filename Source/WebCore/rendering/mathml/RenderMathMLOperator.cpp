@@ -142,28 +142,51 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
     m_stretchHeightAboveBaseline = heightAboveBaseline;
     m_stretchDepthBelowBaseline = depthBelowBaseline;
 
+    LayoutUnit axis = mathAxisHeight();
     if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
         // We make the operator stretch symmetrically above and below the axis.
-        LayoutUnit axis = mathAxisHeight();
         LayoutUnit halfStretchSize = std::max(m_stretchHeightAboveBaseline - axis, m_stretchDepthBelowBaseline + axis);
         m_stretchHeightAboveBaseline = halfStretchSize + axis;
         m_stretchDepthBelowBaseline = halfStretchSize - axis;
     }
-    // We try to honor the minsize/maxsize condition by increasing or decreasing both height and depth proportionately.
-    // Per MathML Core step 5 of https://w3c.github.io/mathml-core/#layout-of-operators:
-    // "If minsize < 0 then set minsize to 0. If maxsize < minsize then set maxsize to minsize."
-    LayoutUnit size = stretchSize();
+    // Honor the minsize/maxsize constraints.
+    // https://w3c.github.io/mathml-core/#layout-of-operators
+    LayoutUnit size = stretchSize(); // T = Tascent + Tdescent.
     LayoutUnit minSizeValue = std::max(0_lu, minSize());
     LayoutUnit maxSizeValue = std::max(minSizeValue, maxSize());
-    float aspect = 1.0;
-    if (size > 0) {
-        if (size < minSizeValue)
-            aspect = minSizeValue.toFloat() / size;
-        else if (maxSizeValue < size)
-            aspect = maxSizeValue.toFloat() / size;
+
+    // The spec adjusts the target by scaling the part relative to the math axis (Tascent - AxisHeight)
+    // and keeping the descent as the remainder, which preserves symmetric stretching about the axis.
+    // We only apply this when an explicit minsize/maxsize is specified. Operators without an explicit
+    // constraint keep their unstretched-size minimum handled the legacy way, so that the ascent/descent
+    // distribution of ordinary stretchy operators (e.g. nested fences) is left unchanged. Anonymous
+    // operators (e.g. mfenced) have no backing element to query, so they always take the legacy path.
+    bool hasExplicitConstraint = !isAnonymous()
+        && (element().minSize().type != MathMLElement::LengthType::ParsingFailed
+            || element().maxSize().type != MathMLElement::LengthType::ParsingFailed);
+    if (hasExplicitConstraint) {
+        if (size <= 0) {
+            m_stretchHeightAboveBaseline = minSizeValue / 2 + axis;
+            m_stretchDepthBelowBaseline = minSizeValue - m_stretchHeightAboveBaseline;
+        } else if (size < minSizeValue) {
+            m_stretchHeightAboveBaseline = LayoutUnit(std::max(0.0f, (m_stretchHeightAboveBaseline - axis).toFloat()) * minSizeValue.toFloat() / size.toFloat()) + axis;
+            m_stretchDepthBelowBaseline = minSizeValue - m_stretchHeightAboveBaseline;
+        } else if (maxSizeValue < size) {
+            m_stretchHeightAboveBaseline = LayoutUnit(std::max(0.0f, (m_stretchHeightAboveBaseline - axis).toFloat()) * maxSizeValue.toFloat() / size.toFloat()) + axis;
+            m_stretchDepthBelowBaseline = maxSizeValue - m_stretchHeightAboveBaseline;
+        }
+    } else {
+        // Legacy proportional scaling for the default (no explicit constraint) case.
+        float aspect = 1.0;
+        if (size > 0) {
+            if (size < minSizeValue)
+                aspect = minSizeValue.toFloat() / size;
+            else if (maxSizeValue < size)
+                aspect = maxSizeValue.toFloat() / size;
+        }
+        m_stretchHeightAboveBaseline *= aspect;
+        m_stretchDepthBelowBaseline *= aspect;
     }
-    m_stretchHeightAboveBaseline *= aspect;
-    m_stretchDepthBelowBaseline *= aspect;
 
     m_mathOperator.stretchTo(style(), m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline);
 
