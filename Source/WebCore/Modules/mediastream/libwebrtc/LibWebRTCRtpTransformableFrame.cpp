@@ -165,7 +165,8 @@ void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedVideoFrameMetada
         rtcMetadata.SetSsrc(*newMetadata.synchronizationSource);
     // FIXME: newMetadata.payloadType
     if (newMetadata.contributingSources) {
-        std::vector<uint32_t> csrcs(newMetadata.contributingSources->size());
+        std::vector<uint32_t> csrcs;
+        csrcs.reserve(newMetadata.contributingSources->size());
         for (auto& csrc : *newMetadata.contributingSources)
             csrcs.push_back(csrc);
         rtcMetadata.SetCsrcs(WTF::move(csrcs));
