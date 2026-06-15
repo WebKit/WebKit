@@ -199,7 +199,6 @@ void FindController::updateFindUIAfterIncrementalFind(bool found, const String& 
     if (auto range = protect(webPage->corePage())->selection().firstRange())
         matchRects = RenderObject::absoluteTextRects(*range);
 
-    updateFindPageOverlay(shouldShowOverlay);
     updateFindIndicatorIfNeeded(found, options, shouldShowOverlay);
     completionHandler(idOfFrameContainingString, WTF::move(matchRects), matchCount, m_foundStringMatchIndex.value_or(0), didWrap == WebCore::DidWrap::Yes);
 }
@@ -289,6 +288,7 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
 
 void FindController::updateFindPageOverlay(bool shouldShowOverlay)
 {
+    m_pageOverlayIsShowing = shouldShowOverlay;
     if (!shouldShowOverlay) {
         if (RefPtr findPageOverlay = m_findPageOverlay.get())
             m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
@@ -347,6 +347,7 @@ void FindController::selectLastFoundRange(const String& string, OptionSet<FindOp
 
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, ShouldReuseLastFoundRange shouldReuseLastFoundRange, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
+    updateFindPageOverlay(options.contains(FindOptions::ShowOverlay));
 #if ENABLE(PDF_PLUGIN)
     RefPtr pluginView = mainFramePlugIn();
 #endif
@@ -415,7 +416,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         RefPtr selectedFrame = frameWithSelection(protect(m_webPage->corePage()).get());
         m_findIndicator->didFindString(selectedFrame);
 
-        if (selectedFrame) {
+        if (selectedFrame && m_pageOverlayIsShowing) {
             if (std::optional<SimpleRange> range = selectedFrame->selection().selection().range())
                 addMarker(*range, DocumentMarkerType::ActiveTextMatch);
         }
@@ -493,8 +494,10 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 
     m_findIndicator->didFindString(selectedFrame);
 
-    if (std::optional<SimpleRange> range = selectedFrame->selection().selection().range())
-        addMarker(*range, DocumentMarkerType::ActiveTextMatch);
+    if (m_pageOverlayIsShowing) {
+        if (std::optional<SimpleRange> range = selectedFrame->selection().selection().range())
+            addMarker(*range, DocumentMarkerType::ActiveTextMatch);
+    }
 
     m_findIndicator->update(selectedFrame, !!m_findPageOverlay);
 }
@@ -503,6 +506,7 @@ void FindController::hideFindUI()
 {
     m_findMatches.clear();
     m_lastFoundRange = std::nullopt;
+    m_pageOverlayIsShowing = false;
     if (RefPtr findPageOverlay = m_findPageOverlay.get())
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 

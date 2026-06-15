@@ -121,6 +121,7 @@ private:
     std::optional<WebCore::SimpleRange> m_lastFoundRange;
     bool m_lastFoundRangeDidWrap { false };
     std::unique_ptr<FindIndicator> m_findIndicator;
+    bool m_pageOverlayIsShowing { false };
 };
 
 } // namespace WebKit

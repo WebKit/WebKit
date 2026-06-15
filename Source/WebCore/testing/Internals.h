@@ -1700,6 +1700,8 @@ public:
     MockMediaDeviceRouteController& NODELETE mockMediaDeviceRouteController();
 #endif
 
+    ExceptionOr<bool> hasMarkerFor(const String&, int from, int length);
+
 private:
     explicit Internals(Document&);
 
@@ -1734,7 +1736,7 @@ private:
 
     CachedResource* resourceFromMemoryCache(const String& url);
 
-    bool hasMarkerFor(DocumentMarkerType, int from, int length);
+    bool hasMarkerForInternal(DocumentMarkerType, int from, int length);
 
     RefPtr<MediaSessionManagerInterface> sessionManager() const;
 

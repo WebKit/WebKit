@@ -2141,6 +2141,8 @@ static WKFindOptions findOptionsFromArray(WKArrayRef array)
             options |= kWKFindOptionsAtWordStarts;
         else if (WKStringIsEqualToUTF8CString(optionName, "TreatMedialCapitalAsWordStart"))
             options |= kWKFindOptionsTreatMedialCapitalAsWordStart;
+        else if (WKStringIsEqualToUTF8CString(optionName, "ShowOverlay"))
+            options |= kWKFindOptionsShowOverlay;
         else if (WKStringIsEqualToUTF8CString(optionName, "Backwards"))
             options |= kWKFindOptionsBackwards;
         else if (WKStringIsEqualToUTF8CString(optionName, "WrapAround"))

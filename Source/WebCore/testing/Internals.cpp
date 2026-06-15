@@ -546,6 +546,8 @@ static bool markerTypeFrom(const String& markerType, DocumentMarkerType& result)
         result = DocumentMarkerType::Grammar;
     else if (equalLettersIgnoringASCIICase(markerType, "textmatch"_s))
         result = DocumentMarkerType::TextMatch;
+    else if (equalLettersIgnoringASCIICase(markerType, "activetextmatch"_s))
+        result = DocumentMarkerType::ActiveTextMatch;
     else if (equalLettersIgnoringASCIICase(markerType, "replacement"_s))
         result = DocumentMarkerType::Replacement;
     else if (equalLettersIgnoringASCIICase(markerType, "correctionindicator"_s))
@@ -3074,7 +3076,16 @@ void Internals::updateEditorUINowIfScheduled()
     }
 }
 
-bool Internals::hasMarkerFor(DocumentMarkerType type, int from, int length)
+ExceptionOr<bool> Internals::hasMarkerFor(const String& type, int from, int length)
+{
+    DocumentMarkerType markerType;
+    if (!markerTypeFrom(type, markerType))
+        return Exception { ExceptionCode::SyntaxError };
+
+    return hasMarkerForInternal(markerType, from, length);
+}
+
+bool Internals::hasMarkerForInternal(DocumentMarkerType type, int from, int length)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -3103,12 +3114,12 @@ ExceptionOr<void> Internals::setMarkerFor(const String& markerTypeString, int fr
 
 bool Internals::hasSpellingMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::Spelling, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::Spelling, from, length);
 }
 
 bool Internals::hasGrammarMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::Grammar, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::Grammar, from, length);
 }
 
 unsigned Internals::appliedGrammarTextEffectCount() const
@@ -3129,34 +3140,34 @@ bool Internals::isAlternativeTextUIActive() const
 
 bool Internals::hasAutocorrectedMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::Autocorrected, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::Autocorrected, from, length);
 }
 
 bool Internals::hasDictationAlternativesMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::DictationAlternatives, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::DictationAlternatives, from, length);
 }
 
 bool Internals::hasCorrectionIndicatorMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::CorrectionIndicator, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::CorrectionIndicator, from, length);
 }
 
 #if ENABLE(WRITING_TOOLS)
 bool Internals::hasWritingToolsTextSuggestionMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::WritingToolsTextSuggestion, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::WritingToolsTextSuggestion, from, length);
 }
 #endif
 
 bool Internals::hasTransparentContentMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::TransparentContent, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::TransparentContent, from, length);
 }
 
 bool Internals::hasDictationStreamingOpacityMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarkerType::DictationStreamingOpacity, from, length);
+    return hasMarkerForInternal(DocumentMarkerType::DictationStreamingOpacity, from, length);
 }
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)

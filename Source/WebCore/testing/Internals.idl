@@ -746,6 +746,7 @@ enum ContentsFormat {
     undefined setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
     undefined setMarkerFor(DOMString markerTypeString, long from, long length, DOMString data);
+    boolean hasMarkerFor(DOMString markerTypeString, long from, long length);
 
     undefined handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
 

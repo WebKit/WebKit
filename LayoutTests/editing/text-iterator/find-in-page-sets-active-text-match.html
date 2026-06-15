@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Find in Page sets active text match document marker</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+
+<script>
+    async function findInPage(textToSearch, searchTerm, shouldShowOverlay)
+    {
+        const container = document.getElementById("container");
+        container.appendChild(document.createTextNode(textToSearch));
+
+        const matchFound = await testRunner.findString(searchTerm, shouldShowOverlay ? ["ShowOverlay"] : []);
+
+        if (!textToSearch.includes(searchTerm)) {
+            assert_false(matchFound);
+            container.replaceChildren();
+            return;
+        }
+
+        assert_true(matchFound);
+
+        const start = textToSearch.indexOf(searchTerm);
+        const hasMarker = window.internals.hasMarkerFor("ActiveTextMatch", start, searchTerm.length);
+
+        assert_equals(shouldShowOverlay, hasMarker);
+        container.replaceChildren();
+    }
+
+
+    const text = "the quick brown fox jumped over the lazy dog";
+    for (const word of ["fox", "dog", "cat"]) {
+        for (const showOverlay of [true, false])
+            promise_test(async() => await findInPage(text, word, showOverlay), `Find "${word}" in "${text}" ${showOverlay ? "with" : "without"} ShowOverlay`);
+    }
+</script>
+</html>

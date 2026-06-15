@@ -1,0 +1,8 @@
+
+PASS Find "fox" in "the quick brown fox jumped over the lazy dog" with ShowOverlay
+PASS Find "fox" in "the quick brown fox jumped over the lazy dog" without ShowOverlay
+PASS Find "dog" in "the quick brown fox jumped over the lazy dog" with ShowOverlay
+PASS Find "dog" in "the quick brown fox jumped over the lazy dog" without ShowOverlay
+PASS Find "cat" in "the quick brown fox jumped over the lazy dog" with ShowOverlay
+PASS Find "cat" in "the quick brown fox jumped over the lazy dog" without ShowOverlay
+
