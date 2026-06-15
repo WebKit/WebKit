@@ -92,7 +92,7 @@ angle::Result AllocateTriangleFanBufferFromPool(ContextMtl *context,
     ANGLE_TRY(mtl::GetTriangleFanIndicesCount(context, vertexCount, &numIndices));
 
     pool->releaseInFlightBuffers(context);
-    ANGLE_TRY(pool->allocate(context, numIndices * sizeof(uint32_t), nullptr, outBuffer));
+    ANGLE_TRY(pool->allocate(context, numIndices * sizeof(uint32_t), outBuffer));
     *numElemsOut = numIndices;
 
     return angle::Result::Continue;
@@ -104,7 +104,7 @@ angle::Result AllocateBufferFromPool(ContextMtl *context,
                                      mtl::BufferSlice *outBuffer)
 {
     pool->releaseInFlightBuffers(context);
-    ANGLE_TRY(pool->allocate(context, indicesToReserve * sizeof(uint32_t), nullptr, outBuffer));
+    ANGLE_TRY(pool->allocate(context, indicesToReserve * sizeof(uint32_t), outBuffer));
 
     return angle::Result::Continue;
 }
@@ -151,8 +151,8 @@ class LineLoopLastSegmentHelper
 
         indexBufferPool->releaseInFlightBuffers(mContextMtl);
 
-        ANGLE_TRY(indexBufferPool->allocate(mContextMtl, 2 * sizeof(uint32_t), nullptr,
-                                            &mLineLoopIndexBuffer));
+        ANGLE_TRY(
+            indexBufferPool->allocate(mContextMtl, 2 * sizeof(uint32_t), &mLineLoopIndexBuffer));
 
         if (indexTypeOrNone == gl::DrawElementsType::InvalidEnum)
         {

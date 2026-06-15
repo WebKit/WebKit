@@ -875,9 +875,14 @@ angle::Result RenderUtils::blitStencilViaCopyBuffer(const gl::Context *context,
 }
 
 angle::Result RenderUtils::convertIndexBufferGPU(ContextMtl *contextMtl,
-                                                 const IndexConversionParams &params)
+                                                 gl::DrawElementsType srcType,
+                                                 uint32_t indexCount,
+                                                 const BufferSlice &srcBuffer,
+                                                 const BufferSlice &dstBuffer,
+                                                 bool primitiveRestartEnabled)
 {
-    return mIndexUtils.convertIndexBufferGPU(contextMtl, params);
+    return mIndexUtils.convertIndexBufferGPU(contextMtl, srcType, indexCount, srcBuffer, dstBuffer,
+                                             primitiveRestartEnabled);
 }
 angle::Result RenderUtils::generateTriFanBufferFromArrays(
     ContextMtl *contextMtl,
@@ -1804,31 +1809,37 @@ angle::Result IndexGeneratorUtils::getLineLoopFromArrayGeneratorPipeline(
 }
 
 angle::Result IndexGeneratorUtils::convertIndexBufferGPU(ContextMtl *contextMtl,
-                                                         const IndexConversionParams &params)
+                                                         gl::DrawElementsType srcType,
+                                                         uint32_t indexCount,
+                                                         const BufferSlice &srcBuffer,
+                                                         const BufferSlice &dstBuffer,
+                                                         bool primitiveRestartEnabled)
 {
     ComputeCommandEncoder *cmdEncoder = contextMtl->getIndexPreprocessingCommandEncoder();
     ASSERT(cmdEncoder);
 
+    uint32_t srcOffset = static_cast<uint32_t>(srcBuffer.offset());
+    uint32_t dstOffset = static_cast<uint32_t>(dstBuffer.offset());
+
     angle::ObjCPtr<id<MTLComputePipelineState>> pipelineState;
-    ANGLE_TRY(
-        getIndexConversionPipeline(contextMtl, params.srcType, params.srcOffset, &pipelineState));
+    ANGLE_TRY(getIndexConversionPipeline(contextMtl, srcType, srcOffset, &pipelineState));
 
     ASSERT(pipelineState);
 
     cmdEncoder->setComputePipelineState(pipelineState);
 
-    ASSERT((params.dstOffset % kIndexBufferOffsetAlignment) == 0);
+    ASSERT((dstOffset % kIndexBufferOffsetAlignment) == 0);
 
     IndexConversionUniform uniform;
-    uniform.srcOffset               = params.srcOffset;
-    uniform.indexCount              = params.indexCount;
-    uniform.primitiveRestartEnabled = params.primitiveRestartEnabled;
+    uniform.srcOffset               = srcOffset;
+    uniform.indexCount              = indexCount;
+    uniform.primitiveRestartEnabled = primitiveRestartEnabled;
 
     cmdEncoder->setData(uniform, 0);
-    cmdEncoder->setBuffer(params.srcBuffer, 0, 1);
-    cmdEncoder->setBufferForWrite(params.dstBuffer, params.dstOffset, 2);
+    cmdEncoder->setBuffer(srcBuffer.buffer(), 0, 1);
+    cmdEncoder->setBufferForWrite(dstBuffer.buffer(), dstBuffer.offset(), 2);
 
-    DispatchCompute(contextMtl, cmdEncoder, pipelineState, params.indexCount);
+    DispatchCompute(contextMtl, cmdEncoder, pipelineState, indexCount);
 
     return angle::Result::Continue;
 }

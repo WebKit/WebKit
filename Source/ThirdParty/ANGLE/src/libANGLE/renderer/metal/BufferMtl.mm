@@ -58,9 +58,8 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
 ConversionBufferMtl::ConversionBufferMtl(ContextMtl *contextMtl,
                                          size_t initialSize,
                                          size_t alignment)
-    : dirty(true), convertedBuffer(nullptr), convertedOffset(0)
 {
-    data.initialize(contextMtl, initialSize, alignment, 0);
+    bufferPool.initialize(contextMtl, initialSize, alignment, 0);
 }
 
 ConversionBufferMtl::~ConversionBufferMtl() = default;
@@ -386,7 +385,7 @@ ConversionBufferMtl *BufferMtl::getVertexConversionBuffer(ContextMtl *context,
     mVertexConversionBuffers.emplace_back(context, formatID, stride, offset);
     ConversionBufferMtl *conv        = &mVertexConversionBuffers.back();
     const angle::Format &angleFormat = angle::Format::Get(formatID);
-    conv->data.updateAlignment(context, angleFormat.pixelBytes);
+    conv->bufferPool.updateAlignment(context, angleFormat.pixelBytes);
 
     return conv;
 }
@@ -439,23 +438,20 @@ void BufferMtl::markConversionBuffersDirty()
 {
     for (VertexConversionBufferMtl &buffer : mVertexConversionBuffers)
     {
-        buffer.dirty           = true;
-        buffer.convertedBuffer = nullptr;
-        buffer.convertedOffset = 0;
+        buffer.dirty  = true;
+        buffer.buffer = {};
     }
 
     for (IndexConversionBufferMtl &buffer : mIndexConversionBuffers)
     {
-        buffer.dirty           = true;
-        buffer.convertedBuffer = nullptr;
-        buffer.convertedOffset = 0;
+        buffer.dirty  = true;
+        buffer.buffer = {};
     }
 
     for (UniformConversionBufferMtl &buffer : mUniformConversionBuffers)
     {
-        buffer.dirty           = true;
-        buffer.convertedBuffer = nullptr;
-        buffer.convertedOffset = 0;
+        buffer.dirty  = true;
+        buffer.buffer = {};
     }
     mDrawIndexRangeCache.reset();
 }

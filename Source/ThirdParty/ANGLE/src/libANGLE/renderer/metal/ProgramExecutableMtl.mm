@@ -12,6 +12,7 @@
 
 #include "libANGLE/renderer/metal/ProgramExecutableMtl.h"
 
+#include "common/span_util.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/TextureMtl.h"
@@ -145,7 +146,6 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
                                        size_t sizeToCopy,
                                        mtl::BufferSlice *outBuffer)
 {
-    uint8_t *dst             = nullptr;
     const uint8_t *maxSrcPtr = sourceData + sizeToCopy;
     dynamicBuffer->releaseInFlightBuffers(contextMtl);
 
@@ -157,6 +157,7 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
     size_t numBlocksToCopy =
         (sizeToCopy + blockConversionInfo.stdSize() - 1) / blockConversionInfo.stdSize();
     size_t bytesToAllocate = numBlocksToCopy * blockConversionInfo.metalSize();
+    angle::Span<uint8_t> dst;
     ANGLE_TRY(dynamicBuffer->allocate(contextMtl, bytesToAllocate, &dst, outBuffer));
 
     const std::vector<sh::BlockMemberInfo> &stdConversions = blockConversionInfo.stdInfo();
@@ -183,8 +184,9 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
                 if (gl::IsMatrixType(mtlIterator->type))
                 {
 
-                    void *dstMat = dst + mtlIterator->offset + mtlArrayOffset +
-                                   blockConversionInfo.metalSize() * i;
+                    void *dstMat = dst.subspan(mtlIterator->offset + mtlArrayOffset +
+                                               blockConversionInfo.metalSize() * i)
+                                       .data();
                     const void *srcMat = sourceData + stdIterator->offset + stdArrayOffset +
                                          blockConversionInfo.stdSize() * i;
                     // Transpose matricies into column major order, if they're row major encoded.
@@ -213,16 +215,18 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
                              gl::VariableComponentSize(GL_BOOL) * boolCol);
                         unsigned int srcValue =
                             srcBool < maxSrcPtr ? *((unsigned int *)(srcBool)) : 0;
-                        uint8_t *dstBool = dst + mtlIterator->offset + mtlArrayOffset +
-                                           blockConversionInfo.metalSize() * i +
-                                           sizeof(bool) * boolCol;
+                        uint8_t *dstBool = dst.subspan(mtlIterator->offset + mtlArrayOffset +
+                                                       blockConversionInfo.metalSize() * i +
+                                                       sizeof(bool) * boolCol)
+                                               .data();
                         *dstBool = (srcValue != 0);
                     }
                 }
                 else
                 {
-                    memcpy_guarded(dst + mtlIterator->offset + mtlArrayOffset +
-                                       blockConversionInfo.metalSize() * i,
+                    memcpy_guarded(dst.subspan(mtlIterator->offset + mtlArrayOffset +
+                                               blockConversionInfo.metalSize() * i)
+                                       .data(),
                                    sourceData + stdIterator->offset + stdArrayOffset +
                                        blockConversionInfo.stdSize() * i,
                                    maxSrcPtr, mtl::GetMetalSizeForGLType(mtlIterator->type));
@@ -1094,15 +1098,11 @@ angle::Result ProgramExecutableMtl::commitUniforms(ContextMtl *context,
 
             ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
             mtl::BufferSlice uniformBuffer;
-            uint8_t *ptrOut;
-            // Allocate a new Uniform buffer
-            ANGLE_TRY(bufferPool->allocate(context, uniformBlock.uniformData.size(), &ptrOut,
+            angle::Span<uint8_t> mapped;
+            ANGLE_TRY(bufferPool->allocate(context, uniformBlock.uniformData.size(), &mapped,
                                            &uniformBuffer));
-            // Copy the uniform result
-            memcpy(ptrOut, uniformBlock.uniformData.data(), uniformBlock.uniformData.size());
-            // Commit
+            angle::SpanMemcpy(mapped, uniformBlock.uniformData.span());
             ANGLE_TRY(bufferPool->commit(context));
-            // Set buffer
             cmdEncoder->setBuffer(shaderType, uniformBuffer.buffer(), uniformBuffer.offset(),
                                   mtl::kDefaultUniformsBindingIndex);
         }
@@ -1318,11 +1318,9 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
                     bufferMtl->getBufferDataReadOnly(context, conversion->initialSrcOffset());
 
                 mtl::BufferSlice converted;
-                ANGLE_TRY(ConvertUniformBufferData(context, conversionInfo, &conversion->data,
+                ANGLE_TRY(ConvertUniformBufferData(context, conversionInfo, &conversion->bufferPool,
                                                    source.data(), source.size(), &converted));
-                conversion->convertedBuffer = converted.buffer();
-                conversion->convertedOffset = converted.offset();
-
+                conversion->buffer = std::move(converted);
                 conversion->dirty = false;
             }
             // Calculate offset in new block.
@@ -1332,12 +1330,10 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
                 (unsigned int)(dstOffsetSource / conversionInfo.stdSize());
             size_t bytesToOffset = numBlocksToOffset * conversionInfo.metalSize();
 
-            size_t resultOffset = conversion->convertedOffset + bytesToOffset;
             mLegalizedOffsetedUniformBuffers[bufferIndex] =
-                mtl::BufferSlice(conversion->convertedBuffer).subslice(resultOffset);
+                conversion->buffer.subslice(bytesToOffset);
             // Ensure that the converted info can fit in the buffer.
-            ASSERT(conversion->convertedOffset + bytesToOffset + conversionInfo.metalSize() <=
-                   conversion->convertedBuffer->size());
+            ASSERT(bytesToOffset + conversionInfo.metalSize() <= conversion->buffer.size());
         }
         else
         {
@@ -1405,8 +1401,7 @@ angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
     mtl::BufferSlice argumentBuffer;
     bufferEncoder.bufferPool.releaseInFlightBuffers(context);
     ANGLE_TRY(bufferEncoder.bufferPool.allocate(
-        context, bufferEncoder.metalArgBufferEncoder.get().encodedLength, nullptr,
-        &argumentBuffer));
+        context, bufferEncoder.metalArgBufferEncoder.get().encodedLength, &argumentBuffer));
 
     // MTLArgumentEncoder is modifying the buffer indirectly on CPU. We need to call map()
     // so that the buffer's data changes could be flushed to the GPU side later.

@@ -52,13 +52,12 @@ struct ConversionBufferMtl
     ~ConversionBufferMtl();
 
     // One state value determines if we need to re-stream vertex data.
-    bool dirty;
+    bool dirty{true};
 
     // The conversion is stored in a dynamic buffer.
-    mtl::BufferPool data;
-    // These properties are to be filled by user of this buffer conversion
-    mtl::BufferRef convertedBuffer;
-    size_t convertedOffset;
+    mtl::BufferPool bufferPool;
+    // The buffer is to be filled by user of this buffer conversion.
+    mtl::BufferSlice buffer;
 };
 
 struct VertexConversionBufferMtl : public ConversionBufferMtl

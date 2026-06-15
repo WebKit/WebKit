@@ -154,9 +154,19 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
 
 angle::Result BufferPool::allocate(ContextMtl *contextMtl,
                                    size_t sizeInBytes,
-                                   uint8_t **ptrOut,
-                                   BufferSlice *outBuffer,
-                                   bool *newBufferAllocatedOut)
+                                   angle::Span<uint8_t> *mappedOut,
+                                   BufferSlice *outBuffer)
+{
+    ANGLE_TRY(allocate(contextMtl, sizeInBytes, outBuffer));
+    // We don't need to synchronize with GPU access, since allocation should return a
+    // non-overlapped region each time.
+    *mappedOut = mBuffer->mapNoSync(contextMtl, outBuffer->offset(), sizeInBytes);
+    return angle::Result::Continue;
+}
+
+angle::Result BufferPool::allocate(ContextMtl *contextMtl,
+                                   size_t sizeInBytes,
+                                   BufferSlice *outBuffer)
 {
     size_t sizeToAllocate = roundUp(sizeInBytes, mAlignment);
 
@@ -197,26 +207,9 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
 
         mNextAllocationOffset = 0;
         mLastFlushOffset      = 0;
-
-        if (newBufferAllocatedOut != nullptr)
-        {
-            *newBufferAllocatedOut = true;
-        }
-    }
-    else if (newBufferAllocatedOut != nullptr)
-    {
-        *newBufferAllocatedOut = false;
     }
 
     ASSERT(mBuffer != nullptr);
-
-    // Optionally map() the buffer if possible
-    if (ptrOut)
-    {
-        // We don't need to synchronize with GPU access, since allocation should return a
-        // non-overlapped region each time.
-        *ptrOut = mBuffer->mapNoSync(contextMtl, mNextAllocationOffset).data();
-    }
 
     if (outBuffer != nullptr)
     {

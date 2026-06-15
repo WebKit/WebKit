@@ -167,7 +167,7 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
     }
     size_t newIndexBufferSize = newFirstIndexOffset + (newIndexCount << indexTypeShift);
     mtl::BufferSlice newIndexBufferSlice;
-    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, nullptr, &newIndexBufferSlice));
+    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, &newIndexBufferSlice));
     mtl::BufferRef newIndexBuffer = newIndexBufferSlice.buffer();
     size_t newIndexBufferOffset   = newIndexBufferSlice.offset();
 
@@ -249,7 +249,7 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     ANGLE_CHECK_GL_MATH(context, newIndexCount <= std::numeric_limits<uint32_t>::max());
     size_t newIndexBufferSize = newIndexCount << gl::GetDrawElementsTypeShift(elementsType);
     mtl::BufferSlice newBufferSlice;
-    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, nullptr, &newBufferSlice));
+    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, &newBufferSlice));
     mtl::BufferRef newBuffer = newBufferSlice.buffer();
     size_t newIndexOffset    = newBufferSlice.offset();
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
