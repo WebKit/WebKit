@@ -3793,7 +3793,73 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self _ensureResizeAnimationView];
 }
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=317000
+#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
+- (void)_endLiveResizeWithResponsiveRelayout
+{
+    if (_liveResizeSnapshotState)
+        [self _removeLiveSnapshotState];
+
+    if (RefPtr drawingArea = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
+        _perProcessState.transactionIDForEndLiveResize = drawingArea->nextMainFrameLayerTreeTransactionID();
+
+    if (!_perProcessState.transactionIDForEndLiveResize)
+        return;
+
+    auto liveResizeSnapshotView = retainPtr([self snapshotViewAfterScreenUpdates:NO]);
+    [liveResizeSnapshotView setFrame:self.bounds];
+    [liveResizeSnapshotView layer].anchorPoint = CGPointZero;
+    [liveResizeSnapshotView layer].position = CGPointZero;
+    [self addSubview:liveResizeSnapshotView.get()];
+
+    auto transactionIDForEndLiveResize = *_perProcessState.transactionIDForEndLiveResize;
+    _liveResizeSnapshotState = { { transactionIDForEndLiveResize, { liveResizeSnapshotView, self.bounds.size.width } } };
+
+    _perProcessState.lastResizeTimestamp = [NSDate now];
+    _perProcessState.lastResizedViewWidth = self.bounds.size.width;
+
+    _perProcessState.liveResizeParameters = std::nullopt;
+
+    ASSERT(_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
+    [self _destroyResizeAnimationView];
+    [self _didStopDeferringGeometryUpdates];
+
+    // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
+    RunLoop::mainSingleton().dispatchAfter(1_s, [weakSelf = WeakObjCPtr<WKWebView>(self), transactionIDForEndLiveResize] {
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf || !strongSelf->_liveResizeSnapshotState || strongSelf->_liveResizeSnapshotState->first != transactionIDForEndLiveResize)
+            return;
+        [strongSelf _removeLiveSnapshotState];
+        strongSelf->_perProcessState.transactionIDForEndLiveResize = std::nullopt;
+        strongSelf->_perProcessState.waitingForEndLiveResizePresentationUpdate = NO;
+    });
+}
+#endif
+
+- (void)_endLiveResizeDefault
+{
+    auto liveResizeSnapshotView = retainPtr([self snapshotViewAfterScreenUpdates:NO]);
+    [liveResizeSnapshotView setFrame:self.bounds];
+    [self addSubview:liveResizeSnapshotView.get()];
+
+    _perProcessState.liveResizeParameters = std::nullopt;
+
+    ASSERT(_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
+    [self _destroyResizeAnimationView];
+    [self _didStopDeferringGeometryUpdates];
+
+    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([liveResizeSnapshotView, weakSelf = WeakObjCPtr<WKWebView>(self)] mutable {
+        RetainPtr strongSelf = weakSelf.get();
+        [strongSelf _doAfterNextPresentationUpdate:makeBlockPtr([liveResizeSnapshotView] {
+            [liveResizeSnapshotView removeFromSuperview];
+        }).get()];
+    }).get()];
+
+    // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
+    RunLoop::mainSingleton().dispatchAfter(1_s, [liveResizeSnapshotView] {
+        [liveResizeSnapshotView removeFromSuperview];
+    });
+}
+
 - (void)_endLiveResize
 {
     WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
@@ -3805,65 +3871,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _endLiveResizeTimer = nil;
 
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    if (_liveResizeSnapshotState)
-        [self _removeLiveSnapshotState];
-
-    if (RefPtr drawingArea = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
-        _perProcessState.transactionIDForEndLiveResize = drawingArea->nextMainFrameLayerTreeTransactionID();
-
-    if (!_perProcessState.transactionIDForEndLiveResize)
-        return;
-#endif
-
-    RetainPtr liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
-    [liveResizeSnapshotView setFrame:self.bounds];
-
-#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    [liveResizeSnapshotView layer].anchorPoint = CGPointZero;
-    [liveResizeSnapshotView layer].position = CGPointZero;
-    [self addSubview:liveResizeSnapshotView.get()];
-    auto transactionIDForEndLiveResize = *_perProcessState.transactionIDForEndLiveResize;
-    _liveResizeSnapshotState = { { transactionIDForEndLiveResize, { liveResizeSnapshotView, self.bounds.size.width } } };
-
-    _perProcessState.lastResizeTimestamp = [NSDate now];
-    _perProcessState.lastResizedViewWidth = self.bounds.size.width;
+    [self _endLiveResizeWithResponsiveRelayout];
 #else
-    [self addSubview:liveResizeSnapshotView.get()];
+    [self _endLiveResizeDefault];
 #endif
-
-    _perProcessState.liveResizeParameters = std::nullopt;
-
-    ASSERT(_perProcessState.dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
-    [self _destroyResizeAnimationView];
-    [self _didStopDeferringGeometryUpdates];
-
-#if !ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([liveResizeSnapshotView, weakSelf = WeakObjCPtr<WKWebView>(self)] mutable {
-        RetainPtr strongSelf = weakSelf.get();
-        [strongSelf _doAfterNextPresentationUpdate:makeBlockPtr([liveResizeSnapshotView] {
-            [liveResizeSnapshotView removeFromSuperview];
-        }).get()];
-    }).get()];
-#endif
-
-    RunLoop::mainSingleton().dispatchAfter(1_s, [
-#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-        weakSelf = WeakObjCPtr<WKWebView>(self), transactionIDForEndLiveResize
-#else
-        liveResizeSnapshotView
-#endif
-    ] {
-#if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf || !strongSelf->_liveResizeSnapshotState || strongSelf->_liveResizeSnapshotState->first != transactionIDForEndLiveResize)
-            return;
-        [strongSelf _removeLiveSnapshotState];
-        strongSelf->_perProcessState.transactionIDForEndLiveResize = std::nullopt;
-        strongSelf->_perProcessState.waitingForEndLiveResizePresentationUpdate = NO;
-#else
-        [liveResizeSnapshotView removeFromSuperview];
-#endif
-    });
 }
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
