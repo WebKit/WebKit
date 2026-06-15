@@ -402,6 +402,47 @@ void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
 #endif
 }
 
+void Thread::setCurrentThreadIsUtility(int relativePriority)
+{
+#if HAVE(QOS_CLASSES)
+    ASSERT(relativePriority <= 0);
+    ASSERT(relativePriority >= QOS_MIN_RELATIVE_PRIORITY);
+    pthread_set_qos_class_self_np(adjustedQOSClass(QOS_CLASS_UTILITY), relativePriority);
+#else
+    UNUSED_PARAM(relativePriority);
+#endif
+}
+
+void Thread::setCurrentThreadQOS(QOS qos)
+{
+#if HAVE(QOS_CLASSES)
+    pthread_set_qos_class_self_np(dispatchQOSClass(qos), 0);
+#else
+    UNUSED_PARAM(qos);
+#endif
+}
+
+#if HAVE(QOS_CLASSES)
+void Thread::startQOSOverride(QOS qos)
+{
+    ASSERT(!m_qosOverride);
+    if (m_qosOverride)
+        return;
+    Locker locker { m_mutex };
+    if (hasExited())
+        return;
+    m_qosOverride = pthread_override_qos_class_start_np(m_handle, dispatchQOSClass(qos), 0);
+}
+
+void Thread::endQOSOverride()
+{
+    if (!m_qosOverride)
+        return;
+    pthread_override_qos_class_end_np(m_qosOverride);
+    m_qosOverride = nullptr;
+}
+#endif
+
 #if HAVE(QOS_CLASSES)
 static Thread::QOS NODELETE toQOS(qos_class_t qosClass)
 {

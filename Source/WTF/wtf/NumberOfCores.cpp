@@ -104,4 +104,28 @@ int numberOfPhysicalProcessorCores()
 }
 #endif
 
+#if CPU(ARM64) && OS(DARWIN)
+int numberOfPerformanceProcessorCores()
+{
+    static int s_numberOfCores = 0;
+    if (s_numberOfCores > 0)
+        return s_numberOfCores;
+
+    if (CString coresEnv = getenv("WTF_numberOfPerformanceProcessorCores"); !coresEnv.isNull()) {
+        if (auto numberOfCores = parseInteger<unsigned>(coresEnv.span()); numberOfCores && *numberOfCores > 0) {
+            s_numberOfCores = static_cast<int>(*numberOfCores);
+            return s_numberOfCores;
+        }
+        SAFE_FPRINTF(stderr, "WARNING: failed to parse WTF_numberOfPerformanceProcessorCores=%s\n", coresEnv);
+    }
+
+    int32_t count = 0;
+    size_t valueSize = sizeof(count);
+    int result = sysctlbyname("hw.perflevel0.physicalcpu", &count, &valueSize, nullptr, 0);
+    ASSERT(result >= 0 && count > 0);
+    s_numberOfCores = (result < 0 || count <= 0) ? numberOfProcessorCores() : static_cast<int>(count);
+    return s_numberOfCores;
+}
+#endif
+
 }

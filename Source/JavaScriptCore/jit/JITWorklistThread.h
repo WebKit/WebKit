@@ -31,6 +31,9 @@
 #include <wtf/AutomaticThread.h>
 #include <wtf/Platform.h>
 #include <wtf/SequesteredAutomaticThread.h>
+#if HAVE(QOS_CLASSES)
+#include <wtf/Threading.h>
+#endif
 
 namespace JSC {
 
@@ -73,6 +76,10 @@ private:
     RefPtr<JITPlan> m_plan { nullptr };
     unsigned m_planLoad { 0 };
     Safepoint* m_safepoint { nullptr };
+#if HAVE(QOS_CLASSES)
+    // Weak ref to our WTF::Thread, published under m_worklist.m_suspensionLock for GC QoS donation.
+    ThreadSafeWeakPtr<Thread> m_underlyingThread;
+#endif
 };
 
 } // namespace JSC

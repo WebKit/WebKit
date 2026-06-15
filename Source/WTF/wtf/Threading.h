@@ -66,6 +66,7 @@
 
 #if HAVE(QOS_CLASSES)
 #include <dispatch/dispatch.h>
+#include <pthread/qos.h>
 #endif
 
 // X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
@@ -199,6 +200,12 @@ public:
     // relativePriority is a value in the range [-15, 0] where a lower value indicates a lower priority.
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInteractive(int relativePriority = 0);
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInitiated(int relativePriority = 0);
+    WTF_EXPORT_PRIVATE static void setCurrentThreadIsUtility(int relativePriority = 0);
+    WTF_EXPORT_PRIVATE static void setCurrentThreadQOS(QOS);
+#if HAVE(QOS_CLASSES)
+    WTF_EXPORT_PRIVATE void startQOSOverride(QOS);
+    WTF_EXPORT_PRIVATE void endQOSOverride();
+#endif
     WTF_EXPORT_PRIVATE static QOS currentThreadQOS();
     WTF_EXPORT_PRIVATE static bool currentThreadIsRealtime();
     bool isRealtime() const { return m_isRealtime; }
@@ -382,6 +389,9 @@ protected:
     StackBounds m_stack { StackBounds::emptyBounds() };
     ThreadSafeWeakHashSet<ThreadGroup> m_threadGroups;
     PlatformThreadHandle m_handle;
+#if HAVE(QOS_CLASSES)
+    pthread_override_t m_qosOverride { nullptr };
+#endif
     const uint32_t m_uid;
 #if OS(WINDOWS)
     ThreadIdentifier m_id { 0 };

@@ -33,6 +33,11 @@
 #include "VM.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#if HAVE(QOS_CLASSES)
+#include <wtf/Scope.h>
+#include <wtf/Threading.h>
+#endif
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITWorklistThread);
@@ -142,7 +147,21 @@ auto JITWorklistThread::work() -> WorkResult
         dataLog("Heap is stopped but here we are! (1)\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
-    m_plan->compileInThread(this);
+    {
+#if HAVE(QOS_CLASSES) && !(PLATFORM(MAC) && CPU(ARM64))
+        // Lower QoS for this compile (FTL only by default) so it runs on the E-cores, then restore.
+        // On Apple Silicon Macs the whole thread is lowered in threadDidStart() instead.
+        bool loweredThreadQOS = m_worklist.shouldUseTieredCompilerThreadQOS()
+            && static_cast<unsigned>(m_plan->tier()) >= Options::compilerThreadQOSMinTier();
+        if (loweredThreadQOS)
+            Thread::setCurrentThreadIsUtility();
+        auto restoreThreadQOS = makeScopeExit([&] {
+            if (loweredThreadQOS)
+                Thread::setCurrentThreadQOS(Thread::defaultQOS);
+        });
+#endif
+        m_plan->compileInThread(this);
+    }
     if (m_plan->stage() != JITPlanStage::Canceled) {
         if (m_plan->vm()->heap.worldIsStopped()) {
             dataLog("Heap is stopped but here we are! (2)\n");
@@ -174,6 +193,16 @@ void JITWorklistThread::threadDidStart()
 {
     dataLogLnIf(Options::verboseCompilationQueue(), m_worklist, ": Thread started");
 
+#if HAVE(QOS_CLASSES)
+    {
+        Locker locker { m_worklist.m_suspensionLock };
+        m_underlyingThread = Thread::currentSingleton();
+    }
+#if PLATFORM(MAC) && CPU(ARM64)
+    if (m_worklist.shouldUseTieredCompilerThreadQOS())
+        Thread::setCurrentThreadIsUtility();
+#endif
+#endif
 }
 
 void JITWorklistThread::threadIsStopping(const AbstractLocker&)

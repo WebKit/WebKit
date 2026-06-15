@@ -299,6 +299,10 @@ bool hasCapacityToUseLargeGigacage();
     v(Int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
+    v(Bool, useTieredCompilerThreadQOS, true, Normal, "On small devices, run JIT compiles at lowered QoS (E-cores) and donate UserInitiated to a compiler thread the GC is blocked on."_s) \
+    v(Unsigned, compilerThreadQOSMinTier, 2, Normal, "Lowest JITPlan::Tier lowered to reduced QoS (1=DFG+FTL, 2=FTL only); no effect on Apple Silicon Mac, which lowers the whole thread."_s) \
+    v(Unsigned, smallDeviceMaxPerformanceCores, 2, Normal, nullptr) \
+    v(Unsigned, smallDeviceMaxLogicalCores, 6, Normal, nullptr) \
     \
     v(Bool, useProfiler, false, Normal, nullptr) \
     v(Bool, dumpProfilerDataAtExit, false, Normal, nullptr) \
