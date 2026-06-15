@@ -14,6 +14,10 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+// This include MUST precede the ANGLE_WITH_ASAN / ANGLE_WITH_TSAN check below
+// to define those macros.
+#include "common/platform.h"
+
 #if defined(ANGLE_WITH_ASAN) || defined(ANGLE_WITH_TSAN)
 #    define ANGLE_DISABLE_POOL_ALLOC  // Use system allocator under sanitizers for accurate detection
 #elif !defined(NDEBUG)
