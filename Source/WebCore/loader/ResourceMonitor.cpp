@@ -131,8 +131,21 @@ static ASCIILiteral eligibilityToString(ResourceMonitorEligibility eligibility)
 }
 #endif
 
+void ResourceMonitor::cancelPendingChecks()
+{
+    m_pendingChecksCancelled = true;
+}
+
+void ResourceMonitor::resumePendingChecks()
+{
+    m_pendingChecksCancelled = false;
+}
+
 void ResourceMonitor::continueAfterDidReceiveEligibility(Eligibility eligibility, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType)
 {
+    if (m_pendingChecksCancelled)
+        return;
+
     RefPtr frame = m_frame.get();
     RefPtr page = frame ? frame->mainFrame().page() : nullptr;
     if (!page)

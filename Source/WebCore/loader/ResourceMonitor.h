@@ -60,6 +60,9 @@ public:
 
     void updateNetworkUsageThreshold(size_t);
 
+    void cancelPendingChecks();
+    void resumePendingChecks();
+
 private:
     explicit ResourceMonitor(LocalFrame&);
 
@@ -74,6 +77,7 @@ private:
     CheckedSize m_networkUsage;
     Eligibility m_eligibility { Eligibility::Unsure };
     bool m_networkUsageExceed { false };
+    bool m_pendingChecksCancelled { false };
 };
 
 } // namespace WebCore

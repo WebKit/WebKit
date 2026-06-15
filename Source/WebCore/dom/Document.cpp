@@ -7530,12 +7530,20 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
         if (RefPtr idbConnectionProxy = m_idbConnectionProxy)
             idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), true);
+#if ENABLE(CONTENT_EXTENSIONS)
+        if (RefPtr resourceMonitor = m_resourceMonitor)
+            resourceMonitor->cancelPendingChecks();
+#endif
         break;
     case NotInBackForwardCache:
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
         if (RefPtr idbConnectionProxy = m_idbConnectionProxy)
             idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), false);
+#if ENABLE(CONTENT_EXTENSIONS)
+        if (RefPtr resourceMonitor = m_resourceMonitor)
+            resourceMonitor->resumePendingChecks();
+#endif
         break;
     case AboutToEnterBackForwardCache:
         break;
