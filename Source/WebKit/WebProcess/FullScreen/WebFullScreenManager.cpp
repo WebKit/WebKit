@@ -149,6 +149,10 @@ void WebFullScreenManager::invalidate()
     m_waitingForLargerImageLoad = LargerImageLoadState::NotWaiting;
     m_pendingImageMediaDetails = std::nullopt;
 #endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    m_pendingFullscreenRequestElementFromControlsOverlay = nullptr;
+    m_currentEntryFromControlsOverlay = false;
+#endif
 }
 
 WebCore::Element* WebFullScreenManager::element()
@@ -306,6 +310,14 @@ void WebFullScreenManager::enterFullScreenForElement(Element& element, HTMLMedia
 {
     ALWAYS_LOG(LOGIDENTIFIER, "<", element.tagName(), " id=\"", element.getIdAttribute(), "\">");
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    // Compare the pending overlay request's element against the entering element. A mismatch means the overlay request was rejected/cancelled upstream and a different entry reached us
+    auto pendingElement = std::exchange(m_pendingFullscreenRequestElementFromControlsOverlay, nullptr);
+    m_currentEntryFromControlsOverlay = pendingElement && pendingElement.get() == &element;
+    if (pendingElement)
+        ALWAYS_LOG(LOGIDENTIFIER, "spatial image controls overlay request: ", m_currentEntryFromControlsOverlay ? "matched entering element" : "mismatch — defaulting to JavaScript attribution");
+#endif
+
     setElement(element);
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -335,6 +347,10 @@ void WebFullScreenManager::enterFullScreenForElement(Element& element, HTMLMedia
             m_page->freezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
             m_pendingImageMediaDetails = getImageMediaDetails(renderImage, IsUpdating::No);
             m_pendingImageMediaDetails->launchInImmersive = false;
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+            if (m_currentEntryFromControlsOverlay)
+                m_pendingImageMediaDetails->requestSource = FullScreenMediaDetails::SpatialImageRequestSource::ControlsOverlay;
+#endif
             m_willUseQuickLookForFullscreen = true;
             performEnterFullScreen();
             return;
@@ -378,6 +394,10 @@ void WebFullScreenManager::enterFullScreenForElement(Element& element, HTMLMedia
             if (isPanorama) {
                 m_pendingImageMediaDetails = getImageMediaDetails(renderImage, IsUpdating::No);
                 m_pendingImageMediaDetails->launchInImmersive = true;
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+                if (m_currentEntryFromControlsOverlay)
+                    m_pendingImageMediaDetails->requestSource = FullScreenMediaDetails::SpatialImageRequestSource::ControlsOverlay;
+#endif
                 m_willUseQuickLookForFullscreen = true;
             } else {
                 m_page->setViewportConfigurationViewLayoutSize(m_oldSize, m_scaleFactor, m_minEffectiveWidth);
@@ -431,6 +451,10 @@ void WebFullScreenManager::performEnterFullScreen()
                 // Either timed out OR loaded a panoramic image in time
                 m_pendingImageMediaDetails = getImageMediaDetails(renderImage, IsUpdating::No);
                 m_pendingImageMediaDetails->launchInImmersive = isPanorama;
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+                if (m_currentEntryFromControlsOverlay)
+                    m_pendingImageMediaDetails->requestSource = FullScreenMediaDetails::SpatialImageRequestSource::ControlsOverlay;
+#endif
                 m_willUseQuickLookForFullscreen = true;
             }
         }
@@ -530,6 +554,13 @@ void WebFullScreenManager::waitForLargerImageLoadTimerFired()
     performEnterFullScreen();
 }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+void WebFullScreenManager::noteFullscreenRequestFromSpatialImageControls(WebCore::Element& element)
+{
+    m_pendingFullscreenRequestElementFromControlsOverlay = element;
+}
+#endif
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element, CompletionHandler<void()>&& completionHandler)
 {

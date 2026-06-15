@@ -78,6 +78,9 @@ public:
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     void updateImageSource(WebCore::Element&);
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    void noteFullscreenRequestFromSpatialImageControls(WebCore::Element&);
+#endif
     void exitFullScreenForElement(WebCore::Element*, CompletionHandler<void()>&&);
 
     void didEnterFullScreen(CompletionHandler<bool(bool)>&&);
@@ -173,6 +176,12 @@ private:
     void waitForLargerImageLoadTimerFired();
 
     std::optional<FullScreenMediaDetails> m_pendingImageMediaDetails;
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    // Element for fullscreen request, prevents leaking controls overlay intent in the case of cancelled/rejected fullscreen requests
+    WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_pendingFullscreenRequestElementFromControlsOverlay;
+    bool m_currentEntryFromControlsOverlay { false };
 #endif
 
     bool m_closing { false };

@@ -1607,6 +1607,14 @@ void WebChromeClient::updateImageSource(Element& element)
 }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+void WebChromeClient::noteFullscreenRequestFromSpatialImageControls(WebCore::Element& element)
+{
+    if (RefPtr page = m_page.get())
+        page->fullScreenManager().noteFullscreenRequestFromSpatialImageControls(element);
+}
+#endif
+
 void WebChromeClient::exitFullScreenForElement(Element* element, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)

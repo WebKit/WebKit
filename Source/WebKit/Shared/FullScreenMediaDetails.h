@@ -37,6 +37,13 @@ namespace WebKit {
 struct FullScreenMediaDetails {
     enum class Type : uint8_t { None, Video, ElementWithVideo, Image };
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    enum class SpatialImageRequestSource : uint8_t {
+        JavaScript,
+        ControlsOverlay,
+    };
+#endif
+
     Type type { Type::None };
     WebCore::FloatSize mediaDimensions { };
 
@@ -44,6 +51,10 @@ struct FullScreenMediaDetails {
     using ImageData = Variant<std::monostate, WebCore::ShareableBitmap::Handle, WebCore::ShareableSpatialImage>;
     ImageData imageData;
     bool launchInImmersive { false };
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    SpatialImageRequestSource requestSource { SpatialImageRequestSource::JavaScript };
 #endif
 };
 

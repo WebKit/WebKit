@@ -28,11 +28,21 @@
     Image
 };
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+[Nested] enum class WebKit::FullScreenMediaDetails::SpatialImageRequestSource : uint8_t {
+    JavaScript,
+    ControlsOverlay
+};
+#endif
+
 [RValue] struct WebKit::FullScreenMediaDetails {
     WebKit::FullScreenMediaDetails::Type type;
     WebCore::FloatSize mediaDimensions;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     WebKit::FullScreenMediaDetails::ImageData imageData;
     bool launchInImmersive;
+#endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    WebKit::FullScreenMediaDetails::SpatialImageRequestSource requestSource;
 #endif
 };

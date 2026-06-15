@@ -548,6 +548,9 @@ public:
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual void updateImageSource(Element&) { }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    virtual void noteFullscreenRequestFromSpatialImageControls(Element&) { }
+#endif
     virtual void exitFullScreenForElement(Element*, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif

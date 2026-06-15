@@ -27,6 +27,8 @@
 #import "FullscreenClient.h"
 
 #import "WKWebViewInternal.h"
+#import "WebFullScreenManagerProxy.h"
+#import "WebPageProxy.h"
 #import "_WKFullscreenDelegate.h"
 #import <wtf/TZoneMallocInlines.h>
 
@@ -63,6 +65,9 @@ void FullscreenClient::setDelegate(id <_WKFullscreenDelegate> delegate)
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     m_delegateMethods.webViewDidFullscreenImageWithQuickLook = [delegate respondsToSelector:@selector(_webView:didFullscreenImageWithQuickLook:)];
 #endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    m_delegateMethods.webViewDidFullscreenImageWithQuickLookFromControlsOverlay = [delegate respondsToSelector:@selector(_webView:didFullscreenImageWithQuickLookFromControlsOverlay:)];
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     m_delegateMethods.webViewPreventDockingFromElementFullscreen = [delegate respondsToSelector:@selector(_webViewPreventDockingFromElementFullscreen:)];
 #endif
@@ -86,7 +91,7 @@ void FullscreenClient::willEnterFullscreen(WebPageProxy*)
 #endif
 }
 
-void FullscreenClient::didEnterFullscreen(WebPageProxy*)
+void FullscreenClient::didEnterFullscreen(WebPageProxy* page)
 {
     RetainPtr webView = m_webView.get();
     [webView willChangeValueForKey:@"fullscreenState"];
@@ -102,8 +107,17 @@ void FullscreenClient::didEnterFullscreen(WebPageProxy*)
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     if (auto fullScreenController = [webView fullScreenWindowController]) {
         CGSize imageDimensions = fullScreenController.imageDimensions;
-        if (fullScreenController.isUsingQuickLook && m_delegateMethods.webViewDidFullscreenImageWithQuickLook)
-            [m_delegate.get() _webView:webView.get() didFullscreenImageWithQuickLook:imageDimensions];
+        if (fullScreenController.isUsingQuickLook) {
+            if (m_delegateMethods.webViewDidFullscreenImageWithQuickLook)
+                [m_delegate.get() _webView:webView.get() didFullscreenImageWithQuickLook:imageDimensions];
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+            if (m_delegateMethods.webViewDidFullscreenImageWithQuickLookFromControlsOverlay) {
+                RefPtr fullScreenManager = page ? page->fullScreenManager() : nullptr;
+                if (fullScreenManager && fullScreenManager->requestedFromSpatialImageControls())
+                    [m_delegate.get() _webView:webView.get() didFullscreenImageWithQuickLookFromControlsOverlay:imageDimensions];
+            }
+#endif
+        }
     }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 }

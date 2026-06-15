@@ -80,6 +80,9 @@ private:
 #if ENABLE(QUICKLOOK_FULLSCREEN)
         bool webViewDidFullscreenImageWithQuickLook : 1 { false };
 #endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+        bool webViewDidFullscreenImageWithQuickLookFromControlsOverlay : 1 { false };
+#endif
 #if PLATFORM(IOS_FAMILY)
         bool webViewRequestPresentingViewController : 1 { false };
 #endif

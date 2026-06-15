@@ -346,6 +346,9 @@ private:
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     void updateImageSource(WebCore::Element&) final;
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    void noteFullscreenRequestFromSpatialImageControls(WebCore::Element&) final;
+#endif
     void exitFullScreenForElement(WebCore::Element*, CompletionHandler<void()>&&) final;
 #endif // ENABLE(FULLSCREEN_API)
 

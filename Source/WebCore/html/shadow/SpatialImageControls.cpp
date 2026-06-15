@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SpatialImageControls.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentEventLoop.h"
 #include "DocumentPage.h"
@@ -238,6 +240,9 @@ bool handleEvent(HTMLElement& element, Event& event)
 
     if (SpatialImageControls::isSpatialImageControlsButtonElement(*target)) {
         RefPtr img = dynamicDowncast<HTMLImageElement>(target->shadowHost());
+        if (!img)
+            return false;
+        page->chrome().client().noteFullscreenRequestFromSpatialImageControls(*img);
         img->webkitRequestFullscreen();
 
         event.setDefaultHandled();

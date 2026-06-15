@@ -100,6 +100,9 @@ public:
     void prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&&) const;
     bool launchInImmersive() const { return m_launchInImmersive; }
 #endif // QUICKLOOK_FULLSCREEN
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    bool requestedFromSpatialImageControls() const { return m_mediaDetails && m_mediaDetails->requestSource == FullScreenMediaDetails::SpatialImageRequestSource::ControlsOverlay; }
+#endif
     void close();
     void detachFromClient();
     void NODELETE attachToNewClient(WebFullScreenManagerProxyClient&);
