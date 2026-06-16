@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>scrollbar-gutter: stable both-edges must not reserve a block-axis gutter</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#scrollbar-gutter-property">
+<meta name="assert" content="scrollbar-gutter: stable both-edges reserves gutters on the inline edges only; it must not affect the block-axis size of the content box.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.scroller {
+    box-sizing: content-box;
+    width: 200px;
+    height: 200px;
+    border: 0;
+    padding: 0;
+    /* overflow: scroll keeps both scrollbars present so both gutter axes exist. */
+    overflow: scroll;
+}
+
+/* Horizontal writing mode: block axis is the height; both-edges must not change it. */
+#stable     { scrollbar-gutter: stable; }
+#bothEdges  { scrollbar-gutter: stable both-edges; }
+
+/* Vertical writing mode: block axis is the width; both-edges must not change it. */
+.vertical   { writing-mode: vertical-rl; }
+#vStable    { scrollbar-gutter: stable; }
+#vBothEdges { scrollbar-gutter: stable both-edges; }
+</style>
+</head>
+<body>
+<div class="scroller" id="stable"></div>
+<div class="scroller" id="bothEdges"></div>
+<div class="scroller vertical" id="vStable"></div>
+<div class="scroller vertical" id="vBothEdges"></div>
+
+<script>
+const px = (el, prop) => parseFloat(getComputedStyle(el).getPropertyValue(prop));
+
+const stable = document.getElementById('stable');
+const bothEdges = document.getElementById('bothEdges');
+const vStable = document.getElementById('vStable');
+const vBothEdges = document.getElementById('vBothEdges');
+
+setup(() => {
+    assert_implements_optional(stable.offsetWidth - stable.clientWidth > 0,
+        "test requires classic (non-overlay) scrollbars that take up space");
+    assert_implements_optional(stable.offsetHeight - stable.clientHeight > 0,
+        "test requires classic (non-overlay) scrollbars that take up space");
+});
+
+test(() => {
+    // Spec: both-edges affects the inline edges only, so the height is unchanged.
+    assert_equals(px(bothEdges, 'height'), px(stable, 'height'),
+        "both-edges must not subtract a horizontal-scrollbar gutter from the height");
+}, "horizontal-tb: both-edges does not change the block-axis (height)");
+
+test(() => {
+    // Mirror in vertical-rl: the block axis is the width. Per spec it stays equal to stable.
+    assert_equals(px(vBothEdges, 'width'), px(vStable, 'width'),
+        "both-edges must not subtract a scrollbar gutter from the block-axis width");
+}, "vertical-rl: both-edges does not change the block-axis (width)");
+</script>
+</body>
+</html>

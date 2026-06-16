@@ -942,8 +942,11 @@ LayoutRect RenderBox::paddingBoxRect() const
 
 LayoutPoint RenderBox::contentBoxLocation() const
 {
-    LayoutUnit verticalScrollbarSpace = (shouldPlaceVerticalScrollbarOnLeft() || style().scrollbarGutter().isStableBothEdges()) ? verticalScrollbarWidth() : 0;
-    LayoutUnit horizontalScrollbarSpace = style().scrollbarGutter().isStableBothEdges() ? horizontalScrollbarHeight() : 0;
+    bool bothEdgeScrollbarGutters = style().scrollbarGutter().isStableBothEdges();
+    // scrollbar-gutter reserves a gutter on the inline-start edge for both-edges; which physical
+    // edge that maps to depends on the writing mode. It never reserves on the block-start edge.
+    LayoutUnit verticalScrollbarSpace = (shouldPlaceVerticalScrollbarOnLeft() || (bothEdgeScrollbarGutters && isHorizontalWritingMode())) ? verticalScrollbarWidth() : 0;
+    LayoutUnit horizontalScrollbarSpace = (bothEdgeScrollbarGutters && !isHorizontalWritingMode()) ? horizontalScrollbarHeight() : 0;
     return { borderLeft() + paddingLeft() + verticalScrollbarSpace, borderTop() + paddingTop() + horizontalScrollbarSpace };
 }
 
