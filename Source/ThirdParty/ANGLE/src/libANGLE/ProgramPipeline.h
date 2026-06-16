@@ -71,8 +71,6 @@ class ProgramPipelineState final : angle::NonCopyable
 
     void updateExecutableTextures();
 
-    void updateExecutableSpecConstUsageBits();
-
   private:
     SharedProgramExecutable makeNewExecutable(
         rx::GLImplFactory *factory,

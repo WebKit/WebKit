@@ -26,9 +26,6 @@ struct ValidateASTOptions
     // Check that all symbols reference TVariables that have been declared.  For built-ins, this
     // makes sure that the same GLSL built-in uses the same TVariable consistently.
     bool validateVariableReferences = true;
-    // Whether validateVariableReferences should also include specialization constants.  Their
-    // declaration is output after their usage is discovered, so this is disabled until then.
-    bool validateSpecConstReferences = false;
     // Validate that:
     //
     // - TIntermUnary only contains unary operators

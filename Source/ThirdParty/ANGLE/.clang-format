@@ -4,7 +4,7 @@
 BasedOnStyle: Chromium
 
 # Allow double brackets such as std::vector<std::vector<int>>.
-Standard: Cpp11
+Standard: Latest
 
 # Indent 4 spaces at a time.
 IndentWidth: 4

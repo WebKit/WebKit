@@ -104,59 +104,65 @@ def get_git_inputs_and_maybe_unpack_ref(cwd):
     return ret
 
 
-if len(sys.argv) < 2:
-    sys.exit(usage)
+def main():
+    if len(sys.argv) < 2:
+        sys.exit(usage)
 
-operation = sys.argv[1]
+    operation = sys.argv[1]
 
-# Set the root of ANGLE's repo as the working directory
-aosp_angle_path = os.path.join(os.path.dirname('.'), 'external', 'angle')
-aosp = os.path.exists(aosp_angle_path)
-cwd = aosp_angle_path if aosp else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-git_dir_exists = does_git_dir_exist(cwd)
+    # Set the root of ANGLE's repo as the working directory
+    aosp_angle_path = os.path.join(os.path.dirname('.'), 'external', 'angle')
+    aosp = os.path.exists(aosp_angle_path)
+    cwd = aosp_angle_path if aosp else os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), '..')
+    git_dir_exists = does_git_dir_exist(cwd)
 
-if operation == 'position':
-    if git_dir_exists:
-        print(get_commit_position(cwd))
-    else:
-        print("0")
-    sys.exit(0)
+    if operation == 'position':
+        if git_dir_exists:
+            print(get_commit_position(cwd))
+        else:
+            print("0")
+        sys.exit(0)
 
-if len(sys.argv) < 3 or operation != 'gen':
-    sys.exit(usage)
+    if len(sys.argv) < 3 or operation != 'gen':
+        sys.exit(usage)
 
-output_file = sys.argv[2]
-depfile = sys.argv[3] if len(sys.argv) == 4 else None
-commit_id_size = 12
-commit_date = 'unknown date'
-commit_position = '0'
+    output_file = sys.argv[2]
+    depfile = sys.argv[3] if len(sys.argv) == 4 else None
+    commit_id_size = 12
+    commit_date = 'unknown date'
+    commit_position = '0'
 
-# If the ANGLE_UPSTREAM_HASH environment variable is set, use it as
-# commit_id. commit_date will be 'unknown date' and commit_position will be 0
-# in this case. See details in roll_aosp.sh where commit_id.py is invoked.
-commit_id = os.environ.get('ANGLE_UPSTREAM_HASH')
-# If ANGLE_UPSTREAM_HASH environment variable is not set, use the git command
-# to get the git hash, when .git is available
-if git_dir_exists and not commit_id:
-    try:
-        commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
-        commit_date = grab_output('git show -s --format=%ci HEAD', cwd) or commit_date
-        commit_position = get_commit_position(cwd) or commit_position
-    except:
-        pass
+    # If the ANGLE_UPSTREAM_HASH environment variable is set, use it as
+    # commit_id. commit_date will be 'unknown date' and commit_position will be 0
+    # in this case. See details in roll_aosp.sh where commit_id.py is invoked.
+    commit_id = os.environ.get('ANGLE_UPSTREAM_HASH')
+    # If ANGLE_UPSTREAM_HASH environment variable is not set, use the git command
+    # to get the git hash, when .git is available
+    if git_dir_exists and not commit_id:
+        try:
+            commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
+            commit_date = grab_output('git show -s --format=%ci HEAD', cwd) or commit_date
+            commit_position = get_commit_position(cwd) or commit_position
+        except:
+            pass
 
-with open(output_file, 'w') as hfile:
-    hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % (commit_id or "unknown hash"))
-    hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
-    hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
-    hfile.write('#define ANGLE_COMMIT_POSITION %s\n' % commit_position)
+    with open(output_file, 'w') as hfile:
+        hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % (commit_id or "unknown hash"))
+        hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
+        hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
+        hfile.write('#define ANGLE_COMMIT_POSITION %s\n' % commit_position)
 
-if depfile:
-    inputs = []
-    if git_dir_exists:
-        inputs = get_git_inputs_and_maybe_unpack_ref(cwd)
-    with open(depfile, 'w') as f:
-        f.write(output_file)
-        f.write(': ')
-        f.write(' '.join(os.path.relpath(p) for p in inputs))
-        f.write('\n')
+    if depfile:
+        inputs = []
+        if git_dir_exists:
+            inputs = get_git_inputs_and_maybe_unpack_ref(cwd)
+        with open(depfile, 'w') as f:
+            f.write(output_file)
+            f.write(': ')
+            f.write(' '.join(os.path.relpath(p) for p in inputs))
+            f.write('\n')
+
+
+if __name__ == '__main__':
+    main()

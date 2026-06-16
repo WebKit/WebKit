@@ -304,9 +304,10 @@ size_t GetVertexCountForRange(GLint64 srcBufferBytes,
         return 0;
     }
 
-    size_t numVertices =
-        static_cast<size_t>(srcBufferBytes + srcVertexStride - 1) / srcVertexStride;
-    return numVertices;
+    // A vertex at stride-slot k occupies [k*stride, k*stride + formatSize). The maximum k such that
+    // k*stride + formatSize <= srcBufferBytes is k_max = floor((srcBufferBytes - srcFormatSize) /
+    // srcVertexStride). The number of vertices is k_max + 1.
+    return static_cast<size_t>((srcBufferBytes - srcFormatSize) / srcVertexStride + 1);
 }
 
 size_t GetVertexCount(BufferVk *srcBuffer, const gl::VertexBinding &binding, uint32_t srcFormatSize)
@@ -351,16 +352,6 @@ angle::Result CalculateMaxVertexCountForConversion(ContextVk *contextVk,
     if (maxNumVertices == 0)
     {
         return angle::Result::Continue;
-    }
-
-    // The intended data size does not include the entire stride from the last vertex, but only the
-    // format size. The data size must be within the source buffer's limit.
-    VkDeviceSize intendedSrcDataSize =
-        static_cast<VkDeviceSize>((maxNumVertices - 1) * srcStride) + srcFormatSize;
-    if (intendedSrcDataSize > srcBufferSize)
-    {
-        maxNumVertices = static_cast<size_t>(srcBufferSize / srcStride);
-        ASSERT(maxNumVertices != 0);
     }
 
     // Allocate buffer for results
@@ -1285,8 +1276,13 @@ angle::Result VertexArrayVk::syncNeedsConversionAttrib(ContextVk *contextVk,
     WarnOnVertexFormatConversion(contextVk, vertexFormat);
 
     const VertexConversionBuffer::CacheKey cacheKey{
-        srcFormat.id, srcStride, static_cast<size_t>(binding.getOffset()) + attrib.relativeOffset,
-        !bindingIsAligned, false};
+        this,
+        attribIndex,
+        srcFormat.id,
+        srcStride,
+        static_cast<size_t>(binding.getOffset()) + attrib.relativeOffset,
+        !bindingIsAligned,
+        false};
 
     VertexConversionBuffer *conversion = bufferVk->getVertexConversionBuffer(renderer, cacheKey);
 

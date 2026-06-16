@@ -40,8 +40,8 @@ bool ValidateES3TexImageParametersBase(const Context *context,
                                        GLint border,
                                        GLenum format,
                                        GLenum type,
-                                       GLsizei imageSize,
-                                       const void *pixels);
+                                       const void *pixels,
+                                       GLuint *outImageSize);
 
 bool ValidateES3TexStorageParametersLevel(const Context *context,
                                           angle::EntryPoint entryPoint,

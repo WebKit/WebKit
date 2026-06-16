@@ -30,7 +30,12 @@ logging.basicConfig(
     format='(%(levelname)s) %(asctime)s pid=%(process)d'
     '  %(module)s.%(funcName)s:%(lineno)d  %(message)s')
 
-PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'src' / 'tests' / 'py_utils')
+ANGLE_ROOT = pathlib.Path(__file__).resolve().parents[1]
+if str(ANGLE_ROOT) not in sys.path:
+    sys.path.insert(0, str(ANGLE_ROOT))
+from src import commit_id
+
+PY_UTILS = str(ANGLE_ROOT / 'src' / 'tests' / 'py_utils')
 if PY_UTILS not in sys.path:
     os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
 import angle_metrics
@@ -396,7 +401,8 @@ def _add_build_info(results, benchmark_name, build_properties):
         reserved_infos.BOTS:
             build_properties['buildername'],
         reserved_infos.POINT_ID:
-            build_properties['angle_commit_pos'],
+            build_properties.get('angle_commit_pos',
+                                 commit_id.get_commit_position(str(ANGLE_ROOT))),
         reserved_infos.BENCHMARKS:
             benchmark_name,
         reserved_infos.ANGLE_REVISIONS:

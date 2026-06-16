@@ -26,7 +26,7 @@ constexpr const char kDepthRange[]       = "depthRange";
 constexpr const char kRenderArea[]       = "renderArea";
 constexpr const char kFlipXY[]           = "flipXY";
 constexpr const char kMisc[]             = "misc";
-constexpr const char kDither[]           = "dither";
+constexpr const char kPadding[]          = "padding";
 constexpr const char kAcbBufferOffsets[] = "acbBufferOffsets";
 
 // Extended uniforms
@@ -81,7 +81,7 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
         kRenderArea,
         kFlipXY,
         kMisc,
-        kDither,
+        kPadding,
         kAcbBufferOffsets,
     }};
 
@@ -97,7 +97,7 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
         new TType(EbtUInt, EbpHigh, EvqGlobal),
         // misc: Various bits of state
         new TType(EbtUInt, EbpHigh, EvqGlobal),
-        // emulated dither: ushort
+        // padding: ushort
         new TType(EbtUInt, EbpHigh, EvqGlobal),
         // acbBufferOffsets: Packed ubyte8
         new TType(EbtUInt, EbpHigh, EvqGlobal, 2),
@@ -301,11 +301,6 @@ TIntermTyped *DriverUniform::getNegFlipXY(TSymbolTable *symbolTable, DriverUnifo
 
     constexpr std::array<float, 2> kMultiplier = {1, -1};
     return new TIntermBinary(EOpMul, flipXY, CreateVecNode(kMultiplier.data(), 2, EbpLow));
-}
-
-TIntermTyped *DriverUniform::getDither() const
-{
-    return createDriverUniformRef(kDither);
 }
 
 TIntermTyped *DriverUniform::getSwapXY() const

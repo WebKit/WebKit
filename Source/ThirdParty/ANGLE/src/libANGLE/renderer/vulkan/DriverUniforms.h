@@ -94,13 +94,8 @@ class GraphicsDriverUniforms
         mUniformData.renderArea = 0;
         mUniformData.flipXY     = 0;
         mUniformData.uint32Misc = 0;
-        mUniformData.dither     = 0;
         std::fill(mUniformData.acbBufferOffsets.begin(), mUniformData.acbBufferOffsets.end(), 0);
 
-        if (renderer->getFeatures().emulateDithering.enabled)
-        {
-            mAllDirtyBits.set(DIRTY_BIT_EMULATED_DITHER_CONTROL);
-        }
         if (renderer->getFeatures().emulateTransformFeedback.enabled)
         {
             mAllDirtyBits.set(DIRTY_BIT_EMULATED_TRANSFORM_FEEDBACK);
@@ -214,12 +209,6 @@ class GraphicsDriverUniforms
         mDirtyBits.set(DIRTY_BIT_ATOMIC_COUNTER_BUFFER);
     }
 
-    void updateEmulatedDitherControl(uint32_t emulatedDitherControl)
-    {
-        mUniformData.dither = emulatedDitherControl;
-        mDirtyBits.set(DIRTY_BIT_EMULATED_DITHER_CONTROL);
-    }
-
     void updateAdvancedBlendEquation(uint32_t advancedBlendEquation)
     {
         SetBitField(mUniformData.misc.advancedBlendEquation, advancedBlendEquation);
@@ -288,7 +277,6 @@ class GraphicsDriverUniforms
         DIRTY_BIT_RENDER_AREA,
         DIRTY_BIT_FLIP_XY,
         DIRTY_BIT_MISC,
-        DIRTY_BIT_EMULATED_DITHER_CONTROL,
         DIRTY_BIT_ATOMIC_COUNTER_BUFFER,
         DIRTY_BIT_EMULATED_TRANSFORM_FEEDBACK,
 
@@ -353,9 +341,7 @@ class GraphicsDriverUniforms
             } misc;
             uint32_t uint32Misc;
         };
-
-        // Only the lower 16 bits used
-        uint32_t dither;
+        int32_t padding;
 
         // Contain packed 8-bit values for atomic counter buffer offsets.  These offsets are within
         // Vulkan's minStorageBufferOffsetAlignment limit and are used to support unaligned offsets
@@ -365,7 +351,7 @@ class GraphicsDriverUniforms
         // Only used when transform feedback is emulated.
         std::array<int32_t, 4> xfbBufferOffsets;
         int32_t xfbVerticesPerInstance;
-        int32_t padding[3];
+        int32_t xfbPadding[3];
     } UniformData;
     ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
@@ -386,7 +372,6 @@ class GraphicsDriverUniforms
         offsetof(struct UniformData, renderArea),
         offsetof(struct UniformData, flipXY),
         offsetof(struct UniformData, misc),
-        offsetof(struct UniformData, dither),
         offsetof(struct UniformData, acbBufferOffsets),
         offsetof(struct UniformData, xfbBufferOffsets),
         sizeof(struct UniformData)};

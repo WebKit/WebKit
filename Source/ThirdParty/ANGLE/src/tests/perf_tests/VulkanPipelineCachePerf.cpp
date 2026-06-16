@@ -115,17 +115,14 @@ void VulkanPipelineCachePerfTest::step()
 
     spc.init(&pc, nullptr);
 
-    vk::SpecializationConstants defaultSpecConsts{};
-
     for (unsigned int iteration = 0; iteration < kIterationsPerStep; ++iteration)
     {
         for (const auto &hit : mCacheHits)
         {
             if (!mCache.getPipeline(hit, &desc, &result))
             {
-                (void)mCache.createPipeline(VK_NULL_HANDLE, &spc, rp, pl,
-                                            {&ssm, &defaultSpecConsts}, PipelineSource::Draw, hit,
-                                            &desc, &result);
+                (void)mCache.createPipeline(VK_NULL_HANDLE, &spc, rp, pl, {&ssm},
+                                            PipelineSource::Draw, hit, &desc, &result);
             }
         }
     }
@@ -136,8 +133,8 @@ void VulkanPipelineCachePerfTest::step()
         const auto &miss = mCacheMisses[mMissIndex];
         if (!mCache.getPipeline(miss, &desc, &result))
         {
-            (void)mCache.createPipeline(VK_NULL_HANDLE, &spc, rp, pl, {&ssm, &defaultSpecConsts},
-                                        PipelineSource::Draw, miss, &desc, &result);
+            (void)mCache.createPipeline(VK_NULL_HANDLE, &spc, rp, pl, {&ssm}, PipelineSource::Draw,
+                                        miss, &desc, &result);
         }
     }
 

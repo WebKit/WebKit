@@ -207,7 +207,7 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
             (imageColorspaceAttribute == EGL_GL_COLORSPACE_SRGB_KHR) ? egl::ImageColorspace::SRGB
                                                                      : egl::ImageColorspace::Linear;
         ASSERT(mImage != nullptr);
-        mImageViews.updateEglImageColorspace(*mImage, imageColorspace);
+        mImageViews.updateEglImageColorspace(mImage->getActualFormat(), imageColorspace);
     }
 
     mRenderTarget.init(mImage, &mImageViews, nullptr, nullptr, imageVk->getImageLevel(),

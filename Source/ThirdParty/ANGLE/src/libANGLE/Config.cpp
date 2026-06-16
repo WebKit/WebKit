@@ -230,8 +230,10 @@ std::vector<const Config *> ConfigSet::filter(const AttributeMap &attributeMap) 
 {
     std::vector<const Config *> result;
 
-    // If EGL_CONFIG_ID is included, all other attributes should be ignored.
-    if (attributeMap.contains(EGL_CONFIG_ID))
+    // If EGL_CONFIG_ID is included and is not EGL_DONT_CARE, all other attributes should be
+    // ignored.  EGL_DONT_CARE means the attribute should not be used for filtering, so fall
+    // through to the normal path where EGL_DONT_CARE values are properly skipped.
+    if (attributeMap.contains(EGL_CONFIG_ID) && attributeMap.get(EGL_CONFIG_ID) != EGL_DONT_CARE)
     {
         result.push_back(&ConfigSet::get(attributeMap.getAsInt(EGL_CONFIG_ID)));
         return result;

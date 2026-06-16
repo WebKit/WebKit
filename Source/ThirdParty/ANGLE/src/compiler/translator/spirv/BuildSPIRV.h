@@ -538,9 +538,6 @@ class SPIRVBuilder : angle::NonCopyable
     // With SPIR-V 1.4, this list includes all global variables.
     spirv::IdRefList mEntryPointInterfaceList;
 
-    // Id of imported instructions, if used.
-    spirv::IdRef mExtInstImportIdStd;
-
     // Current ID bound, used to allocate new ids.
     spirv::IdRef mNextAvailableId;
 

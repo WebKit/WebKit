@@ -641,6 +641,10 @@ class Texture final : public RefCountObject<TextureID>,
     bool isSamplerComplete(const Context *context, const Sampler *optionalSampler);
     bool isSamplerCompleteForCopyImage(const Context *context,
                                        const Sampler *optionalSampler) const;
+    // Check the rules in Framebuffer Attachment Completeness sections, excluding those related to
+    // framebuffer layers.  If a texture is immutable, always returns true, otherwise checks
+    // cube-completeness, mip-completeness, etc, if necessary.
+    bool isFramebufferAttachmentComplete(GLuint attachmentMipLevel, const char **error) const;
 
     GLenum getImplementationColorReadFormat(const Context *context) const;
     GLenum getImplementationColorReadType(const Context *context) const;

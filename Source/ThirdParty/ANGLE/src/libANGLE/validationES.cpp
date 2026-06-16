@@ -689,7 +689,8 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
         }
     }
 
-    if (ANGLE_UNLIKELY(context->isWebGL() || context->isBufferAccessValidationEnabled()))
+    if (ANGLE_UNLIKELY(context->isWebGL() || context->isBufferAccessValidationEnabled() ||
+                       context->isHardenedContext()))
     {
         // Uniform buffer validation
         for (size_t uniformBlockIndex = 0; uniformBlockIndex < executable.getUniformBlocks().size();
@@ -701,15 +702,15 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
             const OffsetBindingPointer<Buffer> &uniformBuffer =
                 state.getIndexedUniformBuffer(blockBinding);
 
-            if (uniformBuffer.get() == nullptr && context->isWebGL())
+            if (uniformBuffer.get() == nullptr &&
+                (context->isWebGL() || context->isHardenedContext()))
             {
                 // undefined behaviour
                 return gl::err::kUniformBufferUnbound;
             }
 
             size_t uniformBufferSize = GetBoundBufferAvailableSize(uniformBuffer);
-            if (uniformBufferSize < uniformBlock.pod.dataSize &&
-                (context->isWebGL() || context->isBufferAccessValidationEnabled()))
+            if (uniformBufferSize < uniformBlock.pod.dataSize)
             {
                 // undefined behaviour
                 return gl::err::kUniformBufferTooSmall;
@@ -1391,19 +1392,13 @@ bool ValidImageDataSize(const Context *context,
                         GLenum format,
                         GLenum type,
                         const void *pixels,
-                        GLsizei imageSize)
+                        GLuint *outImageSize)
 {
-    Buffer *pixelUnpackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelUnpack);
-    if (pixelUnpackBuffer == nullptr && imageSize < 0)
-    {
-        // Checks are not required
-        return true;
-    }
+    // Make sure the output parameter was initialized if not null
+    ASSERT(outImageSize == nullptr || *outImageSize == std::numeric_limits<GLuint>::max());
 
-    // ...the data would be unpacked from the buffer object such that the memory reads required
-    // would exceed the data store size.
     const InternalFormat &formatInfo = GetInternalFormatInfo(format, type);
-    if (formatInfo.internalFormat == GL_NONE)
+    if (ANGLE_UNLIKELY(formatInfo.internalFormat == GL_NONE))
     {
         UNREACHABLE();
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInternalErrorFormatNotFound);
@@ -1414,47 +1409,35 @@ bool ValidImageDataSize(const Context *context,
 
     bool targetIs3D = texType == TextureType::_3D || texType == TextureType::_2DArray ||
                       texType == TextureType::CubeMapArray;
-    GLuint endByte  = 0;
-    if (!formatInfo.computePackUnpackEndByte(type, size, unpack, targetIs3D, &endByte))
+
+    // Make sure computePackUnpackEndByte sets endByte
+    GLuint endByte = std::numeric_limits<GLuint>::max();
+    if (ANGLE_UNLIKELY(
+            !formatInfo.computePackUnpackEndByte(type, size, unpack, targetIs3D, &endByte)))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
         return false;
     }
 
-    if (pixelUnpackBuffer)
+    Buffer *pixelUnpackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelUnpack);
+    if (pixelUnpackBuffer != nullptr)
     {
         CheckedNumeric<size_t> checkedEndByte(endByte);
         CheckedNumeric<size_t> checkedOffset(reinterpret_cast<size_t>(pixels));
         checkedEndByte += checkedOffset;
 
-        if (!checkedEndByte.IsValid() ||
-            (checkedEndByte.ValueOrDie() > static_cast<size_t>(pixelUnpackBuffer->getSize())))
+        if (ANGLE_UNLIKELY(
+                !checkedEndByte.IsValid() ||
+                (checkedEndByte.ValueOrDie() > static_cast<size_t>(pixelUnpackBuffer->getSize()))))
         {
             // Overflow past the end of the buffer
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIntegerOverflow);
-            return false;
-        }
-        if (pixelUnpackBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
-                                   kPixelUnpackBufferBoundForTransformFeedback);
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kParamOverflow);
             return false;
         }
     }
-    else
+    else if (outImageSize != nullptr)
     {
-        ASSERT(imageSize >= 0);
-        if (pixels == nullptr && imageSize != 0)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kImageSizeMustBeZero);
-            return false;
-        }
-
-        if (pixels != nullptr && endByte > static_cast<GLuint>(imageSize))
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kImageSizeTooSmall);
-            return false;
-        }
+        *outImageSize = endByte;
     }
 
     return true;
@@ -1916,7 +1899,8 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                         return false;
                     }
 
-                    if (context->isWebGL() && *readColorBuffer == *attachment)
+                    if ((context->isWebGL() || context->isHardenedContext()) &&
+                        *readColorBuffer == *attachment)
                     {
                         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitSameImageColor);
                         return false;
@@ -1970,7 +1954,8 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                     return false;
                 }
 
-                if (context->isWebGL() && *readBuffer == *drawBuffer)
+                if ((context->isWebGL() || context->isHardenedContext()) &&
+                    *readBuffer == *drawBuffer)
                 {
                     ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitSameImageDepthOrStencil);
                     return false;
@@ -5377,12 +5362,34 @@ bool ValidateGenOrDelete(ErrorSet *errors, angle::EntryPoint entryPoint, GLint n
     return true;
 }
 
-bool ValidateRobustEntryPoint(const Context *context, angle::EntryPoint entryPoint, GLsizei bufSize)
+bool ValidateRobustTexImage(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            const void *pixels,
+                            GLuint imageSize,
+                            GLsizei bufSize)
 {
-    if (bufSize < 0)
+    if (ANGLE_UNLIKELY(bufSize < 0))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
+    }
+
+    const bool hasPBO = context->getState().getTargetBuffer(BufferBinding::PixelUnpack) != nullptr;
+    if (hasPBO || pixels == nullptr)
+    {
+        if (ANGLE_UNLIKELY(bufSize != 0))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufSizeNotZeroForTexImage);
+            return false;
+        }
+    }
+    else
+    {
+        if (ANGLE_UNLIKELY(static_cast<GLuint>(bufSize) < imageSize))
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufSizeTooSmallForTexImage);
+            return false;
+        }
     }
 
     return true;
@@ -7049,7 +7056,7 @@ bool ValidatePixelPack(const Context *context,
         }
     }
 
-    if (context->isWebGL())
+    if (context->isWebGL() || context->isHardenedContext())
     {
         // WebGL 2.0 disallows the scenario:
         //   GL_PACK_SKIP_PIXELS + width > DataStoreWidth
@@ -8336,7 +8343,7 @@ bool ValidateTexImage2DExternalANGLE(const Context *context,
     {
         if (!ValidateES2TexImageParametersBase(context, entryPoint, target, level, internalformat,
                                                false, false, 0, 0, width, height, border, format,
-                                               type, -1, nullptr))
+                                               type, nullptr, nullptr))
         {
             return false;
         }
@@ -8345,7 +8352,7 @@ bool ValidateTexImage2DExternalANGLE(const Context *context,
     {
         if (!ValidateES3TexImageParametersBase(context, entryPoint, target, level, internalformat,
                                                false, false, 0, 0, 0, width, height, 1, border,
-                                               format, type, -1, nullptr))
+                                               format, type, nullptr, nullptr))
         {
             return false;
         }

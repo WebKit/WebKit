@@ -185,6 +185,14 @@
             "issue": ""
         },
         {
+            "name": "dont_invalidate_incomplete_FBOs",
+            "category": "Workarounds",
+            "description": [
+                "Skip invalidation calls if the framebuffer is incomplete."
+            ],
+            "issue": "http://crbug.com/507508103"
+        },
+        {
             "name": "dont_use_loops_to_initialize_variables",
             "category": "Workarounds",
             "description": [
@@ -901,6 +909,14 @@
                 "Some drivers have internal failures when attempting to allocate and initialize buffers larger than 1gb."
             ],
             "issue": "http://crbug.com/475877320"
+        },
+        {
+            "name": "recreate_fbo_upon_flush",
+            "category": "Workarounds",
+            "description": [
+                "Recreate FBO upon flush/finish/fencesync under certain conditions to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/493747593"
         }
     ]
 }

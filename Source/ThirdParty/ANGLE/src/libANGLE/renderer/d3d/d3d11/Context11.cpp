@@ -228,7 +228,7 @@ FenceNVImpl *Context11::createFenceNV()
     return new FenceNV11(mRenderer);
 }
 
-SyncImpl *Context11::createSync()
+SyncImpl *Context11::createSync(const gl::Context *)
 {
     return new Sync11(mRenderer);
 }

@@ -3936,6 +3936,51 @@ void main()
     }
 }
 
+// Test that short circuiting works correctly even if the right hand side has no side effects but
+// is otherwise unsafe to execute (e.g. contains an out-of-bounds array access).
+// This is a regression test for a bug where the HLSL backend would not unfold short-circuit
+// expressions if the right hand side had no side effects.
+TEST_P(GLSLTest_ES3, ShortCircuitUnsafeExpressionNoSideEffects)
+{
+    // Fragment shader based on a reproduction case for a bug where short-circuit unfolding
+    // was gated by hasSideEffects().
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform int idx;
+uniform bool safe;
+out vec4 color;
+void main() {
+  float data[4] = float[4](0.25, 0.5, 0.75, 1.0);
+  // hasSideEffects() == false on the RHS -> should be unfolded because it's unsafe.
+  bool hit = safe && (data[idx] > 0.0);
+  // If short-circuiting works, 'hit' must be false when 'safe' is false,
+  // regardless of 'idx'.
+  color = vec4(hit ? 1.0 : 0.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint idxLocation  = glGetUniformLocation(program, "idx");
+    GLint safeLocation = glGetUniformLocation(program, "safe");
+
+    // Baseline: safe=true, idx=0. hit should be true.
+    glUniform1i(safeLocation, 1);
+    glUniform1i(idxLocation, 0);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Test: safe=false, idx=100 (OOB). hit should be false.
+    // On some drivers/backends, if it's NOT short-circuited, this might crash or
+    // return an unexpected value (e.g. if OOB read returns something > 0.0).
+    glUniform1i(safeLocation, 0);
+    glUniform1i(idxLocation, 100);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that nesting ternary and short-circuitting operators work.
 TEST_P(GLSLTest, NestedTernaryAndShortCircuit)
 {
@@ -24161,9 +24206,6 @@ void main()
 // Test variable declaration in switch case after dead code, but used in the next case.
 TEST_P(GLSLTest_ES3, VariableDeclaredInCaseDeadCode1)
 {
-    // The PruneNoOps AST pass does not retain the variable in dead code.
-    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
-
     constexpr char kFS[] = R"(#version 300 es
 precision mediump float;
 uniform int u0;
@@ -24189,9 +24231,6 @@ void main(){
 // The dead code is after divergence and reconvergence.
 TEST_P(GLSLTest_ES3, VariableDeclaredInCaseDeadCode2)
 {
-    // The PruneNoOps AST pass does not retain the variable in dead code.
-    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
-
     constexpr char kFS[] = R"(#version 300 es
 precision mediump float;
 uniform int u0;
@@ -24223,9 +24262,6 @@ void main(){
 // The dead code itself has divergence and reconvergence.
 TEST_P(GLSLTest_ES3, VariableDeclaredInCaseDeadCode3)
 {
-    // The PruneNoOps AST pass does not retain the variable in dead code.
-    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
-
     constexpr char kFS[] = R"(#version 300 es
 precision mediump float;
 uniform int u0;
@@ -24308,6 +24344,89 @@ void main(){
                 break;
                 vec4 d = vec4(0);
                 d.a = .0;
+            }
+        default:
+            break;
+    }
+    fragOut = vec4(1, 0, 0, 1);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test variable declaration in switch case after dead code, but used in the next case.
+TEST_P(GLSLTest_ES3, VariableDeclaredInCaseDeadCode6)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform int u0;
+out vec4 fragOut;
+void main(){
+    vec4 d = vec4(1);
+    switch(u0){
+        case 0:
+            break;
+            vec4 d = vec4(0);
+        default:
+            d.a = .0;
+    }
+    fragOut = vec4(1, 0, 0, 1);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test variable declaration in switch case after dead code, but used in the next case.
+TEST_P(GLSLTest_ES3, VariableDeclaredInCaseDeadCode7)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform int u0;
+out vec4 fragOut;
+void main(){
+    vec4 d = vec4(1);
+    switch(u0){
+        case 0:
+            break;
+            vec4 d = vec4(0), d1 = vec4(0);
+            vec4 d2 = vec4(0);
+        default:
+            d.a = .0;
+            d1.a = .0;
+            d2.a = .0;
+    }
+    fragOut = vec4(1, 0, 0, 1);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test variable declaration in switch case after dead code, but used in the next case.
+TEST_P(GLSLTest_ES3, VariableDeclaredInCaseDeadCode8)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform int u0;
+out vec4 fragOut;
+void main(){
+    switch(u0){
+        case 0:
+            break;
+            switch(u0){
+                case 0:
+                    break;
+                    vec4 d = vec4(0);
+                default:
+                    d.a = .0;
             }
         default:
             break;

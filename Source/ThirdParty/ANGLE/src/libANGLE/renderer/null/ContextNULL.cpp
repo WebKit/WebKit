@@ -482,7 +482,7 @@ FenceNVImpl *ContextNULL::createFenceNV()
     return new FenceNVNULL();
 }
 
-SyncImpl *ContextNULL::createSync()
+SyncImpl *ContextNULL::createSync(const gl::Context *)
 {
     return new SyncNULL();
 }

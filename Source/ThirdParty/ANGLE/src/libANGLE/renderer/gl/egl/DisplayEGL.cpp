@@ -90,7 +90,12 @@ namespace rx
 
 DisplayEGL::DisplayEGL(const egl::DisplayState &state) : DisplayGL(state) {}
 
-DisplayEGL::~DisplayEGL() {}
+DisplayEGL::~DisplayEGL()
+{
+    // Make sure mRenderer is released before the rest of DisplayEGL is destroyed.  Its destructor
+    // calls into this object.
+    mRenderer.reset();
+}
 
 ImageImpl *DisplayEGL::createImage(const egl::ImageState &state,
                                    const gl::Context *context,

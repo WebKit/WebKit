@@ -12,7 +12,6 @@
 #include "compiler/translator/Name.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
-#include "compiler/translator/tree_util/SpecializationConstant.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -712,13 +711,6 @@ bool ValidateAST::variableNeedsDeclaration(const TVariable *variable)
     if (gl::IsBuiltInName(variable->name().data()))
     {
         return false;
-    }
-
-    // Additionally, don't expect declaration for Vulkan specialization constants if not enabled.
-    // The declaration of these variables is deferred.
-    if (variable->getType().getQualifier() == EvqSpecConst)
-    {
-        return mOptions.validateSpecConstReferences;
     }
 
     return true;

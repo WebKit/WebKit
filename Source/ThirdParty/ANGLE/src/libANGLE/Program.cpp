@@ -1146,7 +1146,6 @@ angle::Result Program::linkJobImpl(const Caps &caps,
             mState.mExecutable->mPod.numViews = vertexShader->numViews;
             mState.mExecutable->mPod.hasClipDistance =
                 vertexShader->metadataFlags.test(sh::MetadataFlags::HasClipDistance);
-            mState.mExecutable->mPod.specConstUsageBits |= vertexShader->specConstUsageBits;
         }
 
         const SharedCompiledShaderState &fragmentShader =
@@ -1178,7 +1177,6 @@ angle::Result Program::linkJobImpl(const Caps &caps,
                 fragmentShader->metadataFlags.test(sh::MetadataFlags::HasStencilInputAttachment);
             mState.mExecutable->mPod.advancedBlendEquations =
                 fragmentShader->advancedBlendEquations;
-            mState.mExecutable->mPod.specConstUsageBits |= fragmentShader->specConstUsageBits;
             mState.mExecutable->mPod.hasFragCoord =
                 fragmentShader->metadataFlags.test(sh::MetadataFlags::HasFragCoord);
 

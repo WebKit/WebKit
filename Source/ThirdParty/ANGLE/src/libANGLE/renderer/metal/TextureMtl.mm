@@ -322,35 +322,6 @@ angle::Result CopyTextureContentsToStagingBuffer(ContextMtl *contextMtl,
     return angle::Result::Continue;
 }
 
-angle::Result CopyCompressedTextureContentsToStagingBuffer(ContextMtl *contextMtl,
-                                                           const angle::Format &textureAngleFormat,
-                                                           const MTLSize &regionSizeInBlocks,
-                                                           const uint8_t *data,
-                                                           size_t bytesPerBlockRow,
-                                                           size_t bytesPer2DImage,
-                                                           size_t *bufferRowPitchOut,
-                                                           size_t *buffer2DImageSizeOut,
-                                                           mtl::BufferRef *bufferOut)
-{
-    size_t stagingBufferRowPitch    = bytesPerBlockRow;
-    size_t stagingBuffer2DImageSize = bytesPer2DImage;
-    size_t stagingBufferSize        = stagingBuffer2DImageSize * regionSizeInBlocks.depth;
-    mtl::BufferRef stagingBuffer;
-    ANGLE_TRY(mtl::Buffer::MakeBuffer(contextMtl, stagingBufferSize, &stagingBuffer));
-
-    uint8_t *pdst = stagingBuffer->map(contextMtl).data();
-    CopyTextureData(regionSizeInBlocks, bytesPerBlockRow, bytesPer2DImage, data,
-                    stagingBufferRowPitch, stagingBuffer2DImageSize, pdst);
-
-    stagingBuffer->unmap(contextMtl);
-
-    *bufferOut            = stagingBuffer;
-    *bufferRowPitchOut    = stagingBufferRowPitch;
-    *buffer2DImageSizeOut = stagingBuffer2DImageSize;
-
-    return angle::Result::Continue;
-}
-
 angle::Result SaturateDepth(ContextMtl *contextMtl,
                             mtl::BufferRef srcBuffer,
                             mtl::BufferRef dstBuffer,
@@ -554,6 +525,7 @@ angle::Result UploadTextureContentsWithStagingBuffer(ContextMtl *contextMtl,
                                                      const mtl::TextureRef &texture)
 {
     ASSERT(texture && texture->valid());
+    ASSERT(!textureAngleFormat.isBlock);
 
     angle::FormatID stagingBufferFormatID   = textureAngleFormat.id;
     const angle::Format &angleStagingFormat = angle::Format::Get(stagingBufferFormatID);
@@ -561,32 +533,10 @@ angle::Result UploadTextureContentsWithStagingBuffer(ContextMtl *contextMtl,
     size_t stagingBufferRowPitch;
     size_t stagingBuffer2DImageSize;
     mtl::BufferRef stagingBuffer;
+    ANGLE_TRY(CopyTextureContentsToStagingBuffer(
+        contextMtl, angleStagingFormat, region.size, data, bytesPerRow, bytesPer2DImage,
+        &stagingBufferRowPitch, &stagingBuffer2DImageSize, &stagingBuffer));
 
-    // Block-compressed formats need a bit of massaging for copy.
-    if (textureAngleFormat.isBlock)
-    {
-        GLenum internalFormat         = textureAngleFormat.glInternalFormat;
-        const gl::InternalFormat &fmt = gl::GetSizedInternalFormatInfo(internalFormat);
-        MTLRegion newRegion           = region;
-        bytesPerRow =
-            (region.size.width + fmt.compressedBlockWidth - 1) / fmt.compressedBlockWidth * 16;
-        bytesPer2DImage = (region.size.height + fmt.compressedBlockHeight - 1) /
-                          fmt.compressedBlockHeight * bytesPerRow;
-        newRegion.size.width =
-            (region.size.width + fmt.compressedBlockWidth - 1) / fmt.compressedBlockWidth;
-        newRegion.size.height =
-            (region.size.height + fmt.compressedBlockHeight - 1) / fmt.compressedBlockHeight;
-        ANGLE_TRY(CopyCompressedTextureContentsToStagingBuffer(
-            contextMtl, angleStagingFormat, newRegion.size, data, bytesPerRow, bytesPer2DImage,
-            &stagingBufferRowPitch, &stagingBuffer2DImageSize, &stagingBuffer));
-    }
-    // Copy to staging buffer before uploading to texture.
-    else
-    {
-        ANGLE_TRY(CopyTextureContentsToStagingBuffer(
-            contextMtl, angleStagingFormat, region.size, data, bytesPerRow, bytesPer2DImage,
-            &stagingBufferRowPitch, &stagingBuffer2DImageSize, &stagingBuffer));
-    }
     mtl::BlitCommandEncoder *encoder =
         GetBlitCommandEncoderForResources(contextMtl, {stagingBuffer.get(), texture.get()});
 
@@ -1510,7 +1460,8 @@ angle::Result TextureMtl::copyImage(const gl::Context *context,
 
     gl::Extents fbSize = source->getReadColorAttachment()->getSize();
     gl::Rectangle fbRect(0, 0, fbSize.width, fbSize.height);
-    if (context->isWebGL() && !fbRect.encloses(sourceArea))
+    if ((context->isWebGL() || context->isRobustResourceInitEnabled()) &&
+        !fbRect.encloses(sourceArea))
     {
         ANGLE_TRY(initializeContents(context, GL_NONE, index));
     }

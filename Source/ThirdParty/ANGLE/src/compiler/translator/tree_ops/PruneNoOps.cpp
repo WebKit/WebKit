@@ -109,18 +109,22 @@ class PruneNoOpsTraverser : private TIntermTraverser
   private:
     PruneNoOpsTraverser(TSymbolTable *symbolTable);
     bool visitDeclaration(Visit, TIntermDeclaration *node) override;
+    bool visitSwitch(Visit visit, TIntermSwitch *node) override;
     bool visitBlock(Visit visit, TIntermBlock *node) override;
     bool visitLoop(Visit visit, TIntermLoop *loop) override;
     bool visitBranch(Visit visit, TIntermBranch *node) override;
     TIntermTyped *pruneNoOpCommaExpressions(TIntermTyped *statement);
 
     bool mIsBranchVisited = false;
+
+    TVector<TVector<const TVariable *>> mSwitchPrunedDeclarationsStack;
 };
 
 bool PruneNoOpsTraverser::apply(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
 {
     PruneNoOpsTraverser prune(symbolTable);
     root->traverse(&prune);
+    ASSERT(prune.mSwitchPrunedDeclarationsStack.empty());
     return prune.updateTree(compiler, root);
 }
 
@@ -196,6 +200,35 @@ bool PruneNoOpsTraverser::visitDeclaration(Visit visit, TIntermDeclaration *node
     return false;
 }
 
+bool PruneNoOpsTraverser::visitSwitch(Visit visit, TIntermSwitch *node)
+{
+    node->getInit()->traverse(this);
+
+    // Before visiting the block, push a list of variable declarations that were pruned because they
+    // were declared directly in the body of the switch but after a branch.  The variable
+    // declarations are instead prepended to the switch, in case they are used in a later case which
+    // references them in live code.
+    mSwitchPrunedDeclarationsStack.push_back({});
+
+    node->getStatementList()->traverse(this);
+    if (!mSwitchPrunedDeclarationsStack.back().empty())
+    {
+        TIntermSequence replacement;
+        for (const TVariable *toDeclare : mSwitchPrunedDeclarationsStack.back())
+        {
+            TIntermDeclaration *decl = new TIntermDeclaration();
+            decl->appendDeclarator(new TIntermSymbol(toDeclare));
+            replacement.push_back(decl);
+        }
+        replacement.push_back(node);
+        mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), node,
+                                        std::move(replacement));
+    }
+
+    mSwitchPrunedDeclarationsStack.pop_back();
+    return false;
+}
+
 bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
 {
     ASSERT(visit == PreVisit);
@@ -218,6 +251,42 @@ bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
         // If a branch is visited, prune the statement.  If the statement is a no-op, also prune it.
         if (mIsBranchVisited || IsNoOp(statement))
         {
+            // If this is a declaration, remember the variable.  The declaration is moved to before
+            // the switch, to support cases like:
+            //
+            //    switch(u0){
+            //        case 0:
+            //            break;
+            //            vec4 d = vec4(0);
+            //        default:
+            //            d.a = .0;
+            //    }
+            if (mIsBranchVisited && getParentNode()->getAsSwitchNode() != nullptr)
+            {
+                TIntermDeclaration *decl = statement->getAsDeclarationNode();
+                if (decl != nullptr)
+                {
+                    for (TIntermNode *declarator : *decl->getSequence())
+                    {
+                        TIntermSymbol *symbol        = declarator->getAsSymbolNode();
+                        const TVariable *declaredVar = nullptr;
+                        if (symbol != nullptr)
+                        {
+                            declaredVar = &symbol->variable();
+                        }
+                        else
+                        {
+                            TIntermBinary *initNode = declarator->getAsBinaryNode();
+                            ASSERT(initNode && initNode->getOp() == EOpInitialize);
+                            ASSERT(initNode->getLeft()->getAsSymbolNode());
+                            declaredVar = &initNode->getLeft()->getAsSymbolNode()->variable();
+                        }
+
+                        mSwitchPrunedDeclarationsStack.back().push_back(declaredVar);
+                    }
+                }
+            }
+
             continue;
         }
 

@@ -6,7 +6,7 @@
   "src/tests/deqp_support/deqp_data_autogen.gni":
     "ee142f516fad1d6aa58ac8dc4b01ef32",
   "third_party/VK-GL-CTS/src/CMakeLists.txt":
-    "98cf61f26f931dd24bf3549804311265",
+    "d222db7af53e8edb16e1978f4132a192",
   "third_party/VK-GL-CTS/src/execserver/CMakeLists.txt":
     "38aa187592e6ef9a331fc1ea313fc68d",
   "third_party/VK-GL-CTS/src/executor/CMakeLists.txt":
@@ -16,7 +16,7 @@
   "third_party/VK-GL-CTS/src/external/glslang/CMakeLists.txt":
     "702c2f212d8f4442e3c307eb451201de",
   "third_party/VK-GL-CTS/src/external/jsoncpp/CMakeLists.txt":
-    "80cd4f898f759cebdeaa46552fcedddb",
+    "6783933d4178dbe4a8328a9dce4fa3b1",
   "third_party/VK-GL-CTS/src/external/libpng/CMakeLists.txt":
     "fb1d65fa30f92dc2368c8d952947e95e",
   "third_party/VK-GL-CTS/src/external/openglcts/CMakeLists.txt":
@@ -52,9 +52,9 @@
   "third_party/VK-GL-CTS/src/external/vulkan-video-samples/CMakeLists.txt":
     "4b82176e0913a0ee812178b692de9cc3",
   "third_party/VK-GL-CTS/src/external/vulkancts/framework/vulkan/CMakeLists.txt":
-    "0d72e65375aa0cd53bb0472e533f9499",
+    "0139e89b14acf44e1688127c3bf5c9da",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/CMakeLists.txt":
-    "7246051890748c5e644b13b4f4deaab0",
+    "0c1150679621e912f77bbe79556049f0",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/amber/CMakeLists.txt":
     "51aed6000e6c76f2e4a5922e48841885",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/api/CMakeLists.txt":
@@ -166,7 +166,9 @@
   "third_party/VK-GL-CTS/src/external/vulkancts/vkscpc/CMakeLists.txt":
     "b1e0a3495cabd10a8020bf0aa2635ee1",
   "third_party/VK-GL-CTS/src/external/vulkancts/vkscserver/CMakeLists.txt":
-    "8e3c3d8286a007fcad20f46031df5c76",
+    "00150c0a7b5c3da7923dfcfa9292ad69",
+  "third_party/VK-GL-CTS/src/external/vulkansc-pcutil/CMakeLists.txt":
+    "76066ac01c66065f4d80c3859bdbdd30",
   "third_party/VK-GL-CTS/src/external/zlib/CMakeLists.txt":
     "30ffe3a360ab8870fe103084e9947e6d",
   "third_party/VK-GL-CTS/src/framework/CMakeLists.txt":

@@ -118,8 +118,9 @@ angle::Result BufferGL::setData(const gl::Context *context,
         }
     }
 
-    ANGLE_GL_TRY(context, functions->bufferData(gl::ToGLenum(DestBufferOperationTarget), size,
-                                                uploadData, ToGLenum(usage)));
+    ANGLE_GL_TRY_ALWAYS_CHECK(
+        context, functions->bufferData(gl::ToGLenum(DestBufferOperationTarget), size, uploadData,
+                                       ToGLenum(usage)));
 
     mBufferSize = size;
 

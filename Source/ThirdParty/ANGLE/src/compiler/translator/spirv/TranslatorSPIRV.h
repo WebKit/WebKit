@@ -19,7 +19,6 @@ namespace sh
 {
 
 class TOutputVulkanGLSL;
-class SpecConst;
 class DriverUniform;
 
 // An index -> TVariable map, tracking the declarated color input attachments, as well as TVariables
@@ -47,7 +46,6 @@ class TranslatorSPIRV final : public TCompiler
     [[nodiscard]] bool translateImpl(TIntermBlock *root,
                                      const ShCompileOptions &compileOptions,
                                      PerformanceDiagnostics *perfDiagnostics,
-                                     SpecConst *specConst,
                                      DriverUniform *driverUniforms);
     void assignInputAttachmentIds(const InputAttachmentMap &inputAttachmentMap);
     void assignSpirvIds(TIntermBlock *root);

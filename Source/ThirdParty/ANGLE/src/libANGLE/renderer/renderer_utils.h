@@ -75,8 +75,6 @@ enum class SurfaceRotation
 
 bool IsRotatedAspectRatio(SurfaceRotation rotation);
 
-using SpecConstUsageBits = angle::PackedEnumBitSet<sh::vk::SpecConstUsage, uint32_t>;
-
 void RotateRectangle(SurfaceRotation rotation,
                      bool flipY,
                      int framebufferWidth,

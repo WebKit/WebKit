@@ -57,16 +57,16 @@ union ProgramTransformOptions final
 {
     struct
     {
-        uint8_t removeTransformFeedbackEmulation : 1;
-        uint8_t multiSampleFramebufferFetch : 1;
-        uint8_t enableSampleShading : 1;
-        uint8_t removeDepthStencilInput : 1;
-        uint8_t reserved : 4;  // must initialize to zero
+        uint16_t removeTransformFeedbackEmulation : 1;
+        uint16_t multiSampleFramebufferFetch : 1;
+        uint16_t enableSampleShading : 1;
+        uint16_t removeDepthStencilInput : 1;
+        uint16_t padding : 12;  // must initialize to zero
+        uint16_t ditherControl;
     };
-    uint8_t permutationIndex;
-    static constexpr uint32_t kPermutationCount = 0x1 << 4;
+    uint32_t permutationIndex;
 };
-static_assert(sizeof(ProgramTransformOptions) == 1, "Size check failed");
+static_assert(sizeof(ProgramTransformOptions) == 4, "Size check failed");
 static_assert(static_cast<int>(SurfaceRotation::EnumCount) <= 8, "Size check failed");
 
 class ProgramInfo final : angle::NonCopyable
@@ -441,7 +441,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         ProgramInfo *programInfo,
         const ShaderInterfaceVariableInfoMap &variableInfoMap)
     {
-        mValidGraphicsPermutations.set(optionBits.permutationIndex);
         return initProgram(context, shaderType, isLastPreFragmentStage, isTransformFeedbackProgram,
                            optionBits, programInfo, variableInfoMap);
     }
@@ -472,7 +471,9 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                                         const vk::GraphicsPipelineDesc **descPtrOut,
                                                         vk::PipelineHelper **pipelineOut);
     angle::Result createGraphicsPipelineImpl(vk::ErrorContext *context,
-                                             ProgramTransformOptions transformOptions,
+                                             ProgramInfo &programInfo,
+                                             CompleteGraphicsPipelineCache &completePipelines,
+                                             ShadersGraphicsPipelineCache &shadersPipelines,
                                              vk::GraphicsPipelineSubset pipelineSubset,
                                              vk::PipelineCacheAccess *pipelineCache,
                                              PipelineSource source,
@@ -495,6 +496,9 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                               vk::PipelineProtectedAccess pipelineProtectedAccess,
                                               vk::GraphicsPipelineSubset subset,
                                               const vk::GraphicsPipelineDesc &graphicsPipelineDesc,
+                                              ProgramInfo &programInfo,
+                                              CompleteGraphicsPipelineCache &completePipelines,
+                                              ShadersGraphicsPipelineCache &shadersPipelines,
                                               const vk::RenderPass &renderPass,
                                               vk::PipelineHelper *placeholderPipelineHelper);
     void waitForPostLinkTasksImpl(ContextVk *contextVk);
@@ -556,17 +560,15 @@ class ProgramExecutableVk : public ProgramExecutableImpl
 
     ShaderInterfaceVariableInfoMap mVariableInfoMap;
 
-    static_assert((ProgramTransformOptions::kPermutationCount == 16),
-                  "ProgramTransformOptions::kPermutationCount must be 16.");
-    angle::BitSet32<ProgramTransformOptions::kPermutationCount> mValidGraphicsPermutations;
-
     static_assert((vk::ComputePipelineOptions::kPermutationCount == 4),
                   "ComputePipelineOptions::kPermutationCount must be 4.");
     angle::BitSet8<vk::ComputePipelineOptions::kPermutationCount> mValidComputePermutations;
 
     // We store all permutations of surface rotation and transformed SPIR-V programs here. We may
     // need some LRU algorithm to free least used programs to reduce the number of programs.
-    ProgramInfo mGraphicsProgramInfos[ProgramTransformOptions::kPermutationCount];
+    // Note: std::unordered_map is used instead of angle::HashMap because references to map values
+    // should remain valid after modification.
+    std::unordered_map<uint32_t, ProgramInfo> mGraphicsProgramInfos;
     ProgramInfo mComputeProgramInfo;
 
     // Pipeline caches.  The pipelines are tightly coupled with the shaders they are created for, so
@@ -574,10 +576,10 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     // divided in subsets; the "shaders" subset is created based on the shaders, so its cache lives
     // in the program executable.  The "vertex input" and "fragment output" pipelines are
     // independent, and live in the context.
-    CompleteGraphicsPipelineCache
-        mCompleteGraphicsPipelines[ProgramTransformOptions::kPermutationCount];
-    ShadersGraphicsPipelineCache
-        mShadersGraphicsPipelines[ProgramTransformOptions::kPermutationCount];
+    // Note: std::unordered_map is used instead of angle::HashMap because references to map values
+    // should remain valid after modification.
+    std::unordered_map<uint32_t, CompleteGraphicsPipelineCache> mCompleteGraphicsPipelines;
+    std::unordered_map<uint32_t, ShadersGraphicsPipelineCache> mShadersGraphicsPipelines;
     ComputePipelineCache mComputePipelines;
 
     DefaultUniformBlockMap mDefaultUniformBlocks;

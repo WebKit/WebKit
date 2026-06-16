@@ -498,18 +498,25 @@ angle::Result FramebufferGL::invalidate(const gl::Context *context,
     const FunctionsGL *functions = GetFunctionsGL(context);
     StateManagerGL *stateManager = GetStateManagerGL(context);
 
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    const bool skipInvalidate =
+        features.dontInvalidateIncompleteFBOs.enabled && !checkStatus(context).isComplete();
+
     // Since this function is just a hint, only call a native function if it exists.
-    if (functions->invalidateFramebuffer)
+    if (!skipInvalidate)
     {
-        stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
-        functions->invalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(count),
-                                         finalAttachmentsPtr);
-    }
-    else if (functions->discardFramebufferEXT)
-    {
-        stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
-        functions->discardFramebufferEXT(GL_FRAMEBUFFER, static_cast<GLsizei>(count),
-                                         finalAttachmentsPtr);
+        if (functions->invalidateFramebuffer)
+        {
+            stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
+            functions->invalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(count),
+                                             finalAttachmentsPtr);
+        }
+        else if (functions->discardFramebufferEXT)
+        {
+            stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
+            functions->discardFramebufferEXT(GL_FRAMEBUFFER, static_cast<GLsizei>(count),
+                                             finalAttachmentsPtr);
+        }
     }
 
     return angle::Result::Continue;
@@ -532,9 +539,13 @@ angle::Result FramebufferGL::invalidateSub(const gl::Context *context,
     const FunctionsGL *functions = GetFunctionsGL(context);
     StateManagerGL *stateManager = GetStateManagerGL(context);
 
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    const bool skipInvalidate =
+        features.dontInvalidateIncompleteFBOs.enabled && !checkStatus(context).isComplete();
+
     // Since this function is just a hint and not available until OpenGL 4.3, only call it if it is
     // available.
-    if (functions->invalidateSubFramebuffer)
+    if (!skipInvalidate && functions->invalidateSubFramebuffer)
     {
         stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
         functions->invalidateSubFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(count),
@@ -1334,6 +1345,80 @@ angle::Result FramebufferGL::ensureAttachmentsInitialized(
 
     BlitGL *blitter = GetBlitGL(context);
     return blitter->clearFramebuffer(context, colorAttachments, depth, stencil, this);
+}
+
+angle::Result FramebufferGL::recreateFbo(const gl::Context *context)
+{
+    const FunctionsGL *functions = GetFunctionsGL(context);
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+
+    stateManager->deleteFramebuffer(mFramebufferID);
+    mFramebufferID = 0;
+    functions->genFramebuffers(1, &mFramebufferID);
+    stateManager->bindFramebuffer(GL_FRAMEBUFFER, mFramebufferID);
+
+    const gl::FramebufferState &state = getState();
+    size_t numColorAttachments        = state.getColorAttachments().size();
+    gl::Framebuffer::DirtyBits dirtyBits;
+
+    // Setting dirty bits that require entry points from later context
+    // versions will crash, as syncState dereferences null function
+    // pointers.
+    for (size_t i = 0; i < numColorAttachments; ++i)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 + i);
+    }
+    if (state.getDepthAttachment())
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DEPTH_ATTACHMENT);
+    }
+    if (state.getStencilAttachment())
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_STENCIL_ATTACHMENT);
+    }
+    const DrawBuffersVector<GLenum> &drawBufferStates = state.getDrawBufferStates();
+    if (drawBufferStates[0] != GL_COLOR_ATTACHMENT0 ||
+        std::find_if_not(drawBufferStates.begin() + 1, drawBufferStates.end(),
+                         [](const GLenum &current) { return current == GL_NONE; }) !=
+            drawBufferStates.end())
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DRAW_BUFFERS);
+    }
+    if (state.getReadBufferState() != GL_COLOR_ATTACHMENT0)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_READ_BUFFER);
+    }
+    if (state.getDefaultWidth() != 0)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DEFAULT_WIDTH);
+    }
+    if (state.getDefaultHeight() != 0)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DEFAULT_HEIGHT);
+    }
+    if (state.getDefaultSamples() != 0)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DEFAULT_SAMPLES);
+    }
+    if (state.getDefaultFixedSampleLocations() != 0)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS);
+    }
+    if (state.getDefaultLayers() != 0)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_DEFAULT_LAYERS);
+    }
+    if (state.getWriteControlMode() != SrgbWriteControlMode::Default)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE);
+    }
+    if (state.getFlipY() != GL_FALSE)
+    {
+        dirtyBits.set(Framebuffer::DIRTY_BIT_FLIP_Y);
+    }
+
+    // Leave other bits like DIRTY_BIT_FOVEATION alone.
+    return syncState(context, GL_FRAMEBUFFER, dirtyBits, gl::Command::Other);
 }
 
 angle::Result FramebufferGL::syncState(const gl::Context *context,

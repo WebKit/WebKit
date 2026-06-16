@@ -546,6 +546,40 @@ void main()
 })";
     }
 
+    const char *getFSMultiAttachment()
+    {
+        return R"(#version 300 es
+precision mediump float;
+uniform ivec2 windowSize;
+layout(location = 3) out vec3 colorOut565;
+layout(location = 1) out vec4 colorOut[2];
+void main()
+{
+    vec2 color = gl_FragCoord.xy / vec2(windowSize);
+    colorOut565 = vec3(color, 0.0f);
+    colorOut[0] = vec4(color, 0.0f, 1.0f);
+    colorOut[1] = vec4(color, 0.0f, 1.0f);
+})";
+    }
+
+    const char *getFSEmulationTest()
+    {
+        return R"(#version 300 es
+precision mediump float;
+uniform ivec2 windowSize;
+layout(location = 0) out vec2 colorOutVec2;
+layout(location = 1) out float colorOutFloat;
+layout(location = 2) out float discardOut;
+const float testArray[4] = float[4](0.1f, 0.2f, 0.4f, 0.5f);
+void main()
+{
+    vec2 color = gl_FragCoord.xy / vec2(windowSize);
+    colorOutVec2 = color;
+    colorOutFloat = color.r;
+    discardOut = testArray[windowSize.x % 4];
+})";
+    }
+
     GLColor getRightColor(Gradient gradient)
     {
         switch (gradient)
@@ -578,9 +612,48 @@ void main()
         }
     }
 
+    void ditheringPixelCheck(bool ditheringExpected, int w, int h);
     void bandingTest(GLuint fbo, GLenum format, Gradient gradient, bool ditheringExpected);
     void bandingTestWithSwitch(GLenum format, Gradient gradient);
+    void bandingTestMultiAttachment();
+    void spvEmulationTest();
 };
+
+void SixteenBppTextureDitheringTestES3::ditheringPixelCheck(bool ditheringExpected, int w, int h)
+{
+    // Stricter pixel check where dithering is supported by the driver or emulated.
+    if (getEGLWindow()->isFeatureEnabled(Feature::EmulateDithering) ||
+        getEGLWindow()->isFeatureEnabled(Feature::SupportsLegacyDithering))
+    {
+        uint32_t pixelCount = w * h;
+        std::vector<uint32_t> pixelData(pixelCount);
+        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.data());
+
+        int samePixelCount = 0;
+        for (EGLint y = 0; y < h; ++y)
+        {
+            for (EGLint x = 0; x < w; ++x)
+            {
+                EGLint srcPixel = x + y * w;
+                if (x < w - 1 && pixelData[srcPixel] == pixelData[srcPixel + 1])
+                {
+                    samePixelCount++;
+                }
+            }
+        }
+
+        double samePixelCountRatio = (1.0 * samePixelCount) / (w * h);
+        // ~0.3 (dithering) vs 0.8+ (no dithering)
+        if (ditheringExpected)
+        {
+            EXPECT_LT(samePixelCountRatio, 0.7);
+        }
+        else
+        {
+            EXPECT_GT(samePixelCountRatio, 0.7);
+        }
+    }
+}
 
 void SixteenBppTextureDitheringTestES3::bandingTest(GLuint fbo,
                                                     GLenum format,
@@ -644,38 +717,7 @@ void SixteenBppTextureDitheringTestES3::bandingTest(GLuint fbo,
     EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, topRightColor, maxError);
     ASSERT_GL_NO_ERROR();
 
-    // Stricter pixel check on Android where dithering is supported by the driver or emulated.
-    if (getEGLWindow()->isFeatureEnabled(Feature::EmulateDithering) ||
-        getEGLWindow()->isFeatureEnabled(Feature::SupportsLegacyDithering))
-    {
-        uint32_t pixelCount = w * h;
-        std::vector<uint32_t> pixelData(pixelCount);
-        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.data());
-
-        int samePixelCount = 0;
-        for (EGLint y = 0; y < h; ++y)
-        {
-            for (EGLint x = 0; x < w; ++x)
-            {
-                EGLint srcPixel = x + y * w;
-                if (x < w - 1 && pixelData[srcPixel] == pixelData[srcPixel + 1])
-                {
-                    samePixelCount++;
-                }
-            }
-        }
-
-        double samePixelCountRatio = (1.0 * samePixelCount) / (w * h);
-        // ~0.3 (dithering) vs 0.8+ (no dithering)
-        if (ditheringExpected)
-        {
-            EXPECT_LT(samePixelCountRatio, 0.7);
-        }
-        else
-        {
-            EXPECT_GT(samePixelCountRatio, 0.7);
-        }
-    }
+    ditheringPixelCheck(ditheringExpected, w, h);
 }
 
 void SixteenBppTextureDitheringTestES3::bandingTestWithSwitch(GLenum format, Gradient gradient)
@@ -699,6 +741,167 @@ void SixteenBppTextureDitheringTestES3::bandingTestWithSwitch(GLenum format, Gra
     bandingTest(anotherFbo, format, gradient, true);
 }
 
+void SixteenBppTextureDitheringTestES3::bandingTestMultiAttachment()
+{
+    int w = getWindowWidth();
+    int h = getWindowHeight();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLTexture tex565;
+    glBindTexture(GL_TEXTURE_2D, tex565);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB565, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, tex565, 0);
+
+    GLTexture tex8888;
+    glBindTexture(GL_TEXTURE_2D, tex8888);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex8888, 0);
+
+    GLTexture tex4444;
+    glBindTexture(GL_TEXTURE_2D, tex4444);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA4, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, tex4444, 0);
+
+    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,
+                            GL_COLOR_ATTACHMENT3};
+    glDrawBuffers(4, drawBuffers);
+
+    ANGLE_GL_PROGRAM(program, makeVS(Gradient::RedGreen).c_str(), getFSMultiAttachment());
+    glUseProgram(program);
+
+    glViewport(0, 0, w, h);
+
+    glUniform2i(glGetUniformLocation(program, "windowSize"), w, h);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results by checking corner pixels and by checking if the low bit depth formats are
+    // dithered.
+    const GLColor rightColor    = GLColor::red;
+    const GLColor topColor      = GLColor::green;
+    const GLColor topRightColor = GLColor(rightColor.R + topColor.R, rightColor.G + topColor.G,
+                                          rightColor.B + topColor.B, 255);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glUseProgram(m2DProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+
+    // Draw a quad using 565 texture
+    glBindTexture(GL_TEXTURE_2D, tex565);
+    drawQuad(m2DProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    int maxError = 256 / 32;
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::black, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, 0, rightColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(0, h - 1, topColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, topRightColor, maxError);
+    ditheringPixelCheck(true, w, h);
+
+    // Draw a quad using 4444 texture
+    glBindTexture(GL_TEXTURE_2D, tex4444);
+    drawQuad(m2DProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    maxError = 256 / 16;
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::black, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, 0, rightColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(0, h - 1, topColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, topRightColor, maxError);
+    ditheringPixelCheck(true, w, h);
+
+    // Draw a quad using 8888 texture
+    glBindTexture(GL_TEXTURE_2D, tex8888);
+    drawQuad(m2DProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    maxError = 0;
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::black, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, 0, rightColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(0, h - 1, topColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, topRightColor, maxError);
+}
+
+void SixteenBppTextureDitheringTestES3::spvEmulationTest()
+{
+    // Test only relevant to dithering emulation.
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::EmulateDithering));
+
+    int w = getWindowWidth();
+    int h = getWindowHeight();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLTexture tex4444Vec2;
+    glBindTexture(GL_TEXTURE_2D, tex4444Vec2);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA4, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex4444Vec2, 0);
+
+    GLTexture tex4444Float;
+    glBindTexture(GL_TEXTURE_2D, tex4444Float);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA4, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex4444Float, 0);
+
+    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, drawBuffers);
+
+    ANGLE_GL_PROGRAM(program, makeVS(Gradient::RedGreen).c_str(), getFSEmulationTest());
+    glUseProgram(program);
+
+    glViewport(0, 0, w, h);
+
+    glUniform2i(glGetUniformLocation(program, "windowSize"), w, h);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results by checking corner pixels and by validating that the low bit depth formats are
+    // not dithered.
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glUseProgram(m2DProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+
+    // Draw a quad using tex4444Vec2 texture
+    glBindTexture(GL_TEXTURE_2D, tex4444Vec2);
+    drawQuad(m2DProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    int maxError = 256 / 16;
+    EXPECT_NEAR(0, angle::ReadColor(0, 0).R, maxError);
+    EXPECT_NEAR(0, angle::ReadColor(0, 0).G, maxError);
+
+    EXPECT_NEAR(255, angle::ReadColor(w - 1, 0).R, maxError);
+    EXPECT_NEAR(0, angle::ReadColor(w - 1, 0).G, maxError);
+
+    EXPECT_NEAR(0, angle::ReadColor(0, h - 1).R, maxError);
+    EXPECT_NEAR(255, angle::ReadColor(0, h - 1).G, maxError);
+
+    EXPECT_NEAR(255, angle::ReadColor(w - 1, h - 1).R, maxError);
+    EXPECT_NEAR(255, angle::ReadColor(w - 1, h - 1).G, maxError);
+    ditheringPixelCheck(false, w, h);
+
+    // Draw a quad using tex4444Float texture
+    glBindTexture(GL_TEXTURE_2D, tex4444Float);
+    drawQuad(m2DProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_NEAR(0, angle::ReadColor(0, 0).R, maxError);
+    EXPECT_NEAR(255, angle::ReadColor(w - 1, 0).R, maxError);
+    EXPECT_NEAR(0, angle::ReadColor(0, h - 1).R, maxError);
+    EXPECT_NEAR(255, angle::ReadColor(w - 1, h - 1).R, maxError);
+    ditheringPixelCheck(false, w, h);
+}
+
 // Test dithering applied to RGBA4.
 TEST_P(SixteenBppTextureDitheringTestES3, RGBA4)
 {
@@ -715,6 +918,19 @@ TEST_P(SixteenBppTextureDitheringTestES3, RGBA5551)
 TEST_P(SixteenBppTextureDitheringTestES3, RGB565)
 {
     bandingTestWithSwitch(GL_RGB565, Gradient::GreenBlue);
+}
+
+// Test dithering to a frame buffer with multiple Attachments.
+TEST_P(SixteenBppTextureDitheringTestES3, MultipleAttachments)
+{
+    bandingTestMultiAttachment();
+}
+
+// Check that dithering is disabled when rendering to a float/Vec2 shader output.
+// Also test that declaring a const float[4] works correctly with dithering emulation.
+TEST_P(SixteenBppTextureDitheringTestES3, SpvEmulation)
+{
+    spvEmulationTest();
 }
 
 ANGLE_INSTANTIATE_TEST_ES2(SixteenBppTextureTest);

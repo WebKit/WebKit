@@ -91,7 +91,6 @@
 
 // Pixel 10
 449120556 PIXEL10 VULKAN : KHR-GLES32.core.ext_texture_shadow_lod.texture.samplercubearrayshadow_bias_fragment = FAIL
-449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.layered_rendering_fbo_no_attachment.layered_rendering_fbo_no_attachment = FAIL
 449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_fan_drawcall = SKIP
 449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_strip_drawcall = SKIP
 449120556 PIXEL10 VULKAN : KHR-GLES32.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangles_drawcall = SKIP

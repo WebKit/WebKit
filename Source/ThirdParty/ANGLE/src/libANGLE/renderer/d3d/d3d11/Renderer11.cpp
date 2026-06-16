@@ -356,8 +356,6 @@ GLsizei GetAdjustedInstanceCount(const ProgramExecutableD3D *executable, GLsizei
     return executable->getExecutable()->getNumViews() * instanceCount;
 }
 
-const uint32_t ScratchMemoryBufferLifetime = 1000;
-
 void PopulateFormatDeviceCaps(ID3D11Device *device,
                               DXGI_FORMAT format,
                               UINT *outSupport,
@@ -418,8 +416,7 @@ Renderer11::Renderer11(egl::Display *display)
       mCreateDebugDevice(false),
       mStateCache(),
       mStateManager(this),
-      mDebug(nullptr),
-      mScratchMemoryBuffer(ScratchMemoryBufferLifetime)
+      mDebug(nullptr)
 {
     mLineLoopIB    = nullptr;
     mTriangleFanIB = nullptr;
@@ -2289,8 +2286,6 @@ bool Renderer11::testDeviceResettable()
 
 void Renderer11::release()
 {
-    mScratchMemoryBuffer.clear();
-
     mAnnotatorContext.release();
     gl::UninitializeDebugAnnotations();
 
@@ -4173,14 +4168,6 @@ ContextImpl *Renderer11::createContext(const gl::State &state, gl::ErrorSet *err
 FramebufferImpl *Renderer11::createDefaultFramebuffer(const gl::FramebufferState &state)
 {
     return new Framebuffer11(state, this);
-}
-
-angle::Result Renderer11::getScratchMemoryBuffer(Context11 *context11,
-                                                 size_t requestedSize,
-                                                 angle::MemoryBuffer **bufferOut)
-{
-    ANGLE_CHECK_GL_ALLOC(context11, mScratchMemoryBuffer.get(requestedSize, bufferOut));
-    return angle::Result::Continue;
 }
 
 gl::Version Renderer11::getMaxSupportedESVersion() const

@@ -164,6 +164,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo dontInvalidateIncompleteFBOs = {
+        "dontInvalidateIncompleteFBOs",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo dontUseLoopsToInitializeVariables = {
         "dontUseLoopsToInitializeVariables",
         FeatureCategory::OpenGLWorkarounds,
@@ -688,6 +694,12 @@ struct FeaturesGL : FeatureSetBase
 
     FeatureInfo limitMaxBufferSizeTo1gb = {
         "limitMaxBufferSizeTo1gb",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo recreateFboUponFlush = {
+        "recreateFboUponFlush",
         FeatureCategory::OpenGLWorkarounds,
         &members,
     };

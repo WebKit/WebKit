@@ -283,7 +283,6 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
     uniformBlocks       = GetShaderVariables(sh::GetUniformBlocks(compilerHandle));
     shaderStorageBlocks = GetShaderVariables(sh::GetShaderStorageBlocks(compilerHandle));
     metadataFlags       = sh::CompilerMetadataFlags(sh::GetMetadataFlags(compilerHandle));
-    specConstUsageBits  = SpecConstUsageBits(sh::GetShaderSpecConstUsageBits(compilerHandle));
 
     switch (shaderType)
     {
@@ -396,7 +395,6 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
     }
 
     stream.writeInt(metadataFlags.bits());
-    stream.writeInt(specConstUsageBits.bits());
 
     switch (shaderType)
     {
@@ -562,7 +560,6 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
     }
 
     metadataFlags      = sh::CompilerMetadataFlags(stream.readInt<uint32_t>());
-    specConstUsageBits = SpecConstUsageBits(stream.readInt<uint32_t>());
 
     switch (shaderType)
     {

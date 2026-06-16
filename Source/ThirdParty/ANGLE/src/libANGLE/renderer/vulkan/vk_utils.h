@@ -1207,16 +1207,6 @@ class Recycler final : angle::NonCopyable
     StorageT mObjectFreeList;
 };
 
-ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
-struct SpecializationConstants final
-{
-    VkBool32 surfaceRotation;
-    uint32_t dither;
-};
-ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
-
-template <typename T>
-using SpecializationConstantMap = angle::PackedEnumMap<sh::vk::SpecializationConstantId, T>;
 
 using ShaderModulePtr = SharedPtr<ShaderModule>;
 using ShaderModuleMap = gl::ShaderMap<ShaderModulePtr>;

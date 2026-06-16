@@ -832,7 +832,7 @@ void ProgramExecutable::reset()
     mPod.drawBufferTypeMask.reset();
     mPod.computeShaderLocalSize.fill(1);
 
-    mPod.specConstUsageBits.reset();
+    mPod.padding = 0;
 
     mActiveSamplersMask.reset();
     mActiveSamplerRefCounts = {};

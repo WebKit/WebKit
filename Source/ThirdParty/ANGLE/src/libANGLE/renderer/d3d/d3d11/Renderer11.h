@@ -413,10 +413,6 @@ class Renderer11 : public RendererD3D
     // Necessary hack for default framebuffers in D3D.
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
 
-    angle::Result getScratchMemoryBuffer(Context11 *context11,
-                                         size_t requestedSize,
-                                         angle::MemoryBuffer **bufferOut);
-
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
 
@@ -612,8 +608,6 @@ class Renderer11 : public RendererD3D
     angle::ComPtr<ID3D11Debug> mDebug;
 
     std::vector<GLuint> mScratchIndexDataBuffer;
-
-    angle::ScratchBuffer mScratchMemoryBuffer;
 
     DebugAnnotatorContext11 mAnnotatorContext;
 

@@ -1845,9 +1845,10 @@ bool InternalFormat::computeRowDepthSkipBytes(GLenum formatType,
     {
         return false;
     }
-    GLuint depthPitch       = 0;
+    // Compute depthPitch for 2D textures too. It is used to size the full texture uploads.
+    GLuint depthPitch = 0;
     const GLint imageHeight = is3D ? unpack.imageHeight : 0;
-    if (!computeDepthPitch(area.height, imageHeight, rowPitch, &depthPitch))
+    if (rowPitch > 0 && !computeDepthPitch(area.height, imageHeight, rowPitch, &depthPitch)) 
     {
         return false;
     }

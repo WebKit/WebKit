@@ -647,16 +647,6 @@ const std::vector<ShPixelLocalStorageLayout> *GetPixelLocalStorageLayouts(const 
     return &compiler->getPixelLocalStorageLayouts();
 }
 
-uint32_t GetShaderSpecConstUsageBits(const ShHandle handle)
-{
-    TCompiler *compiler = GetCompilerFromHandle(handle);
-    if (compiler == nullptr)
-    {
-        return 0;
-    }
-    return compiler->getSpecConstUsageBits().bits();
-}
-
 bool CheckVariablesWithinPackingLimits(int maxVectors, const std::vector<ShaderVariable> &variables)
 {
     return CheckVariablesInPackingLimits(maxVectors, variables);

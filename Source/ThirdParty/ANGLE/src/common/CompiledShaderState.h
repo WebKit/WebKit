@@ -31,10 +31,6 @@ using CompilerMetadataFlags = angle::PackedEnumBitSet<sh::MetadataFlags, uint32_
 namespace gl
 {
 
-// @todo this type is also defined in compiler/Compiler.h and libANGLE/renderer_utils.h. Move this
-// to a single common definition?
-using SpecConstUsageBits = angle::PackedEnumBitSet<sh::vk::SpecConstUsage, uint32_t>;
-
 // Helper functions for serializing shader variables
 void WriteShaderVar(gl::BinaryOutputStream *stream, const sh::ShaderVariable &var);
 void LoadShaderVar(gl::BinaryInputStream *stream, sh::ShaderVariable *var);
@@ -89,7 +85,6 @@ struct CompiledShaderState
 
     sh::CompilerMetadataFlags metadataFlags;
     gl::BlendEquationBitSet advancedBlendEquations;
-    SpecConstUsageBits specConstUsageBits;
 
     // GL_OVR_multiview / GL_OVR_multiview2
     int numViews;

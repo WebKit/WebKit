@@ -71,6 +71,8 @@ class VertexConversionBuffer : public ConversionBuffer
   public:
     struct CacheKey final
     {
+        VertexArrayVk *vertexArrayVk;
+        size_t attribIndex;
         angle::FormatID formatID;
         GLuint stride;
         size_t offset;
@@ -86,7 +88,9 @@ class VertexConversionBuffer : public ConversionBuffer
     bool match(const CacheKey &cacheKey)
     {
         // If anything other than offset mismatch, it can't reuse.
-        if (mCacheKey.formatID != cacheKey.formatID || mCacheKey.stride != cacheKey.stride ||
+        if (mCacheKey.vertexArrayVk != cacheKey.vertexArrayVk ||
+            mCacheKey.attribIndex != cacheKey.attribIndex ||
+            mCacheKey.formatID != cacheKey.formatID || mCacheKey.stride != cacheKey.stride ||
             mCacheKey.offsetMustMatchExactly != cacheKey.offsetMustMatchExactly ||
             mCacheKey.hostVisible != cacheKey.hostVisible)
         {

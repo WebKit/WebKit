@@ -2848,6 +2848,7 @@ void State::detachTexture(Context *context, const TextureMap &zeroTextures, Text
             bindingImageUnit.layer   = 0;
             bindingImageUnit.access  = GL_READ_ONLY;
             bindingImageUnit.format  = GL_R32UI;
+            mDirtyBits.set(state::DIRTY_BIT_IMAGE_BINDINGS);
         }
     }
 

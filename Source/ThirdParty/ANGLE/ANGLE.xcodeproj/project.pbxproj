@@ -800,7 +800,6 @@
 		7BF5554C2C81F198002B101E /* FindMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6ED22826CB200B5BA2C /* FindMain.cpp */; };
 		7BF5554D2C81F198002B101E /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DA518B97B9B0039062F /* Compiler.cpp */; };
 		7BF5554E2C81F198002B101E /* EmitMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF2D2581919700894E24 /* EmitMetal.cpp */; };
-		7BF5554F2C81F198002B101E /* SpecializationConstant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63227446DC700AD6EDC /* SpecializationConstant.cpp */; };
 		7BF555502C81F198002B101E /* ConvertUnsupportedConstructorsToFunctionCalls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D962A7CEDAA0016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.cpp */; };
 		7BF555512C81F198002B101E /* RewriteArrayOfArrayOfOpaqueUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FD327432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp */; };
 		7BF555522C81F198002B101E /* MapSymbols.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF2F2581919700894E24 /* MapSymbols.cpp */; };
@@ -1362,13 +1361,11 @@
 		FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */; };
 		FF582E1726544FC4006DA5B8 /* ProvokingVertexHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */; };
 		FF62F63127443DC400AD6EDC /* mtl_internal_shaders_autogen.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63027443DB900AD6EDC /* mtl_internal_shaders_autogen.metal */; };
-		FF62F64127446DC800AD6EDC /* SpecializationConstant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63227446DC700AD6EDC /* SpecializationConstant.cpp */; };
 		FF62F64227446DC800AD6EDC /* BuiltIn.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63327446DC700AD6EDC /* BuiltIn.h */; };
 		FF62F64327446DC800AD6EDC /* RewriteSampleMaskVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63427446DC700AD6EDC /* RewriteSampleMaskVariable.h */; };
 		FF62F64427446DC800AD6EDC /* ReplaceClipCullDistanceVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63527446DC700AD6EDC /* ReplaceClipCullDistanceVariable.cpp */; };
 		FF62F64527446DC800AD6EDC /* RewriteSampleMaskVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63627446DC700AD6EDC /* RewriteSampleMaskVariable.cpp */; };
 		FF62F64627446DC800AD6EDC /* DriverUniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63727446DC700AD6EDC /* DriverUniform.cpp */; };
-		FF62F64927446DC800AD6EDC /* SpecializationConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63A27446DC800AD6EDC /* SpecializationConstant.h */; };
 		FF62F64A27446DC800AD6EDC /* RunAtTheBeginningOfShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63B27446DC800AD6EDC /* RunAtTheBeginningOfShader.cpp */; };
 		FF62F64B27446DC800AD6EDC /* RunAtTheBeginningOfShader.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63C27446DC800AD6EDC /* RunAtTheBeginningOfShader.h */; };
 		FF62F64D27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62F63E27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h */; };
@@ -2647,13 +2644,11 @@
 		FF582E1826544FE5006DA5B8 /* rewrite_indices.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = rewrite_indices.metal; sourceTree = "<group>"; };
 		FF582E1926544FFA006DA5B8 /* rewrite_indices_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rewrite_indices_shared.h; sourceTree = "<group>"; };
 		FF62F63027443DB900AD6EDC /* mtl_internal_shaders_autogen.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = mtl_internal_shaders_autogen.metal; sourceTree = "<group>"; };
-		FF62F63227446DC700AD6EDC /* SpecializationConstant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpecializationConstant.cpp; sourceTree = "<group>"; };
 		FF62F63327446DC700AD6EDC /* BuiltIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltIn.h; sourceTree = "<group>"; };
 		FF62F63427446DC700AD6EDC /* RewriteSampleMaskVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteSampleMaskVariable.h; sourceTree = "<group>"; };
 		FF62F63527446DC700AD6EDC /* ReplaceClipCullDistanceVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceClipCullDistanceVariable.cpp; sourceTree = "<group>"; };
 		FF62F63627446DC700AD6EDC /* RewriteSampleMaskVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteSampleMaskVariable.cpp; sourceTree = "<group>"; };
 		FF62F63727446DC700AD6EDC /* DriverUniform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverUniform.cpp; sourceTree = "<group>"; };
-		FF62F63A27446DC800AD6EDC /* SpecializationConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecializationConstant.h; sourceTree = "<group>"; };
 		FF62F63B27446DC800AD6EDC /* RunAtTheBeginningOfShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunAtTheBeginningOfShader.cpp; sourceTree = "<group>"; };
 		FF62F63C27446DC800AD6EDC /* RunAtTheBeginningOfShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunAtTheBeginningOfShader.h; sourceTree = "<group>"; };
 		FF62F63E27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceClipCullDistanceVariable.h; sourceTree = "<group>"; };
@@ -3316,8 +3311,6 @@
 				FF62F63C27446DC800AD6EDC /* RunAtTheBeginningOfShader.h */,
 				5C55D6EC22826CB200B5BA2C /* RunAtTheEndOfShader.cpp */,
 				5C55D6FA22826CB300B5BA2C /* RunAtTheEndOfShader.h */,
-				FF62F63227446DC700AD6EDC /* SpecializationConstant.cpp */,
-				FF62F63A27446DC800AD6EDC /* SpecializationConstant.h */,
 				5C55D6F022826CB200B5BA2C /* Visit.h */,
 			);
 			name = treeutil;
@@ -4868,7 +4861,6 @@
 				31CDFF6C2491849200486F27 /* SourceLocation.h in Headers */,
 				7BFD81852D50CF7C0010ED68 /* span.h in Headers */,
 				7B4556F62F28AE5700DC54D0 /* span_util.h in Headers */,
-				FF62F64927446DC800AD6EDC /* SpecializationConstant.h in Headers */,
 				31CDFF7B2491849700486F27 /* SplitSequenceOperator.h in Headers */,
 				31CD0082249184FD00486F27 /* State.h in Headers */,
 				31CD007E249184FD00486F27 /* Stream.h in Headers */,
@@ -5640,7 +5632,6 @@
 				7B4556F12F18CE2B00DC54D0 /* SizeClipCullDistance.cpp in Sources */,
 				7BFF6EE229E9908A009E1A57 /* SourcesPlatform-mm.mm in Sources */,
 				7BFF6EDF29E9908A009E1A57 /* SourcesPlatform.cpp in Sources */,
-				FF62F64127446DC800AD6EDC /* SpecializationConstant.cpp in Sources */,
 				DF83E26E2639FD33000825EF /* SplitSequenceOperator.cpp in Sources */,
 				DF83E2F02639FE17000825EF /* State.cpp in Sources */,
 				DF83E3322639FE18000825EF /* Stream.cpp in Sources */,
@@ -6229,7 +6220,6 @@
 				7BF5552C2C81F198002B101E /* ShaderVars.cpp in Sources */,
 				7BF555432C81F198002B101E /* SimplifyLoopConditions.cpp in Sources */,
 				7B4556F22F18CE2B00DC54D0 /* SizeClipCullDistance.cpp in Sources */,
-				7BF5554F2C81F198002B101E /* SpecializationConstant.cpp in Sources */,
 				7BF555062C81F198002B101E /* SplitSequenceOperator.cpp in Sources */,
 				7BF5550D2C81F198002B101E /* string_utils.cpp in Sources */,
 				7BF5552A2C81F198002B101E /* Symbol.cpp in Sources */,

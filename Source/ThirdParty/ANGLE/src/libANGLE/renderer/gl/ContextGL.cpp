@@ -193,9 +193,14 @@ FenceNVImpl *ContextGL::createFenceNV()
     }
 }
 
-SyncImpl *ContextGL::createSync()
+SyncImpl *ContextGL::createSync(const gl::Context *context)
 {
-    return new SyncGL(getFunctions());
+    SyncImpl *sync = new SyncGL(getFunctions());
+    if (context)
+    {
+        static_cast<void>(applyRecreateFboWorkaroundIfNeeded(context));
+    }
+    return sync;
 }
 
 TransformFeedbackImpl *ContextGL::createTransformFeedback(const gl::TransformFeedbackState &state)
@@ -239,14 +244,81 @@ OverlayImpl *ContextGL::createOverlay(const gl::OverlayState &state)
     return new OverlayImpl(state);
 }
 
+angle::Result ContextGL::applyRecreateFboWorkaroundIfNeeded(const gl::Context *context)
+{
+    if (!getFeaturesGL().recreateFboUponFlush.enabled)
+    {
+        return angle::Result::Continue;
+    }
+
+    gl::Framebuffer *drawFbo = context->getState().getDrawFramebuffer();
+    if (!drawFbo || drawFbo->isDefault())
+    {
+        return angle::Result::Continue;
+    }
+
+    FramebufferGL *drawFboGL = GetImplAs<FramebufferGL>(drawFbo);
+
+    bool needWorkaround = false;
+
+    // The workaround is needed when the draw framebuffer has a depth or stencil
+    // attachment with either of the following criteria:
+    //
+    // 1) The attachment is a renderbuffer.
+    //
+    // 2) The attachment is an immutable texture, and the attached level of the
+    // texture was never initialized via glTexSubImage2D.
+
+    const gl::FramebufferAttachment *depthAtt   = drawFbo->getDepthAttachment();
+    const gl::FramebufferAttachment *stencilAtt = drawFbo->getStencilAttachment();
+
+    const gl::FramebufferAttachment *attachments[] = {depthAtt, stencilAtt};
+    for (const gl::FramebufferAttachment *att : attachments)
+    {
+        if (!att)
+        {
+            continue;
+        }
+
+        if (att->type() == GL_RENDERBUFFER)
+        {
+            needWorkaround = true;
+            break;
+        }
+        else if (att->type() == GL_TEXTURE)
+        {
+            const gl::Texture *texture = att->getTexture();
+            if (texture->getImmutableFormat())
+            {
+                const gl::ImageIndex &index = att->getTextureImageIndex();
+                const gl::ImageDesc &desc   = texture->getState().getImageDesc(index);
+                if (desc.initState == gl::InitState::MayNeedInit)
+                {
+                    needWorkaround = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (needWorkaround)
+    {
+        ANGLE_TRY(drawFboGL->recreateFbo(context));
+    }
+
+    return angle::Result::Continue;
+}
+
 angle::Result ContextGL::flush(const gl::Context *context)
 {
-    return mRenderer->flush();
+    ANGLE_TRY(mRenderer->flush());
+    return applyRecreateFboWorkaroundIfNeeded(context);
 }
 
 angle::Result ContextGL::finish(const gl::Context *context)
 {
-    return mRenderer->finish();
+    ANGLE_TRY(mRenderer->finish());
+    return applyRecreateFboWorkaroundIfNeeded(context);
 }
 
 ANGLE_INLINE angle::Result ContextGL::setDrawArraysState(const gl::Context *context,

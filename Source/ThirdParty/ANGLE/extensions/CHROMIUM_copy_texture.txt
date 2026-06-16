@@ -8,7 +8,7 @@ Name Strings
 
 Version
 
-    Last Modified Date: September 3, 2025
+    Last Modified Date: May 6, 2026
 
 Dependencies
 
@@ -125,6 +125,9 @@ Additions to the OpenGL ES 2.0 Specification
     INVALID_VALUE is generated if <sourceId> or <destId> are not valid texture
     objects.
 
+    INVALID_OPERATION is generated if <sourceId> refers to a texture that is
+    not complete according to Framebuffer Attachment Completeness rules.
+
     INVALID_OPERATION is generated if <sourceId> and <destId> refer to the same
     texture objects and <sourceLevel> is the same as <destLevel>.
 
@@ -147,10 +150,6 @@ Additions to the OpenGL ES 2.0 Specification
 
     INVALID_VALUE is generated if <sourceLevel> of the source texture is not
     defined.
-
-    INVALID_VALUE is generated if <sourceLevel> of the source texture is less
-    than the source texture's value for TEXTURE_BASE_LEVEL or more than the
-    source texture's value for TEXTURE_MAX_LEVEL.
 
     The command
 
@@ -182,6 +181,9 @@ Additions to the OpenGL ES 2.0 Specification
     INVALID_OPERATION is generated if the destination texture array has not
     been defined.
 
+    INVALID_OPERATION is generated if <sourceId> refers to a texture that is
+    not complete according to Framebuffer Attachment Completeness rules.
+
     INVALID_VALUE is generated if <destId> texture is not bound as
     TEXTURE_2D or TEXTURE_RECTANGLE_ARB.
 
@@ -196,10 +198,6 @@ Additions to the OpenGL ES 2.0 Specification
 
     INVALID_VALUE is generated if <sourceLevel> of the source texture is not
     defined.
-
-    INVALID_VALUE is generated if <sourceLevel> of the source texture is less
-    than the source texture's value for TEXTURE_BASE_LEVEL or more than the
-    source texture's value for TEXTURE_MAX_LEVEL.
 
     Table 1.0 Valid internal formats for CopyTextureCHROMIUM:
 
@@ -316,3 +314,5 @@ Revision History
     24/3/2017   Clean up naming and move formats into tables.
     3/9/2025    Add source copy formats from ANGLE_yuv_internal_format
     9/4/2026    Add restriction that sourceLevel is in [BASE, MAX] range
+    6/5/2026    Add restriction that source must be
+                framebuffer-attachment-complete

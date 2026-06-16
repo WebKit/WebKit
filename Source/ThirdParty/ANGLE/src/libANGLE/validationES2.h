@@ -694,8 +694,8 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                                        GLint border,
                                        GLenum format,
                                        GLenum type,
-                                       GLsizei imageSize,
-                                       const void *pixels);
+                                       const void *pixels,
+                                       GLuint *outImageSize);
 
 // Validation of TexStorage*2DEXT
 bool ValidateES2TexStorageParametersBase(const Context *context,

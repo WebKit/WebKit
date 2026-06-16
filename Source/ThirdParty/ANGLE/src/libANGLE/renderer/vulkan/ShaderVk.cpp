@@ -95,15 +95,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
         options->addVulkanXfbEmulationSupportCode = true;
     }
 
-    if (contextVk->getFeatures().emulateDithering.enabled)
-    {
-        options->emulateDithering = true;
-    }
-
-    if (contextVk->getFeatures().roundOutputAfterDithering.enabled)
-    {
-        options->roundOutputAfterDithering = true;
-    }
 
     if (contextVk->getFeatures().appendAliasedMemoryDecorations.enabled)
     {

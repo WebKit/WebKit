@@ -364,13 +364,13 @@ void SyncManager::DeleteObject(const Context *context, Sync *sync)
     sync->release(context);
 }
 
-bool SyncManager::createSync(rx::GLImplFactory *factory, SyncID *outSync)
+bool SyncManager::createSync(rx::GLImplFactory *factory, const Context *context, SyncID *outSync)
 {
     if (!mHandleAllocator.allocate(&outSync->value))
     {
         return false;
     }
-    Sync *sync = new Sync(factory, *outSync);
+    Sync *sync = new Sync(factory, *outSync, context);
     sync->addRef();
     mObjectMap.assign(*outSync, sync);
     return true;

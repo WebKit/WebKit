@@ -40,7 +40,6 @@ class TranslatorMSL;
 #endif  // ANGLE_ENABLE_METAL
 
 using MetadataFlagBits   = angle::PackedEnumBitSet<sh::MetadataFlags, uint32_t>;
-using SpecConstUsageBits = angle::PackedEnumBitSet<vk::SpecConstUsage, uint32_t>;
 
 //
 // Helper function to check if the shader type is GLSL.
@@ -105,7 +104,6 @@ class TCompiler : public TShHandleBase
     bool specifyEarlyFragmentTests() { return mEarlyFragmentTestsSpecified = true; }
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
     MetadataFlagBits getMetadataFlags() const { return mMetadataFlags; }
-    SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
@@ -251,9 +249,6 @@ class TCompiler : public TShHandleBase
     ValidateASTOptions mValidateASTOptions;
 
     MetadataFlagBits mMetadataFlags;
-
-    // Specialization constant usage bits
-    SpecConstUsageBits mSpecConstUsageBits;
 
   private:
     // Initialize symbol-table with built-in symbols.

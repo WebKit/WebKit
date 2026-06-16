@@ -34,7 +34,6 @@
 #include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
 #include "compiler/translator/tree_ops/spirv/ClampGLLayer.h"
 #include "compiler/translator/tree_ops/spirv/EmulateAdvancedBlendEquations.h"
-#include "compiler/translator/tree_ops/spirv/EmulateDithering.h"
 #include "compiler/translator/tree_ops/spirv/EmulateFragColorData.h"
 #include "compiler/translator/tree_ops/spirv/EmulateFramebufferFetch.h"
 #include "compiler/translator/tree_ops/spirv/EmulateYUVBuiltIns.h"
@@ -53,7 +52,6 @@
 #include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/tree_util/RewriteSampleMaskVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
-#include "compiler/translator/tree_util/SpecializationConstant.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -625,7 +623,6 @@ TranslatorSPIRV::TranslatorSPIRV(sh::GLenum type, ShShaderSpec spec)
 bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                                     const ShCompileOptions &compileOptions,
                                     PerformanceDiagnostics * /*perfDiagnostics*/,
-                                    SpecConst *specConst,
                                     DriverUniform *driverUniforms)
 {
     if (!compileOptions.useIR)
@@ -915,6 +912,10 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 if (inputVarying.name == "gl_FragCoord")
                 {
                     usesFragCoord = true;
+                    const TVariable *fragCoord =
+                        static_cast<const TVariable *>(getSymbolTable().findBuiltIn(
+                            ImmutableString("gl_FragCoord"), getShaderVersion()));
+                    assignSpirvId(fragCoord->uniqueId(), vk::spirv::kIdFragCoord);
                     break;
                 }
             }
@@ -1074,16 +1075,6 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 }
             }
 
-            if (compileOptions.emulateDithering)
-            {
-                // Inject dithering code in fragment shader iff "emulateDithering" is enabled
-                if (!EmulateDithering(this, compileOptions, root, &getSymbolTable(), specConst,
-                                      driverUniforms))
-                {
-                    return false;
-                }
-            }
-
             break;
         }
 
@@ -1130,12 +1121,6 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
             break;
     }
 
-    specConst->declareSpecConsts(root);
-    mValidateASTOptions.validateSpecConstReferences = true;
-
-    // Gather specialization constant usage bits so that we can feedback to context.
-    mSpecConstUsageBits = specConst->getSpecConstUsageBits();
-
     if (!validateAST(root))
     {
         return false;
@@ -1180,8 +1165,6 @@ bool TranslatorSPIRV::translate(TIntermBlock *root,
     mUniqueToSpirvIdMap.clear();
     mFirstUnusedSpirvId = 0;
 
-    SpecConst specConst(&getSymbolTable(), getShaderType());
-
     DriverUniform driverUniforms(DriverUniformMode::InterfaceBlock);
     DriverUniformExtended driverUniformsExt(DriverUniformMode::InterfaceBlock);
 
@@ -1189,7 +1172,7 @@ bool TranslatorSPIRV::translate(TIntermBlock *root,
 
     DriverUniform *uniforms = useExtendedDriverUniforms ? &driverUniformsExt : &driverUniforms;
 
-    if (!translateImpl(root, compileOptions, perfDiagnostics, &specConst, uniforms))
+    if (!translateImpl(root, compileOptions, perfDiagnostics, uniforms))
     {
         return false;
     }

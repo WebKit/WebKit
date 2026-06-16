@@ -99,6 +99,7 @@
 // ANGLE is broken if a context is made current before a surface is created in the presence of multiple queue families
 42266900 VULKAN : EGLContextSharingTestNoFixture.*/*ForceDelayedDeviceCreationForTesting* = SKIP
 42266900 VULKAN : EGLSurfacelessContextTest.*/*ForceDelayedDeviceCreationForTesting* = SKIP
+510376884 VULKAN : ComputeShaderTest.DeleteTextureBoundToImageUnit/* = SKIP
 
 500721361 VULKAN SWIFTSHADER : VertexAttributeTestES3.storeStaticAttribWithLargeOffset/* = SKIP
 
@@ -848,6 +849,7 @@
 42267029 PIXEL6 VULKAN : VulkanPerformanceCounterTest.RenderToTextureDepthStencilTextureShouldNotLoad/* = SKIP
 42267029 PIXEL6 VULKAN : VulkanPerformanceCounterTest_DepthStencilLoadStoreOps.RenderToTextureUninitializedAndUnusedDepthStencil/* = SKIP
 509210196 PIXEL6 VULKAN : FramebufferTest_ES31.AttachToMultipleCubeFacesThenMSRTT/* = SKIP
+509210196 PIXEL10 VULKAN : FramebufferTest_ES31.AttachToMultipleCubeFacesThenMSRTT/* = SKIP
 // New failures after AP1A.240405.002 upgrade
 336847261 PIXEL6 VULKAN : StateChangeTestES3.LineWidth/* = SKIP
 
@@ -871,6 +873,7 @@
 
 // Pixel 10 expectations.
 480069042 PIXEL10 GLES : AtomicCounterBufferTest31.DependentAtomicCounterBufferChange/* = SKIP
+510449869 PIXEL10 GLES : BasicCopyTextureTest.SelfCopyOOBWrite/* = SKIP
 480069042 PIXEL10 GLES : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
 480069042 PIXEL10 GLES : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = SKIP
 480069042 PIXEL10 GLES : BlitFramebufferTest.BlitStencilToDefault/* = SKIP
@@ -1201,6 +1204,7 @@
 501584689 PIXEL10 GLES : MSRTTSRGBES3Test.Basic/ES3_OpenGLES_RobustResourceInit = SKIP
 489247643 PIXEL10 GLES : ImageTest.BindExternalTextureAsImage_R16_UINT/* = SKIP
 489247643 PIXEL10 GLES : ImageTest.BindExternalTextureAsImage_R16G16_UINT/* = SKIP
+510376884 PIXEL10 GLES : ComputeShaderTest.DeleteTextureBoundToImageUnit/* = SKIP
 
 480069042 PIXEL10 VULKAN : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_Vulkan*__GL_RG16_SNORM_EXT_GL_RG_GL_SHORT_GL_TEXTURE_2D_ARRAY = SKIP
 480069042 PIXEL10 VULKAN : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_Vulkan*__GL_RGB32UI_GL_RGB_INTEGER_GL_UNSIGNED_INT_GL_TEXTURE_2D_ARRAY = SKIP
@@ -2725,6 +2729,11 @@
 500930576 OPENGL : ReadPixelsTest.LargeTexture/* = SKIP
 // Crashes inside AMD Metal driver when copying the texture -> buffer
 500930576 METAL AMD : ReadPixelsTest.LargeTexture/* = SKIP
+// Fails test on Metal
+499091328 MAC AMD METAL : Texture2DArrayTestES3.ReformatStagedBufferUpdatesLayerCountOOB/* = SKIP
+
+// Timeout on Intel
+509829264 VULKAN WIN INTEL : SimpleStateChangeTestES31.TransformFeedbackThenReadWithCompute/* = SKIP
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file

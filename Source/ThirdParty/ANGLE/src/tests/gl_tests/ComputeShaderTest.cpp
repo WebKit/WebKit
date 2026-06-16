@@ -5715,6 +5715,71 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Test reading from a storage image that was bound to a deleted texture.
+TEST_P(ComputeShaderTest, DeleteTextureBoundToImageUnit)
+{
+    constexpr char kShader[] = R"(#version 310 es
+layout(local_size_x=1) in;
+layout(r32f, binding=0) uniform highp readonly image2D img;
+layout(std430, binding=1) buffer Out {
+    float val;
+} out_data;
+
+void main() {
+    out_data.val = imageLoad(img, ivec2(0,0)).x;
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kShader);
+    glUseProgram(program);
+
+    // Create a texture and fill it with a value.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, 1, 1);
+    float initValue = 1.0f;
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_FLOAT, &initValue);
+
+    // Bind it to an image unit.
+    glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+
+    // Create a buffer for output.
+    GLBuffer buf;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buf);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, buf);
+
+    // Dispatch once to synchronize all dirty bits.
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    // Verify output is 1.0.
+    {
+        const float result = *reinterpret_cast<const float *>(
+            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float), GL_MAP_READ_BIT));
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+        EXPECT_EQ(1.0f, result);
+    }
+
+    // Delete the texture. This should detach it from the image unit.
+    tex.reset();
+
+    // Reset the buffer to another value and dispatch again.
+    float resetValue = 0.5f;
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float), &resetValue);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    // Verify output is 0.0 (null image).
+    {
+        const float result = *reinterpret_cast<const float *>(
+            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float), GL_MAP_READ_BIT));
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+        EXPECT_EQ(0.0f, result);
+    }
+
+    EXPECT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ComputeShaderTest);
 ANGLE_INSTANTIATE_TEST_ES31_AND(ComputeShaderTest,
                                 ES31_VULKAN().enable(Feature::ForceRobustResourceInit));

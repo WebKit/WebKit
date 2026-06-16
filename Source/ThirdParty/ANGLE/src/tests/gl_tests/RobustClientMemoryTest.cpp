@@ -130,6 +130,26 @@ TEST_P(RobustClientMemoryTest, TexImage2D)
                                rgbaData.data());
     EXPECT_GL_NO_ERROR();
 
+    // Test with no data and zero size
+    glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0, GL_RGBA,
+                            GL_UNSIGNED_BYTE, 0, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    // Test with data and negative size
+    glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0, GL_RGBA,
+                            GL_UNSIGNED_BYTE, -1, rgbaData.data());
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    // Test with no data and negative size
+    glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0, GL_RGBA,
+                            GL_UNSIGNED_BYTE, -1, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+    // Test with no data and positive size
+    glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0, GL_RGBA,
+                            GL_UNSIGNED_BYTE, 1, nullptr);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
     // Test with a data size that is too small
     glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0, GL_RGBA,
                             GL_UNSIGNED_BYTE, static_cast<GLsizei>(rgbaData.size()) / 2,
@@ -143,6 +163,30 @@ TEST_P(RobustClientMemoryTest, TexImage2D)
 
     if (getClientMajorVersion() >= 3)
     {
+        {
+            // Test bufSize when a PBO is bound
+            GLBuffer buffer;
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, rgbaData.size(), nullptr, GL_STATIC_COPY);
+
+            // Zero bufSize must be accepted
+            glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0,
+                                    GL_RGBA, GL_UNSIGNED_BYTE, 0, reinterpret_cast<void *>(0));
+            EXPECT_GL_NO_ERROR();
+
+            // Positive bufSize must be rejected
+            glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0,
+                                    GL_RGBA, GL_UNSIGNED_BYTE, 1, reinterpret_cast<void *>(0));
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            // Negative bufSize is invalid
+            glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0,
+                                    GL_RGBA, GL_UNSIGNED_BYTE, -1, reinterpret_cast<void *>(0));
+            EXPECT_GL_ERROR(GL_INVALID_VALUE);
+
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        }
+
         // Set an unpack parameter that would cause the driver to read past the end of the buffer
         glPixelStorei(GL_UNPACK_ROW_LENGTH, dataDimension + 1);
         glTexImage2DRobustANGLE(GL_TEXTURE_2D, 0, GL_RGBA, dataDimension, dataDimension, 0, GL_RGBA,

@@ -201,6 +201,83 @@ TEST_P(GLSLValidationTest, RedeclaringFunctionWithDifferentQualifiers)
         "'in' : function must have the same parameter qualifiers in all of its declarations");
 }
 
+// Auxiliary/interpolation qualifiers must always be paired with storage qualifiers.
+TEST_P(GLSLValidationTest_ES3, NoAuxOrInterpQualifierWithoutStorageQualifier)
+{
+    {
+        constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+centroid float invalid;
+void main() { gl_Position = vec4(invalid); }
+        )";
+
+        validateError(GL_VERTEX_SHADER, kVS,
+                      "'centroid' : qualifier can only be used with in and out variables");
+    }
+
+    {
+        constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+flat int invalid;
+void main() { gl_Position = vec4(invalid); }
+        )";
+
+        validateError(GL_VERTEX_SHADER, kVS,
+                      "'flat' : qualifier can only be used with in and out variables");
+    }
+
+    {
+        constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+smooth float invalid;
+void main() { gl_Position = vec4(invalid); }
+        )";
+
+        validateError(GL_VERTEX_SHADER, kVS,
+                      "'smooth' : qualifier can only be used with in and out variables");
+    }
+
+    if (IsGLExtensionEnabled("GL_NV_shader_noperspective_interpolation"))
+    {
+        constexpr char kVS[] = R"(#version 300 es
+#extension GL_NV_shader_noperspective_interpolation : require
+precision mediump float;
+noperspective float invalid;
+void main() { gl_Position = vec4(invalid); }
+        )";
+
+        validateError(GL_VERTEX_SHADER, kVS,
+                      "'noperspective' : qualifier can only be used with in and out variables");
+    }
+
+    if (IsGLExtensionEnabled("GL_NV_shader_noperspective_interpolation"))
+    {
+        constexpr char kVS[] = R"(#version 300 es
+#extension GL_NV_shader_noperspective_interpolation : require
+precision mediump float;
+noperspective centroid float invalid;
+void main() { gl_Position = vec4(invalid); }
+        )";
+
+        validateError(
+            GL_VERTEX_SHADER, kVS,
+            "'noperspective centroid' : qualifier can only be used with in and out variables");
+    }
+
+    if (IsGLExtensionEnabled("GL_OES_shader_multisample_interpolation"))
+    {
+        constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_shader_multisample_interpolation : require
+precision mediump float;
+sample float invalid;
+out vec4 color;
+void main() { color = vec4(invalid); }
+        )";
+
+        validateError(GL_FRAGMENT_SHADER, kFS,
+                      "'sample' : qualifier can only be used with in and out variables");
+    }
+}
 // Assignment and equality are undefined for structures containing arrays (ESSL 1.00 section 5.7)
 TEST_P(GLSLValidationTest, CompareStructsContainingArrays)
 {
@@ -2101,7 +2178,7 @@ TEST_P(GLSLValidationTest_ES31, InvalidInStorageQualifier)
     })";
 
     validateError(GL_COMPUTE_SHADER, kCS,
-                  "'in' : 'in' can be only used to specify the local group size");
+                  "'in' : 'in' can only be used to specify the local group size");
 }
 
 // Invalid use of the in storage qualifier. Can be only used to describe the local block size.
@@ -6419,6 +6496,65 @@ void main()
         {
             validateErrorWithExt(GL_VERTEX_SHADER, "GL_ANGLE_clip_cull_distance", kVS, kExpect);
         }
+    }
+
+    if (hasExt)
+    {
+        validateErrorWithExt(GL_VERTEX_SHADER, "GL_EXT_clip_cull_distance", kVS, kExpect);
+    }
+}
+
+// Shader redeclares gl_ClipDistance, but without a side
+TEST_P(GLSLValidationClipDistanceTest_ES3, RedeclareClipDistanceNoSize)
+{
+    const bool hasExt   = IsGLExtensionEnabled("GL_EXT_clip_cull_distance");
+    const bool hasAngle = IsGLExtensionEnabled("GL_ANGLE_clip_cull_distance");
+    ANGLE_SKIP_TEST_IF(!hasExt && !hasAngle);
+
+    constexpr char kVS[] =
+        R"(in vec4 aPosition;
+out highp float gl_ClipDistance[];
+void main()
+{
+    gl_Position = aPosition;
+    gl_ClipDistance[0] = 1.0;
+})";
+    constexpr char kExpect[] =
+        "'gl_ClipDistance' : implicitly sized arrays only allowed for tessellation shaders or "
+        "geometry shader inputs";
+
+    if (hasAngle)
+    {
+        validateErrorWithExt(GL_VERTEX_SHADER, "GL_ANGLE_clip_cull_distance", kVS, kExpect);
+    }
+
+    if (hasExt)
+    {
+        validateErrorWithExt(GL_VERTEX_SHADER, "GL_EXT_clip_cull_distance", kVS, kExpect);
+    }
+}
+
+// Shader redeclares gl_CullDistance, but without a side
+TEST_P(GLSLValidationClipDistanceTest_ES3, RedeclareCullDistanceNoSize)
+{
+    const bool hasExt   = IsGLExtensionEnabled("GL_EXT_clip_cull_distance");
+    const bool hasAngle = IsGLExtensionEnabled("GL_ANGLE_clip_cull_distance");
+    ANGLE_SKIP_TEST_IF(!hasExt && !hasAngle);
+
+    constexpr char kVS[] =
+        R"(in vec4 aPosition;
+out highp float gl_CullDistance[];
+void main()
+{
+    gl_Position = aPosition;
+})";
+    constexpr char kExpect[] =
+        "'gl_CullDistance' : implicitly sized arrays only allowed for tessellation shaders or "
+        "geometry shader inputs";
+
+    if (hasAngle)
+    {
+        validateErrorWithExt(GL_VERTEX_SHADER, "GL_ANGLE_clip_cull_distance", kVS, kExpect);
     }
 
     if (hasExt)

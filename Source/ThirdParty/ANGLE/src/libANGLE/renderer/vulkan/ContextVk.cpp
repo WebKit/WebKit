@@ -5266,8 +5266,6 @@ void ContextVk::updateDither()
     {
         mGraphicsPipelineDesc->updateEmulatedDitherControl(&mGraphicsPipelineTransition,
                                                            ditherControl);
-        mGraphicsDriverUniforms.updateEmulatedDitherControl(ditherControl);
-        mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
         invalidateCurrentGraphicsPipeline();
     }
 }
@@ -6293,7 +6291,7 @@ FenceNVImpl *ContextVk::createFenceNV()
     return new FenceNVVk();
 }
 
-SyncImpl *ContextVk::createSync()
+SyncImpl *ContextVk::createSync(const gl::Context *)
 {
     return new SyncVk();
 }
@@ -6479,6 +6477,14 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
     }
 
     onDrawFramebufferRenderPassDescChange(framebufferVk, nullptr);
+
+    if (mGraphicsDriverUniforms.updateflipXY(
+            mCurrentRotationDrawFramebuffer, isViewportFlipEnabledForDrawFBO(),
+            framebufferVk->getSamples(), framebufferVk->getLayerCount() > 1))
+    {
+        mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
+    }
+
     return angle::Result::Continue;
 }
 

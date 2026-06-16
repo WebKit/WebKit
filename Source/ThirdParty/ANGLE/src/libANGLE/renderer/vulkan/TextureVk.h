@@ -277,11 +277,12 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
         bool staticTexelFetchAccess) const
     {
         ASSERT(mImage != nullptr);
-        gl::SrgbDecode srgbDecode = (samplerState.getSRGBDecode() == GL_SKIP_DECODE_EXT)
-                                        ? gl::SrgbDecode::Skip
-                                        : gl::SrgbDecode::Default;
-        mImageView.updateSrgbDecode(*mImage, srgbDecode);
-        mImageView.updateStaticTexelFetch(*mImage, staticTexelFetchAccess);
+        const gl::SrgbDecode srgbDecode  = (samplerState.getSRGBDecode() == GL_SKIP_DECODE_EXT)
+                                               ? gl::SrgbDecode::Skip
+                                               : gl::SrgbDecode::Default;
+        const angle::Format &imageFormat = mImage->getActualFormat();
+        mImageView.updateSrgbDecode(imageFormat, srgbDecode);
+        mImageView.updateStaticTexelFetch(imageFormat, staticTexelFetchAccess);
 
         if (mImageView.getColorspaceForRead() == vk::ImageViewColorspace::SRGB)
         {
@@ -335,10 +336,11 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result updateSrgbDecodeState(ContextVk *contextVk, const gl::SamplerState &samplerState)
     {
         ASSERT(mImage != nullptr && mImage->valid());
-        gl::SrgbDecode srgbDecode = (samplerState.getSRGBDecode() == GL_SKIP_DECODE_EXT)
-                                        ? gl::SrgbDecode::Skip
-                                        : gl::SrgbDecode::Default;
-        mImageView.updateSrgbDecode(*mImage, srgbDecode);
+        const gl::SrgbDecode srgbDecode  = (samplerState.getSRGBDecode() == GL_SKIP_DECODE_EXT)
+                                               ? gl::SrgbDecode::Skip
+                                               : gl::SrgbDecode::Default;
+        const angle::Format &imageFormat = mImage->getActualFormat();
+        mImageView.updateSrgbDecode(imageFormat, srgbDecode);
         if (mImageView.hasColorspaceOverrideForRead(*mImage))
         {
             ANGLE_TRY(ensureMutable(contextVk));

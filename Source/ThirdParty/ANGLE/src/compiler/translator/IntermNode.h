@@ -119,6 +119,10 @@ class TIntermNode : angle::NonCopyable
     // node and it is replaced; otherwise, return false.
     virtual bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) = 0;
 
+    // True if executing the expression represented by this node is safe to execute even if it's
+    // inside a short-circuited expression's branch that's not taken.
+    virtual bool isSafeToExecuteInShortCircuit() const { return false; }
+
     TIntermNode *getAsNode() { return this; }
 
   protected:
@@ -299,6 +303,8 @@ class TIntermSymbol : public TIntermTyped
 
     bool hasSideEffects() const override { return false; }
 
+    bool isSafeToExecuteInShortCircuit() const override { return true; }
+
     const TType &getType() const override;
 
     const TSymbolUniqueId &uniqueId() const;
@@ -359,6 +365,8 @@ class TIntermConstantUnion : public TIntermExpression
     const TConstantUnion *getConstantValue() const override;
 
     bool hasSideEffects() const override { return false; }
+
+    bool isSafeToExecuteInShortCircuit() const override { return true; }
 
     int getIConst(size_t index) const
     {
@@ -439,6 +447,8 @@ class TIntermOperator : public TIntermExpression
 
     bool hasSideEffects() const override { return isAssignment(); }
 
+    bool isShortCircuitNeeded() const;
+
   protected:
     TIntermOperator(TOperator op) : TIntermExpression(TType(EbtFloat, EbpUndefined)), mOp(op) {}
     TIntermOperator(TOperator op, const TType &type) : TIntermExpression(type), mOp(op) {}
@@ -465,6 +475,8 @@ class TIntermSwizzle : public TIntermExpression
     bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
 
     bool hasSideEffects() const override { return mOperand->hasSideEffects(); }
+
+    bool isSafeToExecuteInShortCircuit() const override;
 
     TIntermTyped *getOperand() { return mOperand; }
     ImmutableString getOffsetsAsXYZW() const;
@@ -522,6 +534,8 @@ class TIntermBinary : public TIntermOperator
     {
         return isAssignment() || mLeft->hasSideEffects() || mRight->hasSideEffects();
     }
+
+    bool isSafeToExecuteInShortCircuit() const override;
 
     TIntermTyped *getLeft() const { return mLeft; }
     TIntermTyped *getRight() const { return mRight; }
@@ -650,6 +664,8 @@ class TIntermAggregate : public TIntermOperator, public TIntermAggregateBase
     bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) override;
 
     bool hasSideEffects() const override;
+
+    bool isSafeToExecuteInShortCircuit() const override;
 
     TIntermTyped *fold(TDiagnostics *diagnostics) override;
 

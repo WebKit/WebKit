@@ -16,6 +16,7 @@
 #include "common/utilities.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Image.h"
 #include "libANGLE/State.h"
 #include "libANGLE/Surface.h"
@@ -2507,6 +2508,50 @@ bool Texture::isSamplerCompleteForCopyImage(const Context *context,
         optionalSampler ? optionalSampler->getSamplerState() : mState.mSamplerState;
     const gl::State &contextState = context->getState();
     return mState.computeSamplerCompletenessForCopyImage(samplerState, contextState);
+}
+
+bool Texture::isFramebufferAttachmentComplete(GLuint attachmentMipLevel, const char **error) const
+{
+    if (getImmutableFormat())
+    {
+        return true;
+    }
+
+    if (mState.mType == TextureType::CubeMap && !mState.isCubeComplete())
+    {
+        *error = err::kFramebufferIncompleteAttachmentNotCubeComplete;
+        return false;
+    }
+
+    // From the ES 3.0 spec, pg 213:
+    // If the value of FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is TEXTURE and the value of
+    // FRAMEBUFFER_ATTACHMENT_OBJECT_NAME does not name an immutable-format texture,
+    // then the value of FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL must be in the
+    // range[levelbase, q], where levelbase is the value of TEXTURE_BASE_LEVEL and q is
+    // the effective maximum texture level defined in the Mipmapping discussion of
+    // section 3.8.10.4.
+    // The above condition works only if FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL is not
+    // the same as levelbase.
+    if (attachmentMipLevel != mState.mBaseLevel &&
+        (attachmentMipLevel < mState.mBaseLevel || attachmentMipLevel > mState.getMipmapMaxLevel()))
+    {
+        *error = err::kFramebufferIncompleteAttachmentLevelOutOfBaseMaxLevelRange;
+        return false;
+    }
+
+    // Form the ES 3.0 spec, pg 213/214:
+    // If the value of FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is TEXTURE and the value of
+    // FRAMEBUFFER_ATTACHMENT_OBJECT_NAME does not name an immutable-format texture and
+    // the value of FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL is not levelbase, then the
+    // texture must be mipmap complete, and if FRAMEBUFFER_ATTACHMENT_OBJECT_NAME names
+    // a cubemap texture, the texture must also be cube complete.
+    if (attachmentMipLevel != mState.mBaseLevel && !isMipmapComplete())
+    {
+        *error = err::kFramebufferIncompleteAttachmentLevelNotBaseLevelForIncompleteMipTexture;
+        return false;
+    }
+
+    return true;
 }
 
 Texture::SamplerCompletenessCache::SamplerCompletenessCache()

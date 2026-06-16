@@ -7731,6 +7731,62 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
 ANGLE_INSTANTIATE_TEST_ES3(WebGL2CompatibilityTest);
 
+// Tests that calling draw with a uniform buffer bound range that exceeds the buffer size
+// correctly generates an error in hardened contexts.
+TEST_P(HardenedContextTest, UniformBufferRangeExceedsSize)
+{
+    EGLContext hardenedContext = setupHardenedContext();
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        precision highp float;
+        layout(std140) uniform U { vec4 b[2]; };
+        out vec4 my_FragColor;
+        void main()
+        {
+            my_FragColor = b[0] + b[1];
+        })";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+    // Create a buffer of 32 bytes.
+    constexpr uint8_t data[32] = {0};
+    glBufferData(GL_UNIFORM_BUFFER, 32, data, GL_STATIC_DRAW);
+
+    GLuint blockIndex = glGetUniformBlockIndex(program, "U");
+    glUniformBlockBinding(program, blockIndex, 0);
+
+    // Bind with offset 16 and range of 32 bytes. The effective available size is
+    // min(32, 32 - 16) = 16. The shader requires 32 bytes.
+    // 16 < 32, so validation should fail.
+    // GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT is usually 256, but we need to ensure offset is aligned.
+    GLint alignment = 0;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
+
+    // Recreate buffer with sufficient size to allow an aligned offset.
+    GLintptr offset            = alignment;
+    GLsizeiptr requiredSize    = 32;
+    GLsizeiptr totalBufferSize = offset + requiredSize / 2;  // e.g., offset + 16
+
+    std::vector<uint8_t> largeData(totalBufferSize, 0);
+    glBufferData(GL_UNIFORM_BUFFER, totalBufferSize, largeData.data(), GL_STATIC_DRAW);
+
+    // Bind with offset = alignment, size = requiredSize (32).
+    // Available size = min(32, totalBufferSize - offset) = min(32, 16) = 16.
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer, offset, requiredSize);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw should fail because the bound range is larger than the actual buffer size,
+    // which violates hardened context bounds checking.
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    destroyHardenedContext(hardenedContext);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedContextTest);
 ANGLE_INSTANTIATE_TEST_ES3(HardenedContextTest);
 }  // namespace angle

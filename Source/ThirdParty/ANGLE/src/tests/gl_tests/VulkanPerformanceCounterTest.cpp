@@ -10026,14 +10026,13 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory,
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
 }
 
-class VulkanPerformanceCounterTest_Dither : public VulkanPerformanceCounterTest
+class VulkanPerformanceCounterTest_ClipDistance : public VulkanPerformanceCounterTest
 {};
 
-// Switch dither should update driver uniforms if it is emulated.
-TEST_P(VulkanPerformanceCounterTest_Dither, ToggleEmulatedDitherShouldUpdateDriverUniform)
+// Switch clip distance should update driver uniforms.
+TEST_P(VulkanPerformanceCounterTest_ClipDistance, ToggleClipDistanceShouldUpdateDriverUniform)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
-    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::EmulateDithering));
 
     ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
@@ -10049,10 +10048,10 @@ TEST_P(VulkanPerformanceCounterTest_Dither, ToggleEmulatedDitherShouldUpdateDriv
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     glViewport(0, 0, kWidth, kHeight);
 
-    glDisable(GL_DITHER);
+    glDisable(GL_CLIP_DISTANCE0_EXT);
     drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
     uint64_t program1Count = getPerfCounters().graphicsDriverUniformsUpdated;
-    glEnable(GL_DITHER);
+    glEnable(GL_CLIP_DISTANCE0_EXT);
     drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
     uint64_t program2Count = getPerfCounters().graphicsDriverUniformsUpdated;
     EXPECT_EQ(program2Count, program1Count + 1);
@@ -10132,9 +10131,6 @@ ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_TileMemory,
                            .disable(Feature::SupportsImagelessFramebuffer),
                        ES3_VULKAN_SWIFTSHADER().enable(Feature::SimulateTileMemoryForTesting));
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_Dither);
-ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_Dither,
-                       ES3_VULKAN_SWIFTSHADER()
-                           .enable(Feature::EmulateDithering)
-                           .disable(Feature::SupportsLegacyDithering));
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_ClipDistance);
+ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_ClipDistance, ES3_VULKAN_SWIFTSHADER());
 }  // anonymous namespace

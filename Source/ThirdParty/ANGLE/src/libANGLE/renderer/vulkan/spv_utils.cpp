@@ -18,6 +18,7 @@
 #include <numeric>
 
 #include "common/FixedVector.h"
+#include "common/mathutil.h"
 #include "common/spirv/spirv_instruction_builder_autogen.h"
 #include "common/spirv/spirv_instruction_parser_autogen.h"
 #include "common/string_utils.h"
@@ -27,6 +28,12 @@
 #include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/trace.h"
+
+// Extended instructions
+namespace spv
+{
+#include <spirv/unified1/GLSL.std.450.h>
+}
 
 namespace spirv = angle::spirv;
 
@@ -68,6 +75,19 @@ uint32_t SpvIsXfbBufferBlockId(spirv::IdRef id)
 {
     return id >= sh::vk::spirv::ReservedIds::kIdXfbEmulationBufferVarZero &&
            id < sh::vk::spirv::ReservedIds::kIdXfbEmulationBufferVarZero + 4;
+}
+
+DitheredOutputType GLenumToDitheredOutputType(GLenum type)
+{
+    switch (type)
+    {
+        case GL_FLOAT_VEC3:
+            return DitheredOutputType::Vec3;
+        case GL_FLOAT_VEC4:
+            return DitheredOutputType::Vec4;
+        default:
+            return DitheredOutputType::Invalid;
+    }
 }
 
 template <typename OutputIter, typename ImplicitIter>
@@ -421,8 +441,12 @@ void AssignOutputLocations(const gl::ProgramExecutable &programExecutable,
                                             implicitOutputs.begin(), implicitOutputs.end()) == 1);
             }
 
-            AddLocationInfo(variableInfoMapOut, shaderType, outputVar.pod.id, location,
-                            ShaderInterfaceVariableInfo::kInvalid, 0, 0);
+            ShaderInterfaceVariableInfo *info =
+                AddLocationInfo(variableInfoMapOut, shaderType, outputVar.pod.id, location,
+                                ShaderInterfaceVariableInfo::kInvalid, 0, 0);
+            info->isArray                 = outputVar.isArray();
+            info->fragmentOutputArraySize = outputVar.getOutermostArraySize();
+            info->ditherType              = GLenumToDitheredOutputType(outputVar.pod.type);
         }
     }
     // Handle outputs for ESSL version less than 3.00
@@ -433,8 +457,12 @@ void AssignOutputLocations(const gl::ProgramExecutable &programExecutable,
         {
             if (outputVar.name == "gl_FragColor" || outputVar.name == "gl_FragData")
             {
-                AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.pod.id, 0,
-                                ShaderInterfaceVariableInfo::kInvalid, 0, 0);
+                ShaderInterfaceVariableInfo *info =
+                    AddLocationInfo(variableInfoMapOut, gl::ShaderType::Fragment, outputVar.pod.id,
+                                    0, ShaderInterfaceVariableInfo::kInvalid, 0, 0);
+                info->isArray                 = outputVar.isArray();
+                info->fragmentOutputArraySize = outputVar.getOutermostArraySize();
+                info->ditherType              = GLenumToDitheredOutputType(outputVar.pod.type);
             }
         }
     }
@@ -1041,6 +1069,10 @@ class SpirvNonSemanticInstructions final : angle::NonCopyable
     {
         return (mOverviewFlags & sh::vk::spirv::kOverviewHasSampleIDMask) != 0;
     }
+    bool hasFragCoord() const
+    {
+        return (mOverviewFlags & sh::vk::spirv::kOverviewHasFragCoordMask) != 0;
+    }
     bool hasOutputPerVertex() const
     {
         return (mOverviewFlags & sh::vk::spirv::kOverviewHasOutputPerVertexMask) != 0;
@@ -1092,6 +1124,8 @@ namespace ID
 {
 namespace
 {
+[[maybe_unused]] constexpr spirv::IdRef GlslStdInstructionSet(
+    sh::vk::spirv::kIdGlslStdInstructionSet);
 [[maybe_unused]] constexpr spirv::IdRef EntryPoint(sh::vk::spirv::kIdEntryPoint);
 [[maybe_unused]] constexpr spirv::IdRef Void(sh::vk::spirv::kIdVoid);
 [[maybe_unused]] constexpr spirv::IdRef Float(sh::vk::spirv::kIdFloat);
@@ -1102,15 +1136,25 @@ namespace
 [[maybe_unused]] constexpr spirv::IdRef Mat3(sh::vk::spirv::kIdMat3);
 [[maybe_unused]] constexpr spirv::IdRef Mat4(sh::vk::spirv::kIdMat4);
 [[maybe_unused]] constexpr spirv::IdRef Int(sh::vk::spirv::kIdInt);
+[[maybe_unused]] constexpr spirv::IdRef IVec2(sh::vk::spirv::kIdIVec2);
 [[maybe_unused]] constexpr spirv::IdRef IVec4(sh::vk::spirv::kIdIVec4);
 [[maybe_unused]] constexpr spirv::IdRef Uint(sh::vk::spirv::kIdUint);
 [[maybe_unused]] constexpr spirv::IdRef IntZero(sh::vk::spirv::kIdIntZero);
 [[maybe_unused]] constexpr spirv::IdRef IntOne(sh::vk::spirv::kIdIntOne);
 [[maybe_unused]] constexpr spirv::IdRef IntTwo(sh::vk::spirv::kIdIntTwo);
 [[maybe_unused]] constexpr spirv::IdRef IntThree(sh::vk::spirv::kIdIntThree);
+[[maybe_unused]] constexpr spirv::IdRef IntFour(sh::vk::spirv::kIdIntFour);
+[[maybe_unused]] constexpr spirv::IdRef IntFive(sh::vk::spirv::kIdIntFive);
+[[maybe_unused]] constexpr spirv::IdRef IntSix(sh::vk::spirv::kIdIntSix);
+[[maybe_unused]] constexpr spirv::IdRef IntSeven(sh::vk::spirv::kIdIntSeven);
+[[maybe_unused]] constexpr spirv::IdRef FloatTwo(sh::vk::spirv::kIdFloatTwo);
 [[maybe_unused]] constexpr spirv::IdRef IntInputTypePointer(sh::vk::spirv::kIdIntInputTypePointer);
+[[maybe_unused]] constexpr spirv::IdRef Vec4InputTypePointer(
+    sh::vk::spirv::kIdVec4InputTypePointer);
 [[maybe_unused]] constexpr spirv::IdRef Vec4OutputTypePointer(
     sh::vk::spirv::kIdVec4OutputTypePointer);
+[[maybe_unused]] constexpr spirv::IdRef Vec3OutputTypePointer(
+    sh::vk::spirv::kIdVec3OutputTypePointer);
 [[maybe_unused]] constexpr spirv::IdRef IVec4FunctionTypePointer(
     sh::vk::spirv::kIdIVec4FunctionTypePointer);
 [[maybe_unused]] constexpr spirv::IdRef OutputPerVertexTypePointer(
@@ -1120,6 +1164,7 @@ namespace
 [[maybe_unused]] constexpr spirv::IdRef XfbEmulationGetOffsetsFunction(
     sh::vk::spirv::kIdXfbEmulationGetOffsetsFunction);
 [[maybe_unused]] constexpr spirv::IdRef SampleID(sh::vk::spirv::kIdSampleID);
+[[maybe_unused]] constexpr spirv::IdRef FragCoord(sh::vk::spirv::kIdFragCoord);
 
 [[maybe_unused]] constexpr spirv::IdRef InputPerVertexBlock(sh::vk::spirv::kIdInputPerVertexBlock);
 [[maybe_unused]] constexpr spirv::IdRef OutputPerVertexBlock(
@@ -1137,6 +1182,21 @@ namespace
     sh::vk::spirv::kIdXfbEmulationBufferBlockThree);
 }  // anonymous namespace
 }  // namespace ID
+
+namespace
+{
+bool verifyEntryPointsContainsID(const spirv::IdRefList &interfaceList, spirv::IdRef Id)
+{
+    for (spirv::IdRef interfaceId : interfaceList)
+    {
+        if (interfaceId == Id)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+}  // anonymous namespace
 
 // Helper class that trims input and output gl_PerVertex declarations to remove inactive builtins.
 //
@@ -2855,21 +2915,6 @@ TransformationState SpirvMultisampleTransformer::transformTypeImage(const uint32
     return TransformationState::Transformed;
 }
 
-namespace
-{
-bool verifyEntryPointsContainsID(const spirv::IdRefList &interfaceList)
-{
-    for (spirv::IdRef interfaceId : interfaceList)
-    {
-        if (interfaceId == ID::SampleID)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-}  // namespace
-
 void SpirvMultisampleTransformer::modifyEntryPointInterfaceList(
     const SpirvNonSemanticInstructions &nonSemantic,
     EntryPointList entryPointList,
@@ -2893,11 +2938,11 @@ void SpirvMultisampleTransformer::modifyEntryPointInterfaceList(
     // Nothing to do if the shader had already declared SampleID
     if (nonSemantic.hasSampleID())
     {
-        ASSERT(verifyEntryPointsContainsID(*interfaceList));
+        ASSERT(verifyEntryPointsContainsID(*interfaceList, ID::SampleID));
         return;
     }
 
-    // Add the SampleID id to the interfaceList.  The variable will later be decalred in
+    // Add the SampleID id to the interfaceList.  The variable will later be declared in
     // writePendingDeclarations.
     interfaceList->push_back(ID::SampleID);
     return;
@@ -3445,6 +3490,426 @@ void SpirvDepthStencilInputRemover::writePendingDeclarations(spirv::Blob *blobOu
     spirv::WriteConstantNull(blobOut, ID::IVec4, mIVec4ZeroId);
 }
 
+// Helper class that adds dithering emulation by adding an offset matrix to color outputs.
+// Generates the following dithering emulation code:
+//     const mediump float bayer[4] = { balanced 2x2 bayer divided by 32 };
+//     const mediump float b = bayer[(uint(gl_FragCoord.x) & 1) << 1 |
+//                                   (uint(gl_FragCoord.y) & 1)];
+//
+//     // for each attachment i
+//     //   switch (Dither Format for attachment i)
+//     //   {
+//     //   case kDitherControlDither4444:
+//              colori.rgb += vec3(b * 2);
+//     //       break;
+//     //   case kDitherControlDither5551:
+//              colori.rgb += vec3(b);
+//     //       break;
+//     //   case kDitherControlDither565:
+//              colori.rgb += vec3(b, b / 2, b);
+//     //       break;
+//     //   }
+class SpirvDitherEmulationTransformer final : angle::NonCopyable
+{
+  public:
+    SpirvDitherEmulationTransformer(const SpvTransformOptions &options)
+        : mOptions(options), mFragCoordDecorationAdded(false)
+    {}
+
+    void visitVariable(const ShaderInterfaceVariableInfo &info,
+                       spirv::IdResult id,
+                       spv::StorageClass storageClass);
+
+    void modifyEntryPointInterfaceList(const SpirvNonSemanticInstructions &nonSemantic,
+                                       spirv::IdRefList *interfaceList,
+                                       spirv::Blob *blobOut);
+
+    TransformationState transformDecorate(const SpirvNonSemanticInstructions &nonSemantic,
+                                          spirv::Blob *blobOut);
+
+    void writePendingDeclarations(const SpirvNonSemanticInstructions &nonSemantic,
+                                  spirv::Blob *blobOut);
+
+    void writeInputPreamble(spirv::Blob *blobOut);
+
+    void writeOutputPrologue(
+        const std::vector<const ShaderInterfaceVariableInfo *> &variableInfoById,
+        spirv::Blob *blobOut,
+        uint16_t ditherControl);
+
+  private:
+    const SpvTransformOptions mOptions;
+    bool mFragCoordDecorationAdded;
+    std::vector<spirv::IdRef> fragmentOutputs;
+    // Needed for Bayer matrix
+    spirv::IdRef mBayerArrayId;
+    spirv::IdRef mBayerIndexableId;
+    spirv::IdRef mIndexableFloatArrayTypePointerId;
+    spirv::IdRef mFloatFunctionTypePointerId;
+    // Useful consts
+    spirv::IdRef mConst1_1_Ivec2Id;
+    spirv::IdRef mConst15FloatId;
+    spirv::IdRef mConst31FloatId;
+    spirv::IdRef mConst63FloatId;
+};
+
+void SpirvDitherEmulationTransformer::visitVariable(const ShaderInterfaceVariableInfo &info,
+                                                    spirv::IdResult id,
+                                                    spv::StorageClass storageClass)
+{
+    // Create a list of all fragment output variables that have a valid dither type.
+    if (storageClass != spv::StorageClassOutput || info.ditherType == DitheredOutputType::Invalid)
+    {
+        return;
+    }
+    fragmentOutputs.push_back(id);
+}
+
+void SpirvDitherEmulationTransformer::modifyEntryPointInterfaceList(
+    const SpirvNonSemanticInstructions &nonSemantic,
+    spirv::IdRefList *interfaceList,
+    spirv::Blob *blobOut)
+{
+    // Append %gl_FragCoord to OpEntryPoint
+
+    // Nothing to do if the shader had already declared FragCoord
+    if (nonSemantic.hasFragCoord())
+    {
+        ASSERT(verifyEntryPointsContainsID(*interfaceList, ID::FragCoord));
+        return;
+    }
+
+    // Add the FragCoord id to the interfaceList.  The variable will later be declared in
+    // writePendingDeclarations.
+    interfaceList->push_back(ID::FragCoord);
+}
+
+TransformationState SpirvDitherEmulationTransformer::transformDecorate(
+    const SpirvNonSemanticInstructions &nonSemantic,
+    spirv::Blob *blobOut)
+{
+    if (!nonSemantic.hasFragCoord() && !mFragCoordDecorationAdded)
+    {
+        // Add the following instruction if it is not available yet:
+        // OpDecorate %gl_FragCoord BuiltIn FragCoord
+        spirv::WriteDecorate(blobOut, ID::FragCoord, spv::DecorationBuiltIn,
+                             {spirv::LiteralInteger(spv::BuiltIn::BuiltInFragCoord)});
+
+        mFragCoordDecorationAdded = true;
+    }
+    return TransformationState::Unchanged;
+}
+
+void SpirvDitherEmulationTransformer::writePendingDeclarations(
+    const SpirvNonSemanticInstructions &nonSemantic,
+    spirv::Blob *blobOut)
+{
+    // Add gl_FragCoord declaration if needed
+    // %gl_FragCoord = OpVariable %_ptr_Input_v4float Input
+    if (!nonSemantic.hasFragCoord())
+    {
+        spirv::WriteVariable(blobOut, ID::Vec4InputTypePointer, ID::FragCoord,
+                             spv::StorageClassInput, nullptr);
+    }
+
+    // Add bayer matrix declarations
+    // const mediump float bayer[4] = { balanced 2x2 bayer divided by 32 };
+    // %uint_4 = OpConstant %uint 4
+    // %_arr_float_uint_4 = OpTypeArray %float %uint_4
+    // %float_n0_01171875 = OpConstant %float -0.01171875
+    // %float_0_00390625 = OpConstant %float 0.00390625
+    // %float_0_01171875 = OpConstant %float 0.01171875
+    // %float_n0_00390625 = OpConstant %float -0.00390625
+    // %mBayerArrayId = OpConstantComposite %_arr_float_uint_4 %float_n0_01171875 %float_0_00390625
+    //                                      %float_0_01171875 %float_n0_00390625
+    spirv::IdRef bayerArrayTypeId = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRefList bayerConstantIds(4);
+    bayerConstantIds[0] = SpirvTransformerBase::GetNewId(blobOut);
+    bayerConstantIds[1] = SpirvTransformerBase::GetNewId(blobOut);
+    bayerConstantIds[2] = SpirvTransformerBase::GetNewId(blobOut);
+    bayerConstantIds[3] = SpirvTransformerBase::GetNewId(blobOut);
+    mBayerArrayId       = SpirvTransformerBase::GetNewId(blobOut);
+
+    spirv::WriteTypeArray(blobOut, bayerArrayTypeId, ID::Float, ID::IntFour);
+    spirv::WriteConstant(blobOut, ID::Float, bayerConstantIds[0],
+                         gl::bitCast<spirv::LiteralContextDependentNumber, float>(-0.01171875));
+    spirv::WriteConstant(blobOut, ID::Float, bayerConstantIds[1],
+                         gl::bitCast<spirv::LiteralContextDependentNumber, float>(0.00390625));
+    spirv::WriteConstant(blobOut, ID::Float, bayerConstantIds[2],
+                         gl::bitCast<spirv::LiteralContextDependentNumber, float>(0.01171875));
+    spirv::WriteConstant(blobOut, ID::Float, bayerConstantIds[3],
+                         gl::bitCast<spirv::LiteralContextDependentNumber, float>(-0.00390625));
+    spirv::WriteConstantComposite(blobOut, bayerArrayTypeId, mBayerArrayId, bayerConstantIds);
+
+    // Add some needed type declarations
+    // %_ptr_Function__arr_float_uint_4 = OpTypePointer Function %_arr_float_uint_4
+    mIndexableFloatArrayTypePointerId = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteTypePointer(blobOut, mIndexableFloatArrayTypePointerId, spv::StorageClassFunction,
+                            bayerArrayTypeId);
+    // %_ptr_Function_float = OpTypePointer Function %float
+    mFloatFunctionTypePointerId = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteTypePointer(blobOut, mFloatFunctionTypePointerId, spv::StorageClassFunction,
+                            ID::Float);
+
+    // Add some needed constants
+    // %ivec2_1_1 = OpConstant %ivec2 1 1
+    mConst1_1_Ivec2Id = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteConstantComposite(blobOut, ID::IVec2, mConst1_1_Ivec2Id, {ID::IntOne, ID::IntOne});
+
+    // Add some constants for roundOutputAfterDithering feature
+    if (mOptions.roundOutputAfterDithering)
+    {
+        // %float_15 = OpConstant %float 15
+        // %float_31 = OpConstant %float 31
+        // %float_63 = OpConstant %float 63
+        mConst15FloatId = SpirvTransformerBase::GetNewId(blobOut);
+        mConst31FloatId = SpirvTransformerBase::GetNewId(blobOut);
+        mConst63FloatId = SpirvTransformerBase::GetNewId(blobOut);
+        spirv::WriteConstant(blobOut, ID::Float, mConst15FloatId,
+                             gl::bitCast<spirv::LiteralContextDependentNumber, float>(15.0f));
+        spirv::WriteConstant(blobOut, ID::Float, mConst31FloatId,
+                             gl::bitCast<spirv::LiteralContextDependentNumber, float>(31.0f));
+        spirv::WriteConstant(blobOut, ID::Float, mConst63FloatId,
+                             gl::bitCast<spirv::LiteralContextDependentNumber, float>(63.0f));
+    }
+}
+
+void SpirvDitherEmulationTransformer::writeInputPreamble(spirv::Blob *blobOut)
+{
+    // Add mBayerIndexableId variable declaration
+    // %mBayerIndexableId = OpVariable %_ptr_Function__arr_float_uint_4 Function
+    mBayerIndexableId = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteVariable(blobOut, mIndexableFloatArrayTypePointerId, mBayerIndexableId,
+                         spv::StorageClassFunction, nullptr);
+}
+
+void SpirvDitherEmulationTransformer::writeOutputPrologue(
+    const std::vector<const ShaderInterfaceVariableInfo *> &variableInfoById,
+    spirv::Blob *blobOut,
+    uint16_t ditherControl)
+{
+    // Add bayer temp variable load from bayer matrix
+    //     const mediump float b = bayer[(uint(gl_FragCoord.x) & 1) << 1 |
+    //                                   (uint(gl_FragCoord.y) & 1)];
+    //
+    //  %fragCoord = OpLoad %vec4 %gl_FragCoord
+    //  %fragCoordXY =  OpVectorShuffle %vec2 %fragCoord %fragCoord 0 1
+    //  %fragCoordInt = OpConvertFToS %ivec2 %fragCoordXY
+    //  %fragCoordAND1 = OpBitwiseAnd %ivec2 %fragCoordInt %ivec2_1_1
+    spirv::IdRef fragCoord     = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRef fragCoordXY   = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRef fragCoordInt  = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRef fragCoordAND1 = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteLoad(blobOut, ID::Vec4, fragCoord, ID::FragCoord, nullptr);
+    spirv::WriteVectorShuffle(blobOut, ID::Vec2, fragCoordXY, fragCoord, fragCoord,
+                              {spirv::LiteralInteger(0), spirv::LiteralInteger(1)});
+    spirv::WriteConvertFToS(blobOut, ID::IVec2, fragCoordInt, fragCoordXY);
+    spirv::WriteBitwiseAnd(blobOut, ID::IVec2, fragCoordAND1, fragCoordInt, mConst1_1_Ivec2Id);
+    //  %fragCoordX = OpCompositeExtract %int %fragCoordAND1 %0
+    //  %fragCoordXFinal = OpShiftLeftLogical %int %fragCoordX %int_1
+    spirv::IdRef fragCoordX      = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRef fragCoordXFinal = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteCompositeExtract(blobOut, ID::Int, fragCoordX, fragCoordAND1,
+                                 {spirv::LiteralInteger(0)});
+    spirv::WriteShiftLeftLogical(blobOut, ID::Int, fragCoordXFinal, fragCoordX, ID::IntOne);
+    //  %fragCoordYFinal = OpCompositeExtract %int %fragCoordAND1 %1
+    spirv::IdRef fragCoordYFinal = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteCompositeExtract(blobOut, ID::Int, fragCoordYFinal, fragCoordAND1,
+                                 {spirv::LiteralInteger(1)});
+
+    //  %bayerIndex = OpBitwiseOr %int %fragCoordXFinal %fragCoordYFinal
+    //  OpStore %mBayerIndexableId %mBayerArrayId
+    //  %bayerElementAccessChain = OpAccessChain %_ptr_Function_float %mBayerIndexableId %bayerIndex
+    //  %bayerElement = OpLoad %float %bayerElementAccessChain
+    spirv::IdRef bayerIndex              = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRef bayerElementAccessChain = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::IdRef bayerElement            = SpirvTransformerBase::GetNewId(blobOut);
+    spirv::WriteBitwiseOr(blobOut, ID::Int, bayerIndex, fragCoordXFinal, fragCoordYFinal);
+    spirv::WriteStore(blobOut, mBayerIndexableId, mBayerArrayId, nullptr);
+    spirv::WriteAccessChain(blobOut, mFloatFunctionTypePointerId, bayerElementAccessChain,
+                            mBayerIndexableId, {bayerIndex});
+    spirv::WriteLoad(blobOut, ID::Float, bayerElement, bayerElementAccessChain, nullptr);
+
+    // Loop through output variables
+    for (spirv::IdRef colorAttachmentId : fragmentOutputs)
+    {
+        const ShaderInterfaceVariableInfo *info = variableInfoById[colorAttachmentId];
+        ASSERT(info != nullptr);
+
+        uint32_t outputVariableCount = info->isArray ? info->fragmentOutputArraySize : 1;
+        for (uint32_t arrayIndex = 0; arrayIndex < outputVariableCount; arrayIndex++)
+        {
+            uint16_t attachmentDitherControl =
+                static_cast<uint16_t>(ditherControl >> (2 * (info->location + arrayIndex)) & 0x3);
+            if (attachmentDitherControl == sh::vk::kDitherControlNoDither)
+            {
+                continue;
+            }
+
+            // Create a Vec3 array of dither offsets based on format
+            spirv::IdRef ditherOffsets = SpirvTransformerBase::GetNewId(blobOut);
+            switch (attachmentDitherControl)
+            {
+                case sh::vk::kDitherControlDither4444:
+                {
+                    // %bayerElement4Bit = OpFMul %float %bayerElement %float_2
+                    // %ditherOffsets = OpCompositeConstruct %v3float %bayerElement4Bit
+                    //                      %bayerElement4Bit %bayerElement4Bit
+                    spirv::IdRef bayerElement4Bit = SpirvTransformerBase::GetNewId(blobOut);
+                    spirv::WriteFMul(blobOut, ID::Float, bayerElement4Bit, bayerElement,
+                                     ID::FloatTwo);
+                    spirv::WriteCompositeConstruct(
+                        blobOut, ID::Vec3, ditherOffsets,
+                        {bayerElement4Bit, bayerElement4Bit, bayerElement4Bit});
+                    break;
+                }
+                case sh::vk::kDitherControlDither5551:
+                {
+                    // %ditherOffsets = OpCompositeConstruct %v3float %bayerElement %bayerElement
+                    //                      %bayerElement
+                    spirv::WriteCompositeConstruct(blobOut, ID::Vec3, ditherOffsets,
+                                                   {bayerElement, bayerElement, bayerElement});
+                    break;
+                }
+                case sh::vk::kDitherControlDither565:
+                {
+                    // %bayerElement6Bit = OpFDiv %float %bayerElement %float_2
+                    // %ditherOffsets = OpCompositeConstruct %v3float %bayerElement
+                    //                      %bayerElement6Bit %bayerElement
+                    spirv::IdRef bayerElement6Bit = SpirvTransformerBase::GetNewId(blobOut);
+                    spirv::WriteFDiv(blobOut, ID::Float, bayerElement6Bit, bayerElement,
+                                     ID::FloatTwo);
+                    spirv::WriteCompositeConstruct(blobOut, ID::Vec3, ditherOffsets,
+                                                   {bayerElement, bayerElement6Bit, bayerElement});
+                    break;
+                }
+                default:
+                    UNREACHABLE();
+                    break;
+            }
+
+            // If output variable is an array create an AccessChain otherwise use ID directly for
+            // load/store.
+            spirv::IdRef colorAttachmentAccessChain = colorAttachmentId;
+            if (info->isArray)
+            {
+                // %colorAttachmentAccessChain = OpAccessChain %colorAttachmentAccessChainType
+                //                                 %colorAttachmentId %OpConstantIndex
+                colorAttachmentAccessChain = SpirvTransformerBase::GetNewId(blobOut);
+                spirv::IdRef colorAttachmentAccessChainType =
+                    (info->ditherType == DitheredOutputType::Vec4) ? ID::Vec4OutputTypePointer
+                                                                   : ID::Vec3OutputTypePointer;
+                spirv::WriteAccessChain(blobOut, colorAttachmentAccessChainType,
+                                        colorAttachmentAccessChain, colorAttachmentId,
+                                        {spirv::IdRef(ID::IntZero + arrayIndex)});
+            }
+            // Load output variable, add offset, and store back result
+            //
+            //  %colorOutVec4 = OpLoad %v4float %colorAttachmentAccessChain
+            //  %colorOutVec3 = OpVectorShuffle %v3float %colorOutVec4 %colorOutVec4 0 1 2
+            //  %finalColorVec3 = OpFAdd %v3float %colorOutVec3 %ditherOffsets
+            //  %finalColorVec4 = OpVectorShuffle %v4float %finalColorVec3 %colorOutVec4 0 1 2 6
+            //  OpStore %colorAttachmentAccessChain %finalColorVec4
+            spirv::IdRef colorOutVec4;
+            spirv::IdRef colorOutVec3   = SpirvTransformerBase::GetNewId(blobOut);
+            spirv::IdRef finalColorVec3 = SpirvTransformerBase::GetNewId(blobOut);
+            spirv::IdRef finalColorVec4 = finalColorVec3;
+            // Load fragment output
+            if (info->ditherType == DitheredOutputType::Vec4)
+            {
+                // If output is vec4 convert to vec3
+                colorOutVec4 = SpirvTransformerBase::GetNewId(blobOut);
+                spirv::WriteLoad(blobOut, ID::Vec4, colorOutVec4, colorAttachmentAccessChain,
+                                 nullptr);
+                spirv::WriteVectorShuffle(
+                    blobOut, ID::Vec3, colorOutVec3, colorOutVec4, colorOutVec4,
+                    {spirv::LiteralInteger(0), spirv::LiteralInteger(1), spirv::LiteralInteger(2)});
+            }
+            else
+            {
+                spirv::WriteLoad(blobOut, ID::Vec3, colorOutVec3, colorAttachmentAccessChain,
+                                 nullptr);
+            }
+
+            // Add dither offsets to fragment output
+            // if roundOutputAfterDithering is enabled add the following line after adding the
+            // offsets:
+            // fragmentOutput.rgb = round(fragmentOutput.rgb * roundMultiplier) / roundMultiplier
+            if (mOptions.roundOutputAfterDithering)
+            {
+                spirv::IdRef roundMultiplier     = SpirvTransformerBase::GetNewId(blobOut);
+                spirv::IdRef colorOutPlusOffsets = SpirvTransformerBase::GetNewId(blobOut);
+                spirv::IdRef colorOutMultiplied  = SpirvTransformerBase::GetNewId(blobOut);
+                spirv::IdRef colorOutRounded     = SpirvTransformerBase::GetNewId(blobOut);
+                switch (attachmentDitherControl)
+                {
+                    case sh::vk::kDitherControlDither4444:
+                    {
+                        // %roundMultiplier = OpCompositeConstruct %v3float %mConst15FloatId
+                        //                      %mConst15FloatId %mConst15FloatId
+                        spirv::WriteCompositeConstruct(
+                            blobOut, ID::Vec3, roundMultiplier,
+                            {mConst15FloatId, mConst15FloatId, mConst15FloatId});
+                        break;
+                    }
+                    case sh::vk::kDitherControlDither5551:
+                    {
+                        // %roundMultiplier = OpCompositeConstruct %v3float %mConst31FloatId
+                        //                      %mConst31FloatId %mConst31FloatId
+                        spirv::WriteCompositeConstruct(
+                            blobOut, ID::Vec3, roundMultiplier,
+                            {mConst31FloatId, mConst31FloatId, mConst31FloatId});
+                        break;
+                    }
+                    case sh::vk::kDitherControlDither565:
+                    {
+                        // %roundMultiplier = OpCompositeConstruct %v3float %mConst31FloatId
+                        //                      %mConst63FloatId %mConst31FloatId
+                        spirv::WriteCompositeConstruct(
+                            blobOut, ID::Vec3, roundMultiplier,
+                            {mConst31FloatId, mConst63FloatId, mConst31FloatId});
+                        break;
+                    }
+                    default:
+                        UNREACHABLE();
+                        break;
+                }
+                // %colorOutPlusOffsets = OpFAdd %v3float %colorOutVec3 %ditherOffsets
+                // %colorOutMultiplied = OpFMul %v3float %colorOutPlusOffsets %roundMultiplier
+                // %colorOutRounded = OpExtInst %v3float %GlslStdInstructionSet Round
+                //                    %colorOutMultiplied
+                // %finalColorVec3 = OpFDiv %v3float %colorOutRounded %roundMultiplier
+                spirv::WriteFAdd(blobOut, ID::Vec3, colorOutPlusOffsets, colorOutVec3,
+                                 ditherOffsets);
+                spirv::WriteFMul(blobOut, ID::Vec3, colorOutMultiplied, colorOutPlusOffsets,
+                                 roundMultiplier);
+                spirv::WriteExtInst(blobOut, ID::Vec3, colorOutRounded, ID::GlslStdInstructionSet,
+                                    spirv::LiteralExtInstInteger(spv::GLSLstd450Round),
+                                    {colorOutMultiplied});
+                spirv::WriteFDiv(blobOut, ID::Vec3, finalColorVec3, colorOutRounded,
+                                 roundMultiplier);
+            }
+            else
+            {
+                // Add dither offsets to fragment output
+                spirv::WriteFAdd(blobOut, ID::Vec3, finalColorVec3, colorOutVec3, ditherOffsets);
+            }
+
+            // Store updated fragment output back
+            if (info->ditherType == DitheredOutputType::Vec4)
+            {
+                // If output is vec4 convert result back to vec4
+                finalColorVec4 = SpirvTransformerBase::GetNewId(blobOut);
+                spirv::WriteVectorShuffle(blobOut, ID::Vec4, finalColorVec4, finalColorVec3,
+                                          colorOutVec4,
+                                          {spirv::LiteralInteger(0), spirv::LiteralInteger(1),
+                                           spirv::LiteralInteger(2), spirv::LiteralInteger(6)});
+            }
+            spirv::WriteStore(blobOut, colorAttachmentAccessChain, finalColorVec4, nullptr);
+        }
+    }
+}
+
 // A SPIR-V transformer.  It walks the instructions and modifies them as necessary, for example to
 // assign bindings or locations.
 class SpirvTransformer final : public SpirvTransformerBase
@@ -3462,7 +3927,8 @@ class SpirvTransformer final : public SpirvTransformerBase
           mPerVertexTrimmer(options, variableInfoMap),
           mXfbCodeGenerator(options),
           mPositionTransformer(options),
-          mMultisampleTransformer(options)
+          mMultisampleTransformer(options),
+          mDitherEmulationTransformer(options)
     {}
 
     void transform();
@@ -3527,6 +3993,7 @@ class SpirvTransformer final : public SpirvTransformerBase
     SpirvMultisampleTransformer mMultisampleTransformer;
     SpirvSecondaryOutputTransformer mSecondaryOutputTransformer;
     SpirvDepthStencilInputRemover mDepthStencilInputRemover;
+    SpirvDitherEmulationTransformer mDitherEmulationTransformer;
 };
 
 void SpirvTransformer::transform()
@@ -3750,6 +4217,11 @@ void SpirvTransformer::writePendingDeclarations()
     {
         mDepthStencilInputRemover.writePendingDeclarations(mSpirvBlobOut);
     }
+    if (mOptions.ditherControl != 0)
+    {
+        mDitherEmulationTransformer.writePendingDeclarations(mNonSemanticInstructions,
+                                                             mSpirvBlobOut);
+    }
 
     mMultisampleTransformer.writePendingDeclarations(mNonSemanticInstructions, mVariableInfoById,
                                                      mSpirvBlobOut);
@@ -3772,6 +4244,10 @@ void SpirvTransformer::writePendingDeclarations()
 // Called by transformInstruction to insert necessary instructions for casting varyings.
 void SpirvTransformer::writeInputPreamble()
 {
+    if (mOptions.ditherControl != 0)
+    {
+        mDitherEmulationTransformer.writeInputPreamble(mSpirvBlobOut);
+    }
     if (mOptions.useSpirvVaryingPrecisionFixer)
     {
         mVaryingPrecisionFixer.writeInputPreamble(mVariableInfoById, mOptions.shaderType,
@@ -3783,6 +4259,11 @@ void SpirvTransformer::writeInputPreamble()
 // modifying gl_Position.
 void SpirvTransformer::writeOutputPrologue()
 {
+    if (mOptions.ditherControl != 0)
+    {
+        mDitherEmulationTransformer.writeOutputPrologue(mVariableInfoById, mSpirvBlobOut,
+                                                        mOptions.ditherControl);
+    }
     if (mOptions.useSpirvVaryingPrecisionFixer)
     {
         mVaryingPrecisionFixer.writeOutputPrologue(mVariableInfoById, mOptions.shaderType,
@@ -3959,6 +4440,11 @@ void SpirvTransformer::visitVariable(const uint32_t *instruction)
     }
 
     mMultisampleTransformer.visitVariable(mOptions.shaderType, typeId, id, storageClass);
+
+    if (mOptions.ditherControl)
+    {
+        mDitherEmulationTransformer.visitVariable(*info, id, storageClass);
+    }
 }
 
 bool SpirvTransformer::visitExtInst(const uint32_t *instruction)
@@ -4048,6 +4534,11 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
 
     mMultisampleTransformer.transformDecorate(mNonSemanticInstructions, *info, mOptions.shaderType,
                                               id, replacementId, decoration, mSpirvBlobOut);
+
+    if (mOptions.ditherControl != 0)
+    {
+        mDitherEmulationTransformer.transformDecorate(mNonSemanticInstructions, mSpirvBlobOut);
+    }
 
     uint32_t newDecorationValue = ShaderInterfaceVariableInfo::kInvalid;
 
@@ -4236,6 +4727,11 @@ TransformationState SpirvTransformer::transformEntryPoint(const uint32_t *instru
     if (mOptions.removeDepthStencilInput)
     {
         mDepthStencilInputRemover.modifyEntryPointInterfaceList(&interfaceList, mSpirvBlobOut);
+    }
+    if (mOptions.ditherControl != 0)
+    {
+        mDitherEmulationTransformer.modifyEntryPointInterfaceList(mNonSemanticInstructions,
+                                                                  &interfaceList, mSpirvBlobOut);
     }
 
     mMultisampleTransformer.modifyEntryPointInterfaceList(

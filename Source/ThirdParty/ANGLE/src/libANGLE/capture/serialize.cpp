@@ -949,7 +949,6 @@ void SerializeCompiledShaderState(JsonSerializer *json, const gl::SharedCompiled
     SerializeShaderVariablesVector(json, state->activeAttributes);
     SerializeShaderVariablesVector(json, state->activeOutputVariables);
     json->addScalar("NumViews", state->numViews);
-    json->addScalar("SpecConstUsageBits", state->specConstUsageBits.bits());
     json->addScalar("MetadataFlags", state->metadataFlags.bits());
     json->addScalar("AdvancedBlendEquations", state->advancedBlendEquations.bits());
     json->addString("GeometryShaderInputPrimitiveType",

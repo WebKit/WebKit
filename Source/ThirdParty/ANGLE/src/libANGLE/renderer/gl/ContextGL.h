@@ -74,7 +74,7 @@ class ContextGL : public ContextImpl
     // Query and Fence creation
     QueryImpl *createQuery(gl::QueryType type) override;
     FenceNVImpl *createFenceNV() override;
-    SyncImpl *createSync() override;
+    SyncImpl *createSync(const gl::Context *context) override;
 
     // Transform Feedback creation
     TransformFeedbackImpl *createTransformFeedback(
@@ -315,6 +315,8 @@ class ContextGL : public ContextImpl
 
     gl::AttributesMask updateAttributesForBaseInstance(GLuint baseInstance);
     void resetUpdatedAttributes(gl::AttributesMask attribMask);
+
+    angle::Result applyRecreateFboWorkaroundIfNeeded(const gl::Context *context);
 
   protected:
     std::shared_ptr<RendererGL> mRenderer;

@@ -65,7 +65,6 @@ class DriverUniform
     TIntermTyped *getFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const;
     // Returns vec2(flip.x, -flip.y)
     TIntermTyped *getNegFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const;
-    TIntermTyped *getDither() const;
     TIntermTyped *getSwapXY() const;
     TIntermTyped *getAdvancedBlendEquation() const;
     TIntermTyped *getNumSamples() const;

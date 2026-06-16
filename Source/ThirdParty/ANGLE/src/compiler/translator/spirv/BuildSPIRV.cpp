@@ -693,8 +693,6 @@ SPIRVBuilder::SPIRVBuilder(TCompiler *compiler,
         addCapability(spv::CapabilityTessellation);
     }
 
-    mExtInstImportIdStd = getNewId({});
-
     predefineCommonTypes();
 }
 
@@ -939,8 +937,7 @@ SpirvDecorations SPIRVBuilder::getArithmeticDecorations(const TType &type,
 
 spirv::IdRef SPIRVBuilder::getExtInstImportIdStd()
 {
-    ASSERT(mExtInstImportIdStd.valid());
-    return mExtInstImportIdStd;
+    return spirv::IdRef(vk::spirv::kIdGlslStdInstructionSet);
 }
 
 void SPIRVBuilder::predefineCommonTypes()
@@ -1010,6 +1007,12 @@ void SPIRVBuilder::predefineCommonTypes()
     spirv::WriteTypeInt(&mSpirvTypeAndConstantDecls, id, spirv::LiteralInteger(32),
                         spirv::LiteralInteger(1));
 
+    type.primarySize = 2;
+    id               = spirv::IdRef(kIdIVec2);
+    mTypeMap.insert({type, {id}});
+    spirv::WriteTypeVector(&mSpirvTypeAndConstantDecls, id, spirv::IdRef(kIdInt),
+                           spirv::LiteralInteger(type.primarySize));
+
     type.primarySize = 4;
     id               = spirv::IdRef(kIdIVec4);
     mTypeMap.insert({type, {id}});
@@ -1020,13 +1023,23 @@ void SPIRVBuilder::predefineCommonTypes()
     static_assert(kIdIntOne == kIdIntZero + 1);
     static_assert(kIdIntTwo == kIdIntZero + 2);
     static_assert(kIdIntThree == kIdIntZero + 3);
-    for (uint32_t value = 0; value < 4; ++value)
+    static_assert(kIdIntFour == kIdIntZero + 4);
+    static_assert(kIdIntFive == kIdIntZero + 5);
+    static_assert(kIdIntSix == kIdIntZero + 6);
+    static_assert(kIdIntSeven == kIdIntZero + 7);
+    for (uint32_t value = 0; value < 8; ++value)
     {
         id = spirv::IdRef(kIdIntZero + value);
         spirv::WriteConstant(&mSpirvTypeAndConstantDecls, spirv::IdRef(kIdInt), id,
                              spirv::LiteralContextDependentNumber(value));
         mIntConstants.insert({value, id});
     }
+
+    id             = spirv::IdRef(kIdFloatTwo);
+    uint32_t value = gl::bitCast<spirv::LiteralContextDependentNumber, float>(2.0f);
+    spirv::WriteConstant(&mSpirvTypeAndConstantDecls, spirv::IdRef(kIdFloat), id,
+                         spirv::LiteralContextDependentNumber(value));
+    mFloatConstants.insert({value, id});
 
     // A few type pointers that are helpful for the SPIR-V transformer
     if (mShaderType != gl::ShaderType::Compute)
@@ -1044,7 +1057,17 @@ void SPIRVBuilder::predefineCommonTypes()
             },
             {
                 kIdVec4,
+                kIdVec4InputTypePointer,
+                spv::StorageClassInput,
+            },
+            {
+                kIdVec4,
                 kIdVec4OutputTypePointer,
+                spv::StorageClassOutput,
+            },
+            {
+                kIdVec3,
+                kIdVec3OutputTypePointer,
                 spv::StorageClassOutput,
             },
             {
@@ -1891,6 +1914,10 @@ spirv::IdRef SPIRVBuilder::declareVariable(spirv::IdRef typeId,
         else if (variableId == vk::spirv::kIdSampleID)
         {
             mOverviewFlags |= vk::spirv::kOverviewHasSampleIDMask;
+        }
+        else if (variableId == vk::spirv::kIdFragCoord)
+        {
+            mOverviewFlags |= vk::spirv::kOverviewHasFragCoordMask;
         }
     }
     else

@@ -59,11 +59,6 @@ bool UnfoldShortCircuitTraverser::visitBinary(Visit visit, TIntermBinary *node)
     if (!mPatternToUnfoldMatcher.match(node, getParentNode()))
         return true;
 
-    // If our right node doesn't have side effects, we know we don't need to unfold this
-    // expression: there will be no short-circuiting side effects to avoid
-    // (note: unfolding doesn't depend on the left node -- it will always be evaluated)
-    ASSERT(node->getRight()->hasSideEffects());
-
     mFoundShortCircuit = true;
 
     switch (node->getOp())

@@ -4367,11 +4367,28 @@ TPublicType TParseContext::addFullySpecifiedType(const TTypeQualifierBuilder &ty
     checkEarlyFragmentTestsIsNotSpecified(typeSpecifier.getLine(),
                                           returnType.layoutQualifier.earlyFragmentTests);
 
-    if (returnType.qualifier == EvqSampleIn || returnType.qualifier == EvqSampleOut ||
-        returnType.qualifier == EvqNoPerspectiveSampleIn ||
-        returnType.qualifier == EvqNoPerspectiveSampleOut)
+    switch (returnType.qualifier)
     {
-        mSampleQualifierSpecified = true;
+        case EvqSmooth:
+        case EvqFlat:
+        case EvqNoPerspective:
+        case EvqCentroid:
+        case EvqSample:
+        case EvqNoPerspectiveCentroid:
+        case EvqNoPerspectiveSample:
+            // These qualifiers must be merged with |in| or |out| qualifiers.
+            error(typeSpecifier.getLine(), "qualifier can only be used with in and out variables",
+                  getQualifierString(returnType.qualifier));
+            break;
+
+        case EvqSampleIn:
+        case EvqSampleOut:
+        case EvqNoPerspectiveSampleIn:
+        case EvqNoPerspectiveSampleOut:
+            mSampleQualifierSpecified = true;
+            break;
+        default:
+            break;
     }
 
     if (mShaderVersion < 300)
@@ -4410,7 +4427,7 @@ TPublicType TParseContext::addFullySpecifiedType(const TTypeQualifierBuilder &ty
         }
         if (returnType.qualifier == EvqComputeIn)
         {
-            error(typeSpecifier.getLine(), "'in' can be only used to specify the local group size",
+            error(typeSpecifier.getLine(), "'in' can only be used to specify the local group size",
                   "in");
         }
     }

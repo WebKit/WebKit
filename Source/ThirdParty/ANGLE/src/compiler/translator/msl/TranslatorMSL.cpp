@@ -51,7 +51,6 @@
 #include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheBeginningOfShader.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
-#include "compiler/translator/tree_util/SpecializationConstant.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -874,7 +873,6 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
                                   TIntermBlock *root,
                                   const ShCompileOptions &compileOptions,
                                   PerformanceDiagnostics * /*perfDiagnostics*/,
-                                  SpecConst *specConst,
                                   DriverUniformMetal *driverUniforms)
 {
     TSymbolTable &symbolTable = getSymbolTable();
@@ -1438,9 +1436,8 @@ bool TranslatorMSL::translate(TIntermBlock *root,
     mValidateASTOptions.validatePrecision = false;
 
     TInfoSinkBase &sink = getInfoSink().obj;
-    SpecConst specConst(&getSymbolTable(), getShaderType());
     DriverUniformMetal driverUniforms(DriverUniformMode::Structure);
-    if (!translateImpl(sink, root, compileOptions, perfDiagnostics, &specConst, &driverUniforms))
+    if (!translateImpl(sink, root, compileOptions, perfDiagnostics, &driverUniforms))
     {
         return false;
     }

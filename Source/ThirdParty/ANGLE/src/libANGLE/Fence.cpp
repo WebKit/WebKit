@@ -64,9 +64,9 @@ angle::Result FenceNV::finish(const Context *context)
     return angle::Result::Continue;
 }
 
-Sync::Sync(rx::GLImplFactory *factory, SyncID id)
+Sync::Sync(rx::GLImplFactory *factory, SyncID id, const Context *context)
     : RefCountObject(factory->generateSerial(), id),
-      mFence(factory->createSync()),
+      mFence(factory->createSync(context)),
       mLabel(),
       mCondition(GL_SYNC_GPU_COMMANDS_COMPLETE),
       mFlags(0)

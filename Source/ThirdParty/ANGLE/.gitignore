@@ -41,7 +41,6 @@
 /third_party/android_system_sdk/cipd
 /third_party/android_toolchain
 /third_party/astc-encoder/src
-/third_party/bazel/desugar/*.jar
 /third_party/catapult
 /third_party/cherry
 /third_party/clang-format/script
@@ -80,12 +79,9 @@
 /third_party/OpenCL-ICD-Loader/src
 /third_party/OpenGL-Registry/src
 /third_party/perfetto
-/third_party/proguard/lib
 /third_party/protobuf
 /third_party/Python-Markdown
 /third_party/siso
-/third_party/qemu-linux-x64
-/third_party/qemu-mac-x64
 /third_party/r8/cipd
 /third_party/r8/d8/cipd
 /third_party/r8/lib

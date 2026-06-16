@@ -128,9 +128,9 @@ static float YCoordToFromCG(float y)
     return self;
 }
 
-- (void)onOSXWindowDeleted
+- (void)detach
 {
-    mWindow = nil;
+    mWindow = nullptr;
 }
 
 - (BOOL)windowShouldClose:(id)sender
@@ -704,7 +704,8 @@ void OSXWindow::destroy()
 
     [mView release];
     mView = nil;
-    [mDelegate onOSXWindowDeleted];
+    [mWindow setDelegate:nil];
+    [mDelegate detach];
     [mDelegate release];
     mDelegate = nil;
     // NSWindow won't be completely released unless its content view is set to nil:

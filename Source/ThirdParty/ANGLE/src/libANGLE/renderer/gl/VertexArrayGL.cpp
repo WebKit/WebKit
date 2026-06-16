@@ -347,8 +347,8 @@ angle::Result VertexArrayGL::syncIndexData(const gl::Context *context,
         if (requiredStreamingBufferSize > mStreamingElementArrayBufferSize)
         {
             // Copy the indices in while resizing the buffer
-            ANGLE_GL_TRY(context,
-                         functions->bufferData(GL_ELEMENT_ARRAY_BUFFER, requiredStreamingBufferSize,
+            ANGLE_GL_TRY_ALWAYS_CHECK(
+                context, functions->bufferData(GL_ELEMENT_ARRAY_BUFFER, requiredStreamingBufferSize,
                                                indices, GL_DYNAMIC_DRAW));
             mStreamingElementArrayBufferSize = requiredStreamingBufferSize;
         }
@@ -443,8 +443,9 @@ angle::Result VertexArrayGL::streamAttributes(
     stateManager->bindBuffer(gl::BufferBinding::Array, mStreamingArrayBuffer);
     if (requiredBufferSize > mStreamingArrayBufferSize)
     {
-        ANGLE_GL_TRY(context, functions->bufferData(GL_ARRAY_BUFFER, requiredBufferSize, nullptr,
-                                                    GL_DYNAMIC_DRAW));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context,
+            functions->bufferData(GL_ARRAY_BUFFER, requiredBufferSize, nullptr, GL_DYNAMIC_DRAW));
         mStreamingArrayBufferSize = requiredBufferSize;
     }
 

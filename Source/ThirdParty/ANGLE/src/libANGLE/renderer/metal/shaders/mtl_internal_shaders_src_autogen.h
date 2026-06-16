@@ -2606,6 +2606,7 @@ static inline void outputPrimitive(
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
                 return;
             }
             ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex; } onOutIndex++; });
@@ -2618,9 +2619,16 @@ static inline void outputPrimitive(
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
                 return;
             }
-            if((onIndex - baseIndex) & 1) return;
+            if((onIndex - baseIndex) & 1)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                return;
+            }
             if(fixIndexBufferKey & 0x00200U)
             {
                 ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
@@ -2640,6 +2648,8 @@ static inline void outputPrimitive(
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
                 return;
             }
             if(fixIndexBufferKey & 0x00200U)
@@ -2662,9 +2672,18 @@ static inline void outputPrimitive(
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
                 return;
             }
-            if(((onIndex - baseIndex) % 3) != 0) return;
+            if(((onIndex - baseIndex) % 3) != 0)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                return;
+            }
             if(fixIndexBufferKey & 0x00200U)
             {
                 ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2; } onOutIndex++; });
@@ -2688,6 +2707,9 @@ static inline void outputPrimitive(
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = restartIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = restartIndex; } onOutIndex++; });
                 return;
             }
             if(fixIndexBufferKey & 0x00200U)
@@ -2727,8 +2749,8 @@ kernel void fixIndexBuffer(
                            uint prim [[thread_position_in_grid]])
 {
     uint baseIndex = 0;
-    uint onIndex = onIndex;
-    uint onOutIndex = onOutIndex;
+    uint onIndex = 0;
+    uint onOutIndex = 0;
     if(prim < primCount)
     {
         switch(fixIndexBufferMode)
@@ -2904,8 +2926,8 @@ kernel void genIndexBuffer(
                            uint prim [[thread_position_in_grid]])
 {
     uint baseIndex = 0;
-    uint onIndex = onIndex;
-    uint onOutIndex = onOutIndex;
+    uint onIndex = 0;
+    uint onOutIndex = 0;
     if(prim < primCount)
     {
         switch(fixIndexBufferMode)

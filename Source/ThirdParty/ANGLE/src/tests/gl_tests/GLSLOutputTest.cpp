@@ -594,7 +594,11 @@ void main() {
                          "for (int i = 0; i < 10; i++) { for (int j = 0; j < 1000; ++i) { }}",
                          "for (int i = 0; i != 1; i+=2) { }",
                          "for (int i = 0; i < 1; noop()) { }",
-                         "uint i; for (i = 0u; i < 10u; i++) { for (i = 0u; i < 0u; i++) { } }"};
+                         "uint i; for (i = 0u; i < 10u; i++) { for (i = 0u; i < 0u; i++) { } }",
+                         "for (int i = 0; i < 10; i++) { int j; for (j = 0, i = 0; j < 10; j++) { } }",
+                         "for (int i = 0; i < 10; i++) { for (int j = 0; i = 0, j < 10; j++) { } }",
+                         "for (int i = 0; i < 10; i++) { for (int j = 0; j < 10; i = 0, j++) { } }",
+                         "for (int i = 0; i < 10; i++) { for (int j = 0; j < 10; i--, j++) { } }"};
 
     for (const char *test : kTests)
     {

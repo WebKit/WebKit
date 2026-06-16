@@ -202,16 +202,26 @@ bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *fla
     return false;
 }
 
-bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut)
+bool ParseStringArgWithHandling(const char *flag,
+                                int *argc,
+                                char **argv,
+                                int argIndex,
+                                std::string *valueOut,
+                                ArgHandling handling)
 {
-    const char *value = GetSingleArg(flag, argc, argv, argIndex, ArgHandling::Delete);
+    const char *value = GetSingleArg(flag, argc, argv, argIndex, handling);
     if (!value)
     {
         return false;
     }
 
     *valueOut = value;
-    return true;
+    return handling == ArgHandling::Delete;
+}
+
+bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut)
+{
+    return ParseStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
 }
 
 bool ParseCStringArgWithHandling(const char *flag,

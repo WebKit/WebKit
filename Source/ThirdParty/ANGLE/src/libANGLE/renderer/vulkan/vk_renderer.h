@@ -49,7 +49,7 @@ namespace vk
 {
 class Format;
 
-static constexpr size_t kMaxExtensionNames = 400;
+static constexpr size_t kMaxExtensionNames = 600;
 using ExtensionNameList                    = angle::FixedVector<const char *, kMaxExtensionNames>;
 
 static constexpr size_t kMaxSyncValExtraProperties = 9;

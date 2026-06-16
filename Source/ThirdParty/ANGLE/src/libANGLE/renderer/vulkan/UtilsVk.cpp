@@ -1918,7 +1918,7 @@ angle::Result UtilsVk::setupGraphicsProgramWithLayout(
     {
         ANGLE_TRY(programAndPipelines->program.createGraphicsPipeline(
             contextVk, &programAndPipelines->pipelines, &pipelineCache, *compatibleRenderPass,
-            pipelineLayout, PipelineSource::Utils, *pipelineDesc, {}, &descPtr, &helper));
+            pipelineLayout, PipelineSource::Utils, *pipelineDesc, &descPtr, &helper));
     }
 
     contextVk->getStartedRenderPassCommands().retainResource(helper);

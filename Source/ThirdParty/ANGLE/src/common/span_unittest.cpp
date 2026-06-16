@@ -487,6 +487,139 @@ TEST(SpanTest, Helpers)
         EXPECT_EQ(byte_span.data(), reinterpret_cast<uint8_t *>(kMutArray));
         EXPECT_EQ(byte_span.size(), sizeof(kMutArray));
     }
+
+    // Test copy_from.
+    {
+        unsigned int data1[4] = {1, 2, 3, 4};
+        unsigned int data2[4] = {0, 0, 0, 0};
+
+        Span<unsigned int> sp1(data1);
+        Span<unsigned int> sp2(data2);
+
+        sp2.copy_from(sp1);
+        for (size_t i = 0; i < 4; ++i)
+        {
+            EXPECT_EQ(data2[i], data1[i]);
+        }
+    }
+
+    // Test copy_from with container.
+    {
+        std::vector<unsigned int> vec = {10, 20, 30, 40};
+        unsigned int data[4]          = {0, 0, 0, 0};
+        Span<unsigned int, 4> sp(data);
+
+        sp.copy_from(vec);
+        EXPECT_EQ(data[0], 10u);
+        EXPECT_EQ(data[1], 20u);
+        EXPECT_EQ(data[2], 30u);
+        EXPECT_EQ(data[3], 40u);
+    }
+
+    // Test copy_from with overlapping memory (forward move).
+    {
+        unsigned int data[4] = {1, 2, 3, 4};
+        Span<unsigned int> sp(data);
+
+        // Copy [1, 2, 3] to [2, 3, 4] -> Result should be [1, 1, 2, 3]
+        // This exercises the std::copy_backward path in the overlap logic.
+        sp.subspan(1).copy_from(sp.first(3));
+        EXPECT_EQ(data[0], 1u);
+        EXPECT_EQ(data[1], 1u);
+        EXPECT_EQ(data[2], 2u);
+        EXPECT_EQ(data[3], 3u);
+    }
+
+    // Test copy_from with overlapping memory (backward move).
+    {
+        unsigned int data[4] = {1, 2, 3, 4};
+        Span<unsigned int> sp(data);
+
+        // Copy [2, 3, 4] to [1, 2, 3] -> Result should be [2, 3, 4, 4]
+        // This exercises the std::copy path in the overlap logic.
+        sp.first(3).copy_from(sp.subspan(1));
+        EXPECT_EQ(data[0], 2u);
+        EXPECT_EQ(data[1], 3u);
+        EXPECT_EQ(data[2], 4u);
+        EXPECT_EQ(data[3], 4u);
+    }
+
+    // Verify Extent Safety (Compile-time)
+    {
+        using FixedSpan   = Span<int, 4>;
+        using DynamicSpan = Span<int, dynamic_extent>;
+
+        // Identical fixed extents are allowed.
+        static_assert(std::is_invocable_v<decltype(&FixedSpan::copy_from<int, 4, int *>), FixedSpan,
+                                          const FixedSpan &>);
+        // Const sources are allowed.
+        static_assert(
+            std::is_invocable_v<decltype(&FixedSpan::copy_from<const int, 4, const int *>),
+                                FixedSpan, const Span<const int, 4> &>);
+        // Fixed from Dynamic is allowed (runtime CHECK handles mismatch).
+        static_assert(
+            std::is_invocable_v<decltype(&FixedSpan::copy_from<int, dynamic_extent, int *>),
+                                FixedSpan, const DynamicSpan &>);
+        // Dynamic from Fixed is allowed.
+        static_assert(std::is_invocable_v<decltype(&DynamicSpan::copy_from<int, 4, int *>),
+                                          DynamicSpan, const FixedSpan &>);
+        // Containers are allowed.
+        static_assert(std::is_invocable_v<decltype(&FixedSpan::copy_from<std::vector<int>>),
+                                          FixedSpan, const std::vector<int> &>);
+    }
+
+    // Test to_fixed_extent.
+    {
+        unsigned int data[4] = {1, 2, 3, 4};
+        Span<unsigned int> sp(data);
+
+        auto fixed_sp = sp.to_fixed_extent<4>();
+        ASSERT_TRUE(fixed_sp.has_value());
+        EXPECT_EQ(fixed_sp->size(), 4u);
+        EXPECT_EQ((*fixed_sp)[0], 1u);
+
+        auto fixed_sp_wrong = sp.to_fixed_extent<5>();
+        ASSERT_FALSE(fixed_sp_wrong.has_value());
+    }
+
+    // Test split_at.
+    {
+        unsigned int data[4] = {1, 2, 3, 4};
+        Span<unsigned int> sp(data);
+
+        {
+            auto [front, back] = sp.split_at<2>();
+            static_assert(std::is_same_v<decltype(front), Span<unsigned int, 2>>);
+            EXPECT_EQ(front.size(), 2u);
+            EXPECT_EQ(back.size(), 2u);
+            EXPECT_EQ(front[0], 1u);
+            EXPECT_EQ(back[0], 3u);
+        }
+
+        {
+            auto [front, back] = sp.split_at(1);
+            EXPECT_EQ(front.size(), 1u);
+            EXPECT_EQ(back.size(), 3u);
+            EXPECT_EQ(front[0], 1u);
+            EXPECT_EQ(back[0], 2u);
+        }
+    }
+
+    // Test copy_from on a const Span handle.
+    {
+        unsigned int data1[4] = {1, 2, 3, 4};
+        unsigned int data2[4] = {0, 0, 0, 0};
+
+        const Span<unsigned int> sp1(data1);
+        const Span<unsigned int> sp2(data2);
+
+        sp2.copy_from(sp1);
+
+        for (size_t i = 0; i < 4; ++i)
+        {
+            EXPECT_EQ(data2[i], data1[i]);
+        }
+    }
 }
 
 }  // anonymous namespace

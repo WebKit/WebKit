@@ -196,7 +196,6 @@
 385924891 PIXEL6 VULKAN : KHR-GLES31.core.tessellation_shader.vertex.vertex_spacing* = SKIP
 
 // Pixel 10
-483966076 PIXEL10 VULKAN : KHR-GLES31.core.geometry_shader.layered_rendering_fbo_no_attachment.layered_rendering_fbo_no_attachment = FAIL
 483966076 PIXEL10 VULKAN : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_fan_drawcall = SKIP
 483966076 PIXEL10 VULKAN : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangle_strip_drawcall = SKIP
 483966076 PIXEL10 VULKAN : KHR-GLES31.core.geometry_shader.rendering.rendering.triangles_input_triangle_strip_output_triangles_drawcall = SKIP

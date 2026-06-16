@@ -136,6 +136,12 @@ enum ArgHandling
 bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
 bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
 bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut);
+bool ParseStringArgWithHandling(const char *flag,
+                                int *argc,
+                                char **argv,
+                                int argIndex,
+                                std::string *valueOut,
+                                ArgHandling handling);
 bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut);
 
 // Note: return value is always false with ArgHandling::Preserve handling

@@ -18,7 +18,6 @@ constexpr const char kUnassignedFragmentOutputString[] = "__unassigned_output__"
 
 class DriverUniform;
 class DriverUniformMetal;
-class SpecConst;
 class TOutputMSL;
 class TranslatorMetalReflection;
 typedef std::unordered_map<size_t, std::string> originalNamesMap;
@@ -196,7 +195,6 @@ class TranslatorMSL : public TCompiler
                                      TIntermBlock *root,
                                      const ShCompileOptions &compileOptions,
                                      PerformanceDiagnostics *perfDiagnostics,
-                                     SpecConst *specConst,
                                      DriverUniformMetal *driverUniforms);
 
     [[nodiscard]] bool shouldFlattenPragmaStdglInvariantAll() override;

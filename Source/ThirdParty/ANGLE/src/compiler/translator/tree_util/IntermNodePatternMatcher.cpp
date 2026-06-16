@@ -51,8 +51,7 @@ bool IntermNodePatternMatcher::matchInternal(TIntermBinary *node, TIntermNode *p
 
     if ((mMask & kUnfoldedShortCircuitExpression) != 0)
     {
-        if (node->getRight()->hasSideEffects() &&
-            (node->getOp() == EOpLogicalOr || node->getOp() == EOpLogicalAnd))
+        if (node->isShortCircuitNeeded())
         {
             return true;
         }

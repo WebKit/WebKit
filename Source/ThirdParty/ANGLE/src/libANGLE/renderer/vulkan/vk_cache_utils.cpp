@@ -828,7 +828,6 @@ void UnpackBlendAttachmentState(const PackedColorBlendAttachmentState &packedSta
 void SetPipelineShaderStageInfo(const VkStructureType type,
                                 const VkShaderStageFlagBits stage,
                                 const VkShaderModule module,
-                                const VkSpecializationInfo &specializationInfo,
                                 VkPipelineShaderStageCreateInfo *shaderStage)
 {
     shaderStage->sType               = type;
@@ -836,7 +835,6 @@ void SetPipelineShaderStageInfo(const VkStructureType type,
     shaderStage->stage               = stage;
     shaderStage->module              = module;
     shaderStage->pName               = "main";
-    shaderStage->pSpecializationInfo = &specializationInfo;
 }
 
 // Defines a subpass that uses the resolve attachments as input attachments to initialize color and
@@ -1633,35 +1631,6 @@ void GetRenderPassAndUpdateCounters(ContextVk *contextVk,
         counters.stencilAttachmentResolves += rpCounters.stencilAttachmentResolves;
         counters.readOnlyDepthStencilRenderPasses += rpCounters.readOnlyDepthStencil;
     }
-}
-
-void InitializeSpecializationInfo(
-    const SpecializationConstants &specConsts,
-    SpecializationConstantMap<VkSpecializationMapEntry> *specializationEntriesOut,
-    VkSpecializationInfo *specializationInfoOut)
-{
-    // Collect specialization constants.
-    for (const sh::vk::SpecializationConstantId id :
-         angle::AllEnums<sh::vk::SpecializationConstantId>())
-    {
-        (*specializationEntriesOut)[id].constantID = static_cast<uint32_t>(id);
-        switch (id)
-        {
-            case sh::vk::SpecializationConstantId::Dither:
-                (*specializationEntriesOut)[id].offset =
-                    offsetof(vk::SpecializationConstants, dither);
-                (*specializationEntriesOut)[id].size = sizeof(specConsts.dither);
-                break;
-            default:
-                UNREACHABLE();
-                break;
-        }
-    }
-
-    specializationInfoOut->mapEntryCount = static_cast<uint32_t>(specializationEntriesOut->size());
-    specializationInfoOut->pMapEntries   = specializationEntriesOut->data();
-    specializationInfoOut->dataSize      = sizeof(specConsts);
-    specializationInfoOut->pData         = &specConsts;
 }
 
 // Utility for setting a value on a packed 4-bit integer array.
@@ -3511,8 +3480,8 @@ VkResult GraphicsPipelineDesc::initializePipeline(ErrorContext *context,
         }
         else
         {
-            initializePipelineShadersState(context, *shaders.mShaders, *shaders.mSpecConsts,
-                                           &shadersState, &dynamicStateList);
+            initializePipelineShadersState(context, *shaders.mShaders, &shadersState,
+                                           &dynamicStateList);
 
             createInfo.stageCount         = static_cast<uint32_t>(shadersState.shaderStages.size());
             createInfo.pStages            = shadersState.shaderStages.data();
@@ -3872,20 +3841,15 @@ void GraphicsPipelineDesc::initializePipelineVertexInputState(
 void GraphicsPipelineDesc::initializePipelineShadersState(
     ErrorContext *context,
     const ShaderModuleMap &shaders,
-    const SpecializationConstants &specConsts,
     GraphicsPipelineShadersVulkanStructs *stateOut,
     GraphicsPipelineDynamicStateList *dynamicStateListOut) const
 {
-    InitializeSpecializationInfo(specConsts, &stateOut->specializationEntries,
-                                 &stateOut->specializationInfo);
-
     // Vertex shader is always expected to be present.
     const ShaderModule &vertexModule = *shaders[gl::ShaderType::Vertex];
     ASSERT(vertexModule.valid());
     VkPipelineShaderStageCreateInfo vertexStage = {};
     SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-                               VK_SHADER_STAGE_VERTEX_BIT, vertexModule.getHandle(),
-                               stateOut->specializationInfo, &vertexStage);
+                               VK_SHADER_STAGE_VERTEX_BIT, vertexModule.getHandle(), &vertexStage);
     stateOut->shaderStages.push_back(vertexStage);
 
     const ShaderModulePtr &tessControlPointer = shaders[gl::ShaderType::TessControl];
@@ -3895,8 +3859,7 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
         VkPipelineShaderStageCreateInfo tessControlStage = {};
         SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                                    VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
-                                   tessControlModule.getHandle(), stateOut->specializationInfo,
-                                   &tessControlStage);
+                                   tessControlModule.getHandle(), &tessControlStage);
         stateOut->shaderStages.push_back(tessControlStage);
     }
 
@@ -3907,8 +3870,7 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
         VkPipelineShaderStageCreateInfo tessEvaluationStage = {};
         SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                                    VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
-                                   tessEvaluationModule.getHandle(), stateOut->specializationInfo,
-                                   &tessEvaluationStage);
+                                   tessEvaluationModule.getHandle(), &tessEvaluationStage);
         stateOut->shaderStages.push_back(tessEvaluationStage);
     }
 
@@ -3919,7 +3881,7 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
         VkPipelineShaderStageCreateInfo geometryStage = {};
         SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                                    VK_SHADER_STAGE_GEOMETRY_BIT, geometryModule.getHandle(),
-                                   stateOut->specializationInfo, &geometryStage);
+                                   &geometryStage);
         stateOut->shaderStages.push_back(geometryStage);
     }
 
@@ -3931,7 +3893,7 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
         VkPipelineShaderStageCreateInfo fragmentStage = {};
         SetPipelineShaderStageInfo(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
                                    VK_SHADER_STAGE_FRAGMENT_BIT, fragmentModule.getHandle(),
-                                   stateOut->specializationInfo, &fragmentStage);
+                                   &fragmentStage);
         stateOut->shaderStages.push_back(fragmentStage);
     }
 
@@ -5097,14 +5059,12 @@ CreateMonolithicPipelineTask::CreateMonolithicPipelineTask(
     const PipelineCacheAccess &pipelineCache,
     const PipelineLayout &pipelineLayout,
     const ShaderModuleMap &shaders,
-    const SpecializationConstants &specConsts,
     const GraphicsPipelineDesc &desc)
     : ErrorContext(renderer),
       mPipelineCache(pipelineCache),
       mCompatibleRenderPass(nullptr),
       mPipelineLayout(pipelineLayout),
       mShaders(shaders),
-      mSpecConsts(specConsts),
       mDesc(desc),
       mResult(VK_NOT_READY),
       mFeedback(CacheLookUpFeedback::None)
@@ -5123,8 +5083,8 @@ void CreateMonolithicPipelineTask::operator()()
 
     ANGLE_TRACE_EVENT0("gpu.angle", "CreateMonolithicPipelineTask");
     mResult = mDesc.initializePipeline(this, &mPipelineCache, vk::GraphicsPipelineSubset::Complete,
-                                       *compatibleRenderPass, mPipelineLayout,
-                                       {&mShaders, &mSpecConsts}, &mPipeline, &mFeedback);
+                                       *compatibleRenderPass, mPipelineLayout, {&mShaders},
+                                       &mPipeline, &mFeedback);
 
     if (mRenderer->getFeatures().slowDownMonolithicPipelineCreationForTesting.enabled)
     {

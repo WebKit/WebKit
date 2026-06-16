@@ -85,7 +85,7 @@ bool ValidImageDataSize(const Context *context,
                         GLenum format,
                         GLenum type,
                         const void *pixels,
-                        GLsizei imageSize);
+                        GLuint *outImageSize);
 bool ValidImageAllocationSize(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLsizei width,
@@ -490,9 +490,11 @@ bool ValidateFlushMappedBufferRangeBase(const Context *context,
 
 bool ValidateGenOrDelete(ErrorSet *errors, angle::EntryPoint entryPoint, GLint n, const void *ids);
 
-bool ValidateRobustEntryPoint(const Context *context,
-                              angle::EntryPoint entryPoint,
-                              GLsizei bufSize);
+bool ValidateRobustTexImage(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            const void *pixels,
+                            GLuint imageSize,
+                            GLsizei bufSize);
 bool ValidateRobustParamCount(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLsizei paramCount,
@@ -760,8 +762,8 @@ bool ValidateES3TexImage2DParameters(const Context *context,
                                      GLint border,
                                      GLenum format,
                                      GLenum type,
-                                     GLsizei imageSize,
-                                     const void *pixels);
+                                     const void *pixels,
+                                     GLuint *outImageSize);
 bool ValidateES3CopyTexImage2DParameters(const Context *context,
                                          angle::EntryPoint entryPoint,
                                          TextureTarget target,

@@ -532,8 +532,6 @@ class ProgramExecutable final : public angle::Subject
     int getNumViews() const { return mPod.numViews; }
     bool usesMultiview() const { return mPod.numViews != -1; }
 
-    rx::SpecConstUsageBits getSpecConstUsageBits() const { return mPod.specConstUsageBits; }
-
     int getDrawIDLocation() const { return mPod.drawIDLocation; }
     int getBaseVertexLocation() const { return mPod.baseVertexLocation; }
     int getBaseInstanceLocation() const { return mPod.baseInstanceLocation; }
@@ -936,11 +934,11 @@ class ProgramExecutable final : public angle::Subject
         GLenum tessGenVertexOrder;
         GLenum tessGenPointMode;
 
-        // 4 bytes
-        rx::SpecConstUsageBits specConstUsageBits;
-
         // 24 bytes
         ShaderMap<int> linkedShaderVersions;
+
+        // 4 bytes
+        uint32_t padding;
     } mPod;
     ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 

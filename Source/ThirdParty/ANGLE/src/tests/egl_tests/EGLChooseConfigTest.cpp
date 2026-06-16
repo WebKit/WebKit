@@ -172,6 +172,97 @@ TEST_P(EGLChooseConfigTest, ValidateConfigID)
     }
 }
 
+// Test that EGL_CONFIG_ID = EGL_DONT_CARE does not crash and returns valid configs.
+// Regression test for a bug where the EGL_CONFIG_ID shortcut path in ConfigSet::filter()
+// did not check for EGL_DONT_CARE, causing ConfigSet::get(-1) which is undefined behavior.
+TEST_P(EGLChooseConfigTest, ConfigIdDontCare)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    // Get all configs for comparison.
+    EGLint allConfigCount = 0;
+    ASSERT_EGL_TRUE(eglGetConfigs(display, nullptr, 0, &allConfigCount));
+    ASSERT_NE(allConfigCount, 0);
+
+    std::vector<EGLConfig> allConfigs(allConfigCount);
+    EGLint returnedCount = 0;
+    ASSERT_EGL_TRUE(eglGetConfigs(display, allConfigs.data(), allConfigCount, &returnedCount));
+    ASSERT_EQ(allConfigCount, returnedCount);
+
+    // Choose configs with EGL_CONFIG_ID = EGL_DONT_CARE.  Per the EGL spec, EGL_DONT_CARE means
+    // the attribute should not be used for selection, so the result should be the same as not
+    // specifying EGL_CONFIG_ID at all.
+    const EGLint attribsWithDontCare[] = {EGL_CONFIG_ID, EGL_DONT_CARE, EGL_NONE};
+    EGLint dontCareCount               = 0;
+    std::vector<EGLConfig> dontCareConfigs(allConfigCount);
+    ASSERT_EGL_TRUE(eglChooseConfig(display, attribsWithDontCare, dontCareConfigs.data(),
+                                    allConfigCount, &dontCareCount));
+    ASSERT_EGL_SUCCESS();
+
+    // Should return at least one config.
+    ASSERT_GT(dontCareCount, 0);
+
+    // Every returned config must be valid and have a positive config ID.
+    for (EGLint i = 0; i < dontCareCount; i++)
+    {
+        EGLint configID = 0;
+        ASSERT_EGL_TRUE(eglGetConfigAttrib(display, dontCareConfigs[i], EGL_CONFIG_ID, &configID));
+        ASSERT_EGL_SUCCESS();
+        ASSERT_GT(configID, 0);
+    }
+
+    // The result should match eglChooseConfig with no attributes (default filtering).
+    const EGLint defaultAttribs[] = {EGL_NONE};
+    EGLint defaultCount           = 0;
+    std::vector<EGLConfig> defaultConfigs(allConfigCount);
+    ASSERT_EGL_TRUE(eglChooseConfig(display, defaultAttribs, defaultConfigs.data(), allConfigCount,
+                                    &defaultCount));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_EQ(dontCareCount, defaultCount);
+}
+
+// Test that EGL_CONFIG_ID = EGL_DONT_CARE combined with other filtering attributes works
+// correctly and does not interfere with the other attribute matching.
+TEST_P(EGLChooseConfigTest, ConfigIdDontCareWithOtherAttributes)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EGLint allConfigCount = 0;
+    ASSERT_EGL_TRUE(eglGetConfigs(display, nullptr, 0, &allConfigCount));
+    ASSERT_NE(allConfigCount, 0);
+
+    // Filter with EGL_CONFIG_ID = EGL_DONT_CARE plus a real constraint.
+    const EGLint attribsWithDontCare[] = {EGL_CONFIG_ID, EGL_DONT_CARE, EGL_RENDERABLE_TYPE,
+                                          EGL_OPENGL_ES2_BIT, EGL_NONE};
+    EGLint dontCareCount               = 0;
+    std::vector<EGLConfig> dontCareConfigs(allConfigCount);
+    ASSERT_EGL_TRUE(eglChooseConfig(display, attribsWithDontCare, dontCareConfigs.data(),
+                                    allConfigCount, &dontCareCount));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_GT(dontCareCount, 0);
+
+    // Filter with only the real constraint (no EGL_CONFIG_ID at all).
+    const EGLint attribsWithoutConfigId[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_NONE};
+    EGLint withoutCount                   = 0;
+    std::vector<EGLConfig> withoutConfigs(allConfigCount);
+    ASSERT_EGL_TRUE(eglChooseConfig(display, attribsWithoutConfigId, withoutConfigs.data(),
+                                    allConfigCount, &withoutCount));
+    ASSERT_EGL_SUCCESS();
+
+    // Both queries should return the same number of configs.
+    ASSERT_EQ(dontCareCount, withoutCount);
+
+    // Every returned config must support ES2.
+    for (EGLint i = 0; i < dontCareCount; i++)
+    {
+        EGLint renderableType = 0;
+        ASSERT_EGL_TRUE(
+            eglGetConfigAttrib(display, dontCareConfigs[i], EGL_RENDERABLE_TYPE, &renderableType));
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(renderableType & EGL_OPENGL_ES2_BIT, 0);
+    }
+}
+
 }  // namespace angle
 
 ANGLE_INSTANTIATE_TEST(EGLChooseConfigTest,

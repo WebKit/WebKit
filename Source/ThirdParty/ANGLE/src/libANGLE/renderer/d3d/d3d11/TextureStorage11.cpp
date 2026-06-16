@@ -927,8 +927,9 @@ angle::Result TextureStorage11::setData(const gl::Context *context,
         bufferRowPitch   = checkedBufferRowPitch.ValueOrDie<UINT>();
         bufferDepthPitch = checkedBufferDepthPitch.ValueOrDie<UINT>();
 
-        ANGLE_TRY(mRenderer->getScratchMemoryBuffer(
-            context11, checkedNeededSize.ValueOrDie<size_t>(), &conversionBuffer));
+        ANGLE_CHECK_GL_ALLOC(
+            context11,
+            context->getScratchBuffer(checkedNeededSize.ValueOrDie<size_t>(), &conversionBuffer));
         loadFunctionInfo.loadFunction(mRenderer->getDisplay()->getImageLoadContext(), width, height,
                                       depth, pixelData + srcSkipBytes, srcRowPitch, srcDepthPitch,
                                       conversionBuffer->data(), bufferRowPitch, bufferDepthPitch);

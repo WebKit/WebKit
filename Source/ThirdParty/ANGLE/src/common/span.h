@@ -16,8 +16,11 @@
 
 #include <algorithm>
 #include <array>
+#include <functional>
 #include <iterator>
+#include <memory>
 #include <new>
+#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -246,6 +249,60 @@ class Span
         return !std::equal(begin(), end(), other.begin(), other.end());
     }
 
+    // Performs a deep copy of the elements referenced by `other` to those
+    // referenced by `this`. The spans must be the same size.
+    // (Not in `std::`; inspired by Rust's `slice::copy_from_slice()`.)
+    template <typename U,
+              size_t M,
+              typename R,
+              typename V = T,
+              typename   = std::enable_if_t<
+                    !std::is_const<V>::value && std::is_convertible<U *, const T *>::value &&
+                    (Extent == dynamic_extent || M == dynamic_extent || M == Extent)>>
+    void copy_from(const Span<U, M, R> &other) const
+    {
+        CHECK(size() == other.size());
+        if (std::less_equal<const void *>{}(data(), other.data()))
+        {
+            std::copy(other.begin(), other.end(), begin());
+        }
+        else
+        {
+            std::copy_backward(other.begin(), other.end(), end());
+        }
+    }
+
+    template <typename Container,
+              typename V = T,
+              typename   = internal::EnableIfSpanCompatibleContainer<Container, V>,
+              typename   = std::enable_if_t<!std::is_const<V>::value>>
+    void copy_from(const Container &container) const
+    {
+        copy_from(Span<const T, Extent>(container));
+    }
+
+    template <size_t N>
+    constexpr std::optional<Span<T, N>> to_fixed_extent() const
+    {
+        return (size() == N)
+                   ? std::optional<Span<T, N>>(ANGLE_UNSAFE_BUFFERS(Span<T, N>(data(), N)))
+                   : std::nullopt;
+    }
+
+    template <size_t Offset,
+              typename = std::enable_if_t<(Extent == dynamic_extent || Offset <= Extent)>>
+    constexpr auto split_at() const
+    {
+        CHECK(Offset <= size());
+        return std::make_pair(first<Offset>(), subspan<Offset>());
+    }
+
+    constexpr auto split_at(size_t offset) const
+    {
+        CHECK(offset <= size());
+        return std::make_pair(first(offset), subspan(offset));
+    }
+
     // [span.sub], span subviews
     template <size_t Count>
     constexpr Span<T, Count> first() const
@@ -308,7 +365,7 @@ class Span
     constexpr bool empty() const noexcept { return size_ == 0; }
 
     // [span.elem], span element access
-    T &operator[](size_t index) const noexcept
+    constexpr T &operator[](size_t index) const noexcept
     {
         CHECK(index < size_);
         return ANGLE_UNSAFE_BUFFERS(static_cast<T *>(data_)[index]);

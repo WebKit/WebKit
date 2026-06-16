@@ -3383,7 +3383,7 @@ TEST_P(CopyTextureTestES3, VerifySourceLevelInBaseMaxRange)
         }
         else
         {
-            EXPECT_GL_ERROR(GL_INVALID_VALUE) << srcLevel;
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION) << srcLevel;
         }
         glCopyTextureCHROMIUM(src, srcLevel, GL_TEXTURE_2D, dst, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                               GL_FALSE, GL_FALSE, GL_FALSE);
@@ -3393,7 +3393,7 @@ TEST_P(CopyTextureTestES3, VerifySourceLevelInBaseMaxRange)
         }
         else
         {
-            EXPECT_GL_ERROR(GL_INVALID_VALUE) << srcLevel;
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION) << srcLevel;
         }
     }
 
@@ -3405,6 +3405,51 @@ TEST_P(CopyTextureTestES3, VerifySourceLevelInBaseMaxRange)
     glCopyTextureCHROMIUM(src, 3, GL_TEXTURE_2D, dst, 0, GL_RGBA, GL_UNSIGNED_BYTE, GL_FALSE,
                           GL_FALSE, GL_FALSE);
     EXPECT_GL_NO_ERROR();
+}
+
+// Test that glCopyTextureCHROMIUM and glCopySubTextureCHROMIUM fail validation if the source
+// texture is not framebuffer-attachment-complete.
+TEST_P(CopyTextureTestES3, VerifySourceTexturesComplete)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    // Incomplete because mipmapping is enabled but the 1+ levels are not defined
+    GLTexture incompleteSrc;
+    glBindTexture(GL_TEXTURE_2D, incompleteSrc);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLTexture dst;
+    glBindTexture(GL_TEXTURE_2D, dst);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 10, 15, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // glCopyTextureCHROMIUM with incomplete src, but from the base level is ok
+    glCopySubTextureCHROMIUM(incompleteSrc, 0, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 1, 1, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    EXPECT_GL_NO_ERROR();
+
+    // glCopyTextureCHROMIUM with incomplete src, non-base level is not ok
+    glCopySubTextureCHROMIUM(incompleteSrc, 1, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 1, 1, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glCopySubTextureCHROMIUM(incompleteSrc, 2, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 1, 1, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // glCopySubTextureCHROMIUM with incomplete src, but from the base level is ok
+    glCopySubTextureCHROMIUM(incompleteSrc, 0, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 1, 1, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    EXPECT_GL_NO_ERROR();
+
+    // glCopySubTextureCHROMIUM with incomplete src, non-base level is not ok
+    glCopySubTextureCHROMIUM(incompleteSrc, 1, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 1, 1, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glCopySubTextureCHROMIUM(incompleteSrc, 2, GL_TEXTURE_2D, dst, 0, 0, 0, 0, 0, 1, 1, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
