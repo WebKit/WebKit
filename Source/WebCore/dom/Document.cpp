@@ -952,7 +952,8 @@ void Document::removedLastRef()
         m_cssCanvasElements.clear();
     }
 
-    commonTeardown();
+    if (!activeDOMObjectsAreStopped())
+        commonTeardown();
 
     RELEASE_ASSERT_WITH_MESSAGE(m_refCountAndParentBit == s_refCountIncrement,
         "Please do not escape new references to the Document from inside removedLastRef(). "
@@ -1040,7 +1041,8 @@ void Document::commonTeardown()
 #endif
 
 #if ENABLE(VIDEO)
-    m_lazyLoadVideoObserver = nullptr;
+    if (m_lazyLoadVideoObserver)
+        m_lazyLoadVideoObserver->disconnect();
 #endif
 }
 

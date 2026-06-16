@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<p id="result">FAIL</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function createVideoInDetachedDocument() {
+    // The document reference (doc) does not escape this function, so its JS
+    // wrapper becomes GC-eligible after this function returns.  The returned
+    // video element keeps the document alive via m_referencingNodeCount while
+    // the document's strong ref count is zero.
+    //
+    // The video must NOT be appended to the document: inserting it would set
+    // video.m_shadowIncludingRoot = &doc, causing JSC's opaque-root mechanism
+    // to keep JSDocument alive as long as the video JS wrapper is alive.
+    // A standalone (uninserted) node's opaque root is itself, so holding the
+    // video variable strongly does not prevent JSDocument from being collected.
+    const doc = Document.parseHTMLUnsafe("");
+    return doc.createElementNS("http://www.w3.org/1999/xhtml", "video");
+}
+
+(async function () {
+    const video = createVideoInDetachedDocument();
+
+    // Yield to a macrotask so the C stack is free of any document references,
+    // allowing GC to collect the document's JavaScript wrapper.
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // Force GC. The document's JS wrapper has no more strong references so it
+    // should be collected, triggering removedLastRef() -> commonTeardown() ->
+    // m_lazyLoadVideoObserver = nullptr. The document is not freed yet because
+    // m_referencingNodeCount is still non-zero (video element keeps it alive).
+    if (typeof GCController !== "undefined")
+        GCController.collect();
+    else if (typeof $vm !== "undefined")
+        $vm.gc();
+
+    // Clone the video. This calls HTMLVideoElement::create() which calls
+    // LazyLoadVideoObserver::observe() on the zero-refcount document.
+    // Before the fix, protect(element.document()) temporarily resurected the
+    // document; when that Ref was destroyed, removedLastRef() ran again and
+    // freed the newly created LazyLoadVideoObserver, causing a heap-use-after-
+    // free on the next line in observe().
+    video.cloneNode(false);
+
+    document.getElementById("result").textContent = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>

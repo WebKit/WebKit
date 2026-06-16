@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "EventTarget.h"
 #include "HTMLVideoElement.h"
 #include "IntersectionObserver.h"
 #include "IntersectionObserverCallback.h"
@@ -79,11 +78,20 @@ LazyLoadVideoObserver::~LazyLoadVideoObserver() = default;
 
 void LazyLoadVideoObserver::observe(HTMLVideoElement& element)
 {
-    auto& observer = protect(element.document())->lazyLoadVideoObserver();
-    RefPtr intersectionObserver = observer.intersectionObserver(protect(element.document()));
+    Ref document = element.document();
+    CheckedRef observer = document->lazyLoadVideoObserver();
+    RefPtr intersectionObserver = observer->intersectionObserver(document);
     if (!intersectionObserver)
         return;
     intersectionObserver->observe(element);
+}
+
+void LazyLoadVideoObserver::disconnect()
+{
+    if (m_observer) {
+        m_observer->disconnect();
+        m_observer = nullptr;
+    }
 }
 
 void LazyLoadVideoObserver::unobserve(HTMLVideoElement& element, Document& document)
