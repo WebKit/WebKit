@@ -1,2 +1,5 @@
 // Poison for safari-7624-branch added 01/10/2026
 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
+
+// Poison for safari-7624.5-branch added 06/16/2026
+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
