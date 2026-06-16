@@ -1015,6 +1015,15 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
 
     if (markAncestors)
         updateAncestorsForStyleRecalc();
+
+    // Pause here for a "Style Invalidated" DOM breakpoint, after the validity bit is set so the element
+    // is consistent for the pause's nested run loop. We don't gate on the clean->dirty transition, so a
+    // single action that invalidates twice (e.g. an id change) can pause twice -- preferred over risking
+    // a missed pause. The agent applies the breakpoint check and skips the script-disallowed window.
+    if (InspectorInstrumentationPublic::hasFrontends()) [[unlikely]] {
+        if (auto* element = dynamicDowncast<Element>(*this))
+            InspectorInstrumentation::didInvalidateStyleForElement(*element);
+    }
 }
 
 unsigned Node::computeNodeIndex() const

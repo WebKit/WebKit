@@ -267,6 +267,12 @@ void InspectorInstrumentation::willInvalidateStyleAttrImpl(InstrumentingAgents& 
         pageDOMDebuggerAgent->willInvalidateStyleAttr(element);
 }
 
+void InspectorInstrumentation::didInvalidateStyleForElementImpl(InstrumentingAgents& instrumentingAgents, Element& element)
+{
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->didInvalidateStyleForElement(element);
+}
+
 void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents& instrumentingAgents, Element& element)
 {
     if (RefPtr frame = element.document().frame()) {

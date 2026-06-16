@@ -35,6 +35,10 @@
     content: url(../Images/TypeIcons.svg#DOMBreakpointNodeRemoved-light);
 }
 
+.item.breakpoint.dom.style-invalidated:not(.paused) .icon {
+    content: url(../Images/TypeIcons.svg#DOMBreakpointStyleInvalidated-light);
+}
+
 @media (prefers-color-scheme: dark) {
     .item.breakpoint.dom.subtree-modified:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#DOMBreakpointSubtreeModified-dark);
@@ -46,5 +50,9 @@
 
     .item.breakpoint.dom.node-removed:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#DOMBreakpointNodeRemoved-dark);
+    }
+
+    .item.breakpoint.dom.style-invalidated:not(.paused) .icon {
+        content: url(../Images/TypeIcons.svg#DOMBreakpointStyleInvalidated-dark);
     }
 }
