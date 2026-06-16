@@ -74,6 +74,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     set(ALL_PORTS
         GTK
+        Haiku
         IOS
         JSCOnly
         Mac
