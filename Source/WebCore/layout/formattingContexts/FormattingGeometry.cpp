@@ -34,6 +34,7 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PlacedFloats.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -1084,15 +1085,16 @@ inline static WritingMode usedWritingMode(const Box& layoutBox)
 BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
 {
     CheckedRef style = layoutBox.style();
+    auto deviceScaleFactor = style->deviceScaleFactor();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
         {
-            Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), style->usedZoomForLength(), deviceScaleFactor),
+            Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), style->usedZoomForLength(), deviceScaleFactor)
         },
         {
-            Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), style->usedZoomForLength(), deviceScaleFactor),
+            Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), style->usedZoomForLength(), deviceScaleFactor)
         },
     };
 }

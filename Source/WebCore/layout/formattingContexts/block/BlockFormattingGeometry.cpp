@@ -35,6 +35,7 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "Logging.h"
+#include "Page.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/text/TextStream.h>
 
@@ -328,11 +329,12 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
         const auto& zoomFactor = style.usedZoomForLength();
+        auto deviceScaleFactor = style.deviceScaleFactor();
         return fixedValue(style.marginStart(), zoomFactor).value_or(0)
-            + Style::evaluate<LayoutUnit>(style.usedBorderLeftWidth(), Style::ZoomNeeded { })
+            + Style::evaluate<LayoutUnit>(style.usedBorderLeftWidth(), zoomFactor, deviceScaleFactor)
             + fixedValue(style.paddingLeft(), zoomFactor).value_or(0)
             + fixedValue(style.paddingRight(), zoomFactor).value_or(0)
-            + Style::evaluate<LayoutUnit>(style.usedBorderRightWidth(), Style::ZoomNeeded { })
+            + Style::evaluate<LayoutUnit>(style.usedBorderRightWidth(), zoomFactor, deviceScaleFactor)
             + fixedValue(style.marginEnd(), zoomFactor).value_or(0);
     };
 

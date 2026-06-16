@@ -33,6 +33,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutBoxInlines.h"
 #include "LayoutInitialContainingBlock.h"
+#include "Page.h"
 #include "RubyFormattingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextUtil.h"
@@ -150,7 +151,7 @@ static inline bool computeInkOverflowForInlineLevelBox(const Style::ComputedStyl
     auto inflateWithOutline = [&] {
         if (!style.hasOutlineInVisualOverflow())
             return;
-        inkOverflow.inflate(style.usedOutlineSize());
+        inkOverflow.inflate(style.usedOutlineSize(style.usedZoomForLength(), style.deviceScaleFactor()));
         hasInkOverflow = true;
     };
     inflateWithOutline();
@@ -178,7 +179,7 @@ static inline bool hasInlineBoxInkOverflow(const InlineLevelBox& inlineBox, cons
 static inline void adjustInkOverflowForInlineBox(const Box& layoutBox, const ElementBox& rootBox, const Style::ComputedStyle& style, FloatRect& inkOverflow)
 {
     if (style.hasOutlineInVisualOverflow())
-        inkOverflow.inflate(style.usedOutlineSize());
+        inkOverflow.inflate(style.usedOutlineSize(style.usedZoomForLength(), style.deviceScaleFactor()));
 
     if (!style.boxShadow().isNone()) {
         auto [topBoxShadow, bottomBoxShadow] = Style::shadowVerticalExtent(style.boxShadow(), style.usedZoomForLength());

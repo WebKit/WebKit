@@ -87,7 +87,7 @@ public:
                 auto aHasOutlineInVisualOverflow = a.hasOutlineInVisualOverflow();
                 auto bHasOutlineInVisualOverflow = b.hasOutlineInVisualOverflow();
                 if (aHasOutlineInVisualOverflow != bHasOutlineInVisualOverflow
-                    || (aHasOutlineInVisualOverflow && bHasOutlineInVisualOverflow && a.usedOutlineSize() != b.usedOutlineSize()))
+                    || (aHasOutlineInVisualOverflow && bHasOutlineInVisualOverflow && a.usedOutlineSize(a.usedZoomForLength(), 1.0f) != b.usedOutlineSize(b.usedZoomForLength(), 1.0f)))
                     return true;
             }
 

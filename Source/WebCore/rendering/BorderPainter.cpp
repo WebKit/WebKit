@@ -222,7 +222,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const Style::ComputedSty
             return false;
 
         auto rectWithOutsets = rect;
-        rectWithOutsets.expand(style.imageOutsets(borderImage));
+        rectWithOutsets.expand(style.imageOutsets(borderImage, style.deviceScaleFactor()));
         return !rectWithOutsets.isEmpty();
     };
 
@@ -452,7 +452,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Style:
     float deviceScaleFactor = document().deviceScaleFactor();
 
     LayoutRect rectWithOutsets = rect;
-    rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
+    rectWithOutsets.expand(style.imageOutsets(ninePieceImage, deviceScaleFactor));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
     auto source = modelObject->calculateImageIntrinsicDimensions(image.get(), destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);
@@ -795,7 +795,7 @@ void BorderPainter::drawBoxSideFromPath(const BorderShape& borderShape, const Pa
             GraphicsContextStateSaver stateSaver(graphicsContext);
 
             auto innerThirdShape = borderShape.shapeWithBorderWidths(innerThirdInsets);
-            innerThirdShape.clipToInnerShape(graphicsContext, document().deviceScaleFactor()); // FIXME: Cache document().deviceScaleFactor().
+            innerThirdShape.clipToInnerShape(graphicsContext, document().deviceScaleFactor()); // FIXME: Cache m_renderer->document().deviceScaleFactor().
 
             drawBoxSideFromPath(borderShape, borderPath, edges, thickness, drawThickness, side, color, BorderStyle::Solid, bleedAvoidance);
         }

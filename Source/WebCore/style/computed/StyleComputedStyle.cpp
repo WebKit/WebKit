@@ -607,8 +607,10 @@ Style::LineWidth ComputedStyle::usedColumnRuleWidth() const
 Style::Length<> ComputedStyle::usedOutlineOffset() const
 {
     auto& outline = this->outline();
-    if (outline.outlineOffset.isInternalInset())
-        return Style::Length<> { -Style::evaluate<float>(usedOutlineWidth(), Style::ZoomNeeded { }) };
+    if (outline.outlineOffset.isInternalInset()) {
+        auto deviceScaleFactor = this->deviceScaleFactor();
+        return Style::Length<> { -Style::evaluate<float>(usedOutlineWidth(), usedZoomForLength(), deviceScaleFactor) };
+    }
     return *outline.outlineOffset.tryLength();
 }
 
@@ -617,59 +619,64 @@ Style::LineWidth ComputedStyle::usedOutlineWidth() const
     auto& outline = this->outline();
     if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::None)
         return 0_css_px;
-    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
-        return Style::LineWidth { RenderTheme::singleton().platformFocusRingWidth() * usedZoom() };
+    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto) {
+        auto width = RenderTheme::singleton().platformFocusRingWidth();
+        if (!evaluationTimeZoomEnabled())
+            width *= usedZoom();
+        return Style::LineWidth { width };
+    }
     return outline.outlineWidth;
 }
 
-float ComputedStyle::usedOutlineSize() const
+float ComputedStyle::usedOutlineSize(Style::ZoomFactor zoom, float deviceScaleFactor) const
 {
-    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), Style::ZoomNeeded { }) + Style::evaluate<float>(usedOutlineOffset(), Style::ZoomNeeded { }));
+    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), Style::ZoomNeeded { }));
 }
 
 // MARK: - Derived Values
 
 template<typename OutsetValue>
-static LayoutUnit computeOutset(const OutsetValue& outsetValue, LayoutUnit borderWidth)
+static LayoutUnit computeOutset(const OutsetValue& outsetValue, const Style::LineWidth& borderWidth, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
     return WTF::switchOn(outsetValue,
         [&](const typename OutsetValue::Number& number) {
-            return LayoutUnit(number.value * borderWidth);
+            return LayoutUnit(Style::evaluate<LayoutUnit>(borderWidth, zoom, deviceScaleFactor) * number.value);
         },
         [&](const typename OutsetValue::Length& length) {
-            return LayoutUnit(length.resolveZoom(Style::ZoomNeeded { }));
+            return Style::evaluate<LayoutUnit>(length, Style::ZoomNeeded { });
         }
     );
 }
 
-LayoutBoxExtent ComputedStyle::imageOutsets(const Style::BorderImage& image) const
+template<typename Outsets, typename BorderWidths>
+static LayoutBoxExtent computeOutsets(const Outsets& outsets, const BorderWidths& borderWidths, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
     return {
-        computeOutset(image.outset().values.top(), Style::evaluate<LayoutUnit>(usedBorderTopWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.right(), Style::evaluate<LayoutUnit>(usedBorderRightWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.bottom(), Style::evaluate<LayoutUnit>(usedBorderBottomWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.left(), Style::evaluate<LayoutUnit>(usedBorderLeftWidth(), Style::ZoomNeeded { })),
+        computeOutset(outsets.top(), borderWidths.top(), zoom, deviceScaleFactor),
+        computeOutset(outsets.right(), borderWidths.right(), zoom, deviceScaleFactor),
+        computeOutset(outsets.bottom(), borderWidths.bottom(), zoom, deviceScaleFactor),
+        computeOutset(outsets.left(), borderWidths.left(), zoom, deviceScaleFactor),
     };
 }
 
-LayoutBoxExtent ComputedStyle::imageOutsets(const Style::MaskBorder& image) const
+LayoutBoxExtent ComputedStyle::imageOutsets(const Style::BorderImage& image, float deviceScaleFactor) const
 {
-    return {
-        computeOutset(image.outset().values.top(), Style::evaluate<LayoutUnit>(usedBorderTopWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.right(), Style::evaluate<LayoutUnit>(usedBorderRightWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.bottom(), Style::evaluate<LayoutUnit>(usedBorderBottomWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.left(), Style::evaluate<LayoutUnit>(usedBorderLeftWidth(), Style::ZoomNeeded { })),
-    };
+    return computeOutsets(image.outset().values, usedBorderWidths(), usedZoomForLength(), deviceScaleFactor);
 }
 
-LayoutBoxExtent ComputedStyle::borderImageOutsets() const
+LayoutBoxExtent ComputedStyle::imageOutsets(const Style::MaskBorder& image, float deviceScaleFactor) const
 {
-    return imageOutsets(borderImage());
+    return computeOutsets(image.outset().values, usedBorderWidths(), usedZoomForLength(), deviceScaleFactor);
 }
 
-LayoutBoxExtent ComputedStyle::maskBorderOutsets() const
+LayoutBoxExtent ComputedStyle::borderImageOutsets(float deviceScaleFactor) const
 {
-    return imageOutsets(maskBorder());
+    return imageOutsets(borderImage(), deviceScaleFactor);
+}
+
+LayoutBoxExtent ComputedStyle::maskBorderOutsets(float deviceScaleFactor) const
+{
+    return imageOutsets(maskBorder(), deviceScaleFactor);
 }
 
 // MARK: - Logical

@@ -505,7 +505,8 @@ bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style
         if (shouldRepaintForStyleDifference(diff))
             return RequiredRepaint::RendererOnly;
 
-        if (newStyle.usedOutlineSize() < oldStyle.usedOutlineSize())
+        auto deviceScaleFactor = style().deviceScaleFactor();
+        if (newStyle.usedOutlineSize(newStyle.usedZoomForLength(), deviceScaleFactor) < oldStyle.usedOutlineSize(oldStyle.usedZoomForLength(), deviceScaleFactor))
             return RequiredRepaint::RendererOnly;
 
         if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(*this)) {
@@ -1155,7 +1156,8 @@ void RenderElement::styleDidChange(Style::Difference diff, const Style::Computed
     bool hasOutlineAuto = outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
     if (hasOutlineAuto != hadOutlineAuto) {
         updateOutlineAutoAncestor(hasOutlineAuto);
-        issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().usedOutlineSize() : oldStyle->usedOutlineSize());
+        auto deviceScaleFactor = style().deviceScaleFactor();
+        issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().usedOutlineSize(outlineStyleForRepaint().usedZoomForLength(), deviceScaleFactor) : oldStyle->usedOutlineSize(oldStyle->usedZoomForLength(), deviceScaleFactor));
     }
 
     auto isLayoutDiff = [](Style::Difference diff) {
@@ -1601,7 +1603,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
     auto& style = this->style();
     auto zoom = style.usedZoomForLength();
 
-    auto outlineWidth = LayoutUnit { outlineStyle.usedOutlineSize() };
+    auto outlineWidth = LayoutUnit { outlineStyle.usedOutlineSize(outlineStyle.usedZoomForLength(), outlineStyle.deviceScaleFactor()) };
     auto insetShadowExtent = Style::shadowInsetExtent(style.boxShadow(), style.usedZoomForLength());
     auto sizeDelta = LayoutSize { absoluteValue(newOutlineBoundsRect.width() - oldOutlineBoundsRect.width()), absoluteValue(newOutlineBoundsRect.height() - oldOutlineBoundsRect.height()) };
     if (sizeDelta.width()) {

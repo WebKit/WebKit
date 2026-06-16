@@ -42,9 +42,11 @@ namespace Style {
 
 // MARK: - Conversion
 
-LineWidth::Length LineWidth::snapLengthAsBorderWidth(float length, float deviceScaleFactor)
+static float snapLengthAsBorderWidth(float length, float deviceScaleFactor)
 {
     // https://drafts.csswg.org/css-values-4/#snap-a-length-as-a-border-width
+
+    auto singleDevicePixelLength = 1.0f / deviceScaleFactor;
 
     // 1. Assert: `length` is non-negative.
     // NOTE: Not asserted, but checked in step 3.
@@ -53,35 +55,55 @@ LineWidth::Length LineWidth::snapLengthAsBorderWidth(float length, float deviceS
     // NOTE: Handled by step 4 without explicitly checking here.
 
     // 3. If `length` is greater than zero, but less than 1 device pixel, round `length` up to 1 device pixel.
-    if (auto singleDevicePixelLength = 1.0f / deviceScaleFactor; length > 0.0f && length < singleDevicePixelLength)
-        return LineWidth::Length { singleDevicePixelLength };
+    if (length > 0.0f && length < singleDevicePixelLength)
+        return singleDevicePixelLength;
 
     // 4. If `length` is greater than 1 device pixel, round it down to the nearest integer number of device pixels.
-    return LineWidth::Length { floorToDevicePixel(length, deviceScaleFactor) };
+    return std::floor(length * deviceScaleFactor) * singleDevicePixelLength;
+}
+
+LineWidth::Length LineWidth::snapLengthAsBorderWidth(float length, float deviceScaleFactor)
+{
+    return LineWidth::Length { Style::snapLengthAsBorderWidth(length, deviceScaleFactor) };
 }
 
 LineWidth::Length LineWidth::snapLengthAsBorderWidth(LineWidth::Length length, float deviceScaleFactor)
 {
-    return snapLengthAsBorderWidth(length.unresolvedValue(), deviceScaleFactor);
+    return LineWidth::Length { Style::snapLengthAsBorderWidth(length.unresolvedValue(), deviceScaleFactor) };
 }
 
 auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSValue& value) -> LineWidth
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        if (!evaluationTimeZoomEnabled(state)) {
+            auto zoom = state.style().usedZoom();
+            switch (keywordValue->valueID()) {
+            case CSSValueThin:
+                return LineWidth::snapLengthAsBorderWidth(1.0f * zoom, state.style().deviceScaleFactor());
+            case CSSValueMedium:
+                return LineWidth::snapLengthAsBorderWidth(3.0f * zoom, state.style().deviceScaleFactor());
+            case CSSValueThick:
+                return LineWidth::snapLengthAsBorderWidth(5.0f * zoom, state.style().deviceScaleFactor());
+            default:
+                state.setCurrentPropertyInvalidAtComputedValueTime();
+                return LineWidth::Length { 3.0f };
+            }
+        }
+
         switch (keywordValue->valueID()) {
         case CSSValueThin:
-            return LineWidth::snapLengthAsBorderWidth(1.0f * state.style().usedZoom(), state.document().deviceScaleFactor());
+            return LineWidth { 1.0f };
         case CSSValueMedium:
-            return LineWidth::snapLengthAsBorderWidth(3.0f * state.style().usedZoom(), state.document().deviceScaleFactor());
+            return LineWidth { 3.0f };
         case CSSValueThick:
-            return LineWidth::snapLengthAsBorderWidth(5.0f * state.style().usedZoom(), state.document().deviceScaleFactor());
+            return LineWidth { 5.0f };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return LineWidth::Length { 3.0f };
+            return LineWidth { 3.0f };
         }
     }
 
-    return LineWidth::snapLengthAsBorderWidth(toStyleFromCSSValue<LineWidth::Length>(state, value), state.document().deviceScaleFactor());
+    return LineWidth::snapLengthAsBorderWidth(toStyleFromCSSValue<LineWidth::Length>(state, value), state.style().deviceScaleFactor());
 }
 
 // MARK: - Blending
@@ -94,25 +116,36 @@ auto Blending<LineWidth>::blend(const LineWidth& a, const LineWidth& b, const St
     return blendedValue;
 }
 
-// MARK: - Evaluate
+// MARK: - Evaluation
 
-auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& value, ZoomNeeded zoom) -> FloatBoxExtent
+auto Evaluation<LineWidth, float>::operator()(const LineWidth& value, ZoomFactor zoom, float deviceScaleFactor) -> float
+{
+    return snapLengthAsBorderWidth(evaluate<float>(value.value, zoom), deviceScaleFactor);
+}
+
+auto Evaluation<LineWidth, LayoutUnit>::operator()(const LineWidth& value, ZoomFactor zoom, float deviceScaleFactor) -> LayoutUnit
+{
+    // NOTE: Using `evaluate<float>`, not `evaluate<LayoutUnit>`, as snapLengthAsBorderWidth takes a `float`.
+    return LayoutUnit { snapLengthAsBorderWidth(evaluate<float>(value.value, zoom), deviceScaleFactor) };
+}
+
+auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& value, ZoomFactor zoom, float deviceScaleFactor) -> FloatBoxExtent
 {
     return {
-        evaluate<float>(value.top(), zoom),
-        evaluate<float>(value.right(), zoom),
-        evaluate<float>(value.bottom(), zoom),
-        evaluate<float>(value.left(), zoom),
+        evaluate<float>(value.top(), zoom, deviceScaleFactor),
+        evaluate<float>(value.right(), zoom, deviceScaleFactor),
+        evaluate<float>(value.bottom(), zoom, deviceScaleFactor),
+        evaluate<float>(value.left(), zoom, deviceScaleFactor),
     };
 }
 
-auto Evaluation<LineWidthBox, LayoutBoxExtent>::operator()(const LineWidthBox& value, ZoomNeeded zoom) -> LayoutBoxExtent
+auto Evaluation<LineWidthBox, LayoutBoxExtent>::operator()(const LineWidthBox& value, ZoomFactor zoom, float deviceScaleFactor) -> LayoutBoxExtent
 {
     return {
-        evaluate<LayoutUnit>(value.top(), zoom),
-        evaluate<LayoutUnit>(value.right(), zoom),
-        evaluate<LayoutUnit>(value.bottom(), zoom),
-        evaluate<LayoutUnit>(value.left(), zoom),
+        evaluate<LayoutUnit>(value.top(), zoom, deviceScaleFactor),
+        evaluate<LayoutUnit>(value.right(), zoom, deviceScaleFactor),
+        evaluate<LayoutUnit>(value.bottom(), zoom, deviceScaleFactor),
+        evaluate<LayoutUnit>(value.left(), zoom, deviceScaleFactor),
     };
 }
 

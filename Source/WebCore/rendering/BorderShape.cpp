@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "LayoutRoundedRect.h"
+#include "Page.h"
 #include "Path.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -73,8 +74,9 @@ static RectEdges<LayoutUnit> applyClosedEdges(const RectEdges<LayoutUnit>& width
 
 BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
 {
+    auto deviceScaleFactor = style.deviceScaleFactor();
     auto borderWidths = RectEdges<LayoutUnit>::map(style.usedBorderWidths(), [&](auto width) {
-        return Style::evaluate<LayoutUnit>(width, Style::ZoomNeeded { });
+        return Style::evaluate<LayoutUnit>(width, style.usedZoomForLength(), deviceScaleFactor);
     });
     return shapeForBorderRect(style, borderRect, borderWidths, closedEdges);
 }

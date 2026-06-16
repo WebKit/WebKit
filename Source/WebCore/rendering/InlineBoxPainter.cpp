@@ -104,7 +104,7 @@ static LayoutRect clipRectForNinePieceImageStrip(const InlineIterator::InlineBox
 {
     LayoutRect clipRect(paintRect);
     auto& style = box.renderer().style();
-    LayoutBoxExtent outsets = style.imageOutsets(image);
+    LayoutBoxExtent outsets = style.imageOutsets(image, style.deviceScaleFactor());
     auto closedEdges = box.closedEdges();
     if (box.isHorizontal()) {
         clipRect.setY(paintRect.y() - outsets.top());

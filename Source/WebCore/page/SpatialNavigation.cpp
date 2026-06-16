@@ -524,9 +524,10 @@ LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode& containerNode, boo
         // the rect of the focused element.
         if (ignoreBorder) {
             CheckedRef style = renderer->style();
-            rect.move(Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }), Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }));
-            rect.setWidth(rect.width() - Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }) - Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), Style::ZoomNeeded { }));
-            rect.setHeight(rect.height() - Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }) - Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), Style::ZoomNeeded { }));
+            auto deviceScaleFactor = style->deviceScaleFactor();
+            rect.move(Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), style->usedZoomForLength(), deviceScaleFactor), Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), style->usedZoomForLength(), deviceScaleFactor));
+            rect.setWidth(rect.width() - Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), style->usedZoomForLength(), deviceScaleFactor) - Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), style->usedZoomForLength(), deviceScaleFactor));
+            rect.setHeight(rect.height() - Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), style->usedZoomForLength(), deviceScaleFactor) - Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), style->usedZoomForLength(), deviceScaleFactor));
         }
         return rect;
     }

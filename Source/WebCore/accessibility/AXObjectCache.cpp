@@ -5924,7 +5924,7 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
                     auto borderRect = renderBox->borderBoxRect();
                     borderRect.inflate(shapePathInflationPx);
                     auto borderShape = BorderShape::shapeForBorderRect(renderBox->style(), WTF::move(borderRect));
-                    auto path = borderShape.pathForOuterShape(renderer.document().deviceScaleFactor());
+                    auto path = borderShape.pathForOuterShape(renderBox->document().deviceScaleFactor());
                     // borderBoxRect() is in local coordinates starting at (0, 0). Use the paint
                     // rect's origin to position the path, since it's already gone through
                     // contentsToRootView and matches the relativeFrame coordinate system.

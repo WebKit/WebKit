@@ -933,7 +933,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
         // beginning the layer).
         stateSaver.save();
         auto borderShape = BorderShape::shapeForBorderRect(style(), rect);
-        borderShape.clipToOuterShape(paintInfo.context(), protect(document())->deviceScaleFactor());
+        borderShape.clipToOuterShape(paintInfo.context(), document().deviceScaleFactor());
         paintInfo.context().beginTransparencyLayer(1);
     }
 
@@ -1304,6 +1304,7 @@ void RenderTable::recalcSections() const
 
 LayoutUnit RenderTable::calcBorderStart() const
 {
+    auto deviceScaleFactor = style().deviceScaleFactor();
     if (!collapseBorders())
         return RenderBlock::borderStart();
 
@@ -1317,7 +1318,7 @@ LayoutUnit RenderTable::calcBorderStart() const
     if (tableStartBorder.hasHiddenStyle())
         return 0;
     if (tableStartBorder.hasVisibleStyle())
-        borderWidth = Style::evaluate<float>(tableStartBorder.width, Style::ZoomNeeded { });
+        borderWidth = Style::evaluate<float>(tableStartBorder.width, style().usedZoomForLength(), deviceScaleFactor);
 
     if (RenderTableCol* column = colElement(0)) {
         // FIXME: We don't account for direction on columns and column groups.
@@ -1325,7 +1326,7 @@ LayoutUnit RenderTable::calcBorderStart() const
         if (columnAdjoiningBorder.hasHiddenStyle())
             return 0;
         if (columnAdjoiningBorder.hasVisibleStyle())
-            borderWidth = std::max(borderWidth, Style::evaluate<float>(columnAdjoiningBorder.width, Style::ZoomNeeded { }));
+            borderWidth = std::max(borderWidth, Style::evaluate<float>(columnAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
         // FIXME: This logic doesn't properly account for the first column in the first column-group case.
     }
 
@@ -1335,7 +1336,7 @@ LayoutUnit RenderTable::calcBorderStart() const
             return 0;
 
         if (sectionAdjoiningBorder.hasVisibleStyle())
-            borderWidth = std::max(borderWidth, Style::evaluate<float>(sectionAdjoiningBorder.width, Style::ZoomNeeded { }));
+            borderWidth = std::max(borderWidth, Style::evaluate<float>(sectionAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
 
         if (const RenderTableCell* adjoiningStartCell = topNonEmptySection->cellAt(0, 0).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
@@ -1348,16 +1349,17 @@ LayoutUnit RenderTable::calcBorderStart() const
                 return 0;
 
             if (startCellAdjoiningBorder.hasVisibleStyle())
-                borderWidth = std::max(borderWidth, Style::evaluate<float>(startCellAdjoiningBorder.width, Style::ZoomNeeded { }));
+                borderWidth = std::max(borderWidth, Style::evaluate<float>(startCellAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
             if (firstRowAdjoiningBorder.hasVisibleStyle())
-                borderWidth = std::max(borderWidth, Style::evaluate<float>(firstRowAdjoiningBorder.width, Style::ZoomNeeded { }));
+                borderWidth = std::max(borderWidth, Style::evaluate<float>(firstRowAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, protect(document())->deviceScaleFactor(), writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, style().deviceScaleFactor(), writingMode().isInlineFlipped());
 }
 
 LayoutUnit RenderTable::calcBorderEnd() const
 {
+    auto deviceScaleFactor = style().deviceScaleFactor();
     if (!collapseBorders())
         return RenderBlock::borderEnd();
 
@@ -1371,7 +1373,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
     if (tableEndBorder.hasHiddenStyle())
         return 0;
     if (tableEndBorder.hasVisibleStyle())
-        borderWidth = Style::evaluate<float>(tableEndBorder.width, Style::ZoomNeeded { });
+        borderWidth = Style::evaluate<float>(tableEndBorder.width, style().usedZoomForLength(), deviceScaleFactor);
 
     unsigned endColumn = numEffCols() - 1;
     if (RenderTableCol* column = colElement(endColumn)) {
@@ -1380,7 +1382,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
         if (columnAdjoiningBorder.hasHiddenStyle())
             return 0;
         if (columnAdjoiningBorder.hasVisibleStyle())
-            borderWidth = std::max(borderWidth, Style::evaluate<float>(columnAdjoiningBorder.width, Style::ZoomNeeded { }));
+            borderWidth = std::max(borderWidth, Style::evaluate<float>(columnAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
         // FIXME: This logic doesn't properly account for the last column in the last column-group case.
     }
 
@@ -1390,7 +1392,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
             return 0;
 
         if (sectionAdjoiningBorder.hasVisibleStyle())
-            borderWidth = std::max(borderWidth, Style::evaluate<float>(sectionAdjoiningBorder.width, Style::ZoomNeeded { }));
+            borderWidth = std::max(borderWidth, Style::evaluate<float>(sectionAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
 
         if (const RenderTableCell* adjoiningEndCell = topNonEmptySection->cellAt(0, lastColumnIndex()).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
@@ -1403,12 +1405,12 @@ LayoutUnit RenderTable::calcBorderEnd() const
                 return 0;
 
             if (endCellAdjoiningBorder.hasVisibleStyle())
-                borderWidth = std::max(borderWidth, Style::evaluate<float>(endCellAdjoiningBorder.width, Style::ZoomNeeded { }));
+                borderWidth = std::max(borderWidth, Style::evaluate<float>(endCellAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
             if (firstRowAdjoiningBorder.hasVisibleStyle())
-                borderWidth = std::max(borderWidth, Style::evaluate<float>(firstRowAdjoiningBorder.width, Style::ZoomNeeded { }));
+                borderWidth = std::max(borderWidth, Style::evaluate<float>(firstRowAdjoiningBorder.width, style().usedZoomForLength(), deviceScaleFactor));
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, protect(document())->deviceScaleFactor(), !writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, style().deviceScaleFactor(), !writingMode().isInlineFlipped());
 }
 
 void RenderTable::recalcBordersInRowDirection()
@@ -1438,6 +1440,7 @@ LayoutUnit RenderTable::borderAfter() const
 
 LayoutUnit RenderTable::outerBorderBefore() const
 {
+    auto deviceScaleFactor = style().deviceScaleFactor();
     if (!collapseBorders())
         return 0;
     LayoutUnit borderWidth;
@@ -1450,8 +1453,8 @@ LayoutUnit RenderTable::outerBorderBefore() const
     if (tb.hasHiddenStyle())
         return 0;
     if (tb.hasVisibleStyle()) {
-        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit(Style::evaluate<float>(tb.width, Style::ZoomNeeded { }) / 2));
-        borderWidth = floorToDevicePixel(collapsedBorderWidth, protect(document())->deviceScaleFactor());
+        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit(Style::evaluate<float>(tb.width, style().usedZoomForLength(), deviceScaleFactor) / 2));
+        borderWidth = floorToDevicePixel(collapsedBorderWidth, style().deviceScaleFactor());
     }
     return borderWidth;
 }
@@ -1471,8 +1474,8 @@ LayoutUnit RenderTable::outerBorderAfter() const
     if (tb.hasHiddenStyle())
         return 0;
     if (tb.hasVisibleStyle()) {
-        float deviceScaleFactor = protect(document())->deviceScaleFactor();
-        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit((Style::evaluate<float>(tb.width, Style::ZoomNeeded { }) + (1 / deviceScaleFactor)) / 2));
+        float deviceScaleFactor = style().deviceScaleFactor();
+        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit((Style::evaluate<float>(tb.width, style().usedZoomForLength(), deviceScaleFactor) + (1 / deviceScaleFactor)) / 2));
         borderWidth = floorToDevicePixel(collapsedBorderWidth, deviceScaleFactor);
     }
     return borderWidth;
@@ -1480,6 +1483,7 @@ LayoutUnit RenderTable::outerBorderAfter() const
 
 LayoutUnit RenderTable::outerBorderStart() const
 {
+    auto deviceScaleFactor = style().deviceScaleFactor();
     if (!collapseBorders())
         return 0;
 
@@ -1489,7 +1493,7 @@ LayoutUnit RenderTable::outerBorderStart() const
     if (tb.hasHiddenStyle())
         return 0;
     if (tb.hasVisibleStyle())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate<float>(tb.width, Style::ZoomNeeded { }), protect(document())->deviceScaleFactor(), writingMode().isInlineFlipped());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate<float>(tb.width, style().usedZoomForLength(), deviceScaleFactor), style().deviceScaleFactor(), writingMode().isInlineFlipped());
 
     bool allHidden = true;
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
@@ -1507,6 +1511,7 @@ LayoutUnit RenderTable::outerBorderStart() const
 
 LayoutUnit RenderTable::outerBorderEnd() const
 {
+    auto deviceScaleFactor = style().deviceScaleFactor();
     if (!collapseBorders())
         return 0;
 
@@ -1516,7 +1521,7 @@ LayoutUnit RenderTable::outerBorderEnd() const
     if (tb.hasHiddenStyle())
         return 0;
     if (tb.hasVisibleStyle())
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate<float>(tb.width, Style::ZoomNeeded { }), protect(document())->deviceScaleFactor(), !writingMode().isInlineFlipped());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate<float>(tb.width, style().usedZoomForLength(), deviceScaleFactor), style().deviceScaleFactor(), !writingMode().isInlineFlipped());
 
     bool allHidden = true;
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
