@@ -46,6 +46,7 @@ public:
     void updateCounters();
     void updateWritingSuggestionsRenderer(RenderElement&, Style::DifferenceResult minimalStyleDifference);
 
+    static void removePseudoElement(Element&, PseudoElementType, RenderTreeBuilder&);
     static void removeBeforePseudoElement(Element&, RenderTreeBuilder&);
     static void removeAfterPseudoElement(Element&, RenderTreeBuilder&);
 

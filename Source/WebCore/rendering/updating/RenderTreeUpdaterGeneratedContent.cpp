@@ -335,22 +335,23 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::Comput
     return true;
 }
 
-void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element, RenderTreeBuilder& builder)
+void RenderTreeUpdater::GeneratedContent::removePseudoElement(Element& element, PseudoElementType type, RenderTreeBuilder& builder)
 {
-    RefPtr pseudoElement = element.beforePseudoElement();
+    RefPtr pseudoElement = element.pseudoElementIfExists({ type });
     if (!pseudoElement)
         return;
     tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
-    element.clearBeforePseudoElement();
+    element.clearPseudoElement(type);
+}
+
+void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element, RenderTreeBuilder& builder)
+{
+    removePseudoElement(element, PseudoElementType::Before, builder);
 }
 
 void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element, RenderTreeBuilder& builder)
 {
-    RefPtr pseudoElement = element.afterPseudoElement();
-    if (!pseudoElement)
-        return;
-    tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
-    element.clearAfterPseudoElement();
+    removePseudoElement(element, PseudoElementType::After, builder);
 }
 
 void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(RenderElement& renderer, Style::DifferenceResult minimalStyleDifference)

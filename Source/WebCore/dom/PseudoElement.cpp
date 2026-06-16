@@ -35,6 +35,8 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
+#include "RenderStyle+GettersInlines.h"
+#include "RenderStyleConstants.h"
 #include "StyleableInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
@@ -56,7 +58,7 @@ PseudoElement::PseudoElement(Element& host, PseudoElementType pseudoElementType)
     , m_pseudoElementType(pseudoElementType)
 {
     setEventTargetFlag(EventTargetFlag::IsConnected);
-    ASSERT(pseudoElementType == PseudoElementType::Before || pseudoElementType == PseudoElementType::After);
+    ASSERT(isElementBackedPseudoElementType(pseudoElementType));
 }
 
 PseudoElement::~PseudoElement()

@@ -459,10 +459,10 @@ void InspectorDOMAgent::unbind(Node& node)
     if (RefPtr element = dynamicDowncast<Element>(node)) {
         if (RefPtr root = element->shadowRoot())
             unbind(*root);
-        if (RefPtr beforeElement = element->beforePseudoElement())
-            unbind(*beforeElement);
-        if (RefPtr afterElement = element->afterPseudoElement())
-            unbind(*afterElement);
+        for (auto type : elementBackedPseudoElementTypes) {
+            if (RefPtr pseudo = element->pseudoElementIfExists({ type }))
+                unbind(*pseudo);
+        }
     }
 
     if (CheckedPtr cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
@@ -1923,6 +1923,9 @@ static bool NODELETE pseudoElementType(PseudoElementType pseudoElementType, Insp
     case PseudoElementType::After:
         *type = Inspector::Protocol::DOM::PseudoType::After;
         return true;
+    case PseudoElementType::PickerIcon:
+        *type = Inspector::Protocol::DOM::PseudoType::PickerIcon;
+        return true;
     default:
         return false;
     }
@@ -2111,16 +2114,15 @@ Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildArray
 
 RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForPseudoElements(const Element& element)
 {
-    RefPtr beforeElement = element.beforePseudoElement();
-    RefPtr afterElement = element.afterPseudoElement();
-    if (!beforeElement && !afterElement)
-        return nullptr;
-
-    auto pseudoElements = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
-    if (beforeElement)
-        pseudoElements->addItem(buildObjectForNode(beforeElement.get(), 0));
-    if (afterElement)
-        pseudoElements->addItem(buildObjectForNode(afterElement.get(), 0));
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> pseudoElements;
+    for (auto type : elementBackedPseudoElementTypes) {
+        auto* pseudo = element.pseudoElement(type);
+        if (!pseudo)
+            continue;
+        if (!pseudoElements)
+            pseudoElements = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
+        pseudoElements->addItem(buildObjectForNode(pseudo, 0));
+    }
     return pseudoElements;
 }
 

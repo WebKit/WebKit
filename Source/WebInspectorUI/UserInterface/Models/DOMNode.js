@@ -1502,6 +1502,7 @@ WI.DOMNode.Event = {
 WI.DOMNode.PseudoElementType = {
     Before: "before",
     After: "after",
+    PickerIcon: "picker-icon",
 };
 
 WI.DOMNode.ShadowRootType = {
