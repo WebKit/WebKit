@@ -681,6 +681,8 @@ public:
                     return;
                 }
 
+                Locker locker { domainListLock };
+
                 for (WPTrackingDomain *domain in domains)
                     list().set(String::fromLatin1([domain.host UTF8String]), TrackerDomainLookupInfo { domain });
             }];
@@ -689,13 +691,16 @@ public:
 
     static const TrackerDomainLookupInfo find(String host)
     {
+        Locker locker { domainListLock };
         if (!list().isValidKey(host))
             return { };
         return list().get(host);
     }
 
 private:
-    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& list()
+    static Lock domainListLock;
+
+    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& list() WTF_REQUIRES_LOCK(domainListLock)
     {
         static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>> map;
         return map.get();
@@ -704,6 +709,8 @@ private:
     CString m_owner;
     CanBlock m_canBlock { CanBlock::No };
 };
+
+Lock TrackerDomainLookupInfo::domainListLock;
 
 void configureForAdvancedPrivacyProtections(NSURLSession *session)
 {
