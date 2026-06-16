@@ -41,6 +41,7 @@
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <time.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
@@ -539,6 +540,8 @@ public:
                     return;
                 }
 
+                Locker locker { listLock };
+
                 version4List().clear();
                 version6List().clear();
 
@@ -562,11 +565,12 @@ public:
         });
     }
 
-    static const TrackerAddressLookupInfo* find(const WebCore::IPAddress& address)
+    static std::optional<TrackerAddressLookupInfo> find(const WebCore::IPAddress& address)
     {
+        Locker locker { listLock };
         auto& list = address.isIPv4() ? version4List() : version6List();
         if (list.isEmpty())
-            return nullptr;
+            return std::nullopt;
 
         size_t lower = 0;
         size_t upper = list.size() - 1;
@@ -579,29 +583,31 @@ public:
                 auto middle = std::midpoint(lower, upper);
                 auto compareResult = address <=> list[middle].m_network;
                 if (is_eq(compareResult))
-                    return &list[middle];
+                    return list[middle];
                 if (is_lt(compareResult))
                     upper = middle;
                 else if (is_gt(compareResult))
                     lower = middle;
                 else {
                     ASSERT_NOT_REACHED();
-                    return nullptr;
+                    return std::nullopt;
                 }
             }
         }
 
         if (list[upper].contains(address))
-            return &list[upper];
+            return list[upper];
 
         if (upper != lower && list[lower].contains(address))
-            return &list[lower];
+            return list[lower];
 
-        return nullptr;
+        return std::nullopt;
     }
 
 private:
-    static Vector<TrackerAddressLookupInfo>& version4List()
+    static Lock listLock;
+
+    static Vector<TrackerAddressLookupInfo>& version4List() WTF_REQUIRES_LOCK(listLock)
     {
         static NeverDestroyed sharedList = [] {
             return Vector<TrackerAddressLookupInfo> { };
@@ -609,7 +615,7 @@ private:
         return sharedList.get();
     }
 
-    static Vector<TrackerAddressLookupInfo>& version6List()
+    static Vector<TrackerAddressLookupInfo>& version6List() WTF_REQUIRES_LOCK(listLock)
     {
         static NeverDestroyed sharedList = [] {
             return Vector<TrackerAddressLookupInfo> { };
@@ -628,6 +634,8 @@ private:
     CString m_host;
     CanBlock m_canBlock { CanBlock::No };
 };
+
+Lock TrackerAddressLookupInfo::listLock;
 
 class TrackerDomainLookupInfo {
 public:
@@ -719,7 +727,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
 
     setTrackerLookupCallback(context.get(), ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
         if (auto address = ipAddress(endpoint)) {
-            if (auto* info = TrackerAddressLookupInfo::find(*address)) {
+            if (auto info = TrackerAddressLookupInfo::find(*address)) {
                 *owner = info->owner().data();
                 *hostName = info->host().data();
                 *canBlock = info->canBlock() == TrackerAddressLookupInfo::CanBlock::Yes;
