@@ -1123,9 +1123,12 @@ void WebFrameLoaderClient::shouldGoToHistoryItemAsync(WebCore::HistoryItem&, Com
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void WebFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int, WebCore::FrameLoadType)
+void WebFrameLoaderClient::dispatchGoToBackForwardItemAtIndex(int)
 {
-    // Not needed in WebKitLegacy — single process, useUIProcessForBackForwardItemLoading is never enabled.
+}
+
+void WebFrameLoaderClient::dispatchEnqueueHistoryTraversalDelta(int)
+{
 }
 
 bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError& error) const

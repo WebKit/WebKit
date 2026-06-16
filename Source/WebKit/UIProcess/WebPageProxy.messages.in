@@ -238,7 +238,8 @@ messages -> WebPageProxy {
     # BackForward messages
     ShouldGoToBackForwardListItem(WebCore::BackForwardItemIdentifier itemID, bool inBackForwardCache) -> (enum:uint8_t WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem)
     ShouldGoToBackForwardListItemSync(WebCore::BackForwardItemIdentifier itemID) -> (enum:uint8_t WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem) Synchronous
-    GoToBackForwardItemAtIndex(int32_t steps, enum:uint8_t WebCore::FrameLoadType frameLoadType)
+    GoToBackForwardItemAtIndex(int32_t steps)
+    EnqueueHistoryTraversalDelta(int32_t delta)
 
     # Undo/Redo messages
     RegisterEditCommandForUndo(WebKit::WebUndoStepID commandID, String label) AllowedWhenWaitingForSyncReply
