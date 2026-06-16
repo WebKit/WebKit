@@ -126,8 +126,15 @@ extern Slot g_config[];
 #define PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION 5
 #define PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT 6
 
+// FIXME: rdar://171662605
+#define PAS_WORKAROUND_RDAR_171662605_UNCONDITIONAL_TAG_ON_ALLOC (1)
+
 #define PAS_MTE_FEATURE_FORCED(feature) (0)
+#if !PAS_PLATFORM(VISION)
+#define PAS_MTE_FEATURE_HARDENED_FORCED(feature) (feature == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION || feature == PAS_MTE_FEATURE_RETAG_ON_SCAVENGE)
+#else // PAS_PLATFORM(VISION)
 #define PAS_MTE_FEATURE_HARDENED_FORCED(feature) (feature == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
+#endif // !PAS_PLATFORM(VISION)
 #define PAS_MTE_FEATURE_DEBUG_FORCED(feature) (feature == PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)
 
 #define PAS_MTE_FEATURE_FORCED_IN_RELEASE_BUILD(feature) \
@@ -194,8 +201,10 @@ extern Slot g_config[];
 #ifdef __cplusplus
 extern "C" {
 #endif
+bool pas_mte_is_mte_enabled(void);
 void pas_mte_ensure_initialized(void);
 void pas_mte_force_nontaggable_user_allocations_into_large_heap(void);
+void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void);
 #ifdef __cplusplus
 }
 #endif
