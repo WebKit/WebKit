@@ -123,7 +123,12 @@ namespace api {
 
 enum class TZoneMallocFallback : uint8_t {
     Undecided,
+    // Currently, ForceFastMalloc and ForceDebugMalloc
+    // route to the same place (call into FastMalloc);
+    // however, they are semantically different, and
+    // set for different reasons.
     ForceDebugMalloc,
+    ForceFastMalloc = ForceDebugMalloc,
     DoNotFallBack
 };
 
@@ -214,7 +219,7 @@ public: \
     { \
         if (!s_heapRef || size != sizeof(_type)) [[unlikely]] \
             BMUST_TAIL_CALL return operatorNewSlow(size); \
-        BASSERT(::bmalloc::api::tzoneMallocFallback > TZoneMallocFallback::ForceDebugMalloc); \
+        BASSERT(::bmalloc::api::tzoneMallocFallback == TZoneMallocFallback::DoNotFallBack); \
         if constexpr (::bmalloc::api::compactAllocationMode<_type>() == CompactAllocationMode::Compact) \
             return ::bmalloc::api::tzoneAllocateCompact(s_heapRef); \
         return ::bmalloc::api::tzoneAllocate ## _compactMode(s_heapRef); \

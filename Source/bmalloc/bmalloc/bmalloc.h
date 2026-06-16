@@ -234,6 +234,7 @@ BEXPORT void scavengeThisThread();
 BEXPORT void scavenge();
 
 BEXPORT bool isEnabled(HeapKind kind = HeapKind::Primary);
+BEXPORT bool isMTEEnabled(HeapKind kind = HeapKind::Primary);
 
 // ptr must be aligned to vmPageSizePhysical and size must be divisible 
 // by vmPageSizePhysical.
