@@ -5015,6 +5015,8 @@ RefPtr<PatchpointExceptionHandle> OMGIRGenerator::preparePatchpointForExceptions
     if (!mustSaveState)
         return nullptr;
 
+    ASSERT(patch->kind().isCloningForbidden());
+
     unsigned firstStackmapChildOffset = patch->numChildren();
     unsigned firstStackmapParamOffset = firstStackmapChildOffset + m_proc.resultCount(patch->type());
 
@@ -5594,7 +5596,10 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, const TypeDefinitio
     auto constrainedPatchArgs = createCallConstrainedArgs(block, wasmCalleeInfo, tmpArgs);
 
     advanceCallSiteIndex();
-    PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin());
+    // Calls inside a try carry a catch-restoration stackmap keyed by CallSiteIndex, see preparePatchpointForExceptions.
+    // Forbid cloning so a B3 transform won't alias two call sites to one stackmap.
+    auto patchpointKind = m_tryCatchDepth ? cloningForbidden(Patchpoint) : Patchpoint;
+    PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin(), patchpointKind);
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
