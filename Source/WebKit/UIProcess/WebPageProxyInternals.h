@@ -445,6 +445,8 @@ public:
 
     EnhancedSecurityTracking enhancedSecurityTracker;
 
+    bool forceNeedsSecureInputReevaluation { false };
+
     explicit Internals(WebPageProxy&, std::optional<WebCore::SecurityOriginData>);
 
     Ref<WebPageProxy> protectedPage() const;
