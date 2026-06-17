@@ -249,6 +249,11 @@ function mac_process_network_entitlements()
         # FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>
         plistbuddy Add :com.apple.private.get-system-corpse bool YES
 
+        plistbuddy Add :com.apple.private.security.mutable-state-flags array
+        plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string BlockNetworkAccess
+        plistbuddy Add :com.apple.private.security.enable-state-flags array
+        plistbuddy Add :com.apple.private.security.enable-state-flags:0 string BlockNetworkAccess
+
         if [[ "${WK_USE_FATAL_EXCEPTIONS}" == YES ]]
         then
             plistbuddy Add :com.apple.private.pac.exception bool YES

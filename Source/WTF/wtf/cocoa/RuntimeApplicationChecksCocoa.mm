@@ -246,6 +246,9 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     // It's only enabled for clients that purposely enable all LOOA checks.
     disableBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning);
 
+    if (linkedBefore(dyld_2025_SU_G_os_versions, DYLD_IOS_VERSION_26_6, DYLD_MACOSX_VERSION_26_6))
+        disableBehavior(SDKAlignedBehavior::NetworkProcessInheritsNetworkAccessFromUIProcess);
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;

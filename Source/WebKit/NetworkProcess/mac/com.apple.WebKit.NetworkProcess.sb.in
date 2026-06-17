@@ -31,7 +31,7 @@
 
 #if USE(SANDBOX_VERSION_3)
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 5)))
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
 
 (with-filter (mac-policy-name "vnguard")
     (allow system-mac-syscall (mac-syscall-number 1)))
@@ -494,10 +494,11 @@
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 (system-network)
-(allow network-outbound
-    ;; Local mDNSResponder for DNS, arbitrary outbound TCP
-    (literal "/private/var/run/mDNSResponder")
-    (remote tcp))
+(with-filter (require-not (state-flag "BlockNetworkAccess"))
+    (allow network-outbound
+        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
+        (literal "/private/var/run/mDNSResponder")
+        (remote tcp)))
 
 (with-filter (uid 0)
     (allow mach-lookup
@@ -565,11 +566,12 @@
         (set! allow orig-allow))))
 
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
-(allow network* 
-    (local udp)
-    (remote udp)
-    (local tcp)
-    (remote tcp))
+(with-filter (require-not (state-flag "BlockNetworkAccess"))
+    (allow network*
+        (local udp)
+        (remote udp)
+        (local tcp)
+        (remote tcp)))
 
 ;; For reporting progress for active downloads <rdar://problem/44405661>
 (allow mach-lookup
