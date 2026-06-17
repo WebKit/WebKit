@@ -548,11 +548,6 @@ void PrivateState::setColorMask(bool red, bool green, bool blue, bool alpha)
         return;
     }
 
-    mBlendState.colorMaskRed   = red;
-    mBlendState.colorMaskGreen = green;
-    mBlendState.colorMaskBlue  = blue;
-    mBlendState.colorMaskAlpha = alpha;
-
     mBlendStateExt.setColorMask(red, green, blue, alpha);
     mDirtyBits.set(state::DIRTY_BIT_COLOR_MASK);
 }
@@ -706,10 +701,8 @@ void PrivateState::setBlend(bool enabled)
         return;
     }
 
-    if (mSetBlendIndexedInvoked || mBlendState.blend != enabled)
+    if (mSetBlendIndexedInvoked || mBlendStateExt.getEnabledMask().test(0) != enabled)
     {
-        mBlendState.blend = enabled;
-
         mSetBlendIndexedInvoked = false;
         mBlendStateExt.setEnabled(enabled);
         mDirtyBits.set(state::DIRTY_BIT_BLEND_ENABLED);
@@ -748,17 +741,14 @@ void PrivateState::setBlendFactors(GLenum sourceRGB,
                                    GLenum sourceAlpha,
                                    GLenum destAlpha)
 {
-    if (!mSetBlendFactorsIndexedInvoked && mBlendState.sourceBlendRGB == sourceRGB &&
-        mBlendState.destBlendRGB == destRGB && mBlendState.sourceBlendAlpha == sourceAlpha &&
-        mBlendState.destBlendAlpha == destAlpha)
+    if (!mSetBlendFactorsIndexedInvoked &&
+        mBlendStateExt.getSrcColorIndexed(0) == FromGLenum<BlendFactorType>(sourceRGB) &&
+        mBlendStateExt.getDstColorIndexed(0) == FromGLenum<BlendFactorType>(destRGB) &&
+        mBlendStateExt.getSrcAlphaIndexed(0) == FromGLenum<BlendFactorType>(sourceAlpha) &&
+        mBlendStateExt.getDstAlphaIndexed(0) == FromGLenum<BlendFactorType>(destAlpha))
     {
         return;
     }
-
-    mBlendState.sourceBlendRGB   = sourceRGB;
-    mBlendState.destBlendRGB     = destRGB;
-    mBlendState.sourceBlendAlpha = sourceAlpha;
-    mBlendState.destBlendAlpha   = destAlpha;
 
     if (mNoSimultaneousConstantColorAndAlphaBlendFunc)
     {
@@ -832,12 +822,10 @@ void PrivateState::setBlendColor(float red, float green, float blue, float alpha
 
 void PrivateState::setBlendEquation(GLenum rgbEquation, GLenum alphaEquation)
 {
-    if (mSetBlendEquationsIndexedInvoked || mBlendState.blendEquationRGB != rgbEquation ||
-        mBlendState.blendEquationAlpha != alphaEquation)
+    if (mSetBlendEquationsIndexedInvoked ||
+        mBlendStateExt.getEquationColorIndexed(0) != FromGLenum<BlendEquationType>(rgbEquation) ||
+        mBlendStateExt.getEquationAlphaIndexed(0) != FromGLenum<BlendEquationType>(alphaEquation))
     {
-        mBlendState.blendEquationRGB   = rgbEquation;
-        mBlendState.blendEquationAlpha = alphaEquation;
-
         mSetBlendEquationsIndexedInvoked = false;
         mBlendStateExt.setEquations(rgbEquation, alphaEquation);
         mDirtyBits.set(state::DIRTY_BIT_BLEND_EQUATIONS);

@@ -623,11 +623,12 @@ Additions to the OpenGL ES Specification, Version 3.0.6
     Decrements the pixel local storage interrupt counter on the current draw
     framebuffer. When the counter decrements from 1 to 0, and
     PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE was nonzero at the time this
-    framebuffer entered an interrupted state, the command also begins pixel
-    local storage using LOAD_OP_LOAD_ANGLE for texture backed planes and
+    framebuffer entered an interrupted state, BeginPixelLocalStorageANGLE is
+    implicitly called using LOAD_OP_LOAD_ANGLE for texture backed planes and
     DONT_CARE for memoryless planes. The number of planes activated is equal to
     the value of PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE at the time this
-    framebuffer entered an interrupted state. This command is ignored when the
+    framebuffer entered an interrupted state. Validation associated with
+    BeingPixelLocalStorageANGLE is also run. This command is ignored when the
     default framebuffer object name 0 is bound.
 
   Modify Section 3.8.10.3 "Rendering Feedback Loops"

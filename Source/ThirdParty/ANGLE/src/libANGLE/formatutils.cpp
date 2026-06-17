@@ -1833,7 +1833,8 @@ bool InternalFormat::computePalettedImageRowPitch(GLsizei width, GLuint *resultO
 }
 
 bool InternalFormat::computeRowDepthSkipBytes(GLenum formatType,
-                                              const Extents &area,
+                                              GLsizei width,
+                                              GLsizei height,
                                               const gl::PixelStoreStateBase &unpack,
                                               bool is3D,
                                               GLuint *rowPitchOut,
@@ -1841,14 +1842,14 @@ bool InternalFormat::computeRowDepthSkipBytes(GLenum formatType,
                                               GLuint *skipBytesOut) const
 {
     GLuint rowPitch = 0;
-    if (!computeRowPitch(formatType, area.width, unpack.alignment, unpack.rowLength, &rowPitch))
+    if (!computeRowPitch(formatType, width, unpack.alignment, unpack.rowLength, &rowPitch))
     {
         return false;
     }
     // Compute depthPitch for 2D textures too. It is used to size the full texture uploads.
-    GLuint depthPitch = 0;
+    GLuint depthPitch       = 0;
     const GLint imageHeight = is3D ? unpack.imageHeight : 0;
-    if (rowPitch > 0 && !computeDepthPitch(area.height, imageHeight, rowPitch, &depthPitch)) 
+    if (rowPitch > 0 && !computeDepthPitch(height, imageHeight, rowPitch, &depthPitch))
     {
         return false;
     }
@@ -2102,8 +2103,8 @@ bool InternalFormat::computePackUnpackEndByte(GLenum formatType,
     GLuint rowPitch = 0;
     GLuint depthPitch = 0;
     GLuint skipBytes  = 0;
-    if (!computeRowDepthSkipBytes(formatType, size, state, is3D, &rowPitch, &depthPitch,
-                                  &skipBytes))
+    if (!computeRowDepthSkipBytes(formatType, size.width, size.height, state, is3D, &rowPitch,
+                                  &depthPitch, &skipBytes))
     {
         return false;
     }

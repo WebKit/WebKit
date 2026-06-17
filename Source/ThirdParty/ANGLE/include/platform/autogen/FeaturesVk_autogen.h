@@ -50,6 +50,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo forceRenderableFallbackFormat = {
+        "forceRenderableFallbackFormat",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo clampPointSize = {
         "clampPointSize",
         FeatureCategory::VulkanWorkarounds,

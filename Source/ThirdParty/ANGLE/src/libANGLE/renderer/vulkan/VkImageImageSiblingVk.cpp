@@ -52,7 +52,13 @@ angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
     const vk::ImageFormatSupport formatSupport = isRenderable(nullptr)
                                                      ? vk::ImageFormatSupport::Renderable
                                                      : vk::ImageFormatSupport::SampleOnly;
-    const angle::FormatID actualImageFormatID  = vkFormat.getActualImageFormatID(formatSupport);
+    angle::FormatID actualImageFormatID        = vkFormat.getActualImageFormatID(formatSupport);
+    if (renderer->getFeatures().preferBGR565ToRGB565.enabled &&
+        formatID == angle::FormatID::R5G6B5_UNORM &&
+        actualImageFormatID == angle::FormatID::B5G6R5_UNORM)
+    {
+        actualImageFormatID = angle::FormatID::R5G6B5_UNORM;
+    }
     const angle::Format &format               = angle::Format::Get(actualImageFormatID);
 
     angle::FormatID intendedFormatID;

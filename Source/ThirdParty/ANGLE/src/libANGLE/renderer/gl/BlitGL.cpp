@@ -1284,9 +1284,10 @@ angle::Result BlitGL::generateMipmap(const gl::Context *context,
 
         // Downsample from the source texture into the intermediate texture
         mStateManager->bindTexture(sourceType, intermediateTexture);
-        ANGLE_GL_TRY(context, mFunctions->texImage2D(
-                                  ToGLenum(sourceTarget), 0, format.internalFormat, levelSize.width,
-                                  levelSize.height, 0, format.format, format.type, nullptr));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, mFunctions->texImage2D(ToGLenum(sourceTarget), 0, format.internalFormat,
+                                            levelSize.width, levelSize.height, 0, format.format,
+                                            format.type, nullptr));
 
         ANGLE_GL_TRY(context, mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                                                ToGLenum(sourceTarget),
@@ -1349,8 +1350,8 @@ angle::Result BlitGL::initializeResources(const gl::Context *context)
         -0.5f, 0.0f, 1.5f, 0.0f, 0.5f, 2.0f,
     };
 
-    ANGLE_GL_TRY(context, mFunctions->bufferData(GL_ARRAY_BUFFER, sizeof(float) * 6, vertexData,
-                                                 GL_STATIC_DRAW));
+    ANGLE_GL_TRY_ALWAYS_CHECK(context, mFunctions->bufferData(GL_ARRAY_BUFFER, sizeof(float) * 6,
+                                                              vertexData, GL_STATIC_DRAW));
 
     VertexArrayStateGL *defaultVAOState = mStateManager->getDefaultVAOState();
     if (!mFeatures.syncAllVertexArraysToDefault.enabled)

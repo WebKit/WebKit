@@ -1292,6 +1292,117 @@ TEST_P(WebGLDrawElementsTest3, TwoVertexArraysWithSameElementBuffer)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that uploading a large index buffer (> 1MB) via glBufferSubData
+// does not corrupt the data in the chunks after the first 1MB.
+// This is a regression test for a bug in Metal backend where the offset
+// was not applied to the source pointer when chunking the upload.
+TEST_P(DrawElementsTest, LargeIndexBufferSubData)
+{
+    // We want the buffer size to be slightly larger than 1MB.
+    // 1MB = 1024 * 1024 = 1,048,576 bytes.
+    // With GL_UNSIGNED_INT (4 bytes), 1MB is 262,144 indices.
+    // We use 263,168 indices (1,052,672 bytes).
+    constexpr size_t kIndexCount = 263168;
+    constexpr size_t kBufferSize = kIndexCount * sizeof(GLuint);
+
+    // Staging buffer chunk size is 1MB.
+    // First chunk: indices 0 to 262143.
+    // Second chunk: indices 262144 to 263167.
+
+    // Prepare indices.
+    // We want to draw a triangle using the last 3 indices in the buffer.
+    // These indices will point to green vertices.
+    // The indices at the start of the buffer will point to red vertices.
+    std::vector<GLuint> indices(kIndexCount, 0);
+    // Start of buffer: points to red vertices (0, 1, 2)
+    indices[0] = 0;
+    indices[1] = 1;
+    indices[2] = 2;
+    // End of buffer: points to green vertices (3, 4, 5)
+    indices[kIndexCount - 3] = 3;
+    indices[kIndexCount - 2] = 4;
+    indices[kIndexCount - 1] = 5;
+
+    // Vertices with position and color.
+    struct Vertex
+    {
+        float position[3];
+        GLubyte color[4];
+    };
+
+    const std::vector<Vertex> vertices = {
+        // Red triangle
+        {{-1.0f, -1.0f, 0.0f}, {255, 0, 0, 255}},
+        {{3.0f, -1.0f, 0.0f}, {255, 0, 0, 255}},
+        {{-1.0f, 3.0f, 0.0f}, {255, 0, 0, 255}},
+        // Green triangle
+        {{-1.0f, -1.0f, 0.0f}, {0, 255, 0, 255}},
+        {{3.0f, -1.0f, 0.0f}, {0, 255, 0, 255}},
+        {{-1.0f, 3.0f, 0.0f}, {0, 255, 0, 255}},
+    };
+
+    // Shader program
+    const char *kVS =
+        "attribute vec3 a_position;\n"
+        "attribute vec4 a_color;\n"
+        "varying vec4 v_color;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position = vec4(a_position, 1.0);\n"
+        "    v_color = a_color;\n"
+        "}\n";
+    const char *kFS =
+        "precision mediump float;\n"
+        "varying vec4 v_color;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_FragColor = v_color;\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint posLocation   = glGetAttribLocation(program, "a_position");
+    GLint colorLocation = glGetAttribLocation(program, "a_color");
+    ASSERT_NE(-1, posLocation);
+    ASSERT_NE(-1, colorLocation);
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          reinterpret_cast<const void *>(offsetof(Vertex, position)));
+    glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(colorLocation, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
+                          reinterpret_cast<const void *>(offsetof(Vertex, color)));
+    glEnableVertexAttribArray(colorLocation);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    // Allocate
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    // Upload > 1MB
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, kBufferSize, indices.data());
+
+    ASSERT_GL_NO_ERROR();
+
+    // Draw using the indices at the end of the buffer.
+    // Offset in bytes: (kIndexCount - 3) * sizeof(GLuint)
+    size_t drawOffset = (kIndexCount - 3) * sizeof(GLuint);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, reinterpret_cast<const void *>(drawOffset));
+
+    ASSERT_GL_NO_ERROR();
+
+    // If the bug is present, the indices at the end were copied from the start (which point to
+    // red). If fixed, they point to green.
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawElementsTest);
 ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
 

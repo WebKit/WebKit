@@ -1511,6 +1511,11 @@ void ANGLERenderTest::setWebGLCompatibilityEnabled(bool webglCompatibility)
     mConfigParams.webGLCompatibility = webglCompatibility;
 }
 
+void ANGLERenderTest::setHardenedContextEnabled(bool hardenedContext)
+{
+    mConfigParams.hardenedContext = hardenedContext;
+}
+
 void ANGLERenderTest::setRobustResourceInit(bool enabled)
 {
     mConfigParams.robustResourceInit = enabled;

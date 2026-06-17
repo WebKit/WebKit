@@ -442,6 +442,23 @@ angle::Result ContextMtl::drawArraysImpl(const gl::Context *context,
     // Real instances count. Zero means this is not instanced draw.
     GLsizei instanceCount = instances ? instances : 1;
 
+    if (mState.isTransformFeedbackActiveUnpaused())
+    {
+        // ES 3.0 requires XFB mode to be points, lines, or triangles.
+        // For this workaround, we assume the draw mode is also one of these.
+        CHECK(mode == gl::PrimitiveMode::Triangles || mode == gl::PrimitiveMode::Lines ||
+              mode == gl::PrimitiveMode::Points);
+
+        // Transform feedback only outputs complete primitives. For independent primitives
+        // (triangles and lines), any leftover vertices do not form a primitive and should
+        // not be processed for transform feedback. Since Metal only supports up to ES 3.0
+        // (where VS cannot have side effects), it is safe to round down the count to avoid
+        // processing them and hitting bugs with incomplete primitives in XFB.
+        // The helper function also returns the correct value for Points mode (no changes).
+        GLsizeiptr verticesNeeded = gl::GetVerticesNeededForDraw(mode, count, 1).ValueOrDie();
+        count                     = static_cast<GLsizei>(verticesNeeded);
+    }
+
     if (mCullAllPolygons && gl::IsPolygonMode(mode))
     {
         return angle::Result::Continue;

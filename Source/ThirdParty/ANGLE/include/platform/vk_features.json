@@ -45,6 +45,13 @@
             ]
         },
         {
+            "name": "force_renderable_fallback_format",
+            "category": "Workarounds",
+            "description": [
+                "Force a fallback renderable format for angle_end2end_tests"
+            ]
+        },
+        {
             "name": "clamp_point_size",
             "category": "Workarounds",
             "description": [

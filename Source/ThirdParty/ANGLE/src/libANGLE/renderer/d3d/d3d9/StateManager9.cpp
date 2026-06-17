@@ -126,12 +126,15 @@ void StateManager9::syncState(const gl::State &state,
         return;
     }
 
+    const gl::BlendStateExt &blendStateExt = state.getBlendStateExt();
+
     for (auto dirtyBit : dirtyBits)
     {
         switch (dirtyBit)
         {
             case gl::state::DIRTY_BIT_BLEND_ENABLED:
-                if (state.getBlendState().blend != mCurBlendState.blend)
+                if (blendStateExt.getEnabledMask().test(0) !=
+                    mCurBlendState.getEnabledMask().test(0))
                 {
                     mDirtyBits.set(DIRTY_BIT_BLEND_ENABLED);
                     // BlendColor and funcs and equations has to be set if blend is enabled
@@ -147,11 +150,10 @@ void StateManager9::syncState(const gl::State &state,
                 break;
             case gl::state::DIRTY_BIT_BLEND_FUNCS:
             {
-                const gl::BlendState &blendState = state.getBlendState();
-                if (blendState.sourceBlendRGB != mCurBlendState.sourceBlendRGB ||
-                    blendState.destBlendRGB != mCurBlendState.destBlendRGB ||
-                    blendState.sourceBlendAlpha != mCurBlendState.sourceBlendAlpha ||
-                    blendState.destBlendAlpha != mCurBlendState.destBlendAlpha)
+                if (blendStateExt.getSrcColorIndexed(0) != mCurBlendState.getSrcColorIndexed(0) ||
+                    blendStateExt.getDstColorIndexed(0) != mCurBlendState.getDstColorIndexed(0) ||
+                    blendStateExt.getSrcAlphaIndexed(0) != mCurBlendState.getSrcAlphaIndexed(0) ||
+                    blendStateExt.getDstAlphaIndexed(0) != mCurBlendState.getDstAlphaIndexed(0))
                 {
                     mDirtyBits.set(DIRTY_BIT_BLEND_FUNCS_EQUATIONS);
                     // BlendColor depends on the values of blend funcs
@@ -167,9 +169,10 @@ void StateManager9::syncState(const gl::State &state,
             }
             case gl::state::DIRTY_BIT_BLEND_EQUATIONS:
             {
-                const gl::BlendState &blendState = state.getBlendState();
-                if (blendState.blendEquationRGB != mCurBlendState.blendEquationRGB ||
-                    blendState.blendEquationAlpha != mCurBlendState.blendEquationAlpha)
+                if (blendStateExt.getEquationColorIndexed(0) !=
+                        mCurBlendState.getEquationColorIndexed(0) ||
+                    blendStateExt.getEquationAlphaIndexed(0) !=
+                        mCurBlendState.getEquationAlphaIndexed(0))
                 {
                     mDirtyBits.set(DIRTY_BIT_BLEND_FUNCS_EQUATIONS);
 
@@ -189,11 +192,7 @@ void StateManager9::syncState(const gl::State &state,
                 break;
             case gl::state::DIRTY_BIT_COLOR_MASK:
             {
-                const gl::BlendState &blendState = state.getBlendState();
-                if (blendState.colorMaskRed != mCurBlendState.colorMaskRed ||
-                    blendState.colorMaskGreen != mCurBlendState.colorMaskGreen ||
-                    blendState.colorMaskBlue != mCurBlendState.colorMaskBlue ||
-                    blendState.colorMaskAlpha != mCurBlendState.colorMaskAlpha)
+                if (blendStateExt.getColorMaskIndexed(0) != mCurBlendState.getColorMaskIndexed(0))
                 {
                     mDirtyBits.set(DIRTY_BIT_COLOR_MASK);
 
@@ -332,7 +331,7 @@ void StateManager9::setBlendDepthRasterStates(const gl::State &glState, unsigned
 {
     const gl::Framebuffer *framebuffer = glState.getDrawFramebuffer();
 
-    const gl::BlendState &blendState       = glState.getBlendState();
+    const gl::BlendStateExt &blendStateExt = glState.getBlendStateExt();
     const gl::ColorF &blendColor           = glState.getBlendColor();
     const gl::RasterizerState &rasterState = glState.getRasterizerState();
 
@@ -352,20 +351,23 @@ void StateManager9::setBlendDepthRasterStates(const gl::State &glState, unsigned
         switch (dirtyBit)
         {
             case DIRTY_BIT_BLEND_ENABLED:
-                setBlendEnabled(blendState.blend);
+                setBlendEnabled(blendStateExt.getEnabledMask().test(0));
                 break;
             case DIRTY_BIT_BLEND_COLOR:
-                setBlendColor(blendState, blendColor);
+                setBlendColor(blendStateExt, blendColor);
                 break;
             case DIRTY_BIT_BLEND_FUNCS_EQUATIONS:
-                setBlendFuncsEquations(blendState);
+                setBlendFuncsEquations(blendStateExt);
                 break;
             case DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE:
                 setSampleAlphaToCoverage(glState.isSampleAlphaToCoverageEnabled());
                 break;
             case DIRTY_BIT_COLOR_MASK:
-                setColorMask(framebuffer, blendState.colorMaskRed, blendState.colorMaskBlue,
-                             blendState.colorMaskGreen, blendState.colorMaskAlpha);
+            {
+                bool red, green, blue, alpha;
+                blendStateExt.getColorMaskIndexed(0, &red, &green, &blue, &alpha);
+                setColorMask(framebuffer, red, blue, green, alpha);
+            }
                 break;
             case DIRTY_BIT_DITHER:
                 setDither(rasterState.dither);
@@ -704,15 +706,18 @@ void StateManager9::setSampleAlphaToCoverage(bool enabled)
     }
 }
 
-void StateManager9::setBlendColor(const gl::BlendState &blendState, const gl::ColorF &blendColor)
+void StateManager9::setBlendColor(const gl::BlendStateExt &blendState, const gl::ColorF &blendColor)
 {
-    if (!blendState.blend)
+    if (!blendState.getEnabledMask().test(0))
+    {
         return;
+    }
 
-    if (blendState.sourceBlendRGB != GL_CONSTANT_ALPHA &&
-        blendState.sourceBlendRGB != GL_ONE_MINUS_CONSTANT_ALPHA &&
-        blendState.destBlendRGB != GL_CONSTANT_ALPHA &&
-        blendState.destBlendRGB != GL_ONE_MINUS_CONSTANT_ALPHA)
+    GLenum srcColor = ToGLenum(blendState.getSrcColorIndexed(0));
+    GLenum dstColor = ToGLenum(blendState.getDstColorIndexed(0));
+
+    if (srcColor != GL_CONSTANT_ALPHA && srcColor != GL_ONE_MINUS_CONSTANT_ALPHA &&
+        dstColor != GL_CONSTANT_ALPHA && dstColor != GL_ONE_MINUS_CONSTANT_ALPHA)
     {
         mRenderer9->getDevice()->SetRenderState(D3DRS_BLENDFACTOR,
                                                 gl_d3d9::ConvertColor(blendColor));
@@ -727,45 +732,47 @@ void StateManager9::setBlendColor(const gl::BlendState &blendState, const gl::Co
     mCurBlendColor = blendColor;
 }
 
-void StateManager9::setBlendFuncsEquations(const gl::BlendState &blendState)
+void StateManager9::setBlendFuncsEquations(const gl::BlendStateExt &blendState)
 {
-    if (!blendState.blend)
+    if (!blendState.getEnabledMask().test(0))
+    {
         return;
+    }
 
     IDirect3DDevice9 *device = mRenderer9->getDevice();
 
-    device->SetRenderState(D3DRS_SRCBLEND, gl_d3d9::ConvertBlendFunc(blendState.sourceBlendRGB));
-    device->SetRenderState(D3DRS_DESTBLEND, gl_d3d9::ConvertBlendFunc(blendState.destBlendRGB));
-    device->SetRenderState(D3DRS_BLENDOP, gl_d3d9::ConvertBlendOp(blendState.blendEquationRGB));
+    GLenum srcColor = ToGLenum(blendState.getSrcColorIndexed(0));
+    GLenum dstColor = ToGLenum(blendState.getDstColorIndexed(0));
+    GLenum srcAlpha = ToGLenum(blendState.getSrcAlphaIndexed(0));
+    GLenum dstAlpha = ToGLenum(blendState.getDstAlphaIndexed(0));
+    GLenum eqColor  = ToGLenum(blendState.getEquationColorIndexed(0));
+    GLenum eqAlpha  = ToGLenum(blendState.getEquationAlphaIndexed(0));
 
-    if (blendState.sourceBlendRGB != blendState.sourceBlendAlpha ||
-        blendState.destBlendRGB != blendState.destBlendAlpha ||
-        blendState.blendEquationRGB != blendState.blendEquationAlpha)
+    device->SetRenderState(D3DRS_SRCBLEND, gl_d3d9::ConvertBlendFunc(srcColor));
+    device->SetRenderState(D3DRS_DESTBLEND, gl_d3d9::ConvertBlendFunc(dstColor));
+    device->SetRenderState(D3DRS_BLENDOP, gl_d3d9::ConvertBlendOp(eqColor));
+
+    if (srcColor != srcAlpha || dstColor != dstAlpha || eqColor != eqAlpha)
     {
         device->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
 
-        device->SetRenderState(D3DRS_SRCBLENDALPHA,
-                               gl_d3d9::ConvertBlendFunc(blendState.sourceBlendAlpha));
-        device->SetRenderState(D3DRS_DESTBLENDALPHA,
-                               gl_d3d9::ConvertBlendFunc(blendState.destBlendAlpha));
-        device->SetRenderState(D3DRS_BLENDOPALPHA,
-                               gl_d3d9::ConvertBlendOp(blendState.blendEquationAlpha));
+        device->SetRenderState(D3DRS_SRCBLENDALPHA, gl_d3d9::ConvertBlendFunc(srcAlpha));
+        device->SetRenderState(D3DRS_DESTBLENDALPHA, gl_d3d9::ConvertBlendFunc(dstAlpha));
+        device->SetRenderState(D3DRS_BLENDOPALPHA, gl_d3d9::ConvertBlendOp(eqAlpha));
     }
     else
     {
         device->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
     }
 
-    mCurBlendState.sourceBlendRGB     = blendState.sourceBlendRGB;
-    mCurBlendState.destBlendRGB       = blendState.destBlendRGB;
-    mCurBlendState.blendEquationRGB   = blendState.blendEquationRGB;
-    mCurBlendState.blendEquationAlpha = blendState.blendEquationAlpha;
+    mCurBlendState.setFactorsIndexed(0, srcColor, dstColor, srcAlpha, dstAlpha);
+    mCurBlendState.setEquationsIndexed(0, eqColor, eqAlpha);
 }
 
 void StateManager9::setBlendEnabled(bool enabled)
 {
     mRenderer9->getDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, enabled ? TRUE : FALSE);
-    mCurBlendState.blend = enabled;
+    mCurBlendState.setEnabledIndexed(0, enabled);
 }
 
 void StateManager9::setDither(bool dither)
@@ -806,27 +813,17 @@ void StateManager9::setColorMask(const gl::Framebuffer *framebuffer,
         device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
         device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 
-        mCurBlendState.colorMaskRed   = false;
-        mCurBlendState.colorMaskGreen = true;
-        mCurBlendState.colorMaskBlue  = false;
-        mCurBlendState.colorMaskAlpha = false;
+        mCurBlendState.setColorMaskIndexed(0, false, true, false, false);
 
-        mCurBlendState.blend              = true;
-        mCurBlendState.sourceBlendRGB     = GL_ZERO;
-        mCurBlendState.sourceBlendAlpha   = GL_ZERO;
-        mCurBlendState.destBlendRGB       = GL_ONE;
-        mCurBlendState.destBlendAlpha     = GL_ONE;
-        mCurBlendState.blendEquationRGB   = GL_FUNC_ADD;
-        mCurBlendState.blendEquationAlpha = GL_FUNC_ADD;
+        mCurBlendState.setEnabledIndexed(0, true);
+        mCurBlendState.setFactorsIndexed(0, GL_ZERO, GL_ONE, GL_ZERO, GL_ONE);
+        mCurBlendState.setEquationsIndexed(0, GL_FUNC_ADD, GL_FUNC_ADD);
     }
     else
     {
         mRenderer9->getDevice()->SetRenderState(D3DRS_COLORWRITEENABLE, colorMask);
 
-        mCurBlendState.colorMaskRed   = red;
-        mCurBlendState.colorMaskGreen = green;
-        mCurBlendState.colorMaskBlue  = blue;
-        mCurBlendState.colorMaskAlpha = alpha;
+        mCurBlendState.setColorMaskIndexed(0, red, green, blue, alpha);
     }
 }
 

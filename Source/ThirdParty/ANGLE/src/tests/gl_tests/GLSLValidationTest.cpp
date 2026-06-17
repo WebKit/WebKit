@@ -1128,6 +1128,25 @@ TEST_P(GLSLValidationTest, ConstructorWithSampler)
                   "'constructor' : cannot convert a variable with type sampler2D");
 }
 
+// Test that a struct-with-sampler can't be used in a constructor
+TEST_P(GLSLValidationTest_ES3, ConstructorWithStructWithSampler)
+{
+    constexpr char kFS[] = R"(#version 300 es
+        precision mediump float;
+        struct S {
+            sampler2D inStruct;
+        };
+        uniform S s;
+        out vec4 color;
+        void main()
+        {
+            color = texture(S[2](s, s)[0].inStruct, vec2(0));
+        })";
+
+    validateError(GL_FRAGMENT_SHADER, kFS,
+                  "'constructor' : cannot convert a variable with struct type containing samplers");
+}
+
 // Test that void can't be used in constructor argument list
 TEST_P(GLSLValidationTest, VoidInConstructorArguments)
 {
@@ -1305,58 +1324,6 @@ TEST_P(WebGL2GLSLValidationTest, AssignUniformToGlobalESSL1)
 
     validateWarning(GL_FRAGMENT_SHADER, kFS,
                     "'=' : global variable initializers should be constant expressions");
-}
-
-// Shaders with uniform blocks named "shared" or "packed" should fail to compile in WebGL mode.
-TEST_P(WebGL2GLSLValidationTest, RejectSharedAndPackedUniformBlockNames)
-{
-    // Test "shared" in vertex shader
-    {
-        constexpr char kVS[] =
-            R"(#version 300 es
-            uniform shared { // Invalid name
-                vec4 val;
-            };
-            void main() { gl_Position = val; })";
-        validateError(GL_VERTEX_SHADER, kVS, "'shared' : Illegal use of reserved word");
-    }
-
-    // Test "shared" in fragment shader
-    {
-        constexpr char kFS[] =
-            R"(#version 300 es
-            precision mediump float;
-            uniform shared { // Invalid name
-                vec4 val;
-            };
-            out vec4 out_FragColor;
-            void main() { out_FragColor = val; })";
-        validateError(GL_FRAGMENT_SHADER, kFS, "'shared' : Illegal use of reserved word");
-    }
-
-    // Test "packed" in vertex shader
-    {
-        constexpr char kVS[] =
-            R"(#version 300 es
-            uniform packed { // Invalid name
-                vec4 val;
-            };
-            void main() { gl_Position = val; })";
-        validateError(GL_VERTEX_SHADER, kVS, "'packed' : Illegal use of reserved word");
-    }
-
-    // Test "packed" in fragment shader
-    {
-        constexpr char kFS[] =
-            R"(#version 300 es
-            precision mediump float;
-            uniform packed { // Invalid name
-                vec4 val;
-            };
-            out vec4 out_FragColor;
-            void main() { out_FragColor = val; })";
-        validateError(GL_FRAGMENT_SHADER, kFS, "'packed' : Illegal use of reserved word");
-    }
 }
 
 // Test that deferring global variable init works with an empty main().

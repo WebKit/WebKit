@@ -893,10 +893,9 @@ angle::Result TextureStorage11::setData(const gl::Context *context,
     GLuint srcDepthPitch = 0;
     GLuint srcSkipBytes = 0;
 
-    ANGLE_CHECK_GL_MATH(context11,
-                        internalFormatInfo.computeRowDepthSkipBytes(
-                            type, gl::Extents{width, height, depth}, unpack, index.usesTex3D(),
-                            &srcRowPitch, &srcDepthPitch, &srcSkipBytes));
+    ANGLE_CHECK_GL_MATH(context11, internalFormatInfo.computeRowDepthSkipBytes(
+                                       type, width, height, unpack, index.usesTex3D(), &srcRowPitch,
+                                       &srcDepthPitch, &srcSkipBytes));
 
     const d3d11::Format &d3d11Format =
         d3d11::Format::Get(image->getInternalFormat(), mRenderer->getRenderer11DeviceCaps());

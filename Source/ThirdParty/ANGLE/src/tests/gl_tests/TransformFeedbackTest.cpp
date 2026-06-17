@@ -5367,6 +5367,86 @@ TEST_P(TransformFeedbackTestVkEvent, BufferVkEventUAF)
     glFinish();
 }
 
+// Test that transform feedback with instanced drawing and count that results in incomplete
+// primitives works correctly when the buffer is large enough to store all complete primitives from
+// all instances.
+TEST_P(TransformFeedbackTest, InstancedOverflowIncompletePrimitive)
+{
+    // We need ES3 for transform feedback and instancing.
+
+    constexpr char kVS[] = R"(#version 300 es
+        out float out_value;
+        void main() {
+            out_value = float(gl_VertexID) + float(gl_InstanceID) * 100.0;
+            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        })";
+
+    constexpr char kFS[] = R"(#version 300 es
+        out mediump vec4 color;
+        void main() {
+            color = vec4(0.0, 1.0, 0.0, 1.0);
+        })";
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("out_value");
+
+    mProgram = CompileProgramWithTransformFeedback(kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_NE(0u, mProgram);
+
+    glUseProgram(mProgram);
+
+    // Buffer size: enough for 18 vertices (3 triangles * 3 vertices * 2 instances).
+    // Each vertex writes 1 float.
+    const size_t kBufferSize = 18 * sizeof(float);
+
+    GLBuffer tfBuffer;
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, tfBuffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tfBuffer);
+
+    GLQuery primitivesWrittenQuery;
+    glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, primitivesWrittenQuery);
+
+    glBeginTransformFeedback(GL_TRIANGLES);
+
+    // Draw 11 vertices (3 triangles and 2 vertices), 2 instances.
+    // Total expected vertices if buffer was large enough:
+    // Instance 0: 9 vertices (3 triangles) + 2 vertices (incomplete) -> only 9 written.
+    // Instance 1: 9 vertices (3 triangles) + 2 vertices (incomplete) -> only 9 written.
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 11, 2);
+
+    glEndTransformFeedback();
+    glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
+    ASSERT_GL_NO_ERROR();
+
+    // Map buffer and check results.
+    void *mappedBuffer =
+        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_NE(nullptr, mappedBuffer);
+
+    float *mappedFloats = static_cast<float *>(mappedBuffer);
+
+    // Instance 0 should fill the first 9 floats with values 0 to 8.
+    for (unsigned int i = 0; i < 9; ++i)
+    {
+        EXPECT_EQ(mappedFloats[i], float(i)) << "At index " << i;
+    }
+
+    // Instance 1 should fill the next 9 floats with values 100 to 108.
+    for (unsigned int i = 0; i < 9; ++i)
+    {
+        EXPECT_EQ(mappedFloats[9 + i], 100.0f + float(i)) << "At index " << (9 + i);
+    }
+
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+
+    // Check primitives written query result.
+    GLuint primitivesWritten = 0;
+    glGetQueryObjectuiv(primitivesWrittenQuery, GL_QUERY_RESULT_EXT, &primitivesWritten);
+    // 3 triangles from instance 0 + 3 triangles from instance 1 = 6 triangles.
+    EXPECT_EQ(6u, primitivesWritten);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackTest,
                                ES3_VULKAN().disable(Feature::SupportsTransformFeedbackExtension),

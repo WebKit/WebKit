@@ -221,6 +221,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     const RenderTestParams &mTestParams;
 
     void setWebGLCompatibilityEnabled(bool webglCompatibility);
+    void setHardenedContextEnabled(bool hardenedContext);
     void setRobustResourceInit(bool enabled);
 
     virtual void startGpuTimer();

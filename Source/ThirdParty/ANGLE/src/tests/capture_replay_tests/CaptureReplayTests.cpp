@@ -259,6 +259,7 @@ class CaptureReplayTests
         configParams.clientArraysEnabled   = traceInfo.areClientArraysEnabled;
         configParams.bindGeneratesResource = traceInfo.isBindGeneratesResourcesEnabled;
         configParams.webGLCompatibility    = traceInfo.isWebGLCompatibilityEnabled;
+        configParams.hardenedContext       = traceInfo.isHardenedContextEnabled;
         configParams.robustResourceInit    = traceInfo.isRobustResourceInitEnabled;
         configParams.extensionsEnabled     = traceInfo.areExtensionsEnabled;
 

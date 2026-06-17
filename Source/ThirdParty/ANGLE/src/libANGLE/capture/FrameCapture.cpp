@@ -5614,85 +5614,88 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     }
 
     // Blend state.
+    const gl::BlendStateExt &defaultBlend = replayState.getBlendStateExt();
+    const gl::BlendStateExt &currentBlend = apiState.getBlendStateExt();
 
     // First, check if every draw buffer blend state matches zero buffer.
     // If so, we can set them all the same using calls available before ES 3.2
     if (BlendStateEqualPerDrawBuffer(apiState))
     {
-        const gl::BlendState &defaultBlendState = replayState.getBlendState();
-        const gl::BlendState &currentBlendState = apiState.getBlendState();
-
-        if (currentBlendState.blend != defaultBlendState.blend)
+        if (currentBlend.getEnabledMask().test(0) != defaultBlend.getEnabledMask().test(0))
         {
-            capCap(GL_BLEND, currentBlendState.blend);
+            capCap(GL_BLEND, currentBlend.getEnabledMask().test(0));
         }
 
-        if (currentBlendState.sourceBlendRGB != defaultBlendState.sourceBlendRGB ||
-            currentBlendState.destBlendRGB != defaultBlendState.destBlendRGB ||
-            currentBlendState.sourceBlendAlpha != defaultBlendState.sourceBlendAlpha ||
-            currentBlendState.destBlendAlpha != defaultBlendState.destBlendAlpha)
+        if (currentBlend.getSrcColorIndexed(0) != defaultBlend.getSrcColorIndexed(0) ||
+            currentBlend.getDstColorIndexed(0) != defaultBlend.getDstColorIndexed(0) ||
+            currentBlend.getSrcAlphaIndexed(0) != defaultBlend.getSrcAlphaIndexed(0) ||
+            currentBlend.getDstAlphaIndexed(0) != defaultBlend.getDstAlphaIndexed(0))
         {
+            GLenum srcColor = ToGLenum(currentBlend.getSrcColorIndexed(0));
+            GLenum dstColor = ToGLenum(currentBlend.getDstColorIndexed(0));
+            GLenum srcAlpha = ToGLenum(currentBlend.getSrcAlphaIndexed(0));
+            GLenum dstAlpha = ToGLenum(currentBlend.getDstAlphaIndexed(0));
+
             if (context->isGLES1())
             {
                 // Even though their states are tracked independently, in GLES1 blendAlpha
                 // and blendRGB cannot be set separately and are always equal
-                cap(CaptureBlendFunc(replayState, true, currentBlendState.sourceBlendRGB,
-                                     currentBlendState.destBlendRGB));
+                cap(CaptureBlendFunc(replayState, true, srcColor, dstColor));
                 Capture(&resetCalls[angle::EntryPoint::GLBlendFunc],
-                        CaptureBlendFunc(replayState, true, currentBlendState.sourceBlendRGB,
-                                         currentBlendState.destBlendRGB));
+                        CaptureBlendFunc(replayState, true, srcColor, dstColor));
             }
             else
             {
                 // Always use BlendFuncSeparate for non-GLES1 as it covers all cases
-                cap(CaptureBlendFuncSeparate(replayState, true, currentBlendState.sourceBlendRGB,
-                                             currentBlendState.destBlendRGB,
-                                             currentBlendState.sourceBlendAlpha,
-                                             currentBlendState.destBlendAlpha));
+                cap(CaptureBlendFuncSeparate(replayState, true, srcColor, dstColor, srcAlpha,
+                                             dstAlpha));
                 Capture(&resetCalls[angle::EntryPoint::GLBlendFuncSeparate],
-                        CaptureBlendFuncSeparate(
-                            replayState, true, currentBlendState.sourceBlendRGB,
-                            currentBlendState.destBlendRGB, currentBlendState.sourceBlendAlpha,
-                            currentBlendState.destBlendAlpha));
+                        CaptureBlendFuncSeparate(replayState, true, srcColor, dstColor, srcAlpha,
+                                                 dstAlpha));
             }
         }
 
-        if (currentBlendState.blendEquationRGB != defaultBlendState.blendEquationRGB ||
-            currentBlendState.blendEquationAlpha != defaultBlendState.blendEquationAlpha)
+        if (currentBlend.getEquationColorIndexed(0) != defaultBlend.getEquationColorIndexed(0) ||
+            currentBlend.getEquationAlphaIndexed(0) != defaultBlend.getEquationAlphaIndexed(0))
         {
+            GLenum eqColor = ToGLenum(currentBlend.getEquationColorIndexed(0));
+            GLenum eqAlpha = ToGLenum(currentBlend.getEquationAlphaIndexed(0));
+
             // Similarly to BlendFunc, using BlendEquation in some cases complicates Reset.
-            cap(CaptureBlendEquationSeparate(replayState, true, currentBlendState.blendEquationRGB,
-                                             currentBlendState.blendEquationAlpha));
-            Capture(
-                &resetCalls[angle::EntryPoint::GLBlendEquationSeparate],
-                CaptureBlendEquationSeparate(replayState, true, currentBlendState.blendEquationRGB,
-                                             currentBlendState.blendEquationAlpha));
+            cap(CaptureBlendEquationSeparate(replayState, true, eqColor, eqAlpha));
+            Capture(&resetCalls[angle::EntryPoint::GLBlendEquationSeparate],
+                    CaptureBlendEquationSeparate(replayState, true, eqColor, eqAlpha));
         }
 
-        if (currentBlendState.colorMaskRed != defaultBlendState.colorMaskRed ||
-            currentBlendState.colorMaskGreen != defaultBlendState.colorMaskGreen ||
-            currentBlendState.colorMaskBlue != defaultBlendState.colorMaskBlue ||
-            currentBlendState.colorMaskAlpha != defaultBlendState.colorMaskAlpha)
+        bool defaultColorMaskRed, defaultColorMaskGreen, defaultColorMaskBlue,
+            defaultColorMaskAlpha;
+        defaultBlend.getColorMaskIndexed(0, &defaultColorMaskRed, &defaultColorMaskGreen,
+                                         &defaultColorMaskBlue, &defaultColorMaskAlpha);
+
+        bool currentColorMaskRed, currentColorMaskGreen, currentColorMaskBlue,
+            currentColorMaskAlpha;
+        currentBlend.getColorMaskIndexed(0, &currentColorMaskRed, &currentColorMaskGreen,
+                                         &currentColorMaskBlue, &currentColorMaskAlpha);
+
+        if (currentColorMaskRed != defaultColorMaskRed ||
+            currentColorMaskGreen != defaultColorMaskGreen ||
+            currentColorMaskBlue != defaultColorMaskBlue ||
+            currentColorMaskAlpha != defaultColorMaskAlpha)
         {
-            cap(CaptureColorMask(replayState, true,
-                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskRed),
-                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskGreen),
-                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskBlue),
-                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskAlpha)));
+            cap(CaptureColorMask(replayState, true, gl::ConvertToGLBoolean(currentColorMaskRed),
+                                 gl::ConvertToGLBoolean(currentColorMaskGreen),
+                                 gl::ConvertToGLBoolean(currentColorMaskBlue),
+                                 gl::ConvertToGLBoolean(currentColorMaskAlpha)));
             Capture(&resetCalls[angle::EntryPoint::GLColorMask],
-                    CaptureColorMask(replayState, true,
-                                     gl::ConvertToGLBoolean(currentBlendState.colorMaskRed),
-                                     gl::ConvertToGLBoolean(currentBlendState.colorMaskGreen),
-                                     gl::ConvertToGLBoolean(currentBlendState.colorMaskBlue),
-                                     gl::ConvertToGLBoolean(currentBlendState.colorMaskAlpha)));
+                    CaptureColorMask(replayState, true, gl::ConvertToGLBoolean(currentColorMaskRed),
+                                     gl::ConvertToGLBoolean(currentColorMaskGreen),
+                                     gl::ConvertToGLBoolean(currentColorMaskBlue),
+                                     gl::ConvertToGLBoolean(currentColorMaskAlpha)));
         }
     }
     else
     {
         // Otherwise, we must use EXT_draw_buffers_indexed features to set them independently
-        const gl::BlendStateExt &defaultBlend = replayState.getBlendStateExt();
-        const gl::BlendStateExt &currentBlend = apiState.getBlendStateExt();
-
         for (int idx = 0; idx < currentBlend.getDrawBufferCount(); idx++)
         {
             if (currentBlend.getEnabledMask().test(idx) != defaultBlend.getEnabledMask().test(idx))
@@ -9008,8 +9011,6 @@ void FrameCaptureShared::initalizeTraceStorage()
 void StateResetHelper::setDefaultResetCalls(const gl::Context *context,
                                             angle::EntryPoint entryPoint)
 {
-    static const gl::BlendState kDefaultBlendState;
-
     // Populate default reset calls for entrypoints to support looping to beginning
     switch (entryPoint)
     {
@@ -9040,18 +9041,14 @@ void StateResetHelper::setDefaultResetCalls(const gl::Context *context,
             // non-GLES1 apps as it covers all cases
             if (context->isGLES1())
             {
-                Capture(
-                    &mResetCalls[angle::EntryPoint::GLBlendFunc],
-                    CaptureBlendFunc(context->getState(), true, kDefaultBlendState.sourceBlendRGB,
-                                     kDefaultBlendState.destBlendRGB));
+                Capture(&mResetCalls[angle::EntryPoint::GLBlendFunc],
+                        CaptureBlendFunc(context->getState(), true, GL_ONE, GL_ZERO));
             }
             else
             {
                 Capture(&mResetCalls[angle::EntryPoint::GLBlendFuncSeparate],
-                        CaptureBlendFuncSeparate(
-                            context->getState(), true, kDefaultBlendState.sourceBlendRGB,
-                            kDefaultBlendState.destBlendRGB, kDefaultBlendState.sourceBlendAlpha,
-                            kDefaultBlendState.destBlendAlpha));
+                        CaptureBlendFuncSeparate(context->getState(), true, GL_ONE, GL_ZERO, GL_ONE,
+                                                 GL_ZERO));
             }
             break;
         }
@@ -9062,20 +9059,16 @@ void StateResetHelper::setDefaultResetCalls(const gl::Context *context,
         }
         case angle::EntryPoint::GLBlendEquationSeparate:
         {
-            Capture(&mResetCalls[angle::EntryPoint::GLBlendEquationSeparate],
-                    CaptureBlendEquationSeparate(context->getState(), true,
-                                                 kDefaultBlendState.blendEquationRGB,
-                                                 kDefaultBlendState.blendEquationAlpha));
+            Capture(
+                &mResetCalls[angle::EntryPoint::GLBlendEquationSeparate],
+                CaptureBlendEquationSeparate(context->getState(), true, GL_FUNC_ADD, GL_FUNC_ADD));
             break;
         }
         case angle::EntryPoint::GLColorMask:
         {
-            Capture(&mResetCalls[angle::EntryPoint::GLColorMask],
-                    CaptureColorMask(context->getState(), true,
-                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskRed),
-                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskGreen),
-                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskBlue),
-                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskAlpha)));
+            Capture(
+                &mResetCalls[angle::EntryPoint::GLColorMask],
+                CaptureColorMask(context->getState(), true, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
             break;
         }
         case angle::EntryPoint::GLBlendColor:
@@ -9319,6 +9312,7 @@ void FrameCaptureShared::writeJSON(const gl::Context *context)
     json.addBool("AreClientArraysEnabled", glState.areClientArraysEnabled());
     json.addBool("IsBindGeneratesResourcesEnabled", glState.isBindGeneratesResourceEnabled());
     json.addBool("IsWebGLCompatibilityEnabled", glState.isWebGL());
+    json.addBool("IsHardenedContextEnabled", context->isHardenedContext());
     json.addBool("IsRobustResourceInitEnabled", glState.isRobustResourceInitEnabled());
     json.addBool("AreExtensionsEnabled", context->getExtensionsEnabled());
     json.endGroup();

@@ -24,6 +24,7 @@ import base64
 import dataclasses
 import datetime
 import functools
+import itertools
 import logging
 import pathlib
 import posixpath
@@ -94,6 +95,7 @@ SYNCED_GCS_DEPS = set()
 #   * third_party/SwiftShader
 #   * third_party/vulkan-deps
 #   * third_party/glslang/src
+#   * third_party/perfetto
 #   * third_party/spirv-cross/src
 #   * third_party/spirv-headers/src
 #   * third_party/spirv-tools/src
@@ -120,7 +122,6 @@ SYNCED_REPOS = {
     'third_party/llvm-libc/src': None,
     'third_party/libunwind/src': None,
     'third_party/nasm': None,
-    'third_party/perfetto': None,
     'third_party/re2/src': None,
     'third_party/requests/src': None,
 }
@@ -274,7 +275,7 @@ class ChangedCipd(ChangedDepsEntry):
 
     def setdep_args(self) -> list[str]:
         revisions = [f'{self.name}:{p.setdep_str()}' for p in self.new_packages]
-        return ['--revision'] + revisions
+        return list(itertools.chain.from_iterable(('--revision', r) for r in revisions))
 
     def commit_message_lines(self) -> list[str]:
         return [

@@ -722,10 +722,11 @@ angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
 
     GLuint inputRowPitch = 0;
     GLuint inputDepthPitch = 0;
-    GLuint inputSkipBytes  = 0;  // FIXME: Input skip bytes not handled.
-    ANGLE_CHECK_GL_MATH(contextWgpu, inputInternalFormatInfo.computeRowDepthSkipBytes(
-                                         type, glExtents, unpack, index.usesTex3D(), &inputRowPitch,
-                                         &inputDepthPitch, &inputSkipBytes));
+    GLuint inputSkipBytes  = 0;
+    ANGLE_CHECK_GL_MATH(contextWgpu,
+                        inputInternalFormatInfo.computeRowDepthSkipBytes(
+                            type, glExtents.width, glExtents.height, unpack, index.usesTex3D(),
+                            &inputRowPitch, &inputDepthPitch, &inputSkipBytes));
 
     const angle::Format &actualFormat = webgpuFormat.getActualImageFormat();
     uint32_t outputRowPitch           = roundUp(actualFormat.pixelBytes * glExtents.width,

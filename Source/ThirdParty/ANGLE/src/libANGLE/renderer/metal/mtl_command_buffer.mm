@@ -358,7 +358,7 @@ inline void DrawIndexedInstancedBaseVertexBaseInstanceCmd(id<MTLRenderCommandEnc
     id<MTLBuffer> indexBuffer      = stream->fetch<id<MTLBuffer>>();
     size_t bufferOffset            = stream->fetch<size_t>();
     uint32_t instances             = stream->fetch<uint32_t>();
-    uint32_t baseVertex            = stream->fetch<uint32_t>();
+    int32_t baseVertex             = stream->fetch<int32_t>();
     uint32_t baseInstance          = stream->fetch<uint32_t>();
     [encoder drawIndexedPrimitives:primitiveType
                         indexCount:indexCount
@@ -2244,7 +2244,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstancedBaseVertexBaseIn
     const BufferRef &indexBuffer,
     size_t bufferOffset,
     uint32_t instances,
-    uint32_t baseVertex,
+    int32_t baseVertex,
     uint32_t baseInstance)
 {
     ASSERT(mPipelineStateSet &&

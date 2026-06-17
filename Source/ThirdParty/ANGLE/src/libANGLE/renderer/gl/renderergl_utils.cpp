@@ -2172,9 +2172,10 @@ void GenerateCaps(const FunctionsGL *functions,
     extensions->logicOpANGLE = functions->isAtLeastGL(gl::Version(2, 0));
 
     // GL_EXT_clear_texture
-    extensions->clearTextureEXT = functions->isAtLeastGL(gl::Version(4, 4)) ||
-                                  functions->hasGLESExtension("GL_EXT_clear_texture") ||
-                                  functions->hasGLExtension("GL_ARB_clear_texture");
+    extensions->clearTextureEXT = !features.disableClearTexture.enabled &&
+                                  (functions->isAtLeastGL(gl::Version(4, 4)) ||
+                                   functions->hasGLESExtension("GL_EXT_clear_texture") ||
+                                   functions->hasGLExtension("GL_ARB_clear_texture"));
 
     // GL_QCOM_tiled_rendering
     extensions->tiledRenderingQCOM = !features.disableTiledRendering.enabled &&
@@ -2770,6 +2771,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // IMG GL drivers crash in glClearTexImage on various format/type combinations such as packed
     // types, LUMA and depth stencil.
     ANGLE_FEATURE_CONDITION(features, disableClearTexImageForRobustInit, IsPowerVR(vendor));
+
+    // Disable EXT_clear_texture entirely on IMG as a speculative fix for driver crashes.
+    ANGLE_FEATURE_CONDITION(features, disableClearTexture, IsPowerVR(vendor));
 
     // IMG GL drivers crash while compiling shaders with more than the limit of uniform blocks.
     ANGLE_FEATURE_CONDITION(features, validateMaxPerStageUniformBlocksAtCompileTime,

@@ -76,8 +76,8 @@ class StateManager9 final : angle::NonCopyable
   private:
     // Blend state functions
     void setBlendEnabled(bool enabled);
-    void setBlendColor(const gl::BlendState &blendState, const gl::ColorF &blendColor);
-    void setBlendFuncsEquations(const gl::BlendState &blendState);
+    void setBlendColor(const gl::BlendStateExt &blendState, const gl::ColorF &blendColor);
+    void setBlendFuncsEquations(const gl::BlendStateExt &blendState);
     void setColorMask(const gl::Framebuffer *framebuffer,
                       bool red,
                       bool blue,
@@ -164,7 +164,7 @@ class StateManager9 final : angle::NonCopyable
     bool mCurSampleAlphaToCoverage;
 
     // Currently applied blend state
-    gl::BlendState mCurBlendState;
+    gl::BlendStateExt mCurBlendState;
     gl::ColorF mCurBlendColor;
     unsigned int mCurSampleMask;
     DirtyBits mBlendStateDirtyBits;

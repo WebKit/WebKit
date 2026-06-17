@@ -269,7 +269,7 @@ angle::Result BufferManager::queueBlitCopyDataToBuffer(ContextMtl *contextMtl,
     for (size_t srcOffset = 0; srcOffset < sizeToCopy; srcOffset += kMaxStagingBufferSize)
     {
         size_t subSizeToCopy = std::min(kMaxStagingBufferSize, sizeToCopy - srcOffset);
-        angle::Span<const uint8_t> subSource(src, subSizeToCopy);
+        angle::Span<const uint8_t> subSource(src + srcOffset, subSizeToCopy);
         mtl::BufferRef bufferRef;
         // TODO(anglebug.com/40644888): Here we pass DynamicDraw to get managed buffer for the
         // operation. This should be checked to see if this makes sense.

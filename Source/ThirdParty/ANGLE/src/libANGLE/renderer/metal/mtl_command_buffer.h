@@ -565,7 +565,7 @@ class RenderCommandEncoder final : public CommandEncoder
                                                                      const BufferRef &indexBuffer,
                                                                      size_t bufferOffset,
                                                                      uint32_t instances,
-                                                                     uint32_t baseVertex,
+                                                                     int32_t baseVertex,
                                                                      uint32_t baseInstance);
 
     RenderCommandEncoder &setVisibilityResultMode(MTLVisibilityResultMode mode, size_t offset);

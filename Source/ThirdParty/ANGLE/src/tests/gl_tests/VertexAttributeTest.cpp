@@ -6544,6 +6544,156 @@ TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
     ASSERT_GL_NO_ERROR();
 }
 
+class VertexAttributeResizeDefaultTest : public ANGLETest<>
+{
+  protected:
+    static constexpr char kVS1[] = R"(#version 300 es
+layout(location = 0) in vec4 pos;
+void main() { gl_Position = pos; gl_PointSize = 2.0; })";
+    static constexpr char kVS2[] = R"(#version 300 es
+layout(location = 5) in vec4 pos;
+void main() { gl_Position = pos; gl_PointSize = 2.0; })";
+    static constexpr char kFS1[] = R"(#version 300 es
+precision mediump float;
+out vec4 col;
+void main() { col = vec4(1, 0, 0, 1); })";
+    static constexpr char kFS2[] = R"(#version 300 es
+precision mediump float;
+out vec4 col;
+void main() { col = vec4(0, 1, 0, 1); })";
+
+    VertexAttributeResizeDefaultTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Tests that cached pointers in VertexArrayVk are reset if the DynamicBuffer for default attribute
+// is resized. See crbug.com/502812366.
+TEST_P(VertexAttributeResizeDefaultTest, ResizeAndSwitch)
+{
+    // Program 1: Uses attribute 0 for vertex coords and draws red.
+    ANGLE_GL_PROGRAM(prog1, kVS1, kFS1);
+
+    // Program 2: Uses attribute 5 for vertex coords and draws green.
+    ANGLE_GL_PROGRAM(prog2, kVS2, kFS2);
+
+    GLVertexArray vao1, vao2;
+
+    // Bind vertex array 1 and cache default attribute 0 pointer.
+    glBindVertexArray(vao1);
+    glUseProgram(prog1);
+    glDisableVertexAttribArray(0);
+    glVertexAttrib4f(0, 0, 0, 0, 1);
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::red);
+
+    // Bind vertex array 2 and force a resize of DynamicBuffer by setting large divisor on buffer.
+    glBindVertexArray(vao2);
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    std::vector<float> bufferData(16, 0.0f);
+    for (size_t i = 3; i < bufferData.size(); i += 4)
+    {
+        bufferData[i - 3] = 10.0f / 64.0f;
+        bufferData[i - 2] = 10.0f / 64.0f;
+        bufferData[i]     = 1.0f;
+    }
+    glBufferData(GL_ARRAY_BUFFER, bufferData.size() * sizeof(float), bufferData.data(),
+                 GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribDivisor(0, 300);
+
+    // Draw enough instances to force a large allocation in mStreamedVertexBuffers. This ensures
+    // old BufferHelper is destroyed.
+    glDrawArraysInstanced(GL_POINTS, 0, 1, 2000);
+    ASSERT_GL_NO_ERROR();
+    glFinish();
+
+    // Verify red point was drawn at 74,74.
+    EXPECT_PIXEL_COLOR_EQ(74, 74, GLColor::red);
+
+    // Rebind vertex array 1 which had the cached pointer. The pointer should be reset before it's
+    // used.
+    glBindVertexArray(vao1);
+    glUseProgram(prog2);
+    glVertexAttrib4f(5, -10.0f / 64.0f, -10.0f / 64.0f, 0, 1);
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify green point is drawn
+    EXPECT_PIXEL_COLOR_EQ(54, 54, GLColor::green);
+}
+
+// Tests that cache pointers in VertexArrayVk are reset if the DynamicBuffer for default attribute
+// is resized. This also ensures there are no default active attributes when next draw after
+// switching VAOs happen. See crbug.com/502812366.
+TEST_P(VertexAttributeResizeDefaultTest, ResizeAndSwitchWithNoDefaultAttribsActive)
+{
+    // Program 1: Uses attribute 0 for vertex coords and draws red.
+    ANGLE_GL_PROGRAM(prog1, kVS1, kFS1);
+
+    // Program 2: Uses attribute 5 for vertex coords and draws green.
+    ANGLE_GL_PROGRAM(prog2, kVS2, kFS2);
+
+    GLVertexArray vao1, vao2;
+
+    // Bind vertex array 1 and cache default attribute 0 pointer.
+    glBindVertexArray(vao1);
+    glUseProgram(prog1);
+    glDisableVertexAttribArray(0);
+    glVertexAttrib4f(0, 0, 0, 0, 1);
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::red);
+
+    // Bind vertex array 2 and force a resize of DynamicBuffer by setting large divisor on buffer.
+    glBindVertexArray(vao2);
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    std::vector<float> bufferData(16, 0.0f);
+    for (size_t i = 3; i < bufferData.size(); i += 4)
+    {
+        bufferData[i - 3] = 10.0f / 64.0f;
+        bufferData[i - 2] = 10.0f / 64.0f;
+        bufferData[i]     = 1.0f;
+    }
+    glBufferData(GL_ARRAY_BUFFER, bufferData.size() * sizeof(float), bufferData.data(),
+                 GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribDivisor(0, 300);
+
+    // Draw enough instances to force a large allocation in mStreamedVertexBuffers. This ensures
+    // old BufferHelper is destroyed.
+    glDrawArraysInstanced(GL_POINTS, 0, 1, 2000);
+    ASSERT_GL_NO_ERROR();
+    glFinish();
+    EXPECT_PIXEL_COLOR_EQ(74, 74, GLColor::red);
+
+    // Rebind vertex array 1 and enable attribute 5 before switching to program 2 so there are no
+    // active default attributes. The pointer should be reset before it's used.
+    glBindVertexArray(vao1);
+    glEnableVertexAttribArray(5);
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    std::array<float, 4> array = {-10.0f / 64.0f, -10.0f / 64.0f, 0, 1.0f};
+    glBufferData(GL_ARRAY_BUFFER, array.size() * sizeof(float), array.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glUseProgram(prog2);
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(54, 54, GLColor::green);
+}
+
+ANGLE_INSTANTIATE_TEST_ES3(VertexAttributeResizeDefaultTest);
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeUint8Test);
 ANGLE_INSTANTIATE_TEST_ES3_AND(VertexAttributeUint8Test,
                                ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),

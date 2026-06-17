@@ -1722,9 +1722,17 @@ enum class PLSExpectedStatus
     Any
 };
 
+enum class PLSInterruptedStatus
+{
+    Interrupted,
+    Resumed,
+    Any,
+};
+
 bool ValidatePLSCommon(const Context *context,
                        angle::EntryPoint entryPoint,
-                       PLSExpectedStatus expectedStatus)
+                       PLSExpectedStatus expectedStatus,
+                       PLSInterruptedStatus expectedInterruptedStatus)
 {
     Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
     if (expectedStatus != PLSExpectedStatus::Active)
@@ -1738,11 +1746,19 @@ bool ValidatePLSCommon(const Context *context,
         }
     }
 
-    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
-    // in an interrupted state.
     const PixelLocalStorage *pls = framebuffer->peekPixelLocalStorage();
-    if (pls != nullptr && pls->interruptCount() != 0)
+    const bool plsInterrupted    = pls != nullptr && pls->interruptCount() != 0;
+    if (expectedInterruptedStatus == PLSInterruptedStatus::Interrupted && !plsInterrupted)
     {
+        // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer
+        // is not in an interrupted state.
+        ANGLE_VALIDATION_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION, kPLSNotInterrupted);
+        return false;
+    }
+    else if (expectedInterruptedStatus == PLSInterruptedStatus::Resumed && plsInterrupted)
+    {
+        // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer
+        // is in an interrupted state.
         ANGLE_VALIDATION_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION, kPLSInterrupted);
         return false;
     }
@@ -1772,9 +1788,10 @@ bool ValidatePLSCommon(const Context *context,
 bool ValidatePLSCommon(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLint plane,
-                       PLSExpectedStatus expectedStatus)
+                       PLSExpectedStatus expectedStatus,
+                       PLSInterruptedStatus expectedInterruptedStatus)
 {
-    if (!ValidatePLSCommon(context, entryPoint, expectedStatus))
+    if (!ValidatePLSCommon(context, entryPoint, expectedStatus, expectedInterruptedStatus))
     {
         return false;
     }
@@ -2005,177 +2022,25 @@ bool ValidatePLSStoreOperation(const Context *context, angle::EntryPoint entryPo
             return false;
     }
 }
-}  // namespace
 
-bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
+bool ValidateBeginAndRestorePixelLocalStorageGlobalState(const Context *context,
                                                          angle::EntryPoint entryPoint,
-                                                         GLint plane,
-                                                         GLenum internalformat,
-                                                         GLbitfield usage)
+                                                         GLsizei n)
 {
-    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
-    {
-        return false;
-    }
-
-    // INVALID_ENUM is generated if <internalformat> is not one of the acceptable values in Table
-    // X.2, or NONE.
-    if (internalformat != GL_NONE)
-    {
-        if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
-        {
-            return false;
-        }
-
-        // INVALID_OPERATION is generated if <internalformat> is not NONE and not color-renderable.
-        if (!context->getTextureCaps().get(internalformat).textureAttachment)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kFormatNotRenderable);
-            return false;
-        }
-    }
-
-    if ((usage & kValidPLSUsages) != usage)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSInvalidUsage);
-        return false;
-    }
-
-    return true;
-}
-
-bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
-                                                      angle::EntryPoint entryPoint,
-                                                      GLint plane,
-                                                      TextureID backingtexture,
-                                                      GLint level,
-                                                      GLint layer,
-                                                      GLbitfield usage)
-{
-    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
-    {
-        return false;
-    }
-
-    if (backingtexture.value != 0)
-    {
-        Texture *tex = context->getTexture(backingtexture);
-
-        // INVALID_OPERATION is generated if <backingtexture> is not the name of an existing
-        // immutable texture object, or zero.
-        if (!tex)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureName);
-            return false;
-        }
-        if (!tex->getImmutableFormat())
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureIsNotImmutable);
-            return false;
-        }
-
-        // INVALID_OPERATION is generated if <backingtexture> is nonzero
-        // and not of type GL_TEXTURE_2D, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_CUBE_MAP,
-        // or GL_TEXTURE_CUBE_MAP_ARRAY.
-        size_t textureDepth;
-        if (!ValidatePLSTextureType(context, entryPoint, tex, &textureDepth))
-        {
-            return false;
-        }
-
-        // INVALID_VALUE is generated if <backingtexture> is nonzero and <level> < 0.
-        if (level < 0)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeLevel);
-            return false;
-        }
-
-        // INVALID_VALUE is generated if <backingtexture> is nonzero and <level> >= the
-        // immutable number of mipmap levels in <backingtexture>.
-        if (static_cast<GLuint>(level) >= tex->getImmutableLevels())
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureLevelOutOfRange);
-            return false;
-        }
-
-        // INVALID_VALUE is generated if <backingtexture> is nonzero and <layer> < 0.
-        if (layer < 0)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeLayer);
-            return false;
-        }
-
-        // INVALID_VALUE is generated if <backingtexture> is nonzero and <layer> >= the immutable
-        // number of texture layers in <backingtexture>.
-        if ((size_t)layer >= textureDepth)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureLayerOutOfRange);
-            return false;
-        }
-
-        // INVALID_ENUM is generated if <backingtexture> is nonzero and its internalformat is not
-        // one of the acceptable values in Table X.2.
-        ASSERT(tex->getImmutableFormat());
-        GLenum internalformat = tex->getState().getBaseLevelDesc().format.info->internalFormat;
-        if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
-        {
-            return false;
-        }
-
-        // INVALID_OPERATION is generated if <backingtexture> is nonzero and its internalformat
-        // is not color-renderable.
-        if (!context->getTextureCaps().get(internalformat).textureAttachment)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kFormatNotRenderable);
-            return false;
-        }
-    }
-
-    if ((usage & kValidPLSUsages) != usage)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSInvalidUsage);
-        return false;
-    }
-
-    return true;
-}
-
-bool ValidateFramebufferPixelLocalClearValuefvANGLE(const Context *context,
-                                                    angle::EntryPoint entryPoint,
-                                                    GLint plane,
-                                                    const GLfloat[])
-{
-    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive);
-}
-
-bool ValidateFramebufferPixelLocalClearValueivANGLE(const Context *context,
-                                                    angle::EntryPoint entryPoint,
-                                                    GLint plane,
-                                                    const GLint[])
-{
-    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive);
-}
-
-bool ValidateFramebufferPixelLocalClearValueuivANGLE(const Context *context,
-                                                     angle::EntryPoint entryPoint,
-                                                     GLint plane,
-                                                     const GLuint[])
-{
-    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive);
-}
-
-bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
-                                         angle::EntryPoint entryPoint,
-                                         GLsizei n,
-                                         const GLenum loadops[])
-{
-    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Inactive))
-    {
-        return false;
-    }
-
     const State &state             = context->getState();
     const Framebuffer *framebuffer = state.getDrawFramebuffer();
+
+    // INVALID_VALUE is generated if <n> < 1 or <n> > MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
+    if (n < 1)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSPlanesLessThanOne);
+        return false;
+    }
+    if (n > static_cast<GLsizei>(context->getCaps().maxPixelLocalStoragePlanes))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSPlanesOutOfRange);
+        return false;
+    }
 
     // INVALID_OPERATION is generated if the value of SAMPLE_BUFFERS is 1 (i.e., if rendering to a
     // multisampled framebuffer).
@@ -2236,17 +2101,6 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
             return false;
         }
     }
-    // INVALID_VALUE is generated if <n> < 1 or <n> > MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
-    if (n < 1)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSPlanesLessThanOne);
-        return false;
-    }
-    if (n > static_cast<GLsizei>(context->getCaps().maxPixelLocalStoragePlanes))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSPlanesOutOfRange);
-        return false;
-    }
 
     // INVALID_FRAMEBUFFER_OPERATION is generated if the draw framebuffer has an image attached to
     // any color attachment point on or after:
@@ -2265,26 +2119,12 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
         }
     }
 
-    // INVALID_VALUE is generated if <loadops> is NULL.
-    if (loadops == nullptr)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSLoadOpsNULL);
-        return false;
-    }
-
     const PixelLocalStorage *pls   = framebuffer->peekPixelLocalStorage();
     bool hasTextureBackedPLSPlanes = false;
     Extents textureBackedPLSExtents{};
 
     for (GLsizei i = 0; i < n; ++i)
     {
-        // INVALID_ENUM is generated if <loadops>[0..<n>-1] is not one of the Load Operations
-        // enumerated in Table X.1.
-        if (!ValidatePLSLoadOperation(context, entryPoint, loadops[i]))
-        {
-            return false;
-        }
-
         // INVALID_OPERATION is generated if a pixel local storage plane at index [0..<n>-1] is in a
         // deinitialized state.
         if (pls == nullptr || pls->getPlane(i).isDeinitialized())
@@ -2312,16 +2152,6 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
             else if (textureExtents != textureBackedPLSExtents)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPLSMismatchedBackingTextureSizes);
-                return false;
-            }
-        }
-        else
-        {
-            // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is LOAD_OP_LOAD_ANGLE and the
-            // pixel local storage plane at that same index is memoryless.
-            if (loadops[i] == GL_LOAD_OP_LOAD_ANGLE)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPLSKeepingMemorylessPlane);
                 return false;
             }
         }
@@ -2426,12 +2256,227 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
     return true;
 }
 
+}  // namespace
+
+bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
+                                                         angle::EntryPoint entryPoint,
+                                                         GLint plane,
+                                                         GLenum internalformat,
+                                                         GLbitfield usage)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any,
+                           PLSInterruptedStatus::Resumed))
+    {
+        return false;
+    }
+
+    // INVALID_ENUM is generated if <internalformat> is not one of the acceptable values in Table
+    // X.2, or NONE.
+    if (internalformat != GL_NONE)
+    {
+        if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
+        {
+            return false;
+        }
+
+        // INVALID_OPERATION is generated if <internalformat> is not NONE and not color-renderable.
+        if (!context->getTextureCaps().get(internalformat).textureAttachment)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kFormatNotRenderable);
+            return false;
+        }
+    }
+
+    if ((usage & kValidPLSUsages) != usage)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSInvalidUsage);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
+                                                      angle::EntryPoint entryPoint,
+                                                      GLint plane,
+                                                      TextureID backingtexture,
+                                                      GLint level,
+                                                      GLint layer,
+                                                      GLbitfield usage)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any,
+                           PLSInterruptedStatus::Resumed))
+    {
+        return false;
+    }
+
+    if (backingtexture.value != 0)
+    {
+        Texture *tex = context->getTexture(backingtexture);
+
+        // INVALID_OPERATION is generated if <backingtexture> is not the name of an existing
+        // immutable texture object, or zero.
+        if (!tex)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureName);
+            return false;
+        }
+        if (!tex->getImmutableFormat())
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureIsNotImmutable);
+            return false;
+        }
+
+        // INVALID_OPERATION is generated if <backingtexture> is nonzero
+        // and not of type GL_TEXTURE_2D, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_CUBE_MAP,
+        // or GL_TEXTURE_CUBE_MAP_ARRAY.
+        size_t textureDepth;
+        if (!ValidatePLSTextureType(context, entryPoint, tex, &textureDepth))
+        {
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <level> < 0.
+        if (level < 0)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeLevel);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <level> >= the
+        // immutable number of mipmap levels in <backingtexture>.
+        if (static_cast<GLuint>(level) >= tex->getImmutableLevels())
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureLevelOutOfRange);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <layer> < 0.
+        if (layer < 0)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeLayer);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <layer> >= the immutable
+        // number of texture layers in <backingtexture>.
+        if ((size_t)layer >= textureDepth)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureLayerOutOfRange);
+            return false;
+        }
+
+        // INVALID_ENUM is generated if <backingtexture> is nonzero and its internalformat is not
+        // one of the acceptable values in Table X.2.
+        ASSERT(tex->getImmutableFormat());
+        GLenum internalformat = tex->getState().getBaseLevelDesc().format.info->internalFormat;
+        if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
+        {
+            return false;
+        }
+
+        // INVALID_OPERATION is generated if <backingtexture> is nonzero and its internalformat
+        // is not color-renderable.
+        if (!context->getTextureCaps().get(internalformat).textureAttachment)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kFormatNotRenderable);
+            return false;
+        }
+    }
+
+    if ((usage & kValidPLSUsages) != usage)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSInvalidUsage);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateFramebufferPixelLocalClearValuefvANGLE(const Context *context,
+                                                    angle::EntryPoint entryPoint,
+                                                    GLint plane,
+                                                    const GLfloat[])
+{
+    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive,
+                             PLSInterruptedStatus::Resumed);
+}
+
+bool ValidateFramebufferPixelLocalClearValueivANGLE(const Context *context,
+                                                    angle::EntryPoint entryPoint,
+                                                    GLint plane,
+                                                    const GLint[])
+{
+    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive,
+                             PLSInterruptedStatus::Resumed);
+}
+
+bool ValidateFramebufferPixelLocalClearValueuivANGLE(const Context *context,
+                                                     angle::EntryPoint entryPoint,
+                                                     GLint plane,
+                                                     const GLuint[])
+{
+    return ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive,
+                             PLSInterruptedStatus::Resumed);
+}
+
+bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
+                                         angle::EntryPoint entryPoint,
+                                         GLsizei n,
+                                         const GLenum loadops[])
+{
+    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Inactive,
+                           PLSInterruptedStatus::Resumed))
+    {
+        return false;
+    }
+
+    if (!ValidateBeginAndRestorePixelLocalStorageGlobalState(context, entryPoint, n))
+    {
+        return false;
+    }
+
+    // INVALID_VALUE is generated if <loadops> is NULL.
+    if (loadops == nullptr)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSLoadOpsNULL);
+        return false;
+    }
+
+    const State &state             = context->getState();
+    const Framebuffer *framebuffer = state.getDrawFramebuffer();
+    const PixelLocalStorage *pls   = framebuffer->peekPixelLocalStorage();
+
+    for (GLsizei i = 0; i < n; ++i)
+    {
+        // INVALID_ENUM is generated if <loadops>[0..<n>-1] is not one of the Load Operations
+        // enumerated in Table X.1.
+        if (!ValidatePLSLoadOperation(context, entryPoint, loadops[i]))
+        {
+            return false;
+        }
+
+        const PixelLocalStoragePlane &plane = pls->getPlane(i);
+
+        // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is LOAD_OP_LOAD_ANGLE and the
+        // pixel local storage plane at that same index is memoryless.
+        if (plane.isMemoryless() && loadops[i] == GL_LOAD_OP_LOAD_ANGLE)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPLSKeepingMemorylessPlane);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool ValidateEndPixelLocalStorageANGLE(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        GLsizei n,
                                        const GLenum storeops[])
 {
-    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active))
+    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active,
+                           PLSInterruptedStatus::Resumed))
     {
         return false;
     }
@@ -2464,7 +2509,8 @@ bool ValidateEndPixelLocalStorageImplicitANGLE(const Context *context, angle::En
 
 bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryPoint entryPoint)
 {
-    return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active);
+    return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active,
+                             PLSInterruptedStatus::Resumed);
 }
 
 bool ValidateFramebufferPixelLocalStorageInterruptANGLE(const Context *context,
@@ -2487,19 +2533,27 @@ bool ValidateFramebufferPixelLocalStorageRestoreANGLE(const Context *context,
                                                       angle::EntryPoint entryPoint)
 {
     // This command is ignored when the default framebuffer object name 0 is bound.
-    const Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
     if (context->getState().getDrawFramebuffer()->id().value == 0)
     {
         return true;
     }
 
-    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
-    // not in an interrupted state.
-    const PixelLocalStorage *pls = framebuffer->peekPixelLocalStorage();
-    if (pls == nullptr || pls->interruptCount() == 0)
+    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Any,
+                           PLSInterruptedStatus::Interrupted))
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION, kPLSNotInterrupted);
         return false;
+    }
+
+    // Only validate global state if transitioning from interrupted -> active.
+    const PixelLocalStorage *pls =
+        context->getState().getDrawFramebuffer()->peekPixelLocalStorage();
+    if (pls && pls->interruptCount() == 1 && pls->activePlanesAtInterrupt() >= 1)
+    {
+        GLsizei planes = pls->activePlanesAtInterrupt();
+        if (!ValidateBeginAndRestorePixelLocalStorageGlobalState(context, entryPoint, planes))
+        {
+            return false;
+        }
     }
 
     return true;

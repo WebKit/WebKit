@@ -181,6 +181,11 @@ void Format::initImageFallback(Renderer *renderer, const ImageFormatInitInfo *in
     if (testFunction != HasNonFilterableTextureFormatSupport &&
         !(format.isSnorm() && format.channelCount == 3) && !format.isBlock)
     {
+        if (renderer->getFeatures().forceRenderableFallbackFormat.enabled)
+        {
+            skip = 1;
+        }
+
         // Rendering to RGB SNORM textures is not supported on Android.
         // Compressed textures also need to perform this check.
         testFunction = HasFullTextureFormatSupport;
@@ -211,6 +216,12 @@ size_t Format::getVertexInputAlignment() const
     const angle::Format &bufferFormat = getActualBufferFormat();
     size_t pixelBytes                 = bufferFormat.pixelBytes;
     return mVkBufferFormatIsPacked ? pixelBytes : (pixelBytes / bufferFormat.channelCount);
+}
+
+LoadFunctionMap Format::GetRGB565TextureLoadFunction(const Renderer *renderer)
+{
+    ASSERT(renderer->getFeatures().preferBGR565ToRGB565.enabled);
+    return GetLoadFunctionsMap(GL_RGB565, angle::FormatID::R5G6B5_UNORM);
 }
 
 bool HasEmulatedImageChannels(const angle::Format &intendedFormat,

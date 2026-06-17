@@ -255,7 +255,6 @@ class PrivateState : angle::NonCopyable
 
     // State chunk getters
     const RasterizerState &getRasterizerState() const { return mRasterizer; }
-    const BlendState &getBlendState() const { return mBlendState; }
     const BlendStateExt &getBlendStateExt() const { return mBlendStateExt; }
     const DepthStencilState &getDepthStencilState() const { return mDepthStencil; }
 
@@ -709,7 +708,6 @@ class PrivateState : angle::NonCopyable
 
     bool mNoUnclampedBlendColor;
 
-    BlendState mBlendState;  // Buffer zero blend state legacy struct
     BlendStateExt mBlendStateExt;
     ColorF mBlendColor;
     bool mSampleAlphaToCoverage;
@@ -1372,7 +1370,6 @@ class State : angle::NonCopyable
 
     // Convenience functions that forward to context-private state.
     const RasterizerState &getRasterizerState() const { return mPrivateState.getRasterizerState(); }
-    const BlendState &getBlendState() const { return mPrivateState.getBlendState(); }
     const BlendStateExt &getBlendStateExt() const { return mPrivateState.getBlendStateExt(); }
     const DepthStencilState &getDepthStencilState() const
     {

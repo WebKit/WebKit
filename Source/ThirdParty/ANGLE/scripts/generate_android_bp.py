@@ -1179,7 +1179,6 @@ def main():
         'optimize': {
             'enabled': True,
             'shrink': True,
-            'proguard_compatibility': False,
         },
         'asset_dirs': ['src/android_system_settings/assets',],
     }))
@@ -1212,7 +1211,6 @@ def main():
         'optimize': {
             'enabled': True,
             'shrink': True,
-            'proguard_compatibility': False,
         },
         'asset_dirs': ['src/android_system_settings/assets',],
     }))
