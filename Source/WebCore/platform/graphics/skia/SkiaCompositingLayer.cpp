@@ -587,7 +587,9 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 CoordinatedPlatformLayerBuffer::BufferWasRendered callback;
                 if (m_contentsBuffer)
                     callback = m_contentsBuffer->takeBufferRenderedCallback();
-                context.imageSetBatch.addImage(canvas, image, m_contentsRect, clippingRect, ctm, context.opacity, enableAntialias, WTF::move(callback));
+                context.imageSetBatch.addImage(canvas, image, m_contentsRect, clippingRect, ctm, context.opacity, enableAntialias);
+                if (callback)
+                    callback();
             }
         } else if (m_contentsBuffer)
             m_contentsBuffer->bufferWasRendered();

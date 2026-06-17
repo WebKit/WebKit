@@ -51,21 +51,18 @@
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(RefPtr<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(const Ref<VideoFrameGStreamer>& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
 {
     auto size = frame->presentationSize();
-    return makeUnique<CoordinatedPlatformLayerBufferVideo>(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags);
+    return makeUnique<CoordinatedPlatformLayerBufferVideo>(frame, WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags);
 }
 
-CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(RefPtr<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(const Ref<VideoFrameGStreamer>& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
     : CoordinatedPlatformLayerBuffer(Type::Video, WTF::move(size), flags, nullptr)
+    , m_videoFrame(frame.copyRef())
     , m_videoDecoderPlatform(videoDecoderPlatform)
+    , m_buffer(createBufferIfNeeded(gstGLEnabled))
 {
-    {
-        Locker lock { m_videoFrameLock };
-        m_videoFrame = WTF::move(frame);
-    }
-    m_buffer = createBufferIfNeeded(gstGLEnabled);
 }
 
 CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo() = default;

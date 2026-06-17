@@ -80,9 +80,7 @@ public:
 
     [[nodiscard]] BufferWasRendered takeBufferRenderedCallback()
     {
-        BufferWasRendered result;
-        std::swap(m_bufferWasRenderedCallback, result);
-        return result;
+        return std::exchange(m_bufferWasRenderedCallback, nullptr);
     }
 
 protected:

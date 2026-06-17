@@ -3820,11 +3820,11 @@ void MediaPlayerPrivateGStreamer::isLoopingChanged()
 #endif
 }
 
-RefPtr<VideoFrameGStreamer> MediaPlayerPrivateGStreamer::initializeVideoFrameForRendering()
+Ref<VideoFrameGStreamer> MediaPlayerPrivateGStreamer::initializeVideoFrameForRendering()
 {
     Locker sampleLocker { m_sampleMutex };
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return nullptr;
+
+    RELEASE_ASSERT(GST_IS_SAMPLE(m_sample.get()));
 
     if (!m_videoInfo)
         m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get())));
@@ -3844,11 +3844,7 @@ PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample)
 {
     auto frame = initializeVideoFrameForRendering();
-    if (!frame) [[unlikely]] {
-        GST_WARNING_OBJECT(pipeline(), "Unable to render video frame");
-        return;
-    }
-    auto videoBuffer = CoordinatedPlatformLayerBufferVideo::create(frame.copyRef(), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags);
+    auto videoBuffer = CoordinatedPlatformLayerBufferVideo::create(frame, m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags);
 
     // The GL video appsink reports the sample following a preroll with the same buffer, so don't
     // account for this scenario, this is important for rvfc, ensuring timestamps in metadata
@@ -3857,9 +3853,6 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample
         videoBuffer->setBufferRenderedCallback([weakThis = ThreadSafeWeakPtr { *this }, frame = WTF::move(frame)] {
             RefPtr self = weakThis.get();
             if (!self)
-                return;
-
-            if (!frame) [[unlikely]]
                 return;
 
             self->updateVideoFrameMetadata(frame->metadata());
@@ -3881,10 +3874,6 @@ void MediaPlayerPrivateGStreamer::repaint()
     ASSERT(isMainThread());
 
     auto frame = initializeVideoFrameForRendering();
-    if (!frame) [[unlikely]] {
-        GST_WARNING_OBJECT(pipeline(), "Unable to render video frame");
-        return;
-    }
 
     if (RefPtr player = m_player.get())
         player->repaint();

@@ -50,7 +50,7 @@ public:
     void updatePaintProperties(SkCanvas&, const sk_sp<SkColorFilter>&, const std::optional<SkBlendMode>&);
     void updateSamplingOptions(SkCanvas&, SkSamplingOptions);
     void addImageSet(SkCanvas&, SkiaBackingStore&, const SkMatrix&, float opacity, bool enableAntialias);
-    void addImage(SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const FloatRect& clip, const SkMatrix&, float opacity, bool enableAntialias, Function<void()>&& = [] { });
+    void addImage(SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const FloatRect& clip, const SkMatrix&, float opacity, bool enableAntialias);
     void flushIfNeeded(SkCanvas&);
 
     class ScopedFlush {
@@ -78,7 +78,6 @@ private:
     sk_sp<SkColorFilter> m_colorFilter;
     std::optional<SkBlendMode> m_blendMode;
     SkSamplingOptions m_samplingOptions;
-    Vector<Function<void()>> m_imageDrawnCallbacks;
 };
 
 } // namespace WebCore

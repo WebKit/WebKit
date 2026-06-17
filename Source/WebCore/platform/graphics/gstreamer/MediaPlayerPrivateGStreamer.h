@@ -320,7 +320,7 @@ protected:
     GstElement* createVideoSinkGL();
 #endif
 
-    RefPtr<VideoFrameGStreamer> initializeVideoFrameForRendering();
+    Ref<VideoFrameGStreamer> initializeVideoFrameForRendering();
 
 #if USE(COORDINATED_GRAPHICS)
     void pushTextureToCompositor(bool isDuplicateSample);

@@ -36,8 +36,8 @@ using DMABufFormat = std::pair<uint32_t, uint64_t>;
 
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(RefPtr<VideoFrameGStreamer>&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
-    CoordinatedPlatformLayerBufferVideo(RefPtr<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(const Ref<VideoFrameGStreamer>&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    CoordinatedPlatformLayerBufferVideo(const Ref<VideoFrameGStreamer>&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
