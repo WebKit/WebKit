@@ -7674,9 +7674,19 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     }
 
 #if USE(APPKIT)
-    // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
-    // FIXME: A load going on in one frame shouldn't affect text editing in other frames on the page.
-    protectedPageClient->resetSecureInputState();
+    for (RefPtr ancestor = focusedOrMainFrame(); ancestor; ancestor = ancestor->parentFrame()) {
+        if (ancestor == frame) {
+            protectedPageClient->resetSecureInputState();
+            // FIXME: <rdar://175390893> WebPageProxy::didUpdateEditorState only updates
+            // the secure input state if `isInPasswordField` changed across EditorStates, or
+            // if the select type is `None`. If a frame autofocuses a password input,
+            // `isInPasswordField` may be true for both the old and new state and the selection
+            // type may be `None` and thus fail to update the state even though we just reset it.
+            // We force a reevaluation as a workaround.
+            internals().forceNeedsSecureInputReevaluation = true;
+            break;
+        }
+    }
 #endif
 
     frame->didCommitLoad(mimeType, certificateInfo, containsPluginDocument);
