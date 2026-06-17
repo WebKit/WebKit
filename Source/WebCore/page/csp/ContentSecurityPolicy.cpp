@@ -119,7 +119,13 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecution
     , m_protectedURL { WTF::move(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());
-    updateSourceSelf(*scriptExecutionContext.protectedSecurityOrigin());
+    // CSP3 2.2.2: a policy's self-origin is the response URL's origin. Apply when the runtime
+    // origin is opaque and the URL is http(s); local schemes inherit via Document::initSecurityContext.
+    bool hasOpaqueOriginWithResponseURL = scriptExecutionContext.securityOrigin()->isOpaque() && m_protectedURL.protocolIsInHTTPFamily();
+    if (hasOpaqueOriginWithResponseURL)
+        updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
+    else
+        updateSourceSelf(*scriptExecutionContext.protectedSecurityOrigin());
     // FIXME: handle the non-document case.
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext)) {
         if (auto* page = document->page())

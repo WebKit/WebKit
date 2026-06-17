@@ -550,6 +550,7 @@ imported/w3c/web-platform-tests/clear-site-data/executionContexts.sub.html [ Fai
 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/window-open-local-after-network-scheme.sub.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/sandbox/iframe-self-after-redirect.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-font-loading/nonexistent-file-url.html [ Failure ]
