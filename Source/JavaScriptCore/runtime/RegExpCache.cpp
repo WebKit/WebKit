@@ -57,6 +57,9 @@ RegExp* RegExpCache::lookupOrCreate(VM& vm, const String& patternString, OptionS
     vm.addRegExpToTrace(regExp);
 #endif
 
+    if (!regExp->isValid())
+        return regExp;
+
     {
         Locker locker { m_lock };
         weakAdd(m_weakCache, key, Weak<RegExp>(regExp, this));

@@ -716,6 +716,9 @@ private:
             if (!regExp)
                 break;
 
+            if (!regExp->isValid())
+                break;
+
             m_node->convertToNewRegExp(m_graph.freezeStrong(regExp), m_insertionSet.insertConstantForUse(m_nodeIndex, m_node->origin, jsNumber(0), UntypedUse));
             m_changed = true;
             break;
