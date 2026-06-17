@@ -476,7 +476,11 @@ public:
 
     // SIMD
     bool usesSIMD() { return m_info.usesSIMD(m_functionIndex); }
-    void notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
+    void notifyFunctionUsesSIMD()
+    {
+        ASSERT(m_info.usesSIMD(m_functionIndex));
+        m_proc.setUsesSIMD();
+    }
     WARN_UNUSED_RETURN PartialResult addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
     WARN_UNUSED_RETURN PartialResult addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
     WARN_UNUSED_RETURN PartialResult addSIMDSplat(SIMDLane, ExpressionType scalar, ExpressionType& result);
