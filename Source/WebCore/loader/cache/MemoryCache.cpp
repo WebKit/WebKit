@@ -570,7 +570,7 @@ void MemoryCache::removeResourcesWithOrigin(const ClientOrigin& origin)
     removeResourcesWithOrigin(origin.clientOrigin.securityOrigin(), cachePartition);
 }
 
-void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const HashSet<Ref<SecurityOrigin>>& origins)
+void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const SecurityOriginSet& origins)
 {
     RELEASE_ASSERT(isMainThread());
     auto* resourceMap = sessionResourceMap(sessionID);
@@ -615,11 +615,11 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
     }
 }
 
-HashSet<Ref<SecurityOrigin>> MemoryCache::originsWithCache(PAL::SessionID sessionID) const
+MemoryCache::SecurityOriginSet MemoryCache::originsWithCache(PAL::SessionID sessionID) const
 {
     RELEASE_ASSERT(isMainThread());
 
-    HashSet<Ref<SecurityOrigin>> origins;
+    SecurityOriginSet origins;
 
     auto it = m_sessionResources.find(sessionID);
     if (it != m_sessionResources.end()) {

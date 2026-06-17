@@ -1683,8 +1683,11 @@ void WebProcess::deleteWebsiteDataForOrigin(OptionSet<WebsiteDataType> websiteDa
     ASSERT(websiteDataTypes.contains(WebsiteDataType::MemoryCache)); // This would be useless IPC otherwise.
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         MemoryCache::singleton().removeResourcesWithOrigin(origin);
-        if (origin.topOrigin == origin.clientOrigin)
-            BackForwardCache::singleton().clearEntriesForOrigins({ Ref { origin.clientOrigin.securityOrigin() } });
+        if (origin.topOrigin == origin.clientOrigin) {
+            HashSet<Ref<WebCore::SecurityOrigin>, WebCore::SecurityOriginHash> origins;
+            origins.add(origin.clientOrigin.securityOrigin());
+            BackForwardCache::singleton().clearEntriesForOrigins(origins);
+        }
     }
     completionHandler();
 }
@@ -1701,7 +1704,7 @@ void WebProcess::reloadExecutionContextsForOrigin(const ClientOrigin& origin, st
 void WebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& completionHandler)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
-        HashSet<Ref<SecurityOrigin>> origins;
+        HashSet<Ref<SecurityOrigin>, WebCore::SecurityOriginHash> origins;
         for (auto& originData : originDatas)
             origins.add(originData.securityOrigin());
 

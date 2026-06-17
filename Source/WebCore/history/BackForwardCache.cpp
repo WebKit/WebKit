@@ -725,11 +725,20 @@ void BackForwardCache::prune(PruningReason pruningReason)
     }
 }
 
-void BackForwardCache::clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>& origins)
+void BackForwardCache::clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>, SecurityOriginHash>& origins)
 {
     m_cachedPageMap.removeIf([&](auto& pair) -> bool {
         if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value)) {
-            if (origins.contains(SecurityOrigin::create((*cachedPage)->page().mainFrameURL()))) {
+            Ref cachedOrigin = SecurityOrigin::create((*cachedPage)->page().mainFrameURL());
+            bool found = origins.contains(cachedOrigin);
+#if ASSERT_ENABLED
+            // rdar://179387089
+            if (!found) {
+                for (auto& o : origins)
+                    ASSERT(!o->isSameSchemeHostPort(cachedOrigin));
+            }
+#endif
+            if (found) {
                 RELEASE_LOG(BackForwardCache, "BackForwardCache::clearEntriesForOrigins removing item: %s, size: %u / %u", pair.key.toString().utf8().data(), pageCount() - 1, maxSize());
                 notifyClientOfEviction(protect(cachedPage->get()));
                 m_items.remove(pair.key);

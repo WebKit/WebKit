@@ -161,13 +161,13 @@ public:
     void resourceAccessed(CachedResource&);
     bool NODELETE inLiveDecodedResourcesList(CachedResource&) const;
 
-    using SecurityOriginSet = HashSet<Ref<SecurityOrigin>>;
+    using SecurityOriginSet = HashSet<Ref<SecurityOrigin>, SecurityOriginHash>;
     WEBCORE_EXPORT void removeResourcesWithOrigin(const SecurityOrigin&);
     void removeResourcesWithOrigin(const SecurityOrigin&, const String& cachePartition);
     WEBCORE_EXPORT void removeResourcesWithOrigin(const ClientOrigin&);
-    WEBCORE_EXPORT void removeResourcesWithOrigins(PAL::SessionID, const HashSet<Ref<SecurityOrigin>>&);
+    WEBCORE_EXPORT void removeResourcesWithOrigins(PAL::SessionID, const SecurityOriginSet&);
     WEBCORE_EXPORT void getOriginsWithCache(SecurityOriginSet& origins);
-    WEBCORE_EXPORT HashSet<Ref<SecurityOrigin>> originsWithCache(PAL::SessionID) const;
+    WEBCORE_EXPORT SecurityOriginSet originsWithCache(PAL::SessionID) const;
 
     // pruneDead*() - Flush decoded and encoded data from resources not referenced by Web pages.
     // pruneLive*() - Flush decoded data from resources still referenced by Web pages.

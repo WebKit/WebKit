@@ -28,6 +28,7 @@
 #include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/SecurityOriginHash.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
@@ -68,7 +69,7 @@ public:
 
     WEBCORE_EXPORT void removeAllItemsForPage(Page&);
 
-    WEBCORE_EXPORT void clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>&);
+    WEBCORE_EXPORT void clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>, SecurityOriginHash>&);
 
     unsigned pageCount() const { return m_items.size(); }
     WEBCORE_EXPORT unsigned frameCount() const;
