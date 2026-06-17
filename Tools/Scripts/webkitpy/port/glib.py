@@ -143,7 +143,6 @@ class GLibPort(Port):
             # disable color output, making -stderr files more human-readable.
             environment['GST_DEBUG_NO_COLOR'] = '1'
 
-        environment['WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS'] = '1'
         environment['WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING'] = '1'
 
         # Match our WebRTC stats cache expiration time with LibWebRTC, since some tests actually expect this.
