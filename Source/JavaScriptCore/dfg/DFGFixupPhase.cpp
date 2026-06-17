@@ -2788,6 +2788,11 @@ private:
             break;
         }
 
+        case DebugProbe: {
+            fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case GetArrayLength: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             // We don't know how to handle generic and we only emit this in the Parser when we have checked the value is an Array/TypedArray.

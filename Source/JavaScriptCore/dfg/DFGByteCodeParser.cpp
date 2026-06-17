@@ -4141,6 +4141,18 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case DebugProbeIntrinsic: {
+            RELEASE_ASSERT(argumentCountIncludingThis >= 3, "$vm.probe requires an id and a value: $vm.probe(id, x)");
+            Node* idNode = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            FrozenValue* idConstant = idNode->hasConstant() ? idNode->constant() : nullptr;
+            JSValue idValue = idConstant ? idConstant->value() : JSValue();
+            RELEASE_ASSERT(idValue && idValue.isString(), "$vm.probe id must be a constant string");
+            insertChecks();
+            Node* value = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            setResult(addToGraph(DebugProbe, OpInfo(idConstant), value));
+            return CallOptimizationResult::Inlined;
+        }
+
         case JSMapGetIntrinsic: {
             if (argumentCountIncludingThis < 2 || !is64Bit())
                 return CallOptimizationResult::DidNothing;
@@ -12081,11 +12093,10 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         auto prediction = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
 
         {
-            // FIXME: doneIndex is -1 so it seems like we should be able to do CompareBelow(index, length). See: https://bugs.webkit.org/show_bug.cgi?id=210927
+            // len >= 0, so -1 > (unsigned) length
+            static_assert(JSArrayIterator::doneIndex == -1);
             Node* iterator = get(bytecode.m_iterator);
-            Node* doneIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
             Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
-            Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
             Node* iteratedObject = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), iterator);
             Node* butterfly = addToGraph(GetButterfly, iteratedObject);
@@ -12093,9 +12104,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             // GetArrayLength is pessimized prior to fixup.
             m_exitOK = true;
             addToGraph(ExitOK);
-            Node* isOutOfBounds = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
-
-            isDone = addToGraph(ArithBitOr, isDone, isOutOfBounds);
+            Node* isOutOfBounds = addToGraph(CompareBelowEq, Edge(length, Int32Use), Edge(index, Int32Use));
             // The above compare doesn't produce effects since we know the values are booleans. We don't set UseKinds because Fixup likes to add edges.
             m_exitOK = true;
             addToGraph(ExitOK);
@@ -12103,7 +12112,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             BranchData* branchData = m_graph.m_branchData.add();
             branchData->taken = BranchTarget(isDoneBlock);
             branchData->notTaken = BranchTarget(doLoadBlock);
-            addToGraph(Branch, OpInfo(branchData), isDone);
+            addToGraph(Branch, OpInfo(branchData), isOutOfBounds);
         }
 
         {

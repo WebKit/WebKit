@@ -38,6 +38,8 @@ class Graph;
 
 bool performIntegerRangeOptimization(Graph&);
 
+bool performDebugProbeElimination(Graph&);
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

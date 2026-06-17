@@ -28,13 +28,18 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGBasicBlockInlines.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGBlockSet.h"
+#include "DFGDominators.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include "VMInspector.h"
+#include <wtf/JSONValues.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {
 
@@ -54,7 +59,7 @@ int64_t NODELETE clampedSumImpl(int left, Args... args)
 }
 
 template<typename... Args>
-int clampedSum(Args... args)
+int NODELETE clampedSum(Args... args)
 {
     int64_t result = clampedSumImpl(args...);
     return static_cast<int>(std::min(
@@ -587,7 +592,7 @@ public:
         return Relationship();
     }
     
-    int minValueOfLeft() const
+    int NODELETE minValueOfLeft() const
     {
         if (m_left->isInt32Constant())
             return m_left->asInt32();
@@ -605,7 +610,7 @@ public:
         return clampedSum(minRightValue, m_offset);
     }
     
-    int maxValueOfLeft() const
+    int NODELETE maxValueOfLeft() const
     {
         if (m_left->isInt32Constant())
             return m_left->asInt32();
@@ -1019,39 +1024,144 @@ public:
     {
     }
 
-    std::optional<std::tuple<int32_t, int32_t>> rangeFor(Node* node)
+    std::tuple<int32_t, int32_t> NODELETE rangeFor(Node* node)
     {
         if (node->isInt32Constant()) {
             int32_t value = node->asInt32();
             return std::tuple { value, value };
         }
 
-        auto iter = m_relationships.find(node);
-        if (iter == m_relationships.end())
-            return std::nullopt;
-
         int32_t minValue = std::numeric_limits<int32_t>::min();
         int32_t maxValue = std::numeric_limits<int32_t>::max();
+
+        auto iter = m_relationships.find(node);
+        if (iter == m_relationships.end())
+            return std::tuple { minValue, maxValue };
+
         for (Relationship relationship : iter->value) {
+            // See note in provablyGreaterThan
+            if (relationship.left().kind() != NodeFlowProjection::Primary
+                || relationship.right().kind() != NodeFlowProjection::Primary)
+                continue;
             minValue = std::max(minValue, relationship.minValueOfLeft());
             maxValue = std::min(maxValue, relationship.maxValueOfLeft());
         }
         return std::tuple { minValue, maxValue };
     }
 
-    // Be careful: do not use this to infer a relationship that will not be pruned later,
-    // otherwise it might break the inductive reasoning around phis/upsilons.
-    // For example, if lhs > 0 => node(lhs) > 0, you can't add that relationship. Pruning
-    // relationships involving lhs won't prune this new relationship.
+    BranchDirection NODELETE tryProveBranchDirection(Node* branch)
+    {
+        ASSERT(branch->op() == Branch);
+
+        bool invert = false;
+        Node* condition = branch->child1().node();
+        if (condition->op() == LogicalNot) {
+            invert = true;
+            condition = condition->child1().node();
+        }
+
+        auto applyInvert = [&](BranchDirection direction) -> BranchDirection {
+            if (!invert)
+                return direction;
+            if (direction == TakeTrue)
+                return TakeFalse;
+            if (direction == TakeFalse)
+                return TakeTrue;
+            return direction;
+        };
+
+        // Direct boolean test on an int32: true iff != 0.
+        if (!invert && branch->child1().useKind() == Int32Use) {
+            auto [lo, hi] = rangeFor(branch->child1().node());
+            if (lo > 0 || hi < 0)
+                return TakeTrue;
+            if (!lo && !hi)
+                return TakeFalse;
+            return InvalidBranchDirection;
+        }
+
+        // Comparison with int32 children: fold from operand ranges.
+        if (!condition->isBinaryUseKind(Int32Use))
+            return InvalidBranchDirection;
+
+        auto [lLo, lHi] = rangeFor(condition->child1().node());
+        auto [rLo, rHi] = rangeFor(condition->child2().node());
+
+        switch (condition->op()) {
+        case CompareLess:
+            if (lHi < rLo)
+                return applyInvert(TakeTrue);
+            if (lLo >= rHi)
+                return applyInvert(TakeFalse);
+            break;
+        case CompareLessEq:
+            if (lHi <= rLo)
+                return applyInvert(TakeTrue);
+            if (lLo > rHi)
+                return applyInvert(TakeFalse);
+            break;
+        case CompareGreater:
+            if (lLo > rHi)
+                return applyInvert(TakeTrue);
+            if (lHi <= rLo)
+                return applyInvert(TakeFalse);
+            break;
+        case CompareGreaterEq:
+            if (lLo >= rHi)
+                return applyInvert(TakeTrue);
+            if (lHi < rLo)
+                return applyInvert(TakeFalse);
+            break;
+        case CompareEq:
+        case CompareStrictEq:
+            if (lHi < rLo || rHi < lLo)
+                return applyInvert(TakeFalse);
+            if (lLo == lHi && rLo == rHi && lLo == rLo)
+                return applyInvert(TakeTrue);
+            break;
+        default:
+            break;
+        }
+        return InvalidBranchDirection;
+    }
+
     bool NODELETE provablyGreaterThan(Node* lhs, Node* rhs, int32_t minOffset = 0)
     {
         auto iter = m_relationships.find(lhs);
         if (iter != m_relationships.end()) {
             for (Relationship relationship : iter->value) {
+                // This is important because Shadows are not in ssa form, so a fact about a shadow can change
+                // between when it was added and now. kill() fixes this, but won't apply to derived facts.
+                // So it is incorrect to expand relationships involving shadows.
+                if (relationship.left().kind() != NodeFlowProjection::Primary
+                    || relationship.right().kind() != NodeFlowProjection::Primary)
+                    continue;
                 if (relationship.right() == rhs
                     && relationship.offset() >= minOffset
                     && relationship.kind() == Relationship::GreaterThan)
                         return true;
+                if (rhs->isInt32Constant() && relationship.minValueOfLeft() > rhs->asInt32() + minOffset)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    bool NODELETE provablyLessThan(Node* lhs, Node* rhs, int32_t maxOffset)
+    {
+        auto iter = m_relationships.find(lhs);
+        if (iter != m_relationships.end()) {
+            for (Relationship relationship : iter->value) {
+                // See note above in provablyGreaterThan
+                if (relationship.left().kind() != NodeFlowProjection::Primary
+                    || relationship.right().kind() != NodeFlowProjection::Primary)
+                    continue;
+                if (relationship.right() == rhs
+                    && relationship.offset() <= maxOffset
+                    && relationship.kind() == Relationship::LessThan)
+                        return true;
+                if (rhs->isInt32Constant() && relationship.maxValueOfLeft() < rhs->asInt32() + maxOffset)
+                    return true;
             }
         }
         return false;
@@ -1065,6 +1175,252 @@ public:
     bool NODELETE provablyNonNegative(Node* lhs)
     {
         return provablyGreaterThanOrEqual(lhs, m_zero);
+    }
+
+    // @lhs + addend will not overflow if we can find (@lhs < m_zero + c) such that (c + addend) <= int32_max.
+    bool NODELETE representableWithInt32(Node* lhs, int32_t addend)
+    {
+        auto [_, maxValue] = rangeFor(lhs);
+        return static_cast<int64_t>(maxValue) + static_cast<int64_t>(addend) <= std::numeric_limits<int32_t>::max();
+    }
+
+    // In general, we don't want to store these extra relationships unless we know we might need them.
+    // This allows us to see through one level of indirect relationships.
+    void expandedRangeFor(Node* lhs)
+    {
+        int64_t min = std::numeric_limits<int32_t>::min();
+        int64_t max = std::numeric_limits<int32_t>::max();
+        auto iter = m_relationships.find(lhs);
+        if (iter != m_relationships.end()) {
+            for (Relationship relationship : iter->value) {
+                // See note above in provablyGreaterThan
+                if (relationship.left().kind() != NodeFlowProjection::Primary
+                    || relationship.right().kind() != NodeFlowProjection::Primary)
+                    continue;
+                auto [rmin, rmax] = rangeFor(relationship.right().node());
+                int64_t offset = relationship.offset();
+                if (relationship.kind() == Relationship::LessThan)
+                    max = std::min(max, rmax + offset);
+                if (relationship.kind() == Relationship::Equal)
+                    max = std::min(max, rmax + offset + 1);
+                if (relationship.kind() == Relationship::GreaterThan)
+                    min = std::max(min, rmin + offset);
+                if (relationship.kind() == Relationship::Equal)
+                    min = std::max(min, rmin + offset - 1);
+            }
+        }
+
+        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Expanded range for ", lhs, " is ", min, " to ", max);
+        if (max < std::numeric_limits<int32_t>::max())
+            setRelationship(Relationship::safeCreate(lhs, m_zero, Relationship::LessThan, max));
+        if (min > std::numeric_limits<int32_t>::min())
+            setRelationship(Relationship::safeCreate(lhs, m_zero, Relationship::GreaterThan, min));
+    }
+
+    // See computeRelevantNodes.
+    bool isRelevant(NodeFlowProjection node)
+    {
+        return m_relevantNodes.contains(node.node());
+    }
+
+    bool isRelevantNonConstant(NodeFlowProjection node)
+    {
+        return !node->isInt32Constant() && isRelevant(node);
+    }
+
+    void computeRelevantNodes()
+    {
+        m_relevantNodes.clear();
+        m_phiUpsilons.clear();
+
+        Vector<Node*> worklist;
+        auto markSeed = [&] (Node* node) {
+            if (node && m_relevantNodes.add(node).isNewEntry)
+                worklist.append(node);
+        };
+
+        // A Phi has no operand edges; its inputs reach it only through Upsilons
+        // (see the Upsilon/Phi cases in executeNode). Index them so the backward
+        // closure can walk a loop's induction variable through its Phi.
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                if (node->op() == Upsilon)
+                    m_phiUpsilons.add(node->phi(), Vector<Node*>()).iterator->value.append(node);
+            }
+        }
+
+        bool testing = Options::useTestingHelpers();
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                switch (node->op()) {
+                case ArithAbs:
+                    if (node->child1().useKind() == Int32Use) {
+                        markSeed(node);
+                        markSeed(node->child1().node());
+                    }
+                    break;
+                case ArithAdd:
+                case ArithSub:
+                    if (node->isBinaryUseKind(Int32Use) && node->arithMode() == Arith::CheckOverflow) {
+                        markSeed(node);
+                        markSeed(node->child1().node());
+                        markSeed(node->child2().node());
+                    }
+                    break;
+                case ArithMul:
+                    if (node->isBinaryUseKind(Int32Use)
+                        && (node->arithMode() == Arith::CheckOverflow
+                            || node->arithMode() == Arith::CheckOverflowAndNegativeZero)) {
+                        markSeed(node);
+                        markSeed(node->child1().node());
+                        markSeed(node->child2().node());
+                    }
+                    break;
+                case CheckInBounds:
+                    markSeed(node);
+                    markSeed(node->child1().node());
+                    markSeed(node->child2().node());
+                    break;
+                case EnumeratorGetByVal:
+                case GetByVal:
+                    if (node->arrayMode().type() == Array::Undecided) {
+                        markSeed(node);
+                        markSeed(m_graph.varArgChild(node, 1).node());
+                    }
+                    break;
+                case DebugProbe:
+                    if (testing) {
+                        markSeed(node);
+                        if (node->child1())
+                            markSeed(node->child1().node());
+                    }
+                    break;
+                case PutInternalField:
+                    // A for-of / iterator index is round-tripped through an internal
+                    // field. The stored value carries the bound (e.g. nextIndex >= 1)
+                    // that the loaded index — a CheckInBounds operand — inherits, but it
+                    // is connected only through this heap store, not a dataflow edge the
+                    // backward closure can follow. Seed it so its bound survives.
+                    markSeed(node->child2().node());
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            // Seed the operands of any Int32 comparison feeding a Branch. This must
+            // cover both the transform-pass branch fold and the analysis-pass
+            // taken/not-taken extraction (CompareBelow/CompareBelowEq also read
+            // provablyNonNegative on an operand to emit the unsigned lower bound that
+            // a later bounds-check elision pattern-matches), so we scan terminals
+            // directly rather than relying on the transform switch.
+            Node* terminal = block->terminal();
+            if (terminal && terminal->op() == Branch) {
+                if (terminal->child1()->op() == LogicalNot)
+                    terminal = terminal->child1().node();
+                Node* condition = terminal->child1().node();
+
+                auto seedCompare = [&] (Node* compare) {
+                    if (!compare || !compare->isBinaryUseKind(Int32Use))
+                        return;
+                    switch (compare->op()) {
+                    case CompareEq:
+                    case CompareStrictEq:
+                    case CompareLess:
+                    case CompareLessEq:
+                    case CompareGreater:
+                    case CompareGreaterEq:
+                    case CompareBelow:
+                    case CompareBelowEq:
+                        markSeed(compare->child1().node());
+                        markSeed(compare->child2().node());
+                        break;
+                    default:
+                        break;
+                    }
+                };
+
+                if (terminal->child1().useKind() == Int32Use) {
+                    markSeed(condition);
+                    if ((condition->op() == ArithBitAnd || condition->op() == ArithBitOr)
+                        && condition->isBinaryUseKind(Int32Use)
+                        && condition->child1()->op() == BooleanToNumber
+                        && condition->child2()->op() == BooleanToNumber) {
+                        seedCompare(condition->child1()->child1().node());
+                        seedCompare(condition->child2()->child1().node());
+                    }
+                } else
+                    seedCompare(condition);
+            }
+        }
+
+        // Closure: follow only Int32-result children reached through Int32 use edges
+        // (plus the Phi<-Upsilon equivalence). This halts at the Int32->Double
+        // boundary, which is what excludes the float/byte chain.
+        auto followChild = [&] (Edge& edge) -> bool {
+            Node* child = edge.node();
+            return child && child->hasInt32Result() && isInt32(edge.useKind());
+        };
+
+        auto drainBackward = [&] {
+            while (!worklist.isEmpty()) {
+                Node* node = worklist.takeLast();
+                if (node->op() == Phi) {
+                    auto iter = m_phiUpsilons.find(node);
+                    if (iter != m_phiUpsilons.end()) {
+                        for (Node* upsilon : iter->value) {
+                            // The Upsilon->Phi edge carries a JSValue (UntypedUse), so
+                            // gate on the input's result type rather than the edge use
+                            // kind; an Int32-result input feeds this Phi's value.
+                            Node* input = upsilon->child1().node();
+                            if (input && input->hasInt32Result())
+                                markSeed(input);
+                        }
+                    }
+                    continue;
+                }
+                m_graph.doToChildren(node, [&] (Edge& edge) {
+                    if (followChild(edge))
+                        markSeed(edge.node());
+                });
+            }
+        };
+
+        // The bound on an index also rides forward through its arithmetic successors:
+        // an iterator's nextIndex = index + 1 carries the >= 0 fact that the loaded
+        // index inherits. So an Int32 add/sub of a relevant operand is itself relevant.
+        // (Byte-masked values feed only Double arithmetic, never an Int32 add, so this
+        // does not resurrect the web.) Alternate backward closure and this forward
+        // step until the relevant set is stable.
+        bool changed = true;
+        while (changed) {
+            drainBackward();
+            changed = false;
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                for (Node* node : *block) {
+                    if ((node->op() == ArithAdd || node->op() == ArithSub)
+                        && node->isBinaryUseKind(Int32Use)
+                        && !m_relevantNodes.contains(node)
+                        && (m_relevantNodes.contains(node->child1().node())
+                            || m_relevantNodes.contains(node->child2().node()))) {
+                        markSeed(node);
+                        changed = true;
+                    }
+                    // An Int32 value feeding a Phi makes that Phi (and thus the loop
+                    // variable it merges, e.g. an iterator's internal index) relevant,
+                    // so the bound established at the loop entry survives for the
+                    // induction reasoning. drainBackward then pulls in the Phi's other
+                    // inputs (the entry value).
+                    if (node->op() == Upsilon
+                        && node->child1().node()->hasInt32Result()
+                        && m_relevantNodes.contains(node->child1().node())
+                        && !m_relevantNodes.contains(node->phi())) {
+                        markSeed(node->phi());
+                        changed = true;
+                    }
+                }
+            }
+        }
     }
 
     bool run()
@@ -1082,7 +1438,9 @@ public:
             m_zero = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(0));
             m_insertionSet.execute(m_graph.block(0));
         }
-        
+
+        computeRelevantNodes();
+
         dataLogIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Graph before integer range optimization:\n", m_graph);
         
         // This performs a fixpoint over the blocks in reverse post-order. Logically, we
@@ -1196,35 +1554,111 @@ public:
                         terminal = terminal->child1().node();
                         invert = true;
                     }
-                    
-                    auto extractRelationship = [&](Node* compare) -> Relationship {
-                        // FIXME: Handle CompareBelow and CompareBelowEq.
+
+                    auto extractTakenRelationship = [&](Node* compare) -> Vector<Relationship, 1> {
                         if (!compare || !compare->isBinaryUseKind(Int32Use))
-                            return Relationship();
+                            return { };
                         switch (compare->op()) {
                         case CompareEq:
                         case CompareStrictEq:
-                            return Relationship::safeCreate(
+                            return { Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::Equal, 0);
+                                Relationship::Equal) };
                         case CompareLess:
-                            return Relationship::safeCreate(
+                            return { Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::LessThan, 0);
+                                Relationship::LessThan) };
                         case CompareLessEq:
-                            return Relationship::safeCreate(
+                            return { Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::LessThan, 1);
+                                Relationship::LessThan, 1) };
                         case CompareGreater:
-                            return Relationship::safeCreate(
+                            return { Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::GreaterThan, 0);
+                                Relationship::GreaterThan) };
                         case CompareGreaterEq:
-                            return Relationship::safeCreate(
+                            return { Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::GreaterThan, -1);
+                                Relationship::GreaterThan, -1) };
+                        case CompareBelow:
+                            // a <u b with 0 <=s b implies 0 <=s a <s b. Emit both halves
+                            // so bounds-check elision doesn't have to wait for IRO's
+                            // fixpoint to derive the lower bound through the shadow-Phi
+                            // of the surrounding loop, which is not always reliable.
+                            if (provablyNonNegative(compare->child2().node())) {
+                                return {
+                                    Relationship::safeCreate(
+                                        compare->child1().node(), compare->child2().node(),
+                                        Relationship::LessThan),
+                                    Relationship::safeCreate(
+                                        compare->child1().node(), m_zero,
+                                        Relationship::GreaterThan, -1)
+                                };
+                            }
+                            return { };
+                        case CompareBelowEq:
+                            // a <=u b with 0 <=s b implies 0 <=s a <=s b.
+                            if (provablyNonNegative(compare->child2().node())) {
+                                return {
+                                    Relationship::safeCreate(
+                                        compare->child1().node(), compare->child2().node(),
+                                        Relationship::LessThan, 1),
+                                    Relationship::safeCreate(
+                                        compare->child1().node(), m_zero,
+                                        Relationship::GreaterThan, -1)
+                                };
+                            }
+                            return { };
                         default:
-                            return Relationship();
+                            return { };
+                        }
+                    };
+
+                    auto extractNotTakenRelationship = [&](Node* compare) -> Vector<Relationship, 1> {
+                        if (!compare || !compare->isBinaryUseKind(Int32Use))
+                            return { };
+                        switch (compare->op()) {
+                        case CompareEq:
+                        case CompareStrictEq:
+                        case CompareLess:
+                        case CompareLessEq:
+                        case CompareGreater:
+                        case CompareGreaterEq: {
+                            Vector<Relationship, 1> taken = extractTakenRelationship(compare);
+                            if (taken.isEmpty())
+                                return { };
+                            return { taken[0].inverse() };
+                        }
+                        case CompareBelow:
+                            // !(a <u b) with 0 <=s a implies 0 <=s b <=s a:
+                            // if b were negative, (b>>>0) would be >= 2^31 and
+                            // > (a>>>0), so a <u b would hold.
+                            if (provablyNonNegative(compare->child1().node())) {
+                                return {
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), compare->child1().node(),
+                                        Relationship::LessThan, 1),
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), m_zero,
+                                        Relationship::GreaterThan, -1)
+                                };
+                            }
+                            return { };
+                        case CompareBelowEq:
+                            // !(a <=u b) with 0 <=s a implies 0 <=s b <s a.
+                            if (provablyNonNegative(compare->child1().node())) {
+                                return {
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), compare->child1().node(),
+                                        Relationship::LessThan),
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), m_zero,
+                                        Relationship::GreaterThan, -1)
+                                };
+                            }
+                            return { };
+                        default:
+                            return { };
                         }
                     };
 
@@ -1246,20 +1680,20 @@ public:
                         auto [l, r] = extractBooleansFromBitwise(condition);
 
                         if (condition->op() == ArithBitAnd) {
-                            if (auto relationship = extractRelationship(l))
+                            for (auto relationship : extractTakenRelationship(l))
                                 relationshipForTrue.append(relationship);
-                            if (auto relationship = extractRelationship(r))
+                            for (auto relationship : extractTakenRelationship(r))
                                 relationshipForTrue.append(relationship);
                         } else if (condition->op() == ArithBitOr) {
-                            if (auto relationship = extractRelationship(l).inverse())
+                            for (auto relationship : extractNotTakenRelationship(l))
                                 relationshipForFalse.append(relationship);
-                            if (auto relationship = extractRelationship(r).inverse())
+                            for (auto relationship : extractNotTakenRelationship(r))
                                 relationshipForFalse.append(relationship);
                         }
                     } else {
-                        if (auto relationship = extractRelationship(condition))
+                        for (auto relationship : extractTakenRelationship(condition))
                             relationshipForTrue.append(relationship);
-                        if (auto relationship = extractRelationship(condition).inverse())
+                        for (auto relationship : extractNotTakenRelationship(condition))
                             relationshipForFalse.append(relationship);
                     }
 
@@ -1293,13 +1727,14 @@ public:
         }
         
         // Now we transform the code based on the results computed in the previous loop.
+        dumpFactsHeader();
         changed = false;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_relationships = m_relationshipsAtHead[block];
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Transformation: at ", node, ": ", listDump(sortedRelationships()));
-                
+
                 // This ends up being pretty awkward to write because we need to decide if we
                 // optimize by using the relationships before the operation, but we need to
                 // call executeNode() before we optimize.
@@ -1308,10 +1743,7 @@ public:
                     if (node->child1().useKind() != Int32Use)
                         break;
 
-                    auto range = rangeFor(node->child1().node());
-                    if (!range)
-                        break;
-                    auto [minValue, maxValue] = range.value();
+                    auto [minValue, maxValue] = rangeFor(node->child1().node());
 
                     executeNode(block->at(nodeIndex));
 
@@ -1337,20 +1769,15 @@ public:
                     continue;
                 }
                 case ArithAdd: {
+                    if (!Options::useIROOverflowElimination())
+                        break;
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
                     if (node->arithMode() != Arith::CheckOverflow)
                         break;
 
-                    auto leftRange = rangeFor(node->child1().node());
-                    if (!leftRange)
-                        break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
-
-                    auto rightRange = rangeFor(node->child2().node());
-                    if (!rightRange)
-                        break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [leftMinValue, leftMaxValue] = rangeFor(node->child1().node());
+                    auto [rightMinValue, rightMaxValue] = rangeFor(node->child2().node());
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1375,20 +1802,15 @@ public:
                 }
 
                 case ArithSub: {
+                    if (!Options::useIROOverflowElimination())
+                        break;
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
                     if (node->arithMode() != Arith::CheckOverflow)
                         break;
 
-                    auto leftRange = rangeFor(node->child1().node());
-                    if (!leftRange)
-                        break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
-
-                    auto rightRange = rangeFor(node->child2().node());
-                    if (!rightRange)
-                        break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [leftMinValue, leftMaxValue] = rangeFor(node->child1().node());
+                    auto [rightMinValue, rightMaxValue] = rangeFor(node->child2().node());
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1413,20 +1835,15 @@ public:
                 }
 
                 case ArithMul: {
+                    if (!Options::useIROOverflowElimination())
+                        break;
                     if (!node->isBinaryUseKind(Int32Use))
                         break;
                     if (node->arithMode() != Arith::CheckOverflow && node->arithMode() != Arith::CheckOverflowAndNegativeZero)
                         break;
 
-                    auto leftRange = rangeFor(node->child1().node());
-                    if (!leftRange)
-                        break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
-
-                    auto rightRange = rangeFor(node->child2().node());
-                    if (!rightRange)
-                        break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [leftMinValue, leftMaxValue] = rangeFor(node->child1().node());
+                    auto [rightMinValue, rightMaxValue] = rangeFor(node->child2().node());
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1462,35 +1879,24 @@ public:
                 }
 
                 case CheckInBounds: {
+                    if (!Options::useIROBoundsCheckElimination())
+                        break;
                     auto iter = m_relationships.find(node->child1().node());
                     if (iter == m_relationships.end())
                         break;
-                    
-                    bool nonNegative = false;
-                    bool lessThanLength = false;
-                    for (Relationship relationship : iter->value) {
-                        if (relationship.minValueOfLeft() >= 0)
-                            nonNegative = true;
-                        
-                        if (relationship.right() == node->child2().node()) {
-                            if (relationship.kind() == Relationship::Equal
-                                && relationship.offset() < 0)
-                                lessThanLength = true;
-                            
-                            if (relationship.kind() == Relationship::LessThan
-                                && relationship.offset() <= 0)
-                                lessThanLength = true;
-                        }
-                    }
+
+                    bool nonNegative = provablyNonNegative(node->child1().node());
+                    bool lessThanLength = provablyLessThan(node->child1().node(), node->child2().node(), 0);
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
-                    
+
                     if (nonNegative && lessThanLength) {
                         executeNode(block->at(nodeIndex));
                         if (Options::validateBoundsCheckElimination()) [[unlikely]] {
                             if (node->op() == CheckInBounds)
                                 m_insertionSet.insertNode(nodeIndex, SpecNone, AssertInBounds, node->origin, node->child1(), node->child2());
                         }
+                        recordProbeTransform(node->child1().node(), "CheckInBounds"_s);
                         // We just need to make sure we are a value-producing node.
                         node->convertToIdentityOn(node->child1().node());
                         changed = true;
@@ -1509,8 +1915,13 @@ public:
                         break;
 
                     int minValue = std::numeric_limits<int>::min();
-                    for (Relationship relationship : iter->value)
+                    for (Relationship relationship : iter->value) {
+                        // See note in provablyGreaterThan
+                        if (relationship.left().kind() != NodeFlowProjection::Primary
+                            || relationship.right().kind() != NodeFlowProjection::Primary)
+                            continue;
                         minValue = std::max(minValue, relationship.minValueOfLeft());
+                    }
 
                     if (minValue < 0)
                         break;
@@ -1521,18 +1932,190 @@ public:
                     continue;
                 }
 
+                case Branch: {
+                    if (!Options::useIROBranchFolding())
+                        break;
+                    BranchDirection direction = tryProveBranchDirection(node);
+                    if (!isKnownDirection(direction))
+                        break;
+                    if (node->child1()->hasConstant())
+                        break;
+                    Node* constant = m_insertionSet.insertConstant(
+                        nodeIndex, node->origin, jsBoolean(branchCondition(direction)));
+                    node->child1() = Edge(constant);
+                    changed = true;
+                    break;
+                }
+
                 default:
                     break;
                 }
-                
+
                 executeNode(block->at(nodeIndex));
+                dumpNodeFacts(node);
             }
+            m_insertionSet.execute(block);
         }
-        
+        commitFactDump();
+
         return changed;
     }
 
 private:
+    // Helpers $vm.iroFactDump (see JSTests/stress/resources/iro-test-helpers.js).
+    static Ref<JSON::Value> rangeJSON(std::optional<std::tuple<int32_t, int32_t>> range)
+    {
+        if (!range)
+            return JSON::Value::null();
+        auto [lo, hi] = *range;
+        auto arr = JSON::Array::create();
+        arr->pushInteger(lo);
+        arr->pushInteger(hi);
+        return arr;
+    }
+
+    static ASCIILiteral relationKindName(Relationship::Kind kind)
+    {
+        switch (kind) {
+        case Relationship::LessThan:    return "<"_s;
+        case Relationship::GreaterThan: return ">"_s;
+        case Relationship::Equal:       return "=="_s;
+        case Relationship::NotEqual:    return "!="_s;
+        }
+        return "?"_s;
+    }
+
+    void dumpFactsHeader()
+    {
+        if (!Options::useTestingHelpers()) [[likely]]
+            return;
+        m_factProbes = JSON::Array::create();
+        m_probeIds.clear();
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                if (node->op() != DebugProbe)
+                    continue;
+                String id = probeIdOf(node);
+                if (id.isNull())
+                    continue;
+                m_probeIds.add(node, id);
+                if (node->child1())
+                    m_probeIds.add(node->child1().node(), id);
+            }
+        }
+    }
+
+    // Record that IRO applied a transform, if operand is a probe.
+    void recordProbeTransform(Node* operand, ASCIILiteral op)
+    {
+        if (!m_factProbes) [[likely]]
+            return;
+        auto it = m_probeIds.find(operand);
+        if (it == m_probeIds.end())
+            return;
+        VMInspector::addIROProbeElimination(m_graph.m_codeBlock, op, it->value);
+    }
+
+    void commitFactDump()
+    {
+        if (!m_factProbes) [[likely]]
+            return;
+        auto factRoot = JSON::Object::create();
+        factRoot->setArray("probes"_s, m_factProbes.releaseNonNull());
+        StringPrintStream graphStream;
+        m_graph.dump(graphStream);
+        factRoot->setString("graph"_s, graphStream.toString());
+
+        VMInspector::storeIROFactDump(m_graph.m_codeBlock, factRoot->toJSONString());
+    }
+
+    static String probeIdOf(Node* n)
+    {
+        if (!n || n->op() != DebugProbe)
+            return String();
+        FrozenValue* frozen = n->debugProbeId();
+        JSValue value = frozen->value();
+        if (!value || !value.isString())
+            return String();
+        return String(asString(value)->tryGetValue().data);
+    }
+
+    // The probe id naming this relationship side, or null if it isn't a probe.
+    String probeIdForSide(NodeFlowProjection proj)
+    {
+        if (!proj || !proj.node() || proj.kind() != NodeFlowProjection::Primary)
+            return String();
+        auto it = m_probeIds.find(proj.node());
+        return it != m_probeIds.end() ? it->value : String();
+    }
+
+    bool writeSide(JSON::Object& obj, ASCIILiteral key, NodeFlowProjection proj)
+    {
+        if (!proj || !proj.node() || proj.kind() != NodeFlowProjection::Primary)
+            return false;
+        Node* n = proj.node();
+        if (auto it = m_probeIds.find(n); it != m_probeIds.end())
+            obj.setString(key, it->value);
+        else if (n->isInt32Constant())
+            obj.setInteger(key, n->asInt32());
+        else
+            return false;
+        return true;
+    }
+
+    void dumpNodeFacts(Node* node)
+    {
+        if (!Options::useTestingHelpers()) [[likely]]
+            return;
+        if (!m_factProbes || node->op() != DebugProbe)
+            return;
+        String selfId = probeIdOf(node);
+        if (selfId.isNull())
+            return;
+
+        auto entry = JSON::Object::create();
+        entry->setString("id"_s, selfId);
+        entry->setValue("range"_s, rangeJSON(rangeFor(node)));
+
+        auto lineRanges = JSON::Array::create();
+        HashSet<Node*> seen;
+        for (auto& relEntry : m_relationships) {
+            Node* otherNode = relEntry.key.node();
+            if (!seen.add(otherNode).isNewEntry)
+                continue;
+            String otherId = probeIdOf(otherNode);
+            if (otherId.isNull())
+                continue;
+            auto pair = JSON::Object::create();
+            pair->setString("id"_s, otherId);
+            pair->setValue("range"_s, rangeJSON(rangeFor(otherNode)));
+            lineRanges->pushObject(WTF::move(pair));
+        }
+        entry->setArray("lineRanges"_s, WTF::move(lineRanges));
+
+        auto rels = JSON::Array::create();
+        for (auto& stored : sortedRelationships()) {
+            if (!stored)
+                continue;
+            // IRO stores each relationship in both orientations; pick the one
+            // with the anchor on the left.
+            Relationship rel = probeIdForSide(stored.right()) == selfId
+                ? stored.flipped() : stored;
+            if (probeIdForSide(rel.left()) != selfId)
+                continue;
+            auto r = JSON::Object::create();
+            if (!writeSide(r.get(), "rhs"_s, rel.right()))
+                continue;
+            r->setString("lhs"_s, selfId);
+            r->setString("rel"_s, StringView(relationKindName(rel.kind())).toString());
+            r->setInteger("offset"_s, rel.offset());
+            rels->pushObject(WTF::move(r));
+        }
+        entry->setArray("rels"_s, WTF::move(rels));
+
+        protect(m_factProbes)->pushObject(WTF::move(entry));
+    }
+
     void executeNode(Node* node)
     {
         switch (node->op()) {
@@ -1540,6 +2123,12 @@ private:
         case CheckInBounds: {
             setRelationship(Relationship::safeCreate(node->child1().node(), node->child2().node(), Relationship::LessThan));
             setRelationship(Relationship::safeCreate(node->child1().node(), m_zero, Relationship::GreaterThan, -1));
+            break;
+        }
+
+        case Identity:
+        case DebugProbe: {
+            setEquivalence(node->child1().node(), node);
             break;
         }
 
@@ -1559,39 +2148,46 @@ private:
             int minValue = std::numeric_limits<int>::min();
             auto iter = m_relationships.find(node->child1().node());
             if (iter != m_relationships.end()) {
-                for (Relationship relationship : iter->value)
+                for (Relationship relationship : iter->value) {
+                    // See note in provablyGreaterThan
+                    if (relationship.left().kind() != NodeFlowProjection::Primary
+                        || relationship.right().kind() != NodeFlowProjection::Primary)
+                        continue;
                     minValue = std::max(minValue, relationship.minValueOfLeft());
+                }
             }
 
             if (minValue > std::numeric_limits<int>::min())
                 setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;
         }
-            
+
         case ArithAdd: {
             // We're only interested in int32 additions and we currently only know how to
             // handle the non-wrapping ones.
             if (!node->isBinaryUseKind(Int32Use))
                 break;
-            
-            // FIXME: We could handle the unchecked arithmetic case. We just do it don't right
-            // now.
-            if (node->arithMode() != Arith::CheckOverflow)
-                break;
-            
+
             // Handle add: @value + constant.
             if (!node->child2()->isInt32Constant())
                 break;
-            
+
             int offset = node->child2()->asInt32();
-            
+
+            if (node->arithMode() != Arith::CheckOverflow) {
+                expandedRangeFor(node->child1().node());
+                if (!representableWithInt32(node->child1().node(), offset))
+                    break;
+                dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "ArithAdd found upper bound on ", node->child1().node());
+            }
+
             // We add a relationship for @add == @value + constant, and then we copy the
             // relationships for @value. This gives us a one-deep view of @value's existing
             // relationships, which matches the one-deep search in setRelationship().
-            
+
             setRelationship(
                 Relationship(node, node->child1().node(), Relationship::Equal, offset));
-            
+
             auto iter = m_relationships.find(node->child1().node());
             if (iter != m_relationships.end()) {
                 Vector<Relationship> toAdd;
@@ -1671,6 +2267,107 @@ private:
             break;
         }
 
+        case ArithBitAnd: {
+            if (!node->isBinaryInt32UseKind())
+                break;
+
+            auto apply = [&](Node* child) {
+                auto [lo, hi] = rangeFor(child);
+                // (a & C) with C >= 0 has sign bit 0 and cannot exceed C, so a
+                // provably non-negative operand bounds the result to [0, C].
+                if (lo < 0)
+                    return;
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+                if (hi < std::numeric_limits<int32_t>::max())
+                    setRelationship(Relationship(node, m_zero, Relationship::LessThan, hi + 1));
+            };
+
+            apply(node->child1().node());
+            apply(node->child2().node());
+            break;
+        }
+
+        case ArithBitOr: {
+            if (!node->isBinaryInt32UseKind())
+                break;
+
+            auto apply = [&](Node* child) {
+                auto [lo, hi] = rangeFor(child);
+                if (hi >= 0)
+                    return;
+                // (a | C) with C < 0 has sign bit 1, so the result is negative.
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, 0));
+                // OR on a negative number can only flip zero bits to one, which in
+                // two's complement does not decrease the value, so (a | C) >= C.
+                if (lo > std::numeric_limits<int32_t>::min())
+                    setRelationship(Relationship(node, child, Relationship::GreaterThan, -1));
+            };
+
+            apply(node->child1().node());
+            apply(node->child2().node());
+            break;
+        }
+
+        case ArithBitRShift: {
+            if (!Options::useIROShiftMulRanges())
+                break;
+            // Arithmetic right shift by a constant is monotonic, so the result range
+            // is [valueLo >> C, valueHi >> C] -- tight even for an unbounded value
+            // (full int32 >> 14 collapses to [-2^17, 2^17)). Bounds downstream uses.
+            if (!node->isBinaryInt32UseKind() || !node->child2()->isInt32Constant())
+                break;
+            int32_t c = node->child2()->asInt32() & 0x1f;
+            auto [lo, hi] = rangeFor(node->child1().node());
+            int32_t rlo = lo >> c, rhi = hi >> c;
+            if (rlo > std::numeric_limits<int32_t>::min())
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, rlo - 1));
+            if (rhi < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, rhi + 1));
+            break;
+        }
+
+        case ArithBitURShift: {
+            if (!Options::useIROShiftMulRanges())
+                break;
+            // Logical right shift fills zeros from the top, so the result is always
+            // >= 0, and <= (value >= 0 ? valueHi >> C : the unsigned ceiling).
+            if (!node->isBinaryInt32UseKind() || !node->child2()->isInt32Constant())
+                break;
+            int32_t c = node->child2()->asInt32() & 0x1f;
+            auto [lo, hi] = rangeFor(node->child1().node());
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            if (lo >= 0 && (hi >> c) < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, (hi >> c) + 1));
+            break;
+        }
+
+        case ArithMul: {
+            if (!Options::useIROShiftMulRanges())
+                break;
+            // Emit the product's range from the operand ranges (extremes are at the
+            // four corners). Unlike the overflow-elim transform, this records a range
+            // even when CheckOverflow stays, so downstream ops see a bounded product.
+            if (!node->isBinaryInt32UseKind())
+                break;
+            auto [llo, lhi] = rangeFor(node->child1().node());
+            auto [rlo, rhi] = rangeFor(node->child2().node());
+            int64_t c1 = static_cast<int64_t>(llo) * rlo;
+            int64_t c2 = static_cast<int64_t>(llo) * rhi;
+            int64_t c3 = static_cast<int64_t>(lhi) * rlo;
+            int64_t c4 = static_cast<int64_t>(lhi) * rhi;
+            int64_t pMin = std::min({ c1, c2, c3, c4 });
+            int64_t pMax = std::max({ c1, c2, c3, c4 });
+            // If the product can exceed int32, the Int32Use result wraps and its range
+            // is unknown -- only record a range when the whole product fits.
+            if (pMin < std::numeric_limits<int32_t>::min() || pMax > std::numeric_limits<int32_t>::max())
+                break;
+            if (pMin > std::numeric_limits<int32_t>::min())
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, static_cast<int32_t>(pMin) - 1));
+            if (pMax < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, static_cast<int32_t>(pMax) + 1));
+            break;
+        }
+
         case GetArrayLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             switch (node->arrayMode().type()) {
@@ -1683,6 +2380,17 @@ private:
             default:
                 break;
             }
+            break;
+        }
+
+        // See ToLength below
+        case UInt32ToNumber: {
+            if (node->child1().useKind() != Int32Use)
+                break;
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            auto [minValue, maxValue] = rangeFor(node->child1().node());
+            if (minValue >= 0 && maxValue <= INT32_MAX)
+                setRelationship(Relationship(node, node->child1().node(), Relationship::Equal));
             break;
         }
 
@@ -1702,6 +2410,18 @@ private:
         case GetVectorLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             setRelationship(Relationship(node, m_zero, Relationship::LessThan, (MAX_STORAGE_VECTOR_LENGTH + 1)));
+            break;
+        }
+
+        case StringCharCodeAt: {
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            setRelationship(Relationship(node, m_zero, Relationship::LessThan, (static_cast<int32_t>(std::numeric_limits<char16_t>::max()) + 1)));
+            break;
+        }
+
+        case StringCodePointAt: {
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            setRelationship(Relationship(node, m_zero, Relationship::LessThan, (static_cast<int32_t>(0x10FFFF) + 1)));
             break;
         }
 
@@ -1836,13 +2556,48 @@ private:
     {
         if (!relationship)
             return;
-        
+
+        // Goal-oriented relevance gate: keep a relationship only if it bounds a node
+        // relevant to some transform/branch/probe goal (see computeRelevantNodes).
+        // A constant endpoint does not count: a fact between two irrelevant nodes, or
+        // an irrelevant node and a constant, carries no information any consumer reads,
+        // but such facts are exactly the dense web that small-range values (e.g.
+        // byte-masked components feeding only float math) accumulate. Dropping them
+        // keeps the fixpoint small. Both orientations are offered, so a web fact is
+        // dropped from both; a fact touching a relevant node survives.
+        if (!isRelevantNonConstant(relationship.left()) && !isRelevantNonConstant(relationship.right()))
+            return;
+
         if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
             dataLogLn("    Setting: ", relationship, " (ttl = ", timeToLive, ")");
 
         auto result = relationshipMap.add(
             relationship.left(), Vector<Relationship>());
         Vector<Relationship>& relationships = result.iterator->value;
+
+        // Bound the O(n^2) node-vs-node inequality web. Small-range relevant values
+        // (byte-masked asm.js heap indices, RGBA components) accumulate a dense web of
+        // mutual inequalities that dominates IRO compile time, yet is only consumed by
+        // bounds-check elimination and branch folding — both worth ~0% on JetStream3.
+        // IRO's real win is overflow elimination, which reads node-vs-constant *ranges*;
+        // those are never capped here. Dropping a relationship is always sound (the fact
+        // set is an intersection, so fewer facts only forgo optimization), and a fact
+        // refining an existing same-node pair never grows the list, so it is allowed.
+        if (unsigned cap = Options::iroMaxNodeRelationshipsPerNode();
+            cap && !relationship.right()->isInt32Constant()) {
+            unsigned nodeRelationships = 0;
+            bool refinesExisting = false;
+            for (Relationship& other : relationships) {
+                if (other.sameNodesAs(relationship)) {
+                    refinesExisting = true;
+                    break;
+                }
+                if (!other.right()->isInt32Constant())
+                    ++nodeRelationships;
+            }
+            if (!refinesExisting && nodeRelationships >= cap)
+                return;
+        }
 
         if (relationship.right()->isInt32Constant()) {
             // We want to do some work to refine relationships over constants. This is necessary because
@@ -1999,12 +2754,18 @@ private:
         
         if (m_seenBlocks.add(target)) {
             // This is a new block. We copy subject to liveness pruning.
+            // Int32 JSConstants have no defining block and are available
+            // everywhere; treat them as live so relationships like `x < -1`
+            // survive the merge into a successor that doesn't otherwise
+            // reference the constant.
             auto isLive = [&] (NodeFlowProjection node) {
                 if (node == m_zero)
                     return true;
+                if (node.kind() == NodeFlowProjection::Primary && node->isInt32Constant())
+                    return true;
                 return target->ssa->liveAtHead.contains(node);
             };
-            
+
             for (auto& entry : relationshipMap) {
                 if (!isLive(entry.key))
                     continue;
@@ -2039,6 +2800,18 @@ private:
                 changed = true;
                 continue;
             }
+
+            // Fixpoint fast path: when the incoming relationships for this node are already
+            // identical to the ones at head, merging them would recompute the same list and
+            // leave this entry unchanged, so skip the per-key allocation, merge, and sort
+            // below. Once a node's facts stabilise this holds on every later visit, which is
+            // the common case on a large body whose many blocks are revisited until the
+            // fixpoint converges — and that per-key merge work is the bulk of the phase's
+            // compile time there. This only ever keeps the existing (already sound) facts, so
+            // it cannot introduce an unsound fact; at worst it forgoes a further refinement,
+            // which the IRO test suite confirms no optimization depends on.
+            if (entry.value == iter->value)
+                continue;
 
             Vector<Relationship> constantRelationshipsAtHead;
             for (Relationship& relationshipAtHead : entry.value) {
@@ -2144,6 +2917,15 @@ private:
     BlockMap<RelationshipMap> m_relationshipsAtHead;
     InsertionSet m_insertionSet;
 
+    // Nodes whose relationships might feed a transformation (see computeRelevantNodes).
+    UncheckedKeyHashSet<Node*> m_relevantNodes;
+    // Phi -> the Upsilons that define it, for the relevance backward closure.
+    UncheckedKeyHashMap<Node*, Vector<Node*>> m_phiUpsilons;
+
+    // State for the IRO fact dump consumed by JS tests
+    RefPtr<JSON::Array> m_factProbes;
+    UncheckedKeyHashMap<Node*, String> m_probeIds;
+
     unsigned m_iterations { 0 };
 };
     
@@ -2152,6 +2934,36 @@ private:
 bool performIntegerRangeOptimization(Graph& graph)
 {
     return runPhase<IntegerRangeOptimizationPhase>(graph);
+}
+
+class DebugProbeEliminationPhase : public Phase {
+public:
+    DebugProbeEliminationPhase(Graph& graph)
+        : Phase(graph, "debug probe elimination"_s)
+    {
+    }
+
+    bool run()
+    {
+        if (!Options::useTestingHelpers()) [[likely]]
+            return false;
+
+        bool changed = false;
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                if (node->op() == DebugProbe) {
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                }
+            }
+        }
+        return changed;
+    }
+};
+
+bool performDebugProbeElimination(Graph& graph)
+{
+    return runPhase<DebugProbeEliminationPhase>(graph);
 }
 
 } } // namespace JSC::DFG

@@ -2162,6 +2162,7 @@ private:
             case PhantomNewArrayBuffer:
             case PhantomNewRegExp:
             case BottomValue:
+            case DebugProbe:
                 alreadyHandled = true;
                 break;
 

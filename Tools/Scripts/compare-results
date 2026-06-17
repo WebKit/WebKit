@@ -305,6 +305,7 @@ def computeMultipleHypothesesSignificance(a, b):
 
     sortedPValues = []
     reversePValueMap = {}
+    notTested = {}  # metrics where ttest_ind returned NaN (zero-variance identical inputs)
 
     for key in a.keys():
         if key == unitMarker:
@@ -312,13 +313,18 @@ def computeMultipleHypothesesSignificance(a, b):
 
         (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
 
+        if numpy.isnan(pValue):
+            notTested[key] = True
+            continue
+
         sortedPValues.append(pValue)
         if pValue not in reversePValueMap:
             reversePValueMap[pValue] = []
         reversePValueMap[pValue].append(key)
 
     sortedPValues.sort()
-    assert sortedPValues[0] <= sortedPValues[-1]
+    if sortedPValues:
+        assert sortedPValues[0] <= sortedPValues[-1]
 
     isSignificant = False
     result = {}
@@ -328,12 +334,15 @@ def computeMultipleHypothesesSignificance(a, b):
         threshold = (rank * .05) / float(len(sortedPValues))
         if pValue <= threshold:
             isSignificant = True
-        
+
         assert len(reversePValueMap[pValue]) > 0
         for test in reversePValueMap[pValue]:
             result[test] = isSignificant
 
         rank = rank - 1.0
+
+    for key in notTested:
+        result[key] = False
 
     return result
 

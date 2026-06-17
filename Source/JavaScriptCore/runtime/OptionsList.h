@@ -277,6 +277,12 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, minimumCallToKnownRate, 0.51, Normal, nullptr) \
     v(Bool, createPreHeaders, true, Normal, nullptr) \
     v(Bool, useMovHintRemoval, true, Normal, nullptr) \
+    v(Bool, useIntegerRangeOptimization, true, Normal, "master toggle for the DFG IntegerRangeOptimization phase"_s) \
+    v(Bool, useIROBoundsCheckElimination, true, Normal, "IRO: convert provably-in-bounds CheckInBounds to Identity"_s) \
+    v(Bool, useIROOverflowElimination, true, Normal, "IRO: relax provably-non-overflowing CheckOverflow arithmetic to Unchecked"_s) \
+    v(Bool, useIROBranchFolding, true, Normal, "IRO: fold branches with a provable direction"_s) \
+    v(Bool, useIROShiftMulRanges, true, Normal, "IRO: emit result ranges for right-shift and multiply (feeds overflow-elim)"_s) \
+    v(Unsigned, iroMaxNodeRelationshipsPerNode, 8, Normal, "IRO: cap on node-vs-node relationships kept per node (0 = unlimited); bounds the O(n^2) inequality web while preserving all constant-range facts"_s) \
     v(Bool, usePutStackSinking, true, Normal, nullptr) \
     v(Bool, useObjectAllocationSinking, true, Normal, nullptr) \
     v(Bool, verboseObjectAllocationSinking, false, Normal, nullptr) \
@@ -434,6 +440,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpHeapOnLowMemory, false, Normal, "Dump a heap dump when the memory handler is triggered. Use alongside $vm.triggerMemoryPressure() and enableStrongRefTracker."_s) \
     v(Bool, forceCodeBlockToJettisonDueToOldAge, false, Normal, "If true, this means that anytime we can jettison a CodeBlock due to old age, we do."_s) \
     v(Bool, useEagerCodeBlockJettisonTiming, false, Normal, "If true, the time slices for jettisoning a CodeBlock due to old age are shrunk significantly."_s) \
+    v(Bool, disableCodeBlockJettisonDueToOldAge, false, Normal, "If true, CodeBlocks are never jettisoned due to old age. Used by FTL-only benchmark mode."_s) \
     \
     v(Bool, useTypeProfiler, false, Normal, nullptr) \
     v(Bool, useControlFlowProfiler, false, Normal, nullptr) \
@@ -641,6 +648,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
     v(Bool, useRecursiveJSONParse, true, Normal, nullptr) \
+    v(Bool, useTestingHelpers, false, Restricted, "Helpers for writing unit tests, e.g. $vm.iroFactDump"_s) \
     v(Unsigned, thresholdForStringReplaceCache, 0x1000, Normal, nullptr) \
     v(Bool, useWasmIPInt, ipintEnabledByDefault(), Normal, "Use the in-place interpereter for WASM instead of LLInt."_s) \
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues"_s) \

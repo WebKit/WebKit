@@ -1298,12 +1298,15 @@ ALWAYS_INLINE bool CodeBlock::shouldJettisonDueToOldAge(const ConcurrentJSLocker
     if (visitor.isMarked(this))
         return false;
 
+    if (Options::disableCodeBlockJettisonDueToOldAge()) [[unlikely]]
+        return false;
+
     if (Options::forceCodeBlockToJettisonDueToOldAge()) [[unlikely]]
         return true;
-    
+
     if (timeSinceCreation() < timeToLive(jitType()))
         return false;
-    
+
     return true;
 }
 

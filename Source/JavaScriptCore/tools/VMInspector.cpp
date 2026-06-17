@@ -639,4 +639,56 @@ void VMInspector::dumpSubspaceHashes(VM* vm)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+static Lock iroFactDumpLock;
+
+static HashMap<const void*, String>& iroFactDumpMap() WTF_REQUIRES_LOCK(iroFactDumpLock)
+{
+    static NeverDestroyed<HashMap<const void*, String>> map;
+    return map.get();
+}
+
+void VMInspector::storeIROFactDump(const void* key, String dump)
+{
+    if (!Options::useTestingHelpers())
+        return;
+    Locker locker { iroFactDumpLock };
+    iroFactDumpMap().set(key, dump);
+}
+
+String VMInspector::getIROFactDump(const void* key)
+{
+    if (!Options::useTestingHelpers())
+        return { };
+    Locker locker { iroFactDumpLock };
+    return iroFactDumpMap().get(key);
+}
+
+static HashMap<const void*, Vector<std::pair<String, String>>>& iroProbeEliminationMap() WTF_REQUIRES_LOCK(iroFactDumpLock)
+{
+    static NeverDestroyed<HashMap<const void*, Vector<std::pair<String, String>>>> map;
+    return map.get();
+}
+
+void VMInspector::addIROProbeElimination(const void* key, ASCIILiteral op, const String& probeId)
+{
+    if (!Options::useTestingHelpers())
+        return;
+    Locker locker { iroFactDumpLock };
+    auto& list = iroProbeEliminationMap().add(key, Vector<std::pair<String, String>> { }).iterator->value;
+    for (auto& entry : list)
+        RELEASE_ASSERT(entry.first != op || entry.second != probeId);
+    list.append({ String { op }, probeId });
+}
+
+Vector<std::pair<String, String>> VMInspector::iroProbeEliminations(const void* key)
+{
+    if (!Options::useTestingHelpers())
+        return { };
+    Locker locker { iroFactDumpLock };
+    auto it = iroProbeEliminationMap().find(key);
+    if (it == iroProbeEliminationMap().end())
+        return { };
+    return it->value;
+}
+
 } // namespace JSC

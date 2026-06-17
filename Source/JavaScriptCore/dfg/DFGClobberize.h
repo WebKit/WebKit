@@ -205,6 +205,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case Identity:
     case IdentityWithProfile:
+    case DebugProbe:
     case Phantom:
     case Check:
     case CheckVarargs:
