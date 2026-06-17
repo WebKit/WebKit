@@ -87,6 +87,39 @@ static void initializeNetworkSettings()
     }
 }
 
+#if ENABLE(INHERITANCE_OF_NETWORK_ACCESS_FROM_UI_PROCESS)
+static void blockNetworkAccessIfNeeded(IPC::Connection* parentProcessConnection)
+{
+#if PLATFORM(MAC)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NetworkProcessInheritsNetworkAccessFromUIProcess)) {
+        RELEASE_LOG(Process, "Not blocking network access due to linked-on-or-after check");
+        return;
+    }
+#endif
+
+    OSObjectPtr xpcConnection = protect(parentProcessConnection)->xpcConnection();
+    auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection.get());
+    if (isPlatformBinary && signingIdentifier != "com.apple.textkit.nsattributedstringagent"_s) {
+        RELEASE_LOG(Process, "Not blocking network access since parent process %s is a platform binary", signingIdentifier.utf8().data());
+        return;
+    }
+
+    if (auto auditToken = protect(parentProcessConnection)->getAuditToken()) {
+        bool isNetworkAccessBlockedInUIProcess = (1 == sandbox_check_by_audit_token(*auditToken, "network-outbound", SANDBOX_FILTER_PATH, "/private/var/run/mDNSResponder"));
+
+        if (isNetworkAccessBlockedInUIProcess) {
+            RELEASE_LOG(Process, "Setting sandbox state flag to block network access");
+            if (auto auditTokenForSelf = WTF::auditTokenForSelf()) {
+                if (!sandbox_enable_state_flag("BlockNetworkAccess", *auditTokenForSelf))
+                    RELEASE_LOG_ERROR(Process, "Unable to set sandbox state flag to block network access");
+            } else
+                RELEASE_LOG_FAULT(Process, "Unable to get audit token to block network access");
+        }
+    } else
+        RELEASE_LOG_FAULT(Process, "Unable to get audit token for UI process to block network access");
+}
+#endif // ENABLE(INHERITANCE_OF_NETWORK_ACCESS_FROM_UI_PROCESS)
+
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
     m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
@@ -139,21 +172,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #endif // ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 
 #if ENABLE(INHERITANCE_OF_NETWORK_ACCESS_FROM_UI_PROCESS)
-    if (auto auditToken = protectedParentProcessConnection()->getAuditToken()) {
-        bool isNetworkAccessBlockedInUIProcess = (1 == sandbox_check_by_audit_token(*auditToken, "network-outbound", SANDBOX_FILTER_PATH, "/private/var/run/mDNSResponder"));
-
-        auto xpcConnection = protectedParentProcessConnection()->xpcConnection();
-        auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection);
-        if (!isPlatformBinary && isNetworkAccessBlockedInUIProcess) {
-            RELEASE_LOG(Process, "Setting sandbox state flag to block network access");
-            if (auto auditTokenForSelf = WTF::auditTokenForSelf()) {
-                if (!sandbox_enable_state_flag("BlockNetworkAccess", *auditTokenForSelf))
-                    RELEASE_LOG_ERROR(Process, "Unable to set sandbox state flag to block network access");
-            } else
-                RELEASE_LOG_FAULT(Process, "Unable to get audit token to block network access");
-        }
-    } else
-        RELEASE_LOG_FAULT(Process, "Unable to get audit token for UI process to block network access");
+    blockNetworkAccessIfNeeded(parentProcessConnection());
 #endif
 
     increaseFileDescriptorLimit();

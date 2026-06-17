@@ -136,6 +136,7 @@ enum class SDKAlignedBehavior {
     NoFontFaceSetConstructor,
     EnableUserScriptAndUserStyleInterning,
     ExposePartitionFromWKHTTPCookieStoreAPI,
+    NetworkProcessInheritsNetworkAccessFromUIProcess,
 
     NumberOfBehaviors
 };
