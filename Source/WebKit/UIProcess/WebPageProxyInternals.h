@@ -451,6 +451,8 @@ public:
     WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
 #endif
 
+    bool forceNeedsSecureInputReevaluation { false };
+
     explicit Internals(WebPageProxy&, std::optional<WebCore::SecurityOriginData>);
 
     Ref<WebPageProxy> protectedPage() const;

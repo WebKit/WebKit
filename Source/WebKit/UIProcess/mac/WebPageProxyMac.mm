@@ -753,6 +753,15 @@ CGRect WebPageProxy::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer)
 void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState)
 {
     bool couldChangeSecureInputState = newEditorState.isInPasswordField != oldEditorState.isInPasswordField || oldEditorState.selectionIsNone;
+
+    // FIXME: <rdar://175390893> WebPageProxy::didUpdateEditorState only updates
+    // the secure input state if `isInPasswordField` changed across EditorStates.
+    // If a frame autofocuses a password input, `isInPasswordField` may be true
+    // for both the old and new state, and thus fail to update the state even
+    // though we just reset it. We force a reevaluation as a workaround.
+    if (std::exchange(internals().forceNeedsSecureInputReevaluation, false))
+        couldChangeSecureInputState = true;
+
     // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
     if (couldChangeSecureInputState && !newEditorState.selectionIsNone) {
         if (RefPtr pageClient = this->pageClient())
