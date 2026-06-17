@@ -31,6 +31,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import <WebCore/Page.h>
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -1183,6 +1184,188 @@ TEST(WKBackForwardList, ForgedFileURLItemIsRejected)
     [webView loadRequest:server.request("/"_s)];
 
     EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS: forged file:// back-forward item was rejected by MESSAGE_CHECK");
+}
+
+static constexpr auto messageCheckSpoofHTML = R"TESTRESOURCE(
+<!DOCTYPE html>
+<script src="coreipc.js"></script>
+<script>
+
+const origParseMarkable = ArgumentParser.parseMarkable;
+ArgumentParser.parseMarkable = function (buffer, position, innerType) {
+    const [newPos, result] = origParseMarkable.call(this, buffer, position, innerType);
+    if (result && typeof result === 'object' && Object.keys(result).length > 0 && !Object.hasOwn(result, 'optionalValue'))
+        return [newPos, { optionalValue: result }];
+    return [newPos, result];
+};
+
+const wiretap = new IPCWireTap('UI', 'Outgoing');
+
+let frameItemIDCounter = 100000n;
+
+window.spoofBackForwardSetChildItem = function(topURL, nestedChildURLs) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('Timed out waiting for outgoing BackForwardAddItem')), 5000);
+
+        wiretap.tapNext(IPC.messages['WebBackForwardList_BackForwardAddItem'].name,
+            (process, connectionID, messageName, typedResult, result) => {
+                clearTimeout(timer);
+                try {
+                    if (!result) {
+                        reject(new Error('BackForwardAddItem result was undefined (parse likely failed; see WireTap console output)'));
+                        return;
+                    }
+
+                    const parentFrameItemID = result.navigatedFrameState && result.navigatedFrameState.frameItemID && result.navigatedFrameState.frameItemID.optionalValue;
+                    if (!parentFrameItemID || parentFrameItemID.object === undefined) {
+                        reject(new Error('navigatedFrameState.frameItemID was empty or missing fields; expected a present Markable from a real pushState'));
+                        return;
+                    }
+
+                    const fresh = () => ({
+                        object: ++frameItemIDCounter,
+                        processIdentifier: parentFrameItemID.processIdentifier
+                    });
+
+                    const makeFrameState = (urlString, children) => ({
+                        urlString: urlString,
+                        originalURLString: urlString,
+                        referrer: "",
+                        target: { string: "" },
+                        frameID: { },
+                        stateObjectData: { },
+                        documentSequenceNumber: 0n,
+                        itemSequenceNumber: 0n,
+                        navigationAPIKey: { },
+                        scrollPosition: { x: 0, y: 0 },
+                        shouldRestoreScrollPosition: false,
+                        pageScaleFactor: 0,
+                        httpBody: { },
+                        itemID: { },
+                        frameItemID: { optionalValue: fresh() },
+                        title: "",
+                        shouldOpenExternalURLsPolicy: 0,
+                        sessionStateObject: { },
+                        wasCreatedByJSWithoutUserInteraction: false,
+                        wasRestoredFromSession: false,
+                        policyContainer: { },
+                        children: children,
+                        documentState: []
+                    });
+
+                    // Build children[0] -> children[0] -> ... -> nestedChildURLs[N-1] chain.
+                    let chain = [];
+                    for (let i = nestedChildURLs.length - 1; i >= 0; --i)
+                        chain = [makeFrameState(nestedChildURLs[i], chain)];
+
+                    CoreIPC.UI.WebBackForwardList.BackForwardSetChildItem(IPC.pageID, {
+                        frameItemID: parentFrameItemID,
+                        frameState: makeFrameState(topURL, chain)
+                    });
+                    resolve();
+                } catch (e) {
+                    reject(new Error(`Tap callback failed: ${e && e.stack ? e.stack : e}`));
+                }
+            });
+
+        // Triggering a same-document pushState gets the WebContent process to send
+        // BackForwardAddItem out, which the wiretap above will intercept.
+        history.pushState(null, '', '#trigger-' + Math.random());
+    });
+};
+</script>
+)TESTRESOURCE"_s;
+
+static RetainPtr<NSString> runMessageCheckSpoof(NSString *topURL, NSArray<NSString *> *nestedChildURLs)
+{
+    RetainPtr coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    RetainPtr coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL.get()];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { messageCheckSpoofHTML } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData.get() } },
+    });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableIPCTestingAPI(configuration.get());
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:server.request("/"_s)];
+
+    __block bool spoofDone = false;
+    __block RetainPtr<NSError> spoofError;
+    NSDictionary *args = @{
+        @"topURL": topURL,
+        @"nested": nestedChildURLs,
+    };
+    [webView callAsyncJavaScript:@"return spoofBackForwardSetChildItem(topURL, nested);"
+        arguments:args
+        inFrame:nil
+        inContentWorld:WKContentWorld.pageWorld
+        completionHandler:^(id result, NSError *error) {
+            spoofError = error;
+            spoofDone = true;
+        }];
+    TestWebKitAPI::Util::run(&spoofDone);
+    if (spoofError)
+        NSLog(@"spoofBackForwardSetChildItem rejected: %@", spoofError.get());
+    EXPECT_NULL(spoofError.get());
+
+    // Let the spoofed BackForwardSetChildItem reach the UIProcess and get dispatched.
+    TestWebKitAPI::Util::spinRunLoop(30);
+    TestWebKitAPI::Util::runFor(0.05_s);
+
+    return [[webView backForwardList] _loggingStringForTesting];
+}
+
+TEST(WKBackForwardList, MessageCheckRejectsNestedFileURLChild)
+{
+    NSString *fileURL = @"file:///Users/victim/Library/Cookies/Cookies.binarycookies";
+    RetainPtr logging = runMessageCheckSpoof(@"https://attacker.example/innocuous", @[ fileURL ]);
+    EXPECT_FALSE([logging containsString:fileURL]);
+    EXPECT_FALSE([logging containsString:@"file://"]);
+}
+
+TEST(WKBackForwardList, MessageCheckRejectsDeeplyNestedFileURLChild)
+{
+    NSString *fileURL = @"file:///etc/passwd";
+    NSArray *nestedChain = @[
+        @"https://attacker.example/level1",
+        @"https://attacker.example/level2",
+        @"https://attacker.example/level3",
+        @"https://attacker.example/level4",
+        fileURL,
+    ];
+    RetainPtr logging = runMessageCheckSpoof(@"https://attacker.example/innocuous", nestedChain);
+    EXPECT_FALSE([logging containsString:fileURL]);
+    EXPECT_FALSE([logging containsString:@"file://"]);
+}
+
+TEST(WKBackForwardList, MessageCheckRejectsExcessiveChildDepth)
+{
+    // Send a chain guaranteed to be deeper than the max frame depth to catch the message check.
+    static constexpr unsigned chainDepth = static_cast<unsigned>(WebCore::Page::maxFrameDepth) + 1;
+
+    RetainPtr nestedChain = adoptNS([[NSMutableArray alloc] initWithCapacity:chainDepth]);
+    for (unsigned i = 0; i < chainDepth; ++i)
+        [nestedChain addObject:[NSString stringWithFormat:@"https://attacker.example/depth-%u", i]];
+
+    NSString *probeURL = [nestedChain lastObject];
+
+    RetainPtr logging = runMessageCheckSpoof(@"https://attacker.example/innocuous", nestedChain.get());
+    EXPECT_FALSE([logging containsString:probeURL]);
+}
+
+TEST(WKBackForwardList, MessageCheckAcceptsBenignNestedChildren)
+{
+    NSString *innerURL = @"https://example.com/inner";
+    NSArray *nestedChain = @[
+        @"https://example.com/middle",
+        innerURL,
+    ];
+    RetainPtr logging = runMessageCheckSpoof(@"https://example.com/outer", nestedChain);
+    EXPECT_TRUE([logging containsString:innerURL]);
+    EXPECT_TRUE([logging containsString:@"https://example.com/outer"]);
+    EXPECT_TRUE([logging containsString:@"https://example.com/middle"]);
 }
 
 #endif // ENABLE(IPC_TESTING_API)
