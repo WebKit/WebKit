@@ -865,6 +865,9 @@ void WebPageProxy::potentialTapAtPosition(std::optional<WebCore::FrameIdentifier
 
 void WebPageProxy::commitPotentialTap(std::optional<WebCore::FrameIdentifier> remoteFrameID, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID pointerId)
 {
+    if (RefPtr frame = remoteFrameID ? WebFrameProxy::webFrame(*remoteFrameID) : RefPtr { m_mainFrame.get() })
+        frame->notifyActivated(MonotonicTime::now());
+
     sendWithAsyncReplyToProcessContainingFrame(remoteFrameID, Messages::WebPage::CommitPotentialTap(remoteFrameID, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId), Messages::WebPage::CommitPotentialTap::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId] (auto targetFrameID) {
         if (!targetFrameID)
             return;
