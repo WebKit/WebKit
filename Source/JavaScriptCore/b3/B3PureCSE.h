@@ -48,6 +48,8 @@ public:
 
     void clear();
 
+    void remove(const ValueKey&, Value*);
+
     Value* findMatch(const ValueKey&, BasicBlock*, Dominators&);
 
     bool process(Value*, Dominators&);
