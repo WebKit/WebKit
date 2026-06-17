@@ -354,6 +354,7 @@
 		3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */; };
 		3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */; };
 		3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2232988C96D0080D728 /* renderermtl_utils.h */; };
+		4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */; };
 		6C0BCA202F281EC000B09D24 /* AddDefaultReturnStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C0BCA1E2F28170700B09D24 /* AddDefaultReturnStatements.h */; };
 		6C0BCA212F281EC000B09D24 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C0BCA1F2F28170700B09D24 /* AddDefaultReturnStatements.cpp */; };
 		6C0BCA222F281EC000B09D24 /* AddDefaultReturnStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C0BCA1E2F28170700B09D24 /* AddDefaultReturnStatements.h */; };
@@ -1746,6 +1747,7 @@
 		3AD0D2232988C96D0080D728 /* renderermtl_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderermtl_utils.h; sourceTree = "<group>"; };
 		4458D1152B634F4200B64F47 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = translator_fuzzer.cpp; sourceTree = "<group>"; };
+		4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntegerOverflowClampTest.cpp; sourceTree = "<group>"; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
 		5C1BAA981DFB60FF002906BB /* gl31.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl31.h; path = include/GLES3/gl31.h; sourceTree = "<group>"; };
@@ -3990,6 +3992,7 @@
 				7BFAF5682DE59E0900327F7F /* IndexBufferOffsetTest.cpp */,
 				7BFAF5692DE59E0900327F7F /* IndexedPointsTest.cpp */,
 				7BFAF56A2DE59E0900327F7F /* InstancingTest.cpp */,
+				4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */,
 				7BFAF56B2DE59E0900327F7F /* KTXCompressedTextureTest.cpp */,
 				7BFAF56C2DE59E0900327F7F /* LineLoopTest.cpp */,
 				7BFAF56D2DE59E0900327F7F /* LinkAndRelinkTest.cpp */,
@@ -5986,6 +5989,7 @@
 				7BFAF5EE2DE59E0900327F7F /* IndexBufferOffsetTest.cpp in Sources */,
 				7BFAF5F42DE59E0900327F7F /* IndexedPointsTest.cpp in Sources */,
 				7BFAF5CE2DE59E0900327F7F /* InstancingTest.cpp in Sources */,
+				4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */,
 				7BFAF5D82DE59E0900327F7F /* KTXCompressedTextureTest.cpp in Sources */,
 				7BB9723D2DE4827800455D13 /* libEGL_autogen.cpp in Sources */,
 				7BB972362DE480F000455D13 /* libGLESv2_autogen.cpp in Sources */,
