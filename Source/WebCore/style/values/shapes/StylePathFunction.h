@@ -31,6 +31,10 @@
 #include <WebCore/StyleWindRuleComputation.h>
 
 namespace WebCore {
+
+struct AcceleratedEffectPathFunction;
+struct TransformOperationData;
+
 namespace Style {
 
 enum class PathConversion : bool { None, ForceAbsolute };
@@ -91,6 +95,14 @@ template<> struct Blending<Path> {
     auto canBlend(const Path&, const Path&) -> bool;
     auto blend(const Path&, const Path&, const BlendingContext&) -> Path;
 };
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<PathFunction, AcceleratedEffectPathFunction> { AcceleratedEffectPathFunction operator()(const PathFunction&, const TransformOperationData&); };
+
+#endif
 
 // MARK: - Logging
 

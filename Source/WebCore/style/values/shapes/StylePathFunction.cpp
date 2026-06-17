@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StylePathFunction.h"
 
+#include "AcceleratedEffectPathFunction.h"
 #include "AffineTransform.h"
 #include "CSSPathValue.h"
 #include "FloatRect.h"
@@ -176,6 +177,21 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const Path::Data& value)
     buildStringFromByteStream(value.byteStream, pathString, UnalteredParsing);
     return ts << pathString;
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+AcceleratedEffectPathFunction Evaluation<PathFunction, AcceleratedEffectPathFunction>::operator()(const PathFunction& value, const TransformOperationData&)
+{
+    return {
+        .fillRule = windRule(value),
+        .data = { .byteStream = value->data.byteStream },
+        .zoom = value->zoom,
+    };
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

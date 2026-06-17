@@ -25,10 +25,12 @@
 #include "config.h"
 #include "StyleInsetFunction.h"
 
+#include "AcceleratedEffectInsetFunction.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TransformOperationData.h"
 #include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
@@ -77,6 +79,22 @@ WebCore::Path PathComputation<Inset>::operator()(const Inset& value, const Float
 
     return cachedRoundedInsetPath(FloatRoundedRect { rect, radii });
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+AcceleratedEffectInsetFunction Evaluation<InsetFunction, AcceleratedEffectInsetFunction>::operator()(const InsetFunction& value, const TransformOperationData& data)
+{
+    auto containingBlockSize = data.motionPathData->offsetRect().rect().size();
+
+    return {
+        .insets = evaluate<RectEdges<float>>(value->insets, containingBlockSize, ZoomNeeded { }),
+        .radii = evaluate<CornerRadii>(value->radii, containingBlockSize, ZoomNeeded { }),
+    };
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

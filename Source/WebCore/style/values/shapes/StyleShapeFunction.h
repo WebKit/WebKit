@@ -32,6 +32,10 @@
 #include <WebCore/StyleWindRuleComputation.h>
 
 namespace WebCore {
+
+struct AcceleratedEffectShapeFunction;
+struct TransformOperationData;
+
 namespace Style {
 
 struct Path;
@@ -411,6 +415,14 @@ bool canBlendShapeWithPath(const Shape&, const Path&);
 
 // Makes a `Shape` representation of `Path`. Returns `std::nullopt` if the path cannot be parsed.
 std::optional<Shape> makeShapeFromPath(const Path&);
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<ShapeFunction, AcceleratedEffectShapeFunction> { AcceleratedEffectShapeFunction operator()(const ShapeFunction&, const TransformOperationData&); };
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

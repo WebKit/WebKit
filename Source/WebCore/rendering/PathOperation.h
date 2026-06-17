@@ -95,9 +95,9 @@ public:
 
     const Style::URL& url() const { return m_url; }
     const AtomString& fragment() const { return m_fragment; }
+    const std::optional<Path>& path() const { return m_path; }
 
     std::optional<Path> getPath(const TransformOperationData&) const final { return m_path; }
-    std::optional<Path> path() const { return m_path; }
 
     bool operator==(const ReferencePathOperation& other) const
     {

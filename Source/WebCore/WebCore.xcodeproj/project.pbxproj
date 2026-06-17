@@ -5295,6 +5295,20 @@
 		BC7826272E82152A00FB0C7E /* StyleLineHeight.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7826252E820D8800FB0C7E /* StyleLineHeight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7826762E845D6000FB0C7E /* StyleFontPalette.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7826732E845D5400FB0C7E /* StyleFontPalette.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7CEF5F2EC3C643008664ED /* StyleMarginTrim.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7CEF5D2EC3C2EF008664ED /* StyleMarginTrim.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7032F744D2B00E243F0 /* AcceleratedEffectOffsetPath.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB7012F744CC400E243F0 /* AcceleratedEffectOffsetPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7162F74611500E243F0 /* AcceleratedEffectShapeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB70B2F745F4C00E243F0 /* AcceleratedEffectShapeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7172F74611500E243F0 /* AcceleratedEffectBasicShape.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB70A2F745F4C00E243F0 /* AcceleratedEffectBasicShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7182F74611500E243F0 /* AcceleratedEffectRayFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB70F2F745FFF00E243F0 /* AcceleratedEffectRayFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB72B2F74C2BB00E243F0 /* AcceleratedEffectCircleFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB71A2F74618600E243F0 /* AcceleratedEffectCircleFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB72D2F75992200E243F0 /* AcceleratedEffectEllipseFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB71C2F74618600E243F0 /* AcceleratedEffectEllipseFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB72E2F75997600E243F0 /* AcceleratedEffectInsetFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB71E2F74618600E243F0 /* AcceleratedEffectInsetFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB72F2F75998900E243F0 /* AcceleratedEffectPathFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB7202F74618600E243F0 /* AcceleratedEffectPathFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7302F75998900E243F0 /* AcceleratedEffectPolygonFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB7222F74618600E243F0 /* AcceleratedEffectPolygonFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7362F75ABA100E243F0 /* AcceleratedEffectBasicShapePath.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB7312F75AB8200E243F0 /* AcceleratedEffectBasicShapePath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7372F75ABA100E243F0 /* AcceleratedEffectRayPath.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB7332F75AB8200E243F0 /* AcceleratedEffectRayPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7392F75ACB000E243F0 /* AcceleratedEffectCoordBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB7382F75ACA700E243F0 /* AcceleratedEffectCoordBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB73B2F75AE5A00E243F0 /* AcceleratedEffectBoxPath.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB73A2F75ADF500E243F0 /* AcceleratedEffectBoxPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7EB7522F784F4B00E243F0 /* AcceleratedEffectReferencePath.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7EB74F2F784D1300E243F0 /* AcceleratedEffectReferencePath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7FA6210D1F0CBD00DB22A9 /* LiveNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA61F0D1F0CBD00DB22A9 /* LiveNodeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */; };
@@ -19347,6 +19361,34 @@
 		BC7C5EA02BE2BF4400AE645C /* CSSPropertyParserConsumer+SymbolDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+SymbolDefinitions.h"; sourceTree = "<group>"; };
 		BC7CEF5D2EC3C2EF008664ED /* StyleMarginTrim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMarginTrim.h; sourceTree = "<group>"; };
 		BC7CEF5E2EC3C2EF008664ED /* StyleMarginTrim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMarginTrim.cpp; sourceTree = "<group>"; };
+		BC7EB7012F744CC400E243F0 /* AcceleratedEffectOffsetPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectOffsetPath.h; sourceTree = "<group>"; };
+		BC7EB7022F744D0300E243F0 /* AcceleratedEffectOffsetPath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectOffsetPath.cpp; sourceTree = "<group>"; };
+		BC7EB70A2F745F4C00E243F0 /* AcceleratedEffectBasicShape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectBasicShape.h; sourceTree = "<group>"; };
+		BC7EB70B2F745F4C00E243F0 /* AcceleratedEffectShapeFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectShapeFunction.h; sourceTree = "<group>"; };
+		BC7EB70C2F745F4C00E243F0 /* AcceleratedEffectShapeFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectShapeFunction.cpp; sourceTree = "<group>"; };
+		BC7EB70E2F745F6600E243F0 /* AcceleratedEffectBasicShape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectBasicShape.cpp; sourceTree = "<group>"; };
+		BC7EB70F2F745FFF00E243F0 /* AcceleratedEffectRayFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectRayFunction.h; sourceTree = "<group>"; };
+		BC7EB7122F74609F00E243F0 /* AcceleratedEffectRayFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectRayFunction.cpp; sourceTree = "<group>"; };
+		BC7EB71A2F74618600E243F0 /* AcceleratedEffectCircleFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectCircleFunction.h; sourceTree = "<group>"; };
+		BC7EB71B2F74618600E243F0 /* AcceleratedEffectCircleFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectCircleFunction.cpp; sourceTree = "<group>"; };
+		BC7EB71C2F74618600E243F0 /* AcceleratedEffectEllipseFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectEllipseFunction.h; sourceTree = "<group>"; };
+		BC7EB71D2F74618600E243F0 /* AcceleratedEffectEllipseFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectEllipseFunction.cpp; sourceTree = "<group>"; };
+		BC7EB71E2F74618600E243F0 /* AcceleratedEffectInsetFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectInsetFunction.h; sourceTree = "<group>"; };
+		BC7EB71F2F74618600E243F0 /* AcceleratedEffectInsetFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectInsetFunction.cpp; sourceTree = "<group>"; };
+		BC7EB7202F74618600E243F0 /* AcceleratedEffectPathFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectPathFunction.h; sourceTree = "<group>"; };
+		BC7EB7212F74618600E243F0 /* AcceleratedEffectPathFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectPathFunction.cpp; sourceTree = "<group>"; };
+		BC7EB7222F74618600E243F0 /* AcceleratedEffectPolygonFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectPolygonFunction.h; sourceTree = "<group>"; };
+		BC7EB7232F74618600E243F0 /* AcceleratedEffectPolygonFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectPolygonFunction.cpp; sourceTree = "<group>"; };
+		BC7EB72C2F7597A500E243F0 /* AcceleratedEffectAnimationUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectAnimationUtilities.h; sourceTree = "<group>"; };
+		BC7EB7312F75AB8200E243F0 /* AcceleratedEffectBasicShapePath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectBasicShapePath.h; sourceTree = "<group>"; };
+		BC7EB7322F75AB8200E243F0 /* AcceleratedEffectBasicShapePath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectBasicShapePath.cpp; sourceTree = "<group>"; };
+		BC7EB7332F75AB8200E243F0 /* AcceleratedEffectRayPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectRayPath.h; sourceTree = "<group>"; };
+		BC7EB7342F75AB8200E243F0 /* AcceleratedEffectRayPath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectRayPath.cpp; sourceTree = "<group>"; };
+		BC7EB7382F75ACA700E243F0 /* AcceleratedEffectCoordBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectCoordBox.h; sourceTree = "<group>"; };
+		BC7EB73A2F75ADF500E243F0 /* AcceleratedEffectBoxPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectBoxPath.h; sourceTree = "<group>"; };
+		BC7EB74F2F784D1300E243F0 /* AcceleratedEffectReferencePath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcceleratedEffectReferencePath.h; sourceTree = "<group>"; };
+		BC7EB7502F784D1300E243F0 /* AcceleratedEffectReferencePath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectReferencePath.cpp; sourceTree = "<group>"; };
+		BC7EB7532F78509B00E243F0 /* AcceleratedEffectBoxPath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AcceleratedEffectBoxPath.cpp; sourceTree = "<group>"; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
 		BC7FA61E0D1F0CBD00DB22A9 /* LiveNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveNodeList.cpp; sourceTree = "<group>"; };
 		BC7FA61F0D1F0CBD00DB22A9 /* LiveNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveNodeList.h; sourceTree = "<group>"; };
@@ -37003,6 +37045,45 @@
 			path = fonts;
 			sourceTree = "<group>";
 		};
+		BC7EB70D2F745F4C00E243F0 /* shapes */ = {
+			isa = PBXGroup;
+			children = (
+				BC7EB70E2F745F6600E243F0 /* AcceleratedEffectBasicShape.cpp */,
+				BC7EB70A2F745F4C00E243F0 /* AcceleratedEffectBasicShape.h */,
+				BC7EB71B2F74618600E243F0 /* AcceleratedEffectCircleFunction.cpp */,
+				BC7EB71A2F74618600E243F0 /* AcceleratedEffectCircleFunction.h */,
+				BC7EB71D2F74618600E243F0 /* AcceleratedEffectEllipseFunction.cpp */,
+				BC7EB71C2F74618600E243F0 /* AcceleratedEffectEllipseFunction.h */,
+				BC7EB71F2F74618600E243F0 /* AcceleratedEffectInsetFunction.cpp */,
+				BC7EB71E2F74618600E243F0 /* AcceleratedEffectInsetFunction.h */,
+				BC7EB7212F74618600E243F0 /* AcceleratedEffectPathFunction.cpp */,
+				BC7EB7202F74618600E243F0 /* AcceleratedEffectPathFunction.h */,
+				BC7EB7232F74618600E243F0 /* AcceleratedEffectPolygonFunction.cpp */,
+				BC7EB7222F74618600E243F0 /* AcceleratedEffectPolygonFunction.h */,
+				BC7EB7122F74609F00E243F0 /* AcceleratedEffectRayFunction.cpp */,
+				BC7EB70F2F745FFF00E243F0 /* AcceleratedEffectRayFunction.h */,
+				BC7EB70C2F745F4C00E243F0 /* AcceleratedEffectShapeFunction.cpp */,
+				BC7EB70B2F745F4C00E243F0 /* AcceleratedEffectShapeFunction.h */,
+			);
+			path = shapes;
+			sourceTree = "<group>";
+		};
+		BC7EB7352F75AB8200E243F0 /* paths */ = {
+			isa = PBXGroup;
+			children = (
+				BC7EB7322F75AB8200E243F0 /* AcceleratedEffectBasicShapePath.cpp */,
+				BC7EB7312F75AB8200E243F0 /* AcceleratedEffectBasicShapePath.h */,
+				BC7EB7532F78509B00E243F0 /* AcceleratedEffectBoxPath.cpp */,
+				BC7EB73A2F75ADF500E243F0 /* AcceleratedEffectBoxPath.h */,
+				BC7EB7382F75ACA700E243F0 /* AcceleratedEffectCoordBox.h */,
+				BC7EB7342F75AB8200E243F0 /* AcceleratedEffectRayPath.cpp */,
+				BC7EB7332F75AB8200E243F0 /* AcceleratedEffectRayPath.h */,
+				BC7EB7502F784D1300E243F0 /* AcceleratedEffectReferencePath.cpp */,
+				BC7EB74F2F784D1300E243F0 /* AcceleratedEffectReferencePath.h */,
+			);
+			path = paths;
+			sourceTree = "<group>";
+		};
 		BC8C1BDC2EF46FA200A2FD9B /* computed */ = {
 			isa = PBXGroup;
 			children = (
@@ -37368,10 +37449,15 @@
 		BCB02A942E8ED867008A0B68 /* values */ = {
 			isa = PBXGroup;
 			children = (
+				BC7EB7352F75AB8200E243F0 /* paths */,
+				BC7EB70D2F745F4C00E243F0 /* shapes */,
+				BC7EB72C2F7597A500E243F0 /* AcceleratedEffectAnimationUtilities.h */,
 				BCB02A9E2E8EF7CB008A0B68 /* AcceleratedEffectOffsetAnchor.cpp */,
 				BCB02A8F2E8ED867008A0B68 /* AcceleratedEffectOffsetAnchor.h */,
 				BCB02A9F2E8EF7CB008A0B68 /* AcceleratedEffectOffsetDistance.cpp */,
 				BCB02A902E8ED867008A0B68 /* AcceleratedEffectOffsetDistance.h */,
+				BC7EB7022F744D0300E243F0 /* AcceleratedEffectOffsetPath.cpp */,
+				BC7EB7012F744CC400E243F0 /* AcceleratedEffectOffsetPath.h */,
 				BCB02AA02E8EF7CB008A0B68 /* AcceleratedEffectOffsetPosition.cpp */,
 				BCB02A912E8ED867008A0B68 /* AcceleratedEffectOffsetPosition.h */,
 				BCB02AA12E8EF7CB008A0B68 /* AcceleratedEffectOffsetRotate.cpp */,
@@ -42419,11 +42505,25 @@
 				93D05032253A149A002A3072 /* AbstractRange.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				7164D2D129AFA0F6000AC8DA /* AcceleratedEffect.h in Headers */,
+				BC7EB7172F74611500E243F0 /* AcceleratedEffectBasicShape.h in Headers */,
+				BC7EB7362F75ABA100E243F0 /* AcceleratedEffectBasicShapePath.h in Headers */,
+				BC7EB73B2F75AE5A00E243F0 /* AcceleratedEffectBoxPath.h in Headers */,
+				BC7EB72B2F74C2BB00E243F0 /* AcceleratedEffectCircleFunction.h in Headers */,
+				BC7EB7392F75ACB000E243F0 /* AcceleratedEffectCoordBox.h in Headers */,
+				BC7EB72D2F75992200E243F0 /* AcceleratedEffectEllipseFunction.h in Headers */,
+				BC7EB72E2F75997600E243F0 /* AcceleratedEffectInsetFunction.h in Headers */,
 				BCB02A962E8ED877008A0B68 /* AcceleratedEffectOffsetAnchor.h in Headers */,
 				BCB02A992E8ED877008A0B68 /* AcceleratedEffectOffsetDistance.h in Headers */,
+				BC7EB7032F744D2B00E243F0 /* AcceleratedEffectOffsetPath.h in Headers */,
 				BCB02A982E8ED877008A0B68 /* AcceleratedEffectOffsetPosition.h in Headers */,
 				BCB02A952E8ED877008A0B68 /* AcceleratedEffectOffsetRotate.h in Headers */,
 				BCB02A9D2E8EDECD008A0B68 /* AcceleratedEffectOpacity.h in Headers */,
+				BC7EB72F2F75998900E243F0 /* AcceleratedEffectPathFunction.h in Headers */,
+				BC7EB7302F75998900E243F0 /* AcceleratedEffectPolygonFunction.h in Headers */,
+				BC7EB7182F74611500E243F0 /* AcceleratedEffectRayFunction.h in Headers */,
+				BC7EB7372F75ABA100E243F0 /* AcceleratedEffectRayPath.h in Headers */,
+				BC7EB7522F784F4B00E243F0 /* AcceleratedEffectReferencePath.h in Headers */,
+				BC7EB7162F74611500E243F0 /* AcceleratedEffectShapeFunction.h in Headers */,
 				71BF4C3529B098A8008344FC /* AcceleratedEffectStack.h in Headers */,
 				715FCD1729B09B0E002CE6A7 /* AcceleratedEffectStackUpdater.h in Headers */,
 				BCB02A9B2E8ED8C2008A0B68 /* AcceleratedEffectTransformBox.h in Headers */,

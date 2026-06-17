@@ -37,6 +37,10 @@
 #include <WebCore/StyleXywhFunction.h>
 
 namespace WebCore {
+
+struct AcceleratedEffectBasicShape;
+struct TransformOperationData;
+
 namespace Style {
 
 // NOTE: This differs from CSS::BasicShape due to lack of RectFunction and XywhFunction, both of
@@ -74,10 +78,19 @@ template<> struct Blending<BasicShape> {
 // MARK: - Path
 
 template<> struct PathComputation<BasicShape> { WebCore::Path operator()(const BasicShape&, const FloatRect&); };
+std::optional<WebCore::Path> tryPath(const BasicShape&, const TransformOperationData&);
 
 // MARK: - Winding
 
 template<> struct WindRuleComputation<BasicShape> { WebCore::WindRule operator()(const BasicShape&); };
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<BasicShape, AcceleratedEffectBasicShape> { AcceleratedEffectBasicShape operator()(const BasicShape&, const TransformOperationData&); };
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

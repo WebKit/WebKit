@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StylePathOperationWrappers.h"
 
+#include "AcceleratedEffectOffsetPath.h"
 #include "CSSBasicShapeValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSRayValue.h"
@@ -138,6 +139,64 @@ void Serialize<BasicShapePath>::operator()(StringBuilder& builder, const CSS::Se
     builder.append(' ');
     serializationForCSS(builder, context, style, shape.referenceBox());
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+static std::optional<AcceleratedEffectCoordBox> toAcceleratedEffectCoordBox(CSSBoxType boxType)
+{
+    switch (boxType) {
+    case CSSBoxType::BoxMissing:
+    case CSSBoxType::MarginBox:
+        return std::nullopt;
+    case CSSBoxType::BorderBox:
+        return AcceleratedEffectCoordBox::BorderBox;
+    case CSSBoxType::PaddingBox:
+        return AcceleratedEffectCoordBox::PaddingBox;
+    case CSSBoxType::ContentBox:
+        return AcceleratedEffectCoordBox::ContentBox;
+    case CSSBoxType::FillBox:
+        return AcceleratedEffectCoordBox::FillBox;
+    case CSSBoxType::StrokeBox:
+        return AcceleratedEffectCoordBox::StrokeBox;
+    case CSSBoxType::ViewBox:
+        return AcceleratedEffectCoordBox::ViewBox;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+AcceleratedEffectRayPath Evaluation<RayPath, AcceleratedEffectRayPath>::operator()(const RayPath& value, const TransformOperationData& data)
+{
+    return {
+        .ray = evaluate<AcceleratedEffectRayFunction>(value.ray(), data),
+        .box = toAcceleratedEffectCoordBox(value.referenceBox()),
+    };
+}
+
+AcceleratedEffectReferencePath Evaluation<ReferencePath, AcceleratedEffectReferencePath>::operator()(const ReferencePath& value, const TransformOperationData&)
+{
+    return {
+        .url = value.url().resolved,
+        .path = value.path(),
+        .box = toAcceleratedEffectCoordBox(value.referenceBox()),
+    };
+}
+
+AcceleratedEffectBasicShapePath Evaluation<BasicShapePath, AcceleratedEffectBasicShapePath>::operator()(const BasicShapePath& value, const TransformOperationData& data)
+{
+    return {
+        .basicShape = evaluate<AcceleratedEffectBasicShape>(value.shape(), data),
+        .box = toAcceleratedEffectCoordBox(value.referenceBox()),
+    };
+}
+
+AcceleratedEffectBoxPath Evaluation<BoxPath, AcceleratedEffectBoxPath>::operator()(const BoxPath& value, const TransformOperationData&)
+{
+    return { .box = *toAcceleratedEffectCoordBox(value.referenceBox()) };
+}
+
+#endif
 
 // MARK: - Logging
 

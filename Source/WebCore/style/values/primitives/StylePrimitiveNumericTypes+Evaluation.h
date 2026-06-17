@@ -334,6 +334,41 @@ template<typename T> struct Evaluation<MinimallySerializingSpaceSeparatedSize<T>
     }
 };
 
+// MARK: - MinimallySerializingSpaceSeparatedRectEdges
+
+template<typename T> struct Evaluation<MinimallySerializingSpaceSeparatedRectEdges<T>, RectEdges<float>> {
+    auto operator()(const MinimallySerializingSpaceSeparatedRectEdges<T>& value, FloatSize referenceBox) -> RectEdges<float>
+        requires HasTwoParameterEvaluate<T, float, float>
+    {
+        return {
+            evaluate<float>(value.top(), referenceBox.height()),
+            evaluate<float>(value.right(), referenceBox.width()),
+            evaluate<float>(value.bottom(), referenceBox.height()),
+            evaluate<float>(value.left(), referenceBox.width()),
+        };
+    }
+    auto operator()(const MinimallySerializingSpaceSeparatedRectEdges<T>& value, FloatSize referenceBox, ZoomNeeded token) -> RectEdges<float>
+        requires HasThreeParameterEvaluate<T, float, float, ZoomNeeded>
+    {
+        return {
+            evaluate<float>(value.top(), referenceBox.height(), token),
+            evaluate<float>(value.right(), referenceBox.width(), token),
+            evaluate<float>(value.bottom(), referenceBox.height(), token),
+            evaluate<float>(value.left(), referenceBox.width(), token),
+        };
+    }
+    auto operator()(const MinimallySerializingSpaceSeparatedRectEdges<T>& value, FloatSize referenceBox, ZoomFactor zoom) -> RectEdges<float>
+        requires HasThreeParameterEvaluate<T, float, float, ZoomFactor>
+    {
+        return {
+            evaluate<float>(value.top(), referenceBox.height(), zoom),
+            evaluate<float>(value.right(), referenceBox.width(), zoom),
+            evaluate<float>(value.bottom(), referenceBox.height(), zoom),
+            evaluate<float>(value.left(), referenceBox.width(), zoom),
+        };
+    }
+};
+
 // MARK: - Calculated Evaluations
 
 // Convert to `calc(100% - value)`.

@@ -25,11 +25,13 @@
 #include "config.h"
 #include "StylePolygonFunction.h"
 
+#include "AcceleratedEffectPolygonFunction.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TransformOperationData.h"
 #include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
@@ -90,6 +92,24 @@ auto Blending<Polygon>::blend(const Polygon& a, const Polygon& b, const Blending
         .vertices = WebCore::Style::blend(a.vertices, b.vertices, context),
     };
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+AcceleratedEffectPolygonFunction Evaluation<PolygonFunction, AcceleratedEffectPolygonFunction>::operator()(const PolygonFunction& value, const TransformOperationData& data)
+{
+    auto containingBlockSize = data.motionPathData->offsetRect().rect().size();
+
+    return {
+        .fillRule = windRule(value),
+        .vertices = WTF::map(value->vertices, [&](auto& vertex) -> FloatPoint {
+            return evaluate<FloatPoint>(vertex, containingBlockSize, ZoomNeeded { });
+        }),
+    };
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

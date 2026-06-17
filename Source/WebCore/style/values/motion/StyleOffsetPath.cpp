@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleOffsetPath.h"
 
+#include "AcceleratedEffectOffsetPath.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StylePrimitiveKeyword+Serialization.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
@@ -98,6 +99,33 @@ auto ToPlatform<OffsetPath>::operator()(const OffsetPath& value) -> RefPtr<PathO
 {
     return value.operation;
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+AcceleratedEffectOffsetPath Evaluation<OffsetPath, AcceleratedEffectOffsetPath>::operator()(const OffsetPath& value, const TransformOperationData& data)
+{
+    return WTF::switchOn(value,
+        [&](const CSS::Keyword::None&) -> AcceleratedEffectOffsetPath {
+            return { .value = AcceleratedEffectOffsetPath::None { } };
+        },
+        [&](const RayPath& path) -> AcceleratedEffectOffsetPath {
+            return { .value = evaluate<AcceleratedEffectOffsetPath::RayPath>(path, data) };
+        },
+        [&](const ReferencePath& path) -> AcceleratedEffectOffsetPath {
+            return { .value = evaluate<AcceleratedEffectOffsetPath::ReferencePath>(path, data) };
+        },
+        [&](const BasicShapePath& path) -> AcceleratedEffectOffsetPath {
+            return { .value = evaluate<AcceleratedEffectOffsetPath::BasicShapePath>(path, data) };
+        },
+        [&](const BoxPath& path) -> AcceleratedEffectOffsetPath {
+            return { .value = evaluate<AcceleratedEffectOffsetPath::BoxPath>(path, data) };
+        }
+    );
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

@@ -879,14 +879,12 @@ header: <WebCore/RenderStyleConstants.h>
     WebCore::FloatSize radii().bottomRight();
 }
 
-#if HAVE(NSVIEW_CORNER_CONFIGURATION)
 class WebCore::CornerRadii {
     WebCore::FloatSize topLeft();
     WebCore::FloatSize topRight();
     WebCore::FloatSize bottomLeft();
     WebCore::FloatSize bottomRight();
 };
-#endif
 
 webkit_platform_headers: <WebCore/IntRect.h>
 
@@ -2980,351 +2978,6 @@ class WebCore::SVGPathByteStream {
     Vector<unsigned char> bytes();
 }
 
-header: <WebCore/StylePrimitiveNumericTypes.h>
-[CustomHeader, Nested] struct WebCore::Style::Angle<WebCore::CSS::Nonnegative> {
-    double value;
-};
-[CustomHeader, Nested] struct WebCore::Style::Angle<WebCore::CSS::All> {
-    double value;
-};
-
-[CustomHeader, Nested] struct WebCore::Style::PercentageNonnegativeFloat {
-    float value;
-};
-
-[CustomHeader, Nested] struct WebCore::Style::PercentageAllFloat {
-    float value;
-};
-
-[CustomHeader, Nested] struct WebCore::Style::LengthNonnegative {
-    float unresolvedValue();
-};
-using WebCore::Style::LengthAll = WebCore::Style::Length<WebCore::CSS::All>;
-[CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::All> {
-    float unresolvedValue();
-};
-
-[CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::All> {
-    Variant<WebCore::Style::LengthAll, WebCore::Style::PercentageAllFloat> ipcData()
-};
-[CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative> {
-    Variant<WebCore::Style::LengthNonnegative, WebCore::Style::PercentageNonnegativeFloat> ipcData();
-};
-
-using WebCore::Style::LengthPercentageNonnegative = WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative>;
-using WebCore::Style::LengthPercentageAll = WebCore::Style::LengthPercentage<WebCore::CSS::All>;
-
-[CustomHeader, Nested] struct WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageNonnegative> {
-    std::array<WebCore::Style::LengthPercentageNonnegative, 2> value;
-};
-[CustomHeader, Nested] struct WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageAll> {
-    std::array<WebCore::Style::LengthPercentageAll, 2> value;
-};
-[CustomHeader, Nested] struct WebCore::SpaceSeparatedPair<WebCore::Style::CoordinatePair> {
-    std::array<WebCore::Style::CoordinatePair, 2> value;
-};
-
-[CustomHeader, Nested] struct WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageNonnegative> {
-    WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageNonnegative> value;
-};
-[CustomHeader, Nested] struct WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageAll> {
-    WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageAll> value;
-};
-
-[CustomHeader, Nested] struct WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> {
-    WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageNonnegative> value;
-};
-[CustomHeader, Nested] struct WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageAll> {
-    WebCore::SpaceSeparatedPair<WebCore::Style::LengthPercentageAll> value;
-};
-
-using WebCore::Style::LengthPercentageSpaceSeparatedPointAll = WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageAll>;
-using WebCore::Style::LengthPercentageSpaceSeparatedPointNonnegative = WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageNonnegative>;
-
-[CustomHeader, Nested] struct WebCore::CommaSeparatedVector<WebCore::Style::LengthPercentageSpaceSeparatedPointAll> {
-    Vector<WebCore::Style::LengthPercentageSpaceSeparatedPointAll> value;
-};
-[CustomHeader, Nested] struct WebCore::CommaSeparatedVector<WebCore::Style::LengthPercentageSpaceSeparatedPointNonnegative> {
-    Vector<WebCore::Style::LengthPercentageSpaceSeparatedPointNonnegative> value;
-};
-
-[CustomHeader, Nested] struct WebCore::MinimallySerializingSpaceSeparatedRectEdges<WebCore::Style::LengthPercentageAll> {
-    WebCore::Style::LengthPercentageAll top();
-    WebCore::Style::LengthPercentageAll right();
-    WebCore::Style::LengthPercentageAll bottom();
-    WebCore::Style::LengthPercentageAll left();
-};
-
-using WebCore::Style::ShapeCommand = Variant<WebCore::Style::MoveCommand, WebCore::Style::LineCommand, WebCore::Style::HLineCommand, WebCore::Style::VLineCommand, WebCore::Style::CurveCommand, WebCore::Style::SmoothCommand, WebCore::Style::ArcCommand, WebCore::Style::CloseCommand>;
-[CustomHeader, Nested] struct WebCore::CommaSeparatedVector<WebCore::Style::ShapeCommand> {
-    Vector<WebCore::Style::ShapeCommand> value;
-};
-
-header: <WebCore/StyleLengthWrapperData.h>
-[CustomHeader, Nested] struct WebCore::Style::LengthWrapperData::IPCData {
-    float value;
-    uint8_t opaqueType;
-    bool hasQuirk;
-};
-[CustomHeader, Nested] struct WebCore::Style::LengthWrapperData {
-    WebCore::Style::LengthWrapperData::IPCData ipcData();
-};
-
-header: <WebCore/StylePosition.h>
-[CustomHeader, Nested] struct WebCore::Style::PositionX {
-    WebCore::Style::LengthWrapperData::IPCData ipcData();
-};
-[CustomHeader, Nested] struct WebCore::Style::PositionY {
-    WebCore::Style::LengthWrapperData::IPCData ipcData();
-};
-[CustomHeader, Nested] struct WebCore::Style::Position {
-    WebCore::Style::PositionX x;
-    WebCore::Style::PositionY y;
-};
-[CustomHeader, Nested] struct WebCore::Style::TwoComponentPositionHorizontal {
-    WebCore::Style::PositionX offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::TwoComponentPositionVertical {
-    WebCore::Style::PositionY offset;
-};
-
-header: <WebCore/StyleGradient.h>
-using WebCore::CSS::Keyword::ClosestCorner = WebCore::Constant<WebCore::CSSValueClosestCorner>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueClosestCorner> {
-};
-using WebCore::CSS::Keyword::ClosestSide = WebCore::Constant<WebCore::CSSValueClosestSide>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueClosestSide> {
-};
-using WebCore::CSS::Keyword::FarthestCorner = WebCore::Constant<WebCore::CSSValueFarthestCorner>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueFarthestCorner> {
-};
-using WebCore::CSS::Keyword::FarthestSide = WebCore::Constant<WebCore::CSSValueFarthestSide>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueFarthestSide> {
-};
-
-header: <WebCore/StyleCircleFunction.h>
-using WebCore::Style::Circle::Extent = Variant<WebCore::CSS::Keyword::ClosestCorner, WebCore::CSS::Keyword::ClosestSide, WebCore::CSS::Keyword::FarthestCorner, WebCore::CSS::Keyword::FarthestSide>;
-using WebCore::Style::Circle::RadialSize = Variant<WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative>, WebCore::Style::Circle::Extent>;
-
-[CustomHeader, Nested] struct WebCore::Style::CircleFunction {
-    WebCore::Style::Circle parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Circle {
-    WebCore::Style::Circle::RadialSize radius;
-    std::optional<WebCore::Style::Position> position;
-};
-
-header: <WebCore/StyleEllipseFunction.h>
-
-using WebCore::Style::Ellipse::Extent = Variant<WebCore::CSS::Keyword::ClosestCorner, WebCore::CSS::Keyword::ClosestSide, WebCore::CSS::Keyword::FarthestCorner, WebCore::CSS::Keyword::FarthestSide>;
-using WebCore::Style::Ellipse::RadialSize = Variant<WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative>, WebCore::Style::Ellipse::Extent>;
-[CustomHeader, Nested] struct WebCore::SpaceSeparatedPair<WebCore::Style::Ellipse::RadialSize> {
-    std::array<WebCore::Style::Ellipse::RadialSize, 2> value;
-};
-
-[CustomHeader, Nested] struct WebCore::Style::EllipseFunction {
-    WebCore::Style::Ellipse parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Ellipse {
-    WebCore::SpaceSeparatedPair<WebCore::Style::Ellipse::RadialSize> radii;
-    std::optional<WebCore::Style::Position> position;
-};
-
-header: <WebCore/StyleInsetFunction.h>
-[CustomHeader, Nested] struct WebCore::Style::InsetFunction {
-    WebCore::Style::Inset parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Inset {
-    WebCore::MinimallySerializingSpaceSeparatedRectEdges<WebCore::Style::LengthPercentageAll> insets;
-    WebCore::Style::BorderRadius radii;
-};
-
-header: <WebCore/StylePathFunction.h>
-[CustomHeader, Nested] struct WebCore::Style::PathFunction {
-    WebCore::Style::Path parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Path::Data {
-    WebCore::SVGPathByteStream byteStream;
-};
-[CustomHeader, Nested] struct WebCore::Style::Path {
-    std::optional<WebCore::Style::FillRule> fillRule;
-    WebCore::Style::Path::Data data;
-    float zoom;
-};
-
-header: <WebCore/StylePolygonFunction.h>
-[CustomHeader, Nested] struct WebCore::Style::PolygonFunction {
-    WebCore::Style::Polygon parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Polygon {
-    std::optional<WebCore::Style::FillRule> fillRule;
-    WebCore::CommaSeparatedVector<WebCore::Style::LengthPercentageSpaceSeparatedPointAll> vertices;
-};
-
-header: <WebCore/StyleFillRule.h>
-using WebCore::CSS::Keyword::Nonzero = WebCore::Constant<WebCore::CSSValueNonzero>;
-using WebCore::CSS::Keyword::Evenodd = WebCore::Constant<WebCore::CSSValueEvenodd>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueNonzero> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueEvenodd> {
-};
-using WebCore::Style::FillRule = Variant<WebCore::CSS::Keyword::Nonzero, WebCore::CSS::Keyword::Evenodd>;
-
-header: <WebCore/StyleShapeFunction.h>
-using WebCore::Style::CoordinatePair = WebCore::SpaceSeparatedPoint<WebCore::Style::LengthPercentageAll>;
-using WebCore::CSS::Keyword::By = WebCore::Constant<WebCore::CSSValueBy>;
-using WebCore::CSS::Keyword::To = WebCore::Constant<WebCore::CSSValueTo>;
-using WebCore::CSS::Keyword::Ccw = WebCore::Constant<WebCore::CSSValueCcw>;
-using WebCore::CSS::Keyword::Cw = WebCore::Constant<WebCore::CSSValueCw>;
-using WebCore::CSS::Keyword::Large = WebCore::Constant<WebCore::CSSValueLarge>;
-using WebCore::CSS::Keyword::Small = WebCore::Constant<WebCore::CSSValueSmall>;
-using WebCore::CSS::Keyword::Start = WebCore::Constant<WebCore::CSSValueStart>;
-using WebCore::CSS::Keyword::End = WebCore::Constant<WebCore::CSSValueEnd>;
-using WebCore::CSS::Keyword::Origin = WebCore::Constant<WebCore::CSSValueOrigin>;
-using WebCore::Style::ControlPointAnchor = Variant<WebCore::CSS::Keyword::Start, WebCore::CSS::Keyword::End, WebCore::CSS::Keyword::Origin>;
-using WebCore::Style::CloseCommand = WebCore::Constant<WebCore::CSSValueClose>;
-
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueBy> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueTo> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueCcw> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueCw> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueLarge> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueSmall> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueStart> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueEnd> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueOrigin> {
-};
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueClose> {
-};
-
-[CustomHeader, Nested] struct WebCore::Style::ToPosition {
-    WebCore::Style::Position offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::ByCoordinatePair {
-    WebCore::Style::CoordinatePair offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::RelativeControlPoint {
-    WebCore::Style::CoordinatePair offset;
-    std::optional<WebCore::Style::ControlPointAnchor> anchor;
-};
-[CustomHeader, Nested] struct WebCore::Style::AbsoluteControlPoint {
-    WebCore::Style::Position offset;
-    std::optional<WebCore::Style::ControlPointAnchor> anchor;
-};
-
-[CustomHeader, Nested] struct WebCore::Style::ShapeFunction {
-    WebCore::Style::Shape parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Shape {
-    std::optional<WebCore::Style::FillRule> fillRule;
-    WebCore::Style::Position startingPoint;
-    WebCore::CommaSeparatedVector<WebCore::Style::ShapeCommand> commands;
-};
-[CustomHeader, Nested] struct WebCore::Style::MoveCommand {
-    Variant<WebCore::Style::ToPosition, WebCore::Style::ByCoordinatePair> toBy;
-};
-[CustomHeader, Nested] struct WebCore::Style::LineCommand {
-    Variant<WebCore::Style::ToPosition, WebCore::Style::ByCoordinatePair> toBy;
-};
-[CustomHeader, Nested] struct WebCore::Style::HLineCommand::To {
-    WebCore::Style::TwoComponentPositionHorizontal offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::HLineCommand::By {
-    WebCore::Style::LengthPercentageAll offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::HLineCommand {
-    Variant<WebCore::Style::HLineCommand::To, WebCore::Style::HLineCommand::By> toBy;
-};
-[CustomHeader, Nested] struct WebCore::Style::VLineCommand::To {
-    WebCore::Style::TwoComponentPositionVertical offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::VLineCommand::By {
-    WebCore::Style::LengthPercentageAll offset;
-};
-[CustomHeader, Nested] struct WebCore::Style::VLineCommand {
-    Variant<WebCore::Style::VLineCommand::To, WebCore::Style::VLineCommand::By> toBy;
-};
-[CustomHeader, Nested] struct WebCore::Style::CurveCommand::To {
-    WebCore::Style::Position offset;
-    WebCore::Style::AbsoluteControlPoint controlPoint1;
-    std::optional<WebCore::Style::AbsoluteControlPoint> controlPoint2;
-};
-[CustomHeader, Nested] struct WebCore::Style::CurveCommand::By {
-    WebCore::Style::CoordinatePair offset;
-    WebCore::Style::RelativeControlPoint controlPoint1;
-    std::optional<WebCore::Style::RelativeControlPoint> controlPoint2;
-};
-[CustomHeader, Nested] struct WebCore::Style::CurveCommand {
-    Variant<WebCore::Style::CurveCommand::To, WebCore::Style::CurveCommand::By> toBy;
-};
-[CustomHeader, Nested] struct WebCore::Style::SmoothCommand::To {
-    WebCore::Style::Position offset;
-    std::optional<WebCore::Style::AbsoluteControlPoint> controlPoint;
-};
-[CustomHeader, Nested] struct WebCore::Style::SmoothCommand::By {
-    WebCore::Style::CoordinatePair offset;
-    std::optional<WebCore::Style::RelativeControlPoint> controlPoint;
-};
-[CustomHeader, Nested] struct WebCore::Style::SmoothCommand {
-    Variant<WebCore::Style::SmoothCommand::To, WebCore::Style::SmoothCommand::By> toBy;
-};
-[CustomHeader, Nested] struct WebCore::Style::ArcCommand {
-    Variant<WebCore::Style::ToPosition, WebCore::Style::ByCoordinatePair> toBy;
-    WebCore::Style::LengthPercentageMinimallySerializingSpaceSeparatedSizeAll size;
-    Variant<WebCore::CSS::Keyword::Cw, WebCore::CSS::Keyword::Ccw> arcSweep;
-    Variant<WebCore::CSS::Keyword::Large, WebCore::CSS::Keyword::Small> arcSize;
-    WebCore::Style::Angle<WebCore::CSS::All> rotation;
-};
-using WebCore::Style::LengthPercentageMinimallySerializingSpaceSeparatedSizeAll = WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageAll>
-
-header: <WebCore/StyleBorderRadius.h>
-[CustomHeader, Nested] struct WebCore::Style::BorderRadius {
-    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> topLeft();
-    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> topRight();
-    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> bottomRight();
-    WebCore::MinimallySerializingSpaceSeparatedSize<WebCore::Style::LengthPercentageNonnegative> bottomLeft();
-};
-
-header: <WebCore/StyleRayFunction.h>
-using WebCore::CSS::Keyword::Sides = WebCore::Constant<WebCore::CSSValueSides>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueSides> {
-};
-using WebCore::CSS::Keyword::Contain = WebCore::Constant<WebCore::CSSValueContain>;
-[CustomHeader, Nested] struct WebCore::Constant<WebCore::CSSValueContain> {
-};
-using WebCore::Style::RaySize = Variant<WebCore::CSS::Keyword::ClosestCorner, WebCore::CSS::Keyword::ClosestSide, WebCore::CSS::Keyword::FarthestCorner, WebCore::CSS::Keyword::FarthestSide, WebCore::CSS::Keyword::Sides>;
-[CustomHeader, Nested] struct WebCore::Style::RayFunction {
-    WebCore::Style::Ray parameters;
-};
-[CustomHeader, Nested] struct WebCore::Style::Ray {
-    WebCore::Style::Angle<WebCore::CSS::All> angle;
-    WebCore::Style::RaySize size;
-    std::optional<WebCore::CSS::Keyword::Contain> contain;
-    std::optional<WebCore::Style::Position> position;
-};
-
-using WebCore::Style::BasicShape = Variant<WebCore::Style::CircleFunction, WebCore::Style::EllipseFunction, WebCore::Style::InsetFunction, WebCore::Style::PathFunction, WebCore::Style::PolygonFunction, WebCore::Style::ShapeFunction>;
-
-header: <WebCore/RenderStyleConstants.h>
-[CustomHeader] enum class WebCore::CSSBoxType : uint8_t {
-    BoxMissing,
-    MarginBox,
-    BorderBox,
-    PaddingBox,
-    ContentBox,
-    FillBox,
-    StrokeBox,
-    ViewBox
-};
-
 header: <WebCore/MotionPath.h>
 [CustomHeader] struct WebCore::MotionPathData {
     WebCore::FloatRoundedRect containingBlockBoundingRect;
@@ -3337,31 +2990,6 @@ header: <WebCore/TransformOperationData.h>
     WebCore::FloatRect boundingBox;
     std::optional<WebCore::MotionPathData> motionPathData;
     bool isSVGRenderer;
-}
-
-header: <WebCore/PathOperation.h>
-[RefCounted, CustomHeader] class WebCore::ReferencePathOperation {
-    std::optional<WebCore::Path> path();
-}
-
-[RefCounted, CustomHeader] class WebCore::ShapePathOperation {
-    WebCore::Style::BasicShape shape();
-    WebCore::CSSBoxType referenceBox();
-}
-
-[RefCounted, CustomHeader] class WebCore::BoxPathOperation {
-    WebCore::CSSBoxType referenceBox();
-}
-
-[RefCounted, CustomHeader] class WebCore::RayPathOperation {
-    WebCore::Style::RayFunction ray();
-}
-
-[RefCounted] class WebCore::PathOperation subclasses {
-    WebCore::ReferencePathOperation,
-    WebCore::ShapePathOperation,
-    WebCore::BoxPathOperation,
-    WebCore::RayPathOperation
 }
 
 #if ENABLE(WEB_AUTHN)
@@ -6524,6 +6152,193 @@ struct WebCore::AcceleratedEffectOffsetDistance {
     float value;
 };
 
+struct WebCore::AcceleratedEffectOffsetPath {
+    Variant<WebCore::AcceleratedEffectOffsetPath::None, WebCore::AcceleratedEffectRayPath, WebCore::AcceleratedEffectReferencePath, WebCore::AcceleratedEffectBasicShapePath, WebCore::AcceleratedEffectBoxPath> value;
+};
+
+[Nested] struct WebCore::AcceleratedEffectOffsetPath::None {
+};
+
+struct WebCore::AcceleratedEffectRayPath {
+    WebCore::AcceleratedEffectRayFunction ray;
+    std::optional<WebCore::AcceleratedEffectCoordBox> box;
+};
+
+struct WebCore::AcceleratedEffectReferencePath {
+    URL url;
+    std::optional<WebCore::Path> path;
+    std::optional<WebCore::AcceleratedEffectCoordBox> box;
+};
+
+struct WebCore::AcceleratedEffectBasicShapePath {
+    WebCore::AcceleratedEffectBasicShape basicShape;
+    std::optional<WebCore::AcceleratedEffectCoordBox> box;
+};
+
+struct WebCore::AcceleratedEffectBoxPath {
+    WebCore::AcceleratedEffectCoordBox box;
+};
+
+struct WebCore::AcceleratedEffectRayFunction {
+    double angle;
+    WebCore::AcceleratedEffectRayFunction::RaySize size;
+    std::optional<WebCore::AcceleratedEffectRayFunction::Contain> contain;
+    std::optional<WebCore::FloatPoint> position;
+};
+
+[Nested] enum class WebCore::AcceleratedEffectRayFunction::RaySize : uint8_t {
+    ClosestCorner,
+    ClosestSide,
+    FarthestCorner,
+    FarthestSide,
+    Sides
+};
+
+[Nested] struct WebCore::AcceleratedEffectRayFunction::Contain {
+};
+
+struct WebCore::AcceleratedEffectBasicShape {
+    Variant<WebCore::AcceleratedEffectCircleFunction, WebCore::AcceleratedEffectEllipseFunction, WebCore::AcceleratedEffectInsetFunction, WebCore::AcceleratedEffectPathFunction, WebCore::AcceleratedEffectPolygonFunction, WebCore::AcceleratedEffectShapeFunction> function;
+};
+
+using WebCore::AcceleratedEffectCircleFunction::RadialSize = Variant<float, WebCore::AcceleratedEffectCircleFunction::Extent>;
+
+struct WebCore::AcceleratedEffectCircleFunction {
+    WebCore::AcceleratedEffectCircleFunction::RadialSize radius;
+    std::optional<WebCore::FloatPoint> position;
+};
+
+[Nested] enum class WebCore::AcceleratedEffectCircleFunction::Extent : uint8_t {
+    ClosestSide,
+    FarthestSide,
+    ClosestCorner,
+    FarthestCorner
+};
+
+using WebCore::AcceleratedEffectEllipseFunction::RadialSize = Variant<float, WebCore::AcceleratedEffectEllipseFunction::Extent>;
+
+struct WebCore::AcceleratedEffectEllipseFunction {
+    std::pair<WebCore::AcceleratedEffectEllipseFunction::RadialSize, WebCore::AcceleratedEffectEllipseFunction::RadialSize> radii;
+    std::optional<WebCore::FloatPoint> position;
+};
+
+[Nested] enum class WebCore::AcceleratedEffectEllipseFunction::Extent : uint8_t {
+    ClosestSide,
+    FarthestSide,
+    ClosestCorner,
+    FarthestCorner
+};
+
+struct WebCore::AcceleratedEffectInsetFunction {
+    WebCore::FloatBoxExtent insets;
+    WebCore::CornerRadii radii;
+};
+
+struct WebCore::AcceleratedEffectPathFunction {
+    std::optional<WebCore::WindRule> fillRule;
+    WebCore::AcceleratedEffectPathFunction::Data data;
+    float zoom;
+};
+
+[Nested] struct WebCore::AcceleratedEffectPathFunction::Data {
+    WebCore::SVGPathByteStream byteStream;
+};
+
+struct WebCore::AcceleratedEffectPolygonFunction {
+    std::optional<WebCore::WindRule> fillRule;
+    Vector<WebCore::FloatPoint> vertices;
+};
+
+using WebCore::AcceleratedEffectShapeFunction::Command = Variant<WebCore::AcceleratedEffectShapeFunction::MoveCommand, WebCore::AcceleratedEffectShapeFunction::LineCommand, WebCore::AcceleratedEffectShapeFunction::HLineCommand, WebCore::AcceleratedEffectShapeFunction::VLineCommand, WebCore::AcceleratedEffectShapeFunction::CurveCommand, WebCore::AcceleratedEffectShapeFunction::SmoothCommand, WebCore::AcceleratedEffectShapeFunction::ArcCommand, WebCore::AcceleratedEffectShapeFunction::CloseCommand>;
+
+struct WebCore::AcceleratedEffectShapeFunction {
+    std::optional<WebCore::WindRule> fillRule;
+    WebCore::FloatPoint startingPoint;
+    Vector<WebCore::AcceleratedEffectShapeFunction::Command> commands;
+};
+
+[Nested] enum class WebCore::AcceleratedEffectShapeFunction::ControlPointAnchor : uint8_t {
+    Start,
+    End,
+    Origin
+};
+[Nested] enum class WebCore::AcceleratedEffectShapeFunction::ArcSweep : bool;
+[Nested] enum class WebCore::AcceleratedEffectShapeFunction::ArcSize : bool;
+
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::ToPosition {
+    WebCore::FloatPoint offset;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::ByCoordinatePair {
+    WebCore::FloatPoint offset;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::RelativeControlPoint {
+    WebCore::FloatPoint offset;
+    std::optional<WebCore::AcceleratedEffectShapeFunction::ControlPointAnchor> anchor;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::AbsoluteControlPoint {
+    WebCore::FloatPoint offset;
+    std::optional<WebCore::AcceleratedEffectShapeFunction::ControlPointAnchor> anchor;
+};
+
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::MoveCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::ToPosition, WebCore::AcceleratedEffectShapeFunction::ByCoordinatePair> toBy;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::LineCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::ToPosition, WebCore::AcceleratedEffectShapeFunction::ByCoordinatePair> toBy;
+};
+
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::HLineCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::HLineCommand::To, WebCore::AcceleratedEffectShapeFunction::HLineCommand::By> toBy;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::HLineCommand::To {
+    float offset;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::HLineCommand::By {
+    float offset;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::VLineCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::VLineCommand::To, WebCore::AcceleratedEffectShapeFunction::VLineCommand::By> toBy;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::VLineCommand::To {
+    float offset;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::VLineCommand::By {
+    float offset;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::CurveCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::CurveCommand::To, WebCore::AcceleratedEffectShapeFunction::CurveCommand::By> toBy;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::CurveCommand::To {
+    WebCore::FloatPoint offset;
+    WebCore::AcceleratedEffectShapeFunction::AbsoluteControlPoint controlPoint1;
+    std::optional<WebCore::AcceleratedEffectShapeFunction::AbsoluteControlPoint> controlPoint2;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::CurveCommand::By {
+    WebCore::FloatPoint offset;
+    WebCore::AcceleratedEffectShapeFunction::RelativeControlPoint controlPoint1;
+    std::optional<WebCore::AcceleratedEffectShapeFunction::RelativeControlPoint> controlPoint2;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::SmoothCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::SmoothCommand::To, WebCore::AcceleratedEffectShapeFunction::SmoothCommand::By> toBy;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::SmoothCommand::To {
+    WebCore::FloatPoint offset;
+    std::optional<WebCore::AcceleratedEffectShapeFunction::AbsoluteControlPoint> controlPoint;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::SmoothCommand::By {
+    WebCore::FloatPoint offset;
+    std::optional<WebCore::AcceleratedEffectShapeFunction::RelativeControlPoint> controlPoint;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::ArcCommand {
+    Variant<WebCore::AcceleratedEffectShapeFunction::ToPosition, WebCore::AcceleratedEffectShapeFunction::ByCoordinatePair> toBy;
+    WebCore::FloatSize size;
+    WebCore::AcceleratedEffectShapeFunction::ArcSweep arcSweep;
+    WebCore::AcceleratedEffectShapeFunction::ArcSize arcSize;
+    double rotation;
+};
+[Nested] struct WebCore::AcceleratedEffectShapeFunction::CloseCommand {
+};
+
 struct WebCore::AcceleratedEffectOffsetPosition {
     Variant<WebCore::AcceleratedEffectOffsetPosition::Normal, WebCore::AcceleratedEffectOffsetPosition::Auto, WebCore::FloatPoint> value;
 }
@@ -6541,6 +6356,15 @@ struct WebCore::AcceleratedEffectOffsetRotate {
 
 struct WebCore::AcceleratedEffectOpacity {
     float value;
+};
+
+enum class WebCore::AcceleratedEffectCoordBox : uint8_t {
+    ContentBox,
+    PaddingBox,
+    BorderBox,
+    FillBox,
+    StrokeBox,
+    ViewBox
 };
 
 enum class WebCore::AcceleratedEffectTransformBox : uint8_t {
@@ -6564,7 +6388,7 @@ struct WebCore::AcceleratedEffectValues {
     RefPtr<WebCore::TransformOperation> translate;
     RefPtr<WebCore::TransformOperation> scale;
     RefPtr<WebCore::TransformOperation> rotate;
-    RefPtr<WebCore::PathOperation> offsetPath;
+    WebCore::AcceleratedEffectOffsetPath offsetPath;
     WebCore::AcceleratedEffectOffsetDistance offsetDistance;
     WebCore::AcceleratedEffectOffsetPosition offsetPosition;
     WebCore::AcceleratedEffectOffsetAnchor offsetAnchor;

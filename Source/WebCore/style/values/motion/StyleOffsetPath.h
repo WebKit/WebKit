@@ -30,6 +30,9 @@
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
+
+struct AcceleratedEffectOffsetPath;
+
 namespace Style {
 
 // <'offset-path'> = none | [ [ <ray()> | <url> | <basic-shape> ] || <coord-box> ]
@@ -161,6 +164,14 @@ template<> struct Blending<OffsetPath> {
 // MARK: - Platform
 
 template<> struct ToPlatform<OffsetPath> { auto operator()(const OffsetPath&) -> RefPtr<PathOperation>; };
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<OffsetPath, AcceleratedEffectOffsetPath> { AcceleratedEffectOffsetPath operator()(const OffsetPath&, const TransformOperationData&); };
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

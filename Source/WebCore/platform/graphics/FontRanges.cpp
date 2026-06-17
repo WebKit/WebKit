@@ -28,6 +28,7 @@
 
 #include "Font.h"
 #include "FontSelector.h"
+#include "GlyphPage.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/WTFString.h>

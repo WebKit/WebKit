@@ -100,7 +100,7 @@ RefPtr<PathOperation> ShapePathOperation::blend(const PathOperation* to, const B
 
 std::optional<Path> ShapePathOperation::getPath(const TransformOperationData& data) const
 {
-    return MotionPath::computePathForShape(*this, data);
+    return Style::tryPath(shape(), data);
 }
 
 // MARK: - BoxPathOperation
@@ -117,7 +117,12 @@ Ref<PathOperation> BoxPathOperation::clone() const
 
 std::optional<Path> BoxPathOperation::getPath(const TransformOperationData& data) const
 {
-    return MotionPath::computePathForBox(*this, data);
+    if (auto motionPathData = data.motionPathData) {
+        Path path;
+        path.addRoundedRect(motionPathData->offsetRect(), PathRoundedRect::Strategy::PreferBezier);
+        return path;
+    }
+    return std::nullopt;
 }
 
 // MARK: - RayPathOperation
@@ -151,7 +156,7 @@ RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const Ble
 
 std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data) const
 {
-    return MotionPath::computePathForRay(*this, data);
+    return Style::tryPath(*ray(), data);
 }
 
 } // namespace WebCore

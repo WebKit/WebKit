@@ -29,6 +29,12 @@
 #include <WebCore/PathOperation.h>
 
 namespace WebCore {
+
+struct AcceleratedEffectBoxPath;
+struct AcceleratedEffectBasicShapePath;
+struct AcceleratedEffectRayPath;
+struct AcceleratedEffectReferencePath;
+
 namespace Style {
 
 struct OffsetPath;
@@ -74,6 +80,7 @@ struct ReferencePath {
 
     ALWAYS_INLINE const URL& url() const { return operation->url(); }
     ALWAYS_INLINE const AtomString& fragment() const { return operation->fragment(); }
+    ALWAYS_INLINE const std::optional<WebCore::Path>& path() const { return operation->path(); }
     ALWAYS_INLINE CSSBoxType referenceBox() const { return operation->referenceBox(); }
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
@@ -195,6 +202,17 @@ template<> struct CSSValueCreation<BasicShapePath> { Ref<CSSValue> operator()(CS
 
 // `BasicShapePath` is special-cased to handle non-standard `PathConversion` argument.
 template<> struct Serialize<BasicShapePath> { void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, const BasicShapePath&, PathConversion = PathConversion::None); };
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<RayPath, AcceleratedEffectRayPath> { AcceleratedEffectRayPath operator()(const RayPath&, const TransformOperationData& data); };
+template<> struct Evaluation<ReferencePath, AcceleratedEffectReferencePath> { AcceleratedEffectReferencePath operator()(const ReferencePath&, const TransformOperationData&); };
+template<> struct Evaluation<BasicShapePath, AcceleratedEffectBasicShapePath> { AcceleratedEffectBasicShapePath operator()(const BasicShapePath&, const TransformOperationData&); };
+template<> struct Evaluation<BoxPath, AcceleratedEffectBoxPath> { AcceleratedEffectBoxPath operator()(const BoxPath&, const TransformOperationData&); };
+
+#endif
 
 // MARK: - Logging
 

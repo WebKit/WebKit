@@ -38,10 +38,13 @@
 #include "FloatRect.h"
 #include "KeyframeEffect.h"
 #include "LayoutSize.h"
+#include "RotateTransformOperation.h"
+#include "ScaleTransformOperation.h"
 #include "Settings.h"
 #include "StyleInterpolation.h"
 #include "StyleOffsetRotate.h"
 #include "StyleOriginatedAnimation.h"
+#include "TranslateTransformOperation.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -369,8 +372,11 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         output.offsetDistance = blend(from.offsetDistance, to.offsetDistance, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetPath:
-        if (auto& fromOffsetPath = from.offsetPath)
-            output.offsetPath = fromOffsetPath->blend(to.offsetPath.get(), blendingContext);
+        if (!canBlend(from.offsetPath, to.offsetPath)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
+        output.offsetPath = blend(from.offsetPath, to.offsetPath, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetPosition:
         if (!canBlend(from.offsetPosition, to.offsetPosition)) {

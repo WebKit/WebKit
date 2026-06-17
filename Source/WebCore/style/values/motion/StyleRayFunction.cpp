@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,11 @@
 #include "config.h"
 #include "StyleRayFunction.h"
 
+#include "AcceleratedEffectRayFunction.h"
+#include "GeometryUtilities.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
+#include "TransformOperationData.h"
 
 namespace WebCore {
 namespace Style {
@@ -53,6 +57,85 @@ void Serialize<Ray>::operator()(StringBuilder& builder, const CSS::Serialization
         serializationForCSS(builder, context, style, *value.position);
     }
 }
+
+// MARK: - Path
+
+static double lengthForRayPath(const Ray& ray, const MotionPathData& data)
+{
+    auto& boundingBox = data.containingBlockBoundingRect.rect();
+    auto distances = distanceOfPointToSidesOfRect(boundingBox, data.usedStartingPosition);
+
+    return WTF::switchOn(ray.size,
+        [&](CSS::Keyword::ClosestSide) {
+            return std::min( { distances.top(), distances.bottom(), distances.left(), distances.right() } );
+        },
+        [&](CSS::Keyword::FarthestSide) {
+            return std::max( { distances.top(), distances.bottom(), distances.left(), distances.right() } );
+        },
+        [&](CSS::Keyword::FarthestCorner) {
+            return std::hypot(std::max(distances.left(), distances.right()), std::max(distances.top(), distances.bottom()));
+        },
+        [&](CSS::Keyword::ClosestCorner) {
+            return std::hypot(std::min(distances.left(), distances.right()), std::min(distances.top(), distances.bottom()));
+        },
+        [&](CSS::Keyword::Sides) {
+            return lengthOfRayIntersectionWithBoundingBox(boundingBox, std::make_pair(data.usedStartingPosition, ray.angle.value));
+        }
+    );
+}
+
+static double lengthForRayContainPath(const FloatRect& elementRect, double computedPathLength)
+{
+    return std::max(0.0, computedPathLength - (std::max(elementRect.width(), elementRect.height()) / 2));
+}
+
+std::optional<WebCore::Path> tryPath(const Ray& ray, const TransformOperationData& transformData)
+{
+    auto motionPathData = transformData.motionPathData;
+    if (!motionPathData || motionPathData->containingBlockBoundingRect.rect().isZero())
+        return std::nullopt;
+
+    auto elementBoundingBox = transformData.boundingBox;
+    double length = lengthForRayPath(ray, *motionPathData);
+    if (ray.contain)
+        length = lengthForRayContainPath(elementBoundingBox, length);
+
+    auto radians = deg2rad(toPositiveAngle(ray.angle.value) - 90.0);
+    auto point = FloatPoint(std::cos(radians) * length, std::sin(radians) * length);
+
+    auto currentOffset = motionPathData->currentOffset();
+
+    WebCore::Path path;
+    path.moveTo(currentOffset);
+    path.addLineTo(currentOffset + point);
+    return path;
+}
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+AcceleratedEffectRayFunction Evaluation<RayFunction, AcceleratedEffectRayFunction>::operator()(const RayFunction& ray, const TransformOperationData& data)
+{
+    auto toAcceleratedEffectRaySize = [](RaySize size) -> AcceleratedEffectRayFunction::RaySize {
+        return WTF::switchOn(size,
+            [](const CSS::Keyword::ClosestCorner)  { return AcceleratedEffectRayFunction::RaySize::ClosestCorner; },
+            [](const CSS::Keyword::ClosestSide)    { return AcceleratedEffectRayFunction::RaySize::ClosestSide; },
+            [](const CSS::Keyword::FarthestCorner) { return AcceleratedEffectRayFunction::RaySize::FarthestCorner; },
+            [](const CSS::Keyword::FarthestSide)   { return AcceleratedEffectRayFunction::RaySize::FarthestSide; },
+            [](const CSS::Keyword::Sides)          { return AcceleratedEffectRayFunction::RaySize::Sides; }
+        );
+    };
+
+    return {
+        .angle = ray->angle.value,
+        .size = toAcceleratedEffectRaySize(ray->size),
+        .contain = ray->contain ? std::optional { AcceleratedEffectRayFunction::Contain { } } : std::nullopt,
+        .position = ray->position ? std::optional { evaluate<FloatPoint>(*ray->position, data.motionPathData->containingBlockBoundingRect.rect().size(), ZoomNeeded { }) } : std::nullopt,
+    };
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore

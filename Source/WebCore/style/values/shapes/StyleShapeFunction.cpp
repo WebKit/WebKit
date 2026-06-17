@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleShapeFunction.h"
 
+#include "AcceleratedEffectShapeFunction.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
@@ -663,6 +664,279 @@ std::optional<Shape> makeShapeFromPath(const Path& path)
         .commands = { WTF::move(shapeCommands) }
     };
 }
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+template<> struct Evaluation<ControlPointAnchor, AcceleratedEffectShapeFunction::ControlPointAnchor> { AcceleratedEffectShapeFunction::ControlPointAnchor operator()(const ControlPointAnchor&); };
+
+template<> struct Evaluation<ToPosition, AcceleratedEffectShapeFunction::ToPosition> { AcceleratedEffectShapeFunction::ToPosition operator()(const ToPosition&, const FloatRect&); };
+template<> struct Evaluation<ByCoordinatePair, AcceleratedEffectShapeFunction::ByCoordinatePair> { AcceleratedEffectShapeFunction::ByCoordinatePair operator()(const ByCoordinatePair&, const FloatRect&); };
+template<> struct Evaluation<RelativeControlPoint, AcceleratedEffectShapeFunction::RelativeControlPoint> { AcceleratedEffectShapeFunction::RelativeControlPoint operator()(const RelativeControlPoint&, const FloatRect&); };
+template<> struct Evaluation<AbsoluteControlPoint, AcceleratedEffectShapeFunction::AbsoluteControlPoint> { AcceleratedEffectShapeFunction::AbsoluteControlPoint operator()(const AbsoluteControlPoint&, const FloatRect&); };
+
+template<> struct Evaluation<MoveCommand, AcceleratedEffectShapeFunction::MoveCommand> { AcceleratedEffectShapeFunction::MoveCommand operator()(const MoveCommand&, const FloatRect&); };
+template<> struct Evaluation<LineCommand, AcceleratedEffectShapeFunction::LineCommand> { AcceleratedEffectShapeFunction::LineCommand operator()(const LineCommand&, const FloatRect&); };
+
+template<> struct Evaluation<HLineCommand, AcceleratedEffectShapeFunction::HLineCommand> { AcceleratedEffectShapeFunction::HLineCommand operator()(const HLineCommand&, const FloatRect&); };
+template<> struct Evaluation<HLineCommand::To, AcceleratedEffectShapeFunction::HLineCommand::To> { AcceleratedEffectShapeFunction::HLineCommand::To operator()(const HLineCommand::To&, const FloatRect&); };
+template<> struct Evaluation<HLineCommand::By, AcceleratedEffectShapeFunction::HLineCommand::By> { AcceleratedEffectShapeFunction::HLineCommand::By operator()(const HLineCommand::By&, const FloatRect&); };
+
+template<> struct Evaluation<VLineCommand, AcceleratedEffectShapeFunction::VLineCommand> { AcceleratedEffectShapeFunction::VLineCommand operator()(const VLineCommand&, const FloatRect&); };
+template<> struct Evaluation<VLineCommand::To, AcceleratedEffectShapeFunction::VLineCommand::To> { AcceleratedEffectShapeFunction::VLineCommand::To operator()(const VLineCommand::To&, const FloatRect&); };
+template<> struct Evaluation<VLineCommand::By, AcceleratedEffectShapeFunction::VLineCommand::By> { AcceleratedEffectShapeFunction::VLineCommand::By operator()(const VLineCommand::By&, const FloatRect&); };
+
+template<> struct Evaluation<CurveCommand, AcceleratedEffectShapeFunction::CurveCommand> { AcceleratedEffectShapeFunction::CurveCommand operator()(const CurveCommand&, const FloatRect&); };
+template<> struct Evaluation<CurveCommand::To, AcceleratedEffectShapeFunction::CurveCommand::To> { AcceleratedEffectShapeFunction::CurveCommand::To operator()(const CurveCommand::To&, const FloatRect&); };
+template<> struct Evaluation<CurveCommand::By, AcceleratedEffectShapeFunction::CurveCommand::By> { AcceleratedEffectShapeFunction::CurveCommand::By operator()(const CurveCommand::By&, const FloatRect&); };
+
+template<> struct Evaluation<SmoothCommand, AcceleratedEffectShapeFunction::SmoothCommand> { AcceleratedEffectShapeFunction::SmoothCommand operator()(const SmoothCommand&, const FloatRect&); };
+template<> struct Evaluation<SmoothCommand::To, AcceleratedEffectShapeFunction::SmoothCommand::To> { AcceleratedEffectShapeFunction::SmoothCommand::To operator()(const SmoothCommand::To&, const FloatRect&); };
+template<> struct Evaluation<SmoothCommand::By, AcceleratedEffectShapeFunction::SmoothCommand::By> { AcceleratedEffectShapeFunction::SmoothCommand::By operator()(const SmoothCommand::By&, const FloatRect&); };
+
+template<> struct Evaluation<ArcCommand, AcceleratedEffectShapeFunction::ArcCommand> { AcceleratedEffectShapeFunction::ArcCommand operator()(const ArcCommand&, const FloatRect&); };
+template<> struct Evaluation<CloseCommand, AcceleratedEffectShapeFunction::CloseCommand> { AcceleratedEffectShapeFunction::CloseCommand operator()(const CloseCommand&, const FloatRect&); };
+
+AcceleratedEffectShapeFunction::ControlPointAnchor Evaluation<ControlPointAnchor, AcceleratedEffectShapeFunction::ControlPointAnchor>::operator()(const ControlPointAnchor& value)
+{
+    return WTF::switchOn(value,
+        [&](CSS::Keyword::Start) { return AcceleratedEffectShapeFunction::ControlPointAnchor::Start; },
+        [&](CSS::Keyword::End) { return AcceleratedEffectShapeFunction::ControlPointAnchor::End; },
+        [&](CSS::Keyword::Origin) { return AcceleratedEffectShapeFunction::ControlPointAnchor::Origin; }
+    );
+}
+
+AcceleratedEffectShapeFunction::ToPosition Evaluation<ToPosition, AcceleratedEffectShapeFunction::ToPosition>::operator()(const ToPosition& value, const FloatRect& rect)
+{
+    return { .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }) };
+}
+
+AcceleratedEffectShapeFunction::ByCoordinatePair Evaluation<ByCoordinatePair, AcceleratedEffectShapeFunction::ByCoordinatePair>::operator()(const ByCoordinatePair& value, const FloatRect& rect)
+{
+    return { .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }) };
+}
+
+AcceleratedEffectShapeFunction::RelativeControlPoint Evaluation<RelativeControlPoint, AcceleratedEffectShapeFunction::RelativeControlPoint>::operator()(const RelativeControlPoint& value, const FloatRect& rect)
+{
+    return {
+        .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }),
+        .anchor = value.anchor ? std::optional { evaluate<AcceleratedEffectShapeFunction::ControlPointAnchor>(*value.anchor) } : std::nullopt,
+    };
+}
+
+AcceleratedEffectShapeFunction::AbsoluteControlPoint Evaluation<AbsoluteControlPoint, AcceleratedEffectShapeFunction::AbsoluteControlPoint>::operator()(const AbsoluteControlPoint& value, const FloatRect& rect)
+{
+    return {
+        .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }),
+        .anchor = value.anchor ? std::optional { evaluate<AcceleratedEffectShapeFunction::ControlPointAnchor>(*value.anchor) } : std::nullopt,
+    };
+}
+
+AcceleratedEffectShapeFunction::MoveCommand Evaluation<MoveCommand, AcceleratedEffectShapeFunction::MoveCommand>::operator()(const MoveCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const MoveCommand::To& to) -> AcceleratedEffectShapeFunction::MoveCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::MoveCommand::To>(to, rect);
+            },
+            [&](const MoveCommand::By& by) -> AcceleratedEffectShapeFunction::MoveCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::MoveCommand::By>(by, rect);
+            }
+        )
+    };
+}
+
+AcceleratedEffectShapeFunction::LineCommand Evaluation<LineCommand, AcceleratedEffectShapeFunction::LineCommand>::operator()(const LineCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const LineCommand::To& to) -> AcceleratedEffectShapeFunction::LineCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::LineCommand::To>(to, rect);
+            },
+            [&](const LineCommand::By& by) -> AcceleratedEffectShapeFunction::LineCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::LineCommand::By>(by, rect);
+            }
+        )
+    };
+}
+
+AcceleratedEffectShapeFunction::HLineCommand Evaluation<HLineCommand, AcceleratedEffectShapeFunction::HLineCommand>::operator()(const HLineCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const HLineCommand::To& to) -> AcceleratedEffectShapeFunction::HLineCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::HLineCommand::To>(to, rect);
+            },
+            [&](const HLineCommand::By& by) -> AcceleratedEffectShapeFunction::HLineCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::HLineCommand::By>(by, rect);
+            }
+        )
+    };
+}
+
+AcceleratedEffectShapeFunction::HLineCommand::To Evaluation<HLineCommand::To, AcceleratedEffectShapeFunction::HLineCommand::To>::operator()(const HLineCommand::To& value, const FloatRect& rect)
+{
+    return { .offset = evaluate<float>(value.offset, rect.width(), ZoomNeeded { }) };
+}
+
+AcceleratedEffectShapeFunction::HLineCommand::By Evaluation<HLineCommand::By, AcceleratedEffectShapeFunction::HLineCommand::By>::operator()(const HLineCommand::By& value, const FloatRect& rect)
+{
+    return { .offset = evaluate<float>(value.offset, rect.width(), ZoomNeeded { }) };
+}
+
+AcceleratedEffectShapeFunction::VLineCommand Evaluation<VLineCommand, AcceleratedEffectShapeFunction::VLineCommand>::operator()(const VLineCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const VLineCommand::To& to) -> AcceleratedEffectShapeFunction::VLineCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::VLineCommand::To>(to, rect);
+            },
+            [&](const VLineCommand::By& by) -> AcceleratedEffectShapeFunction::VLineCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::VLineCommand::By>(by, rect);
+            }
+        )
+    };
+}
+
+AcceleratedEffectShapeFunction::VLineCommand::To Evaluation<VLineCommand::To, AcceleratedEffectShapeFunction::VLineCommand::To>::operator()(const VLineCommand::To& value, const FloatRect& rect)
+{
+    return { .offset = evaluate<float>(value.offset, rect.height(), ZoomNeeded { }) };
+}
+
+AcceleratedEffectShapeFunction::VLineCommand::By Evaluation<VLineCommand::By, AcceleratedEffectShapeFunction::VLineCommand::By>::operator()(const VLineCommand::By& value, const FloatRect& rect)
+{
+    return { .offset = evaluate<float>(value.offset, rect.height(), ZoomNeeded { }) };
+}
+
+AcceleratedEffectShapeFunction::CurveCommand Evaluation<CurveCommand, AcceleratedEffectShapeFunction::CurveCommand>::operator()(const CurveCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const CurveCommand::To& to) -> AcceleratedEffectShapeFunction::CurveCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::CurveCommand::To>(to, rect);
+            },
+            [&](const CurveCommand::By& by) -> AcceleratedEffectShapeFunction::CurveCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::CurveCommand::By>(by, rect);
+            }
+        )
+    };
+}
+
+AcceleratedEffectShapeFunction::CurveCommand::To Evaluation<CurveCommand::To, AcceleratedEffectShapeFunction::CurveCommand::To>::operator()(const CurveCommand::To& value, const FloatRect& rect)
+{
+    return {
+        .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }),
+        .controlPoint1 = evaluate<AcceleratedEffectShapeFunction::AbsoluteControlPoint>(value.controlPoint1, rect),
+        .controlPoint2 = value.controlPoint2 ? std::optional  { evaluate<AcceleratedEffectShapeFunction::AbsoluteControlPoint>(*value.controlPoint2, rect) } : std::nullopt,
+    };
+}
+
+AcceleratedEffectShapeFunction::CurveCommand::By Evaluation<CurveCommand::By, AcceleratedEffectShapeFunction::CurveCommand::By>::operator()(const CurveCommand::By& value, const FloatRect& rect)
+{
+    return {
+        .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }),
+        .controlPoint1 = evaluate<AcceleratedEffectShapeFunction::RelativeControlPoint>(value.controlPoint1, rect),
+        .controlPoint2 = value.controlPoint2 ? std::optional  { evaluate<AcceleratedEffectShapeFunction::RelativeControlPoint>(*value.controlPoint2, rect) } : std::nullopt,
+    };
+}
+
+AcceleratedEffectShapeFunction::SmoothCommand Evaluation<SmoothCommand, AcceleratedEffectShapeFunction::SmoothCommand>::operator()(const SmoothCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const SmoothCommand::To& to) -> AcceleratedEffectShapeFunction::SmoothCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::SmoothCommand::To>(to, rect);
+            },
+            [&](const SmoothCommand::By& by) -> AcceleratedEffectShapeFunction::SmoothCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::SmoothCommand::By>(by, rect);
+            }
+        )
+    };
+}
+
+AcceleratedEffectShapeFunction::SmoothCommand::To Evaluation<SmoothCommand::To, AcceleratedEffectShapeFunction::SmoothCommand::To>::operator()(const SmoothCommand::To& value, const FloatRect& rect)
+{
+    return {
+        .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }),
+        .controlPoint = value.controlPoint ? std::optional  { evaluate<AcceleratedEffectShapeFunction::AbsoluteControlPoint>(*value.controlPoint, rect) } : std::nullopt,
+    };
+}
+
+AcceleratedEffectShapeFunction::SmoothCommand::By Evaluation<SmoothCommand::By, AcceleratedEffectShapeFunction::SmoothCommand::By>::operator()(const SmoothCommand::By& value, const FloatRect& rect)
+{
+    return {
+        .offset = evaluate<FloatPoint>(value.offset, rect.size(), ZoomNeeded { }),
+        .controlPoint = value.controlPoint ? std::optional  { evaluate<AcceleratedEffectShapeFunction::RelativeControlPoint>(*value.controlPoint, rect) } : std::nullopt,
+    };
+}
+
+AcceleratedEffectShapeFunction::ArcCommand Evaluation<ArcCommand, AcceleratedEffectShapeFunction::ArcCommand>::operator()(const ArcCommand& value, const FloatRect& rect)
+{
+    return {
+        .toBy = WTF::switchOn(value.toBy,
+            [&](const ArcCommand::To& to) -> AcceleratedEffectShapeFunction::ArcCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::ArcCommand::To>(to, rect);
+            },
+            [&](const ArcCommand::By& by) -> AcceleratedEffectShapeFunction::ArcCommand::ToBy {
+                return evaluate<AcceleratedEffectShapeFunction::ArcCommand::By>(by, rect);
+            }
+        ),
+        .size = evaluate<FloatSize>(value.size, rect.size(), ZoomNeeded { }),
+        .arcSweep = std::holds_alternative<CSS::Keyword::Cw>(value.arcSweep) ? AcceleratedEffectShapeFunction::ArcSweep::Cw : AcceleratedEffectShapeFunction::ArcSweep::Ccw,
+        .arcSize = std::holds_alternative<CSS::Keyword::Large>(value.arcSize) ? AcceleratedEffectShapeFunction::ArcSize::Large : AcceleratedEffectShapeFunction::ArcSize::Small,
+        .rotation = value.rotation.value,
+    };
+}
+
+AcceleratedEffectShapeFunction::CloseCommand Evaluation<CloseCommand, AcceleratedEffectShapeFunction::CloseCommand>::operator()(const CloseCommand&, const FloatRect&)
+{
+    return { };
+}
+
+AcceleratedEffectShapeFunction Evaluation<ShapeFunction, AcceleratedEffectShapeFunction>::operator()(const ShapeFunction& value, const TransformOperationData& data)
+{
+    auto rect = data.motionPathData->offsetRect().rect();
+
+    auto evaluatedCommands = [&] {
+        return WTF::map(value->commands, [&](auto& command) -> AcceleratedEffectShapeFunction::Command {
+            return WTF::switchOn(command,
+                [&](const MoveCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::MoveCommand>(command, rect);
+                },
+                [&](const LineCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::LineCommand>(command, rect);
+                },
+                [&](const HLineCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::HLineCommand>(command, rect);
+                },
+                [&](const VLineCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::VLineCommand>(command, rect);
+                },
+                [&](const CurveCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::CurveCommand>(command, rect);
+                },
+                [&](const SmoothCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::SmoothCommand>(command, rect);
+                },
+                [&](const ArcCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::ArcCommand>(command, rect);
+                },
+                [&](const CloseCommand& command) -> AcceleratedEffectShapeFunction::Command {
+                    return evaluate<AcceleratedEffectShapeFunction::CloseCommand>(command, rect);
+                }
+            );
+        });
+    };
+
+    return {
+        .fillRule = windRule(*value),
+        .startingPoint = evaluate<FloatPoint>(value->startingPoint, rect.size(), ZoomNeeded { }),
+        .commands = evaluatedCommands(),
+    };
+}
+
+#endif
 
 } // namespace Style
 } // namespace WebCore
