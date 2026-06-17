@@ -24,6 +24,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FFFF00000000FFFF.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-0.7333-0-0.svg
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-1-0-0.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000.mp4
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000.webm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000CC.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000FF.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BBBC00000000CCCC.png
@@ -41,7 +43,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-semitransparent-p3d65.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-semitransparent-rec2020.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-semitransparent-srgb.png
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-srgb-fullcolor.ogv
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-srgb-transparent.avif
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-srgb-transparent.bmp
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/pattern-srgb-transparent.ico

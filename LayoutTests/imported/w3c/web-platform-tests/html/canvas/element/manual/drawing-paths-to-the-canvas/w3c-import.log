@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/canvas_complexshapes_ispointInpath_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/drawFocusIfNeeded_001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/drawFocusIfNeeded_002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/drawFocusIfNeeded_003.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/drawFocusIfNeeded_004.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/drawFocusIfNeeded_005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-paths-to-the-canvas/fill-path-with-uninvertible-transform-crash.html

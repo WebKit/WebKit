@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/canvas-with-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false-ref.html

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/unclosed-canvas-1-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/unclosed-canvas-1-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/unclosed-canvas-1.htm

@@ -8452,3 +8452,5 @@ fast/events/pointerleave-after-ancestor-removal.html [ Skip ]
 webkit.org/b/316446 imported/w3c/web-platform-tests/css/css-borders/border-width-rounding.tentative.html [ Failure ]
 
 webkit.org/b/316830 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Pass Timeout ]
+
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-svg-resize.html [ ImageOnlyFailure ]

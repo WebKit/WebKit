@@ -1336,3 +1336,5 @@ webkit.org/b/252878 [ arm64 ] fast/frames/lots-of-objects.html [ Pass Timeout ]
 webkit.org/b/317021 [ arm64 ] fast/parser/elementstack-nesting-depth.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-for-repeat-key-ending-after-scroll-container-end-is-reached.html [ Skip ] # Different outputs
+
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-svg-resize.html [ ImageOnlyFailure ]

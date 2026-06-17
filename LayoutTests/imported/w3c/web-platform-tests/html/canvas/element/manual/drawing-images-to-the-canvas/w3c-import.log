@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas_self-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas_self.html

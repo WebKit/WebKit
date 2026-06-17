@@ -1,0 +1,15 @@
+
+PASS createImageBitmap with an OffscreenCanvas source and invalid cropHeight should reject sync
+PASS createImageBitmap with an OffscreenCanvas source and invalid resizeHeight should reject sync
+FAIL createImageBitmap with an OffscreenCanvas source should resolve async assert_equals: The promise should be resolved asynchronously expected true but got false
+PASS createImageBitmap with an ImageData source and invalid cropHeight should reject sync
+PASS createImageBitmap with an ImageData source and invalid resizeHeight should reject sync
+FAIL createImageBitmap with an ImageData source should resolve async assert_equals: The promise should be resolved asynchronously expected true but got false
+PASS createImageBitmap with an ImageBitmap source and invalid cropHeight should reject sync
+PASS createImageBitmap with an ImageBitmap source and invalid resizeHeight should reject sync
+FAIL createImageBitmap with an ImageBitmap source should resolve async assert_equals: The promise should be resolved asynchronously expected true but got false
+PASS createImageBitmap with a Blob source and invalid cropHeight should reject sync
+FAIL createImageBitmap with a Blob source and invalid resizeHeight should reject sync assert_equals: The promise should be rejected synchronously expected true but got false
+PASS createImageBitmap with a Blob source should resolve async
+PASS Invalid Blob source should reject async
+

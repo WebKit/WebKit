@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/ImageData-fidelity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html

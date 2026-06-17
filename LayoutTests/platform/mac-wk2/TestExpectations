@@ -2444,3 +2444,5 @@ webkit.org/b/317031 [ Release ] imported/w3c/web-platform-tests/web-locks/acquir
 [ Tahoe ] fast/speechsynthesis/speech-synthesis-speak-fuzzer-crash.html [ Skip ]
 
 webkit.org/b/317173 [ arm64 ] fast/webgpu/nocrash/fuzz-298315.html [ Pass Crash ]
+
+[ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-colorSpaceConversion.html [ Skip ]

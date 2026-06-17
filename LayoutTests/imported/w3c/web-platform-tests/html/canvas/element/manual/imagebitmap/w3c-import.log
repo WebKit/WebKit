@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-ImageBitmap-close.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html
@@ -29,8 +30,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-in-worker-transfer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-invalid-args.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-premultiplyAlpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-resolves-in-task.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-serializable.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-sizeOverflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-svg-resize-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-svg-resize-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-svg-resize.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-transfer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmap-from-imageData-no-image-rotation-expected.html

@@ -1,0 +1,14 @@
+
+FAIL createImageBitmap: from ImageData, unpremultiplied, drawn to canvas assert_approx_equals: Red channel of the pixel at (0, 0) expected 64 +/- 2 but got 128
+PASS createImageBitmap: from ImageData, premultiplied, drawn to canvas
+PASS createImageBitmap: from ImageData, default, drawn to canvas
+PASS createImageBitmap: from Canvas2D, unpremultiplied, drawn to canvas
+PASS createImageBitmap: from Canvas2D, premultiplied, drawn to canvas
+PASS createImageBitmap: from Canvas2D, default, drawn to canvas
+PASS createImageBitmap: from Canvas2D willReadFrequently:true, unpremultiplied, drawn to canvas
+PASS createImageBitmap: from Canvas2D willReadFrequently:true, premultiplied, drawn to canvas
+PASS createImageBitmap: from Canvas2D willReadFrequently:true, default, drawn to canvas
+PASS createImageBitmap: from Canvas2D willReadFrequently:false, unpremultiplied, drawn to canvas
+PASS createImageBitmap: from Canvas2D willReadFrequently:false, premultiplied, drawn to canvas
+PASS createImageBitmap: from Canvas2D willReadFrequently:false, default, drawn to canvas
+

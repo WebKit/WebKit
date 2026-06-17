@@ -14,8 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/alpha_filter_shadow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/alpha_filter_shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/canvas_compositing_globalcompositeoperation_001-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/canvas_compositing_globalcompositeoperation_001-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/canvas_compositing_globalcompositeoperation_001.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/colr-glyph-composition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/colr-glyph-composition-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/colr-glyph-composition.html

@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_arcto_001-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_arcto_001-ref.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/building-paths/canvas_complexshapes_arcto_001.htm
