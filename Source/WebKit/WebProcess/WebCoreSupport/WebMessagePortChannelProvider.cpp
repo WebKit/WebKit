@@ -71,18 +71,23 @@ void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePor
         m_inProcessPortMessages.add(port2, Vector<MessageWithMessagePorts> { });
     }
 
+    m_portsKnownToNetworkProcess.add(port1);
+    m_portsKnownToNetworkProcess.add(port2);
+
     protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::CreateNewMessagePortChannel { port1, port2 }, 0);
 }
 
 void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
     m_inProcessPortMessages.add(local, Vector<MessageWithMessagePorts> { });
+    m_portsKnownToNetworkProcess.add(local);
 
     protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& port)
 {
+    m_portsKnownToNetworkProcess.remove(port);
     protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
 }
 
@@ -93,14 +98,30 @@ void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::Messa
         postMessageToRemote(WTF::move(message), port);
 }
 
+void WebMessagePortChannelProvider::networkProcessConnectionClosed()
+{
+    ASSERT(isMainRunLoop());
+
+    m_inProcessPortMessages.clear();
+    m_portsKnownToNetworkProcess.clear();
+    MessagePort::notifyAllConnectionsClosed();
+}
+
 void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& port)
 {
     m_inProcessPortMessages.remove(port);
+    m_portsKnownToNetworkProcess.remove(port);
     protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
 }
 
 void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& completionHandler)
 {
+    // This attempt to takeAllMessagesForPort might asynchronously have come from a worker thread while
+    // all ports were being detached due to disconnection from the networking process.
+    // Gracefully fail in this case.
+    if (!m_portsKnownToNetworkProcess.contains(port))
+        return completionHandler({ }, [] { });
+
     protectedNetworkProcessConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::TakeAllMessagesForPort { port }, [completionHandler = WTF::move(completionHandler), port](Vector<WebCore::MessageWithMessagePorts>&& messages, std::optional<MessageBatchIdentifier> messageBatchIdentifier) mutable {
         if (!messageBatchIdentifier)
             return completionHandler({ }, [] { }); // IPC failure.
