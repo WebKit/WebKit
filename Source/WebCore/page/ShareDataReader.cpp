@@ -51,8 +51,9 @@ void ShareDataReader::start(Document* document, ShareDataWithParsedURL&& shareDa
     int count = 0;
     m_pendingFileLoads.reserveInitialCapacity(m_shareData.shareData.files.size());
     for (auto& blob : m_shareData.shareData.files) {
-        Ref blobLoader = BlobLoader::create([this, count, fileName = blob->name()](BlobLoader&) {
-            this->didFinishLoading(count, fileName);
+        Ref blobLoader = BlobLoader::create([weakThis = WeakPtr { *this }, count, fileName = blob->name()](BlobLoader&) {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->didFinishLoading(count, fileName);
         });
         m_pendingFileLoads.append(blobLoader.copyRef());
         blobLoader->start(blob, document, FileReaderLoader::ReadAsArrayBuffer);
