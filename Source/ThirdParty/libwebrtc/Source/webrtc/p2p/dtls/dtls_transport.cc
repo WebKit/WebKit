@@ -240,6 +240,9 @@ DtlsTransportInternalImpl::~DtlsTransportInternalImpl() {
 #if WEBRTC_WEBKIT_BUILD
     ice_transport_->UnsubscribeReceivingState(this);
     ice_transport_->UnsubscribeWritableState(this);
+    ice_transport()->UnsubscribeReadyToSend(this);
+    ice_transport()->UnsubscribeNetworkRouteChanged(this);
+    ice_transport()->UnsubscribeSentPacket(this);
 #endif
   }
 }
