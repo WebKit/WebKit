@@ -17,8 +17,10 @@
 
     prepareTest();
 
-    if (window.testRunner)
+    if (window.testRunner) {
+        testRunner.setPrivateClickMeasurementAppBundleIDForTesting("com.apple.WebKit.WebKitTestRunner");
         testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.py?nonce=" + nonce, "http://localhost:8000/privateClickMeasurement/resources/conversionReport.py?nonce=" + nonce);
+    }
 
     function activateElement(elementID) {
         var element = document.getElementById(elementID);
