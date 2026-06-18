@@ -279,7 +279,9 @@ public:
         return m_rects.rects;
     }
 
-    Region regionForTesting() const
+    // Non-overlapping (disjoint) cover of the damage - safe to restrict translucent compositing to,
+    // unlike rects() which may return overlapping rects.
+    Region region() const
     {
         Region region;
 

@@ -226,7 +226,7 @@ void NonCompositedFrameRenderer::updateRendering()
 #if ENABLE(DAMAGE_TRACKING)
         if (m_frameDamage) {
             if (m_frameDamageHistoryForTesting)
-                m_frameDamageHistoryForTesting->append(m_frameDamage->regionForTesting());
+                m_frameDamageHistoryForTesting->append(m_frameDamage->region());
             m_surface->setFrameDamage(WTF::move(*m_frameDamage));
             resetFrameDamage();
         }

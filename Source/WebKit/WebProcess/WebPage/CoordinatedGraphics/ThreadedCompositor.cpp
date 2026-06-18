@@ -332,7 +332,7 @@ void ThreadedCompositor::paintToTextureMapper(const TransformationMatrix& matrix
         WTFEndSignpost(this, CollectDamage);
 
         if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.regionForTesting());
+            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.region());
 
         if (!frameDamage.isEmpty())
             m_surface->setFrameDamage(WTF::move(frameDamage));
@@ -402,7 +402,7 @@ void ThreadedCompositor::paintToSkiaCanvas(const TransformationMatrix& matrix, c
 #if ENABLE(DAMAGE_TRACKING)
     if (frameDamage) {
         if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage->regionForTesting());
+            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage->region());
 
         if (!frameDamage->isEmpty())
             m_surface->setFrameDamage(WTF::move(*frameDamage));

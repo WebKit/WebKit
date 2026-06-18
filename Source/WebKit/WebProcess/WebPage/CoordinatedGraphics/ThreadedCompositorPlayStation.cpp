@@ -259,7 +259,7 @@ void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& mat
         WTFEndSignpost(this, CollectDamage);
 
         if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.regionForTesting());
+            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.region());
 
         if (!frameDamage.isEmpty())
             m_surface->setFrameDamage(WTF::move(frameDamage));
