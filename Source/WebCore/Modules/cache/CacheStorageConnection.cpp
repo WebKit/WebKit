@@ -64,16 +64,22 @@ uint64_t CacheStorageConnection::computeRecordBodySize(const FetchResponse& resp
         return computeRealBodySize(body);
     }
 
-    return m_opaqueResponseToSizeWithPaddingMap.ensure(response.opaqueLoadIdentifier(), [&] () {
-        uint64_t realSize = computeRealBodySize(body);
+    {
+        Locker lock { m_opaqueResponseToSizeWithPaddingMapLock };
+        auto iterator = m_opaqueResponseToSizeWithPaddingMap.find(response.opaqueLoadIdentifier());
+        if (iterator != m_opaqueResponseToSizeWithPaddingMap.end())
+            return iterator->value;
+    }
 
-        // Padding the size as per https://github.com/whatwg/storage/issues/31.
-        uint64_t sizeWithPadding = realSize + static_cast<uint64_t>(cryptographicallyRandomUnitInterval() * 128000);
-        sizeWithPadding = ((sizeWithPadding / 32000) + 1) * 32000;
+    // We compute the size outside of the lock as form data size computation may hop to main thread.
+    uint64_t realSize = computeRealBodySize(body);
 
-        m_opaqueResponseToSizeWithPaddingMap.set(response.opaqueLoadIdentifier(), sizeWithPadding);
-        return sizeWithPadding;
-    }).iterator->value;
+    // Padding the size as per https://github.com/whatwg/storage/issues/31.
+    uint64_t sizeWithPadding = realSize + static_cast<uint64_t>(cryptographicallyRandomUnitInterval() * 128000);
+    sizeWithPadding = ((sizeWithPadding / 32000) + 1) * 32000;
+
+    Locker lock { m_opaqueResponseToSizeWithPaddingMapLock };
+    return m_opaqueResponseToSizeWithPaddingMap.add(response.opaqueLoadIdentifier(), sizeWithPadding).iterator->value;
 }
 
 } // namespace WebCore
