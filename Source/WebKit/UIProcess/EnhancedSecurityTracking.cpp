@@ -175,7 +175,7 @@ void EnhancedSecurityTracking::trackSameSiteNavigation(const API::Navigation& na
 
 static bool isURLCandidateForEnhancedSecurity(const URL& url)
 {
-    return url.protocolIs("http"_s) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host());
+    return url.protocolIs("http"_s);
 }
 
 bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, bool httpFallbackInProgress)

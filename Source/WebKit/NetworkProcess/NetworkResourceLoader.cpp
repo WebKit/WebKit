@@ -1106,8 +1106,7 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
         shouldConsiderProcessSwapForEnhancedSecurity = browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup
             && m_parameters.shouldConsiderEnhancedSecurityForInsecureResponse
             && m_parameters.navigationID
-            && response.url().protocolIs("http"_s)
-            && !WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress(response.url().host());
+            && response.url().protocolIs("http"_s);
     }
 
     if (!shouldConsiderProcessSwapForEnhancedSecurity && browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
