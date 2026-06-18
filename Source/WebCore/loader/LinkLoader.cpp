@@ -102,6 +102,12 @@ void LinkLoader::triggerEvents(const CachedResource& resource)
         client->linkLoaded();
 }
 
+void LinkLoader::triggerLoad()
+{
+    if (RefPtr client = m_client.get())
+        client->linkLoaded();
+}
+
 void LinkLoader::triggerError()
 {
     if (RefPtr client = m_client.get())
@@ -356,6 +362,15 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
     } else if (params.relAttribute.isLinkPreload) {
         ASSERT(document.settings().linkPreloadEnabled());
         type = LinkLoader::resourceTypeFromAsAttribute(params.as, document, ShouldLog::Yes);
+        if (!type && equalLettersIgnoringASCIICase(params.as, "json"_s)) {
+            // `json` is reflected by HTMLLinkElement::as as a known value, but is only a valid
+            // preload destination for <link rel=modulepreload>. For a plain preload we perform
+            // no fetch; fire the load event (rather than staying silent) so listeners are not
+            // left waiting indefinitely. This matches Firefox.
+            if (loader)
+                loader->triggerLoad();
+            return nullptr;
+        }
     }
 
     if (!type)
