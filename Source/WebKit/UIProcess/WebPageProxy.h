@@ -150,6 +150,7 @@ class NotificationResources;
 class PlatformSpeechSynthesisUtterance;
 class PlatformSpeechSynthesizer;
 class PrivateClickMeasurement;
+class PublicSuffix;
 class Region;
 class RegistrableDomain;
 class ResourceError;
@@ -246,6 +247,7 @@ enum class SelectionDirection : uint8_t;
 enum class SessionHistoryVisibility : bool;
 enum class ShouldGoToHistoryItem : uint8_t;
 enum class ShouldOpenExternalURLsPolicy : uint8_t;
+enum class ShouldRestoreFromBackForwardCache : uint8_t;
 enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class TextAnimationRunMode : uint8_t;
@@ -3015,6 +3017,10 @@ private:
     Ref<WebPageProxy> navigationOriginatingPage(const FrameInfoData&);
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListFrameItem&, WebCore::FrameLoadType);
+
+    bool dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromFrame, WebBackForwardListFrameItem& toFrame, WebCore::NavigationIdentifier, WebCore::FrameLoadType, WebCore::ShouldRestoreFromBackForwardCache, const WebCore::PublicSuffix&);
+    void sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& targetFrame, WebCore::NavigationIdentifier, WebCore::FrameLoadType, WebCore::ShouldRestoreFromBackForwardCache, const WebCore::PublicSuffix&);
+    Ref<WebBackForwardListFrameItem> frameItemForLegacyTraversalRouting(WebBackForwardListItem& targetItem, ASCIILiteral logTag);
 
     void updateActivityState(OptionSet<WebCore::ActivityState> flagsToUpdate);
     void updateThrottleState();
