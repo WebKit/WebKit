@@ -585,6 +585,7 @@ TEST(WebAuthenticationPanel, PanelTwice)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
+    [webView waitForMessage:@"Succeeded!"];
     Util::run(&webAuthenticationPanelSucceded);
 
     reset();
