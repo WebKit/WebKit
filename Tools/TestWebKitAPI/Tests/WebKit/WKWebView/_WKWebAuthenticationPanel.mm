@@ -578,6 +578,11 @@ TEST(WebAuthenticationPanel, PanelTwice)
     auto webView = setUpTestWebViewForTestAuthenticationPanel();
     RetainPtr delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
+
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        EXPECT_WK_STREQ("Succeeded!", message);
+    }];
+
 #if PLATFORM(IOS_FAMILY)
     [webView focusInWindow];
 #endif
