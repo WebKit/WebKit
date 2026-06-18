@@ -64,6 +64,8 @@ private:
     RefPtr<MutableStyleProperties> resolveAndRegisterDashedFunctionArguments(const Vector<StyleRuleFunction::Parameter>&, const Vector<Vector<CSSParserToken>>&, LocalPropertyRegistry&);
     bool substituteAttrFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteInternalAutoBaseFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
+    bool substituteRandomItemFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
+    std::optional<double> randomItemBaseValue(CSSParserTokenRange caching);
 
     struct AttrArgumentGrammarSubstitution {
         Vector<CSSParserToken> firstArg;
@@ -86,6 +88,7 @@ private:
     Vector<String> m_intermediateTokenStrings;
     Vector<RefPtr<const CustomProperty>> m_intermediateCustomProperties;
     unsigned m_urlContextDepth { 0 };
+    unsigned m_randomItemAutoIndex { 0 };
     bool m_isAttrTainted { false };
     bool m_hasTaintedURL { false };
 };

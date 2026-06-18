@@ -37,7 +37,10 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserState.h"
 #include "CSSSubstitutionValue.h"
 #include "CSSTokenizer.h"
 #include "CSSUnits.h"
@@ -65,6 +68,7 @@ static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext
 static bool isValidConstantReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidRandomItemReference(CSSParserTokenRange, const CSSParserContext&);
 
 struct ClassifyBlockResult {
     bool hasSubstitutionFunctions { false };
@@ -135,6 +139,12 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
             }
             if (token.functionId() == CSSValueAttr && parserContext.cssAttrSubstitutionFunctionEnabled) {
                 if (!isValidAttrReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueRandomItem && parserContext.cssRandomItemFunctionEnabled) {
+                if (!isValidRandomItemReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
@@ -271,6 +281,88 @@ bool isValidAttrReference(CSSParserTokenRange range, const CSSParserContext& par
         return true;
 
     return !!classifyBlock(range, parserContext);
+}
+
+static bool isValidRandomCaching(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    // <random-value-sharing> = [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>
+    range.consumeWhitespace();
+    if (range.atEnd())
+        return false;
+
+    if (range.peek().id() == CSSValueFixed) {
+        range.consumeIncludingWhitespace();
+        // fixed <number [0,1]>, reusing random()'s number consumer so calc()/var() are accepted.
+        auto numberParsingState = CSS::PropertyParserState { .context = parserContext };
+        auto number = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<CSS::ClosedUnitRange>>::consume(range, numberParsingState);
+        return number && range.atEnd();
+    }
+
+    bool hasIdentifier = false;
+    bool hasElementScoped = false;
+    while (!range.atEnd()) {
+        auto& token = range.peek();
+        if (!hasElementScoped && token.id() == CSSValueElementScoped) {
+            hasElementScoped = true;
+            range.consumeIncludingWhitespace();
+            continue;
+        }
+        if (!hasIdentifier && token.id() == CSSValueAuto) {
+            hasIdentifier = true;
+            range.consumeIncludingWhitespace();
+            continue;
+        }
+        if (!hasIdentifier && token.type() == IdentToken && isCustomPropertyName(token.value())) {
+            hasIdentifier = true;
+            range.consumeIncludingWhitespace();
+            continue;
+        }
+        break;
+    }
+
+    return range.atEnd() && (hasIdentifier || hasElementScoped);
+}
+
+bool isValidRandomItemReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    // random-item( <random-value-sharing> , <declaration-value>?# )
+    range.consumeWhitespace();
+
+    // Split at the first literal comma; the first argument is the <random-value-sharing> specifier.
+    auto cachingStart = range;
+    while (!range.atEnd() && range.peek().type() != CommaToken)
+        range.consumeComponentValue();
+    auto cachingRange = cachingStart.rangeUntil(range);
+    if (!isValidRandomCaching(cachingRange, parserContext))
+        return false;
+
+    // A comma must follow the caching specifier, introducing the list of items.
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return false;
+
+    // At least one item must be present. Each item is a (possibly empty, possibly brace-wrapped)
+    // <declaration-value>; items are validated through classifyBlock.
+    do {
+        auto itemStart = range;
+        while (!range.atEnd() && range.peek().type() != CommaToken)
+            range.consumeComponentValue();
+        auto itemRange = itemStart.rangeUntil(range);
+
+        // Strip an optional outer brace block wrapping a comma-containing value.
+        itemRange.consumeWhitespace();
+        if (!itemRange.atEnd() && itemRange.peek().type() == LeftBraceToken) {
+            auto braced = itemRange.consumeBlock();
+            itemRange.consumeWhitespace();
+            if (!itemRange.atEnd())
+                return false;
+            itemRange = braced;
+        }
+
+        if (!itemRange.atEnd() && !classifyBlock(itemRange, parserContext))
+            return false;
+    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+    return range.atEnd();
 }
 
 struct VariableType {

@@ -26,12 +26,16 @@
 #include "config.h"
 #include "StyleSubstitutionResolver.h"
 
+#include "CSSCalcRandomCachingKey.h"
 #include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserState.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSSelectorParser.h"
 #include "CSSSerializationContext.h"
@@ -56,11 +60,16 @@
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleLocalPropertyRegistry.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 
 namespace WebCore {
 namespace Style {
+
+// The maximum number of tokens that may be produced by a substitution function reference or fallback value.
+// https://drafts.csswg.org/css-variables/#long-variables
+static constexpr size_t maxSubstitutionTokens = 65536;
 
 static bool containsURLTokens(std::span<const CSSParserToken> tokens)
 {
@@ -131,10 +140,6 @@ RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(
 
 bool SubstitutionResolver::substituteVariableFunction(CSSParserTokenRange range, CSSValueID functionId, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
 {
-    // The maximum number of tokens that may be produced by a substitution function reference or fallback value.
-    // https://drafts.csswg.org/css-variables/#long-variables
-    static constexpr size_t maxSubstitutionTokens = 65536;
-
     ASSERT(functionId == CSSValueVar || functionId == CSSValueEnv);
 
     range.consumeWhitespace();
@@ -647,6 +652,124 @@ bool SubstitutionResolver::substituteInternalAutoBaseFunction(CSSParserTokenRang
     return true;
 }
 
+bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+{
+    // https://drafts.csswg.org/css-values-5/#random-item
+    // random-item( <random-value-sharing> , <declaration-value>?# )
+
+    range.consumeWhitespace();
+
+    auto cachingStart = range;
+    while (!range.atEnd() && range.peek().type() != CommaToken)
+        range.consumeComponentValue();
+    auto cachingRange = cachingStart.rangeUntil(range);
+
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return false;
+
+    Vector<CSSParserTokenRange> items;
+    do {
+        auto itemStart = range;
+        while (!range.atEnd() && range.peek().type() != CommaToken)
+            range.consumeComponentValue();
+        auto itemRange = itemStart.rangeUntil(range);
+
+        // Strip an optional outer brace block wrapping a comma-containing value.
+        itemRange.consumeWhitespace();
+        if (!itemRange.atEnd() && itemRange.peek().type() == LeftBraceToken) {
+            auto braced = itemRange.consumeBlock();
+            itemRange.consumeWhitespace();
+            if (!itemRange.atEnd())
+                return false;
+            itemRange = braced;
+        }
+
+        items.append(itemRange);
+    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+    if (items.isEmpty())
+        return false;
+
+    auto baseValue = randomItemBaseValue(cachingRange);
+    if (!baseValue)
+        return false;
+
+    auto index = static_cast<size_t>(*baseValue * items.size());
+    if (index >= items.size())
+        index = items.size() - 1;
+
+    auto selectedTokens = substituteTokenRange(items[index], context);
+    if (!selectedTokens)
+        return false;
+
+    // https://drafts.csswg.org/css-variables/#long-variables
+    if (selectedTokens->size() > maxSubstitutionTokens)
+        return false;
+
+    tokens.appendVector(*selectedTokens);
+    return true;
+}
+
+std::optional<double> SubstitutionResolver::randomItemBaseValue(CSSParserTokenRange cachingRange)
+{
+    // <random-value-sharing> = [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>
+    cachingRange.consumeWhitespace();
+    if (cachingRange.atEnd())
+        return { };
+
+    if (cachingRange.peek().id() == CSSValueFixed) {
+        cachingRange.consumeIncludingWhitespace();
+        // <random-value-sharing-fixed> = fixed <number [0,1]>, reusing random()'s number consumer
+        // so calc() and var()-derived numbers are accepted identically.
+        auto numberParsingState = CSS::PropertyParserState { .context = m_substitutionValue->context() };
+        auto number = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<CSS::ClosedUnitRange>>::consume(cachingRange, numberParsingState);
+        if (!number || !cachingRange.atEnd())
+            return { };
+        return Style::toStyle(*number, m_styleBuilder.state()).value;
+    }
+
+    std::optional<CSS::Keyword::ElementScoped> elementScoped;
+    std::optional<AtomString> dashedIdent;
+    bool isAuto = false;
+
+    while (!cachingRange.atEnd()) {
+        auto& token = cachingRange.peek();
+        if (!elementScoped && token.id() == CSSValueElementScoped) {
+            elementScoped = CSS::Keyword::ElementScoped { };
+            cachingRange.consumeIncludingWhitespace();
+            continue;
+        }
+        if (!isAuto && !dashedIdent && token.id() == CSSValueAuto) {
+            isAuto = true;
+            cachingRange.consumeIncludingWhitespace();
+            continue;
+        }
+        if (!isAuto && !dashedIdent && token.type() == IdentToken && isCustomPropertyName(token.value())) {
+            dashedIdent = token.value().toAtomString();
+            cachingRange.consumeIncludingWhitespace();
+            continue;
+        }
+        break;
+    }
+
+    if (!cachingRange.atEnd())
+        return { };
+
+    if (elementScoped && !m_styleBuilder.state().element())
+        return { };
+
+    if (dashedIdent)
+        return m_styleBuilder.state().lookupCSSRandomBaseValue(CSSCalc::RandomCachingKey { Style::CustomIdent { *dashedIdent } }, elementScoped);
+
+    // "auto" (or an omitted identifier alongside element-scoped) keys on the current property,
+    // disambiguated by position so independent instances in one declaration select independently.
+    auto autoKey = CSSCalc::RandomSharingOptions::Auto {
+        .property = m_styleBuilder.state().cssPropertyID(),
+        .index = m_randomItemAutoIndex++
+    };
+    return m_styleBuilder.state().lookupCSSRandomBaseValue(CSSCalc::RandomCachingKey { autoKey }, elementScoped);
+}
+
 std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange(CSSParserTokenRange range, const CSSParserContext& context)
 {
     Vector<CSSParserToken> tokens;
@@ -671,6 +794,11 @@ std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange
             }
             if (functionId == CSSValueInternalAutoBase) {
                 if (!substituteInternalAutoBaseFunction(range.consumeBlock(), tokens, context))
+                    success = false;
+                continue;
+            }
+            if (functionId == CSSValueRandomItem) {
+                if (!substituteRandomItemFunction(range.consumeBlock(), tokens, context))
                     success = false;
                 continue;
             }
@@ -738,6 +866,7 @@ RefPtr<CSSVariableData> SubstitutionResolver::substitute(const CSSSubstitutionVa
 {
     m_isAttrTainted = false;
     m_hasTaintedURL = false;
+    m_randomItemAutoIndex = 0;
     m_substitutionValue = &value;
 
     if (auto data = trySimpleSubstitution(value)) {

@@ -985,6 +985,7 @@ exclude
 //
 var
 env
+random-item
 -internal-auto-base
 
 //
