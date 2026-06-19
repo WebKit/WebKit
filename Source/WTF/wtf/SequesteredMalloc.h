@@ -127,6 +127,8 @@ struct SequesteredArenaMalloc {
         return nullptr;
     }
 
+    static void* alignedMalloc(size_t alignment, size_t size) { return sequesteredArenaAlignedMalloc(alignment, size); }
+
     static void free(void* p) { sequesteredArenaFree(p); }
 
     static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
@@ -189,6 +191,26 @@ using WTF::sequesteredArenaAlignedFree;
     void operator delete[](void* p) \
     { \
         ::WTF::sequesteredArenaFree(p); \
+    } \
+    \
+    void* operator new(size_t size, std::align_val_t alignment) \
+    { \
+        return ::WTF::sequesteredArenaAlignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete(void* p, std::align_val_t) \
+    { \
+        ::WTF::sequesteredArenaAlignedFree(p); \
+    } \
+    \
+    void* operator new[](size_t size, std::align_val_t alignment) \
+    { \
+        return ::WTF::sequesteredArenaAlignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete[](void* p, std::align_val_t) \
+    { \
+        ::WTF::sequesteredArenaAlignedFree(p); \
     } \
     void* operator new(size_t, NotNullTag, void* location) \
     { \

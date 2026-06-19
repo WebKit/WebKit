@@ -57,6 +57,7 @@ set(TestWTF_SOURCES
     Tests/WTF/EmbeddedFixedVector.cpp
     Tests/WTF/EnumTraits.cpp
     Tests/WTF/Expected.cpp
+    Tests/WTF/FastMalloc.cpp
     Tests/WTF/FileSystem.cpp
     Tests/WTF/FormattedLogging.cpp
     Tests/WTF/FixedBitVector.cpp

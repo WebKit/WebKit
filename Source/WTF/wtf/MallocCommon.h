@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <new>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
@@ -132,6 +133,26 @@ using WTF::ForbidMallocUseForCurrentThreadScope;
     { \
         return alloc::free(p); \
     } \
+    \
+    void* operator new(size_t size, std::align_val_t alignment) \
+    { \
+        return alloc::alignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete(void* p, std::align_val_t) \
+    { \
+        alloc::free(p); \
+    } \
+    \
+    void* operator new[](size_t size, std::align_val_t alignment) \
+    { \
+        return alloc::alignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete[](void* p, std::align_val_t) \
+    { \
+        alloc::free(p); \
+    } \
     void* operator new(size_t, NotNullTag, void* location) \
     { \
         ASSERT(location); \
@@ -165,6 +186,26 @@ using WTF::ForbidMallocUseForCurrentThreadScope;
     } \
     \
     void operator delete[](void* p) \
+    { \
+        classname##Malloc::free(p); \
+    } \
+    \
+    void* operator new(size_t size, std::align_val_t alignment) \
+    { \
+        return classname##Malloc::alignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete(void* p, std::align_val_t) \
+    { \
+        classname##Malloc::free(p); \
+    } \
+    \
+    void* operator new[](size_t size, std::align_val_t alignment) \
+    { \
+        return classname##Malloc::alignedMalloc(static_cast<size_t>(alignment), size); \
+    } \
+    \
+    void operator delete[](void* p, std::align_val_t) \
     { \
         classname##Malloc::free(p); \
     } \

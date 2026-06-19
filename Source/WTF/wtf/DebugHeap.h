@@ -74,6 +74,8 @@ private:
 \
         static void* tryRealloc(void* p, size_t size) { return debugHeap().realloc(p, size); } \
 \
+        static void* alignedMalloc(size_t alignment, size_t size) { return debugHeap().memalign(alignment, size, true); } \
+\
         static void free(void* p) { debugHeap().free(p); } \
 \
         static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity / 4 + 1; } \
@@ -106,6 +108,8 @@ private:
         static void* realloc(void* p, size_t size) { return debugHeap().reallocCompact(p, size); } \
 \
         static void* tryRealloc(void* p, size_t size) { return debugHeap().reallocCompact(p, size); } \
+\
+        static void* alignedMalloc(size_t alignment, size_t size) { return debugHeap().memalignCompact(alignment, size, true); } \
 \
         static void free(void* p) { debugHeap().free(p); } \
 \
