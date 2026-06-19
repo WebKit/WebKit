@@ -663,6 +663,9 @@
 		1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC650A8B92EC00D9D37B /* XPathValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */; };
 		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
+		7EBFC0571F95B7BD00000000 /* StyleBuilderGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8386A96E19F61E4F00E1EC4A /* StyleBuilderGenerated.cpp */; };
+		7EBFC0571F95B7BD00000001 /* StyleExtractorGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFEE3332DC6C4B800EC3901 /* StyleExtractorGenerated.cpp */; };
+		7EBFC0571F95B7BD00000002 /* StyleInterpolationWrapperMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9770432D650F5300B97766 /* StyleInterpolationWrapperMap.cpp */; };
 		1ABA80001897341200DCE9D6 /* VisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
 		1AC2D845171734A100652FC0 /* Storage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3F9C40DA059DC00250911 /* Storage.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1143,6 +1146,11 @@
 		2D8B92FD203D13E1009C868F /* UnifiedSource528.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D21FA23856006DB63B /* UnifiedSource528.cpp */; };
 		2D8B92FE203D13E1009C868F /* UnifiedSource529.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CF1FA23850006DB63B /* UnifiedSource529.cpp */; };
 		2D8B92FF203D13E1009C868F /* UnifiedSource530.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D31FA23859006DB63B /* UnifiedSource530.cpp */; };
+		7EBFC0571F95B7BD00000003 /* CSSPropertyParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7C5E5F2BE2A8FB00AE645C /* CSSPropertyParser.cpp */; };
+		7EBFC0571F95B7BD00000004 /* CSSPropertyParserConsumer+Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7C5E642BE2A8FB00AE645C /* CSSPropertyParserConsumer+Color.cpp */; };
+		7EBFC0571F95B7BD00000005 /* FetchBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F7D1C50C4F600338488 /* FetchBody.cpp */; };
+		7EBFC0571F95B7BD00000006 /* FetchBodyConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */; };
+		7EBFC0571F95B7BD00000007 /* FetchBodyOwner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4147E2B31C89912600A7E715 /* FetchBodyOwner.cpp */; };
 		2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8FEBDB143E3EF70072502B /* CSSCrossfadeValue.h */; };
 		2D9066070BE141D400956998 /* RenderLayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* RenderLayoutState.h */; };
 		2D9153EF28AE0E280073A385 /* FragmentDirectiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 445612AB270F6F3800758C97 /* FragmentDirectiveParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -50748,10 +50756,15 @@
 				463642A729687D53003D43F2 /* CoreHapticsSoftLink.mm in Sources */,
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
+				7EBFC0571F95B7BD00000003 /* CSSPropertyParser.cpp in Sources */,
+				7EBFC0571F95B7BD00000004 /* CSSPropertyParserConsumer+Color.cpp in Sources */,
 				2D22830323A8470700364B7E /* CursorMac.mm in Sources */,
 				5CBD59592280E926002B22AA /* CustomHeaderFields.cpp in Sources */,
 				07E4BDBF2A3A5FAB000D5509 /* DictationCaretAnimator.cpp in Sources */,
 				0749E9512E275A23009B912B /* EditingHTMLConverter.mm in Sources */,
+				7EBFC0571F95B7BD00000005 /* FetchBody.cpp in Sources */,
+				7EBFC0571F95B7BD00000006 /* FetchBodyConsumer.cpp in Sources */,
+				7EBFC0571F95B7BD00000007 /* FetchBodyOwner.cpp in Sources */,
 				7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */,
 				4667EA3E2968D9DA00BAB1E2 /* GameControllerHapticEffect.mm in Sources */,
 				46FE73D32968E52000B8064C /* GameControllerHapticEngines.mm in Sources */,
@@ -50842,6 +50855,9 @@
 				51D8380C2F5ACAA000E06540 /* SpatialAudioPlaybackHelperIOS.mm in Sources */,
 				B9CA3B412CAB1D3E00B2607C /* SpatialImageControls.cpp in Sources */,
 				41514FDB2E92DC40002074EA /* StreamPipeToUtilities.cpp in Sources */,
+				7EBFC0571F95B7BD00000000 /* StyleBuilderGenerated.cpp in Sources */,
+				7EBFC0571F95B7BD00000001 /* StyleExtractorGenerated.cpp in Sources */,
+				7EBFC0571F95B7BD00000002 /* StyleInterpolationWrapperMap.cpp in Sources */,
 				A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */,
 				C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */,
 				329C0C2328BD96D600F187D2 /* TagName.cpp in Sources */,

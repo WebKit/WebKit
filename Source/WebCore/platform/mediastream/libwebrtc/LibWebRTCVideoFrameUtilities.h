@@ -31,7 +31,7 @@
 
 #if ENABLE(VIDEO) && USE(LIBWEBRTC)
 
-namespace libwebrtc {
+namespace webrtc {
 class ColorSpace;
 class VideoFrame;
 }
