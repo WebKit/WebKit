@@ -1198,7 +1198,6 @@ public:
                     }
                     
                     auto extractRelationship = [&](Node* compare) -> Relationship {
-                        // FIXME: Handle CompareBelow and CompareBelowEq.
                         if (!compare || !compare->isBinaryUseKind(Int32Use))
                             return Relationship();
                         switch (compare->op()) {
@@ -1255,6 +1254,16 @@ public:
                                 relationshipForFalse.append(relationship);
                             if (auto relationship = extractRelationship(r).inverse())
                                 relationshipForFalse.append(relationship);
+                        }
+                    } else if ((condition->op() == CompareBelow || condition->op() == CompareBelowEq) && condition->isBinaryUseKind(Int32Use)) {
+                        Node* left = condition->child1().node();
+                        Node* right = condition->child2().node();
+                        if (provablyNonNegative(right)) {
+                            int offset = condition->op() == CompareBelow ? 0 : 1;
+                            if (auto rel = Relationship::safeCreate(left, right, Relationship::LessThan, offset))
+                                relationshipForTrue.append(rel);
+                            if (auto rel = Relationship::safeCreate(left, m_zero, Relationship::GreaterThan, -1))
+                                relationshipForTrue.append(rel);
                         }
                     } else {
                         if (auto relationship = extractRelationship(condition))
