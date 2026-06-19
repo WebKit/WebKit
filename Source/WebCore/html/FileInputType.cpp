@@ -468,31 +468,24 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
 #if PLATFORM(MAC)
     auto settings = fileChooserSettings();
     auto allowedMIMETypes = MIMETypeRegistry::allowedMIMETypes(settings.acceptMIMETypes, settings.acceptFileExtensions);
-    
+
     auto transcodingPaths = findImagesForTranscoding(paths, allowedMIMETypes);
     if (transcodingPaths.isEmpty())
-        return { };
+        return false;
 
     auto transcodingMIMEType = MIMETypeRegistry::preferredImageMIMETypeForEncoding(allowedMIMETypes, { });
     if (transcodingMIMEType.isNull())
-        return { };
+        return false;
 
     auto transcodingUTI = WebCore::UTIFromMIMEType(transcodingMIMEType);
     auto transcodingExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(transcodingMIMEType);
 
-    auto callFilesChosen = [protectedThis = Ref { *this }, paths](const Vector<String>& replacementPaths) {
+    auto* chrome = this->chrome();
+    if (!chrome)
+        return false;
+
+    chrome->transcodeChosenFiles(WTF::move(transcodingPaths), WTF::move(transcodingUTI), WTF::move(transcodingExtension), [protectedThis = Ref { *this }, paths](Vector<String>&& replacementPaths) mutable {
         protectedThis->filesChosen(paths, replacementPaths);
-    };
-
-    sharedImageTranscodingQueueSingleton().dispatch([callFilesChosen = WTF::move(callFilesChosen), transcodingPaths = crossThreadCopy(WTF::move(transcodingPaths)), transcodingUTI = WTF::move(transcodingUTI).isolatedCopy(), transcodingExtension = WTF::move(transcodingExtension).isolatedCopy()]() mutable {
-        ASSERT(!RunLoop::isMain());
-
-        auto replacementPaths = transcodeImages(transcodingPaths, transcodingUTI, transcodingExtension);
-        ASSERT(transcodingPaths.size() == replacementPaths.size());
-
-        RunLoop::mainSingleton().dispatch([callFilesChosen = WTF::move(callFilesChosen), replacementPaths = crossThreadCopy(WTF::move(replacementPaths))] {
-            callFilesChosen(replacementPaths);
-        });
     });
 
     return true;

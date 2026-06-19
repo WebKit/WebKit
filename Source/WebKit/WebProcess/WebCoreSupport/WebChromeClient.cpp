@@ -1004,6 +1004,17 @@ void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
     ASSERT(webFrame);
     page->send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), webFrame->info(), fileChooser.settings()));
 }
+
+void WebChromeClient::transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+{
+    RefPtr page = m_page.get();
+    if (!page) {
+        completion({ });
+        return;
+    }
+
+    page->sendWithAsyncReply(Messages::WebPageProxy::TranscodeChosenFiles(transcodingPaths, destinationUTI, destinationExtension), WTF::move(completion));
+}
     
 void WebChromeClient::showShareSheet(ShareDataWithParsedURL&& shareData, CompletionHandler<void(bool)>&& callback)
 {

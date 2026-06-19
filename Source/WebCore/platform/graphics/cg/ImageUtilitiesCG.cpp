@@ -41,9 +41,11 @@
 #include <ImageIO/ImageIO.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -125,10 +127,25 @@ Vector<String> transcodeImages(const Vector<String>& paths, const String& destin
 {
     ASSERT(!destinationUTI.isNull());
     ASSERT(!destinationExtension.isNull());
-    
+
     return paths.map([&](auto& path) {
         // Append the transcoded path if the image needs transcoding. Otherwise append a null string.
         return path.isNull() ? nullString() : transcodeImage(path, destinationUTI, destinationExtension);
+    });
+}
+
+void transcodeImagesInBackgroundQueue(Vector<String>&& paths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+{
+    ASSERT(isMainThread());
+    sharedImageTranscodingQueueSingleton().dispatch([paths = crossThreadCopy(WTF::move(paths)), destinationUTI = WTF::move(destinationUTI).isolatedCopy(), destinationExtension = WTF::move(destinationExtension).isolatedCopy(), completion = WTF::move(completion)]() mutable {
+        ASSERT(!isMainThread());
+
+        auto replacementPaths = transcodeImages(paths, destinationUTI, destinationExtension);
+        ASSERT(paths.size() == replacementPaths.size());
+
+        RunLoop::mainSingleton().dispatch([replacementPaths = crossThreadCopy(WTF::move(replacementPaths)), completion = WTF::move(completion)]() mutable {
+            completion(WTF::move(replacementPaths));
+        });
     });
 }
 

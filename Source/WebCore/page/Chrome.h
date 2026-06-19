@@ -209,6 +209,7 @@ public:
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
 
     void runOpenPanel(LocalFrame&, FileChooser&);
+    void transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&);
     void showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&);
     void showContactPicker(ContactsRequestData&&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&&);
 

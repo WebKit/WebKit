@@ -72,6 +72,7 @@ messages -> WebPageProxy {
     SetHasModelElement(bool hasModelElement)
 #endif
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
+    TranscodeChosenFiles(Vector<String> transcodingPaths, String destinationUTI, String destinationExtension) -> (Vector<String> replacementPaths)
     [EnabledBy=WebShareEnabled] ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted)
     [EnabledBy=ContactPickerAPIEnabled] ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (std::optional<Vector<WebCore::ContactInfo>> info)
 
