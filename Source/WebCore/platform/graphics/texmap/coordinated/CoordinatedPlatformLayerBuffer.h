@@ -29,7 +29,7 @@
 #include "GLFence.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayer.h"
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/OptionSet.h>
 
 #if USE(SKIA)
@@ -70,7 +70,7 @@ public:
     virtual sk_sp<SkImage> skiaImage() { return nullptr; }
 #endif
 
-    using BufferWasRendered = Function<void()>;
+    using BufferWasRendered = CompletionHandler<void()>;
     void setBufferRenderedCallback(BufferWasRendered&& callback) { m_bufferWasRenderedCallback = WTF::move(callback); }
     void bufferWasRendered()
     {

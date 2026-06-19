@@ -3850,13 +3850,14 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample
     // account for this scenario, this is important for rvfc, ensuring timestamps in metadata
     // increase monotonically during playback.
     if (!isDuplicateSample) {
-        videoBuffer->setBufferRenderedCallback([weakThis = ThreadSafeWeakPtr { *this }, frame = WTF::move(frame)] {
+        CompletionHandler<void()> callback([weakThis = ThreadSafeWeakPtr { *this }, frame = WTF::move(frame)] {
             RefPtr self = weakThis.get();
             if (!self)
                 return;
 
             self->updateVideoFrameMetadata(frame->metadata());
-        });
+        }, CompletionHandlerCallThread::AnyThread);
+        videoBuffer->setBufferRenderedCallback(WTF::move(callback));
     }
 
     if (RefPtr player = m_player.get()) {
