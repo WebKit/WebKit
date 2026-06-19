@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DOMAsyncIterator.h"
+#include "AsyncSequence.h"
 
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMPromise.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<DOMAsyncIterator>> DOMAsyncIterator::create(JSDOMGlobalObject& globalObject, JSC::JSValue iterable)
+ExceptionOr<Ref<AsyncSequence>> AsyncSequence::create(JSDOMGlobalObject& globalObject, JSC::JSValue iterable)
 {
     Ref vm = globalObject.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -47,10 +47,10 @@ ExceptionOr<Ref<DOMAsyncIterator>> DOMAsyncIterator::create(JSDOMGlobalObject& g
     if (!iteratorRecord.nextMethod.isCell())
         return Exception { ExceptionCode::TypeError, "iterator next should be callable"_s };
 
-    return adoptRef(*new DOMAsyncIterator(globalObject, *iteratorObject, *iteratorRecord.nextMethod.asCell()));
+    return adoptRef(*new AsyncSequence(globalObject, *iteratorObject, *iteratorRecord.nextMethod.asCell()));
 }
 
-void DOMAsyncIterator::handleCallbackWithPromise(JSDOMGlobalObject& globalObject, Callback&& callback, JSC::JSPromise& promise)
+void AsyncSequence::handleCallbackWithPromise(JSDOMGlobalObject& globalObject, Callback&& callback, JSC::JSPromise& promise)
 {
     bool shouldStoreCallback = DOMPromise::whenPromiseIsSettled(&globalObject, &promise, [weakThis = WeakPtr { *this }](auto* globalObject, bool isOK, auto value) {
         if (RefPtr protectedThis = weakThis.get())
@@ -65,7 +65,7 @@ void DOMAsyncIterator::handleCallbackWithPromise(JSDOMGlobalObject& globalObject
     m_callback = WTF::move(callback);
 }
 
-void DOMAsyncIterator::callNext(Callback&& callback)
+void AsyncSequence::callNext(Callback&& callback)
 {
     ASSERT(!m_callback);
     auto* globalObject = this->globalObject();
@@ -100,7 +100,7 @@ void DOMAsyncIterator::callNext(Callback&& callback)
     handleCallbackWithPromise(*globalObject, WTF::move(callback), *promise);
 }
 
-void DOMAsyncIterator::callReturn(JSC::JSValue reason, Callback&& callback)
+void AsyncSequence::callReturn(JSC::JSValue reason, Callback&& callback)
 {
     ASSERT(!m_callback);
     auto* globalObject = this->globalObject();

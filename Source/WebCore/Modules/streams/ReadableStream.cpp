@@ -27,8 +27,9 @@
 #include "ReadableStream.h"
 
 #include "ContextDestructionObserverInlines.h"
-#include "DOMAsyncIterator.h"
 #include "InternalWritableStreamWriter.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertAsyncSequence.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMPromise.h"
@@ -181,13 +182,13 @@ Ref<ReadableStream> ReadableStream::create(Ref<InternalReadableStream>&& interna
 
 class AsyncIteratorSource : public ReadableStreamSource, public RefCountedAndCanMakeWeakPtr<AsyncIteratorSource> {
 public:
-    static Ref<AsyncIteratorSource> create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
+    static Ref<AsyncIteratorSource> create(Ref<AsyncSequenceValue<IDLAny>>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
 
     void NODELETE ref() const { return RefCounted::ref(); }
     void deref() const { return RefCounted::deref(); }
 
 private:
-    explicit AsyncIteratorSource(Ref<DOMAsyncIterator>&& iterator)
+    explicit AsyncIteratorSource(Ref<AsyncSequenceValue<IDLAny>>&& iterator)
         : m_iterator(WTF::move(iterator))
     {
     }
@@ -199,25 +200,22 @@ private:
 
     void doPull() final
     {
-        m_iterator->callNext([weakThis = WeakPtr { *this }](auto* globalObject, bool isOK, auto value) {
+        m_iterator->callNext([weakThis = WeakPtr { *this }](auto* globalObject, AsyncSequenceValue<IDLAny>::NextResult&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || !globalObject)
                 return;
 
-            if (!isOK) {
-                protectedThis->error(*globalObject, value ? value : JSC::jsUndefined());
+            if (!result) {
+                auto reason = result.error();
+                protectedThis->error(*globalObject, reason ? reason : JSC::jsUndefined());
                 return;
             }
 
-            if (!value.getObject()) {
-                protectedThis->error(Exception { ExceptionCode::TypeError, "next result is not an object"_s });
-                return;
-            }
-
-            if (JSC::iteratorCompleteExported(globalObject, value))
+            auto value = result.value();
+            if (!value)
                 protectedThis->controller().close();
             else
-                protectedThis->controller().enqueue(JSC::iteratorValue(globalObject, value));
+                protectedThis->controller().enqueue(*value);
 
             protectedThis->pullFinished();
         });
@@ -241,15 +239,12 @@ private:
         });
     }
 
-    const Ref<DOMAsyncIterator> m_iterator;
+    const Ref<AsyncSequenceValue<IDLAny>> m_iterator;
 };
 
-ExceptionOr<Ref<ReadableStream>> ReadableStream::from(JSDOMGlobalObject& globalObject, JSC::JSValue iterable)
+ExceptionOr<Ref<ReadableStream>> ReadableStream::from(JSDOMGlobalObject& globalObject, Ref<AsyncSequenceValue<IDLAny>>&& iterator)
 {
-    auto iteratorOrException = DOMAsyncIterator::create(globalObject, iterable);
-    if (iteratorOrException.hasException())
-        return iteratorOrException.releaseException();
-    return ReadableStream::create(globalObject, AsyncIteratorSource::create(iteratorOrException.releaseReturnValue()), 0);
+    return ReadableStream::create(globalObject, AsyncIteratorSource::create(WTF::move(iterator)), 0);
 }
 
 ReadableStream::ReadableStream(ScriptExecutionContext* context, RefPtr<InternalReadableStream>&& internalReadableStream, RefPtr<DependencyToVisit>&& dependencyToVisit, IsSourceReachableFromOpaqueRoot isSourceReachableFromOpaqueRoot)

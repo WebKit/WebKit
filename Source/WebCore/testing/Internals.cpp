@@ -31,6 +31,7 @@
 #include "AXObjectCacheInlines.h"
 #include "AnimationTimeline.h"
 #include "AnimationTimelinesController.h"
+#include "AsyncSequence.h"
 #include "AudioSession.h"
 #include "AudioTrackPrivateMediaStream.h"
 #include "Autofill.h"
@@ -62,7 +63,6 @@
 #include "CookieJar.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Cursor.h"
-#include "DOMAsyncIterator.h"
 #include "DOMPointReadOnly.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
@@ -8597,7 +8597,7 @@ size_t Internals::fileConnectionHandleCount(const FileSystemHandle& handle) cons
     return handle.connectionHandleCount();
 }
 
-static void storeNextResults(DOMAsyncIterator& iterator, Vector<JSC::Strong<JSC::Unknown>>&& results, Internals::IteratorResultPromise&& promise)
+static void storeNextResults(AsyncSequence& iterator, Vector<JSC::Strong<JSC::Unknown>>&& results, Internals::IteratorResultPromise&& promise)
 {
     iterator.callNext([iterator = Ref { iterator }, results = WTF::move(results), promise = WTF::move(promise)](auto* globalObject, bool isOK, JSC::JSValue value) mutable {
         if (!globalObject) {
@@ -8634,7 +8634,7 @@ static void storeNextResults(DOMAsyncIterator& iterator, Vector<JSC::Strong<JSC:
 
 void Internals::testAsyncIterator(JSDOMGlobalObject& globalObject, JSC::JSValue value, IteratorResultPromise&& promise)
 {
-    auto domIteratorOrException = DOMAsyncIterator::create(globalObject, value);
+    auto domIteratorOrException = AsyncSequence::create(globalObject, value);
     if (domIteratorOrException.hasException()) {
         promise.reject(domIteratorOrException.releaseException());
         return;

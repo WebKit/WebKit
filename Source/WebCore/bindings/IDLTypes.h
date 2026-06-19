@@ -51,6 +51,7 @@ class IDBValue;
 class JSWindowProxy;
 class DOMPromise;
 class ScheduledAction;
+template<typename T> class AsyncSequenceValue;
 
 template<typename T>
 struct IDLType {
@@ -328,6 +329,13 @@ template<typename T> struct IDLPromiseIgnoringSuspension : IDLWrapper<DOMPromise
 
     using ConversionResultType = Ref<DOMPromise>;
     using NullableConversionResultType = RefPtr<DOMPromise>;
+};
+
+template<typename T> struct IDLAsyncSequence : IDLWrapper<AsyncSequenceValue<T>> {
+    using InnerType = T;
+
+    using ConversionResultType = Ref<AsyncSequenceValue<T>>;
+    using NullableConversionResultType = RefPtr<AsyncSequenceValue<T>>;
 };
 
 struct IDLError : IDLUnsupportedType { };

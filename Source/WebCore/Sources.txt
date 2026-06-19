@@ -672,7 +672,7 @@ bindings/js/BindingsJSTZoneImpls.cpp
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp
 bindings/js/CommonVM.cpp
-bindings/js/DOMAsyncIterator.cpp
+bindings/js/AsyncSequence.cpp
 bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GarbageCollectionController.cpp

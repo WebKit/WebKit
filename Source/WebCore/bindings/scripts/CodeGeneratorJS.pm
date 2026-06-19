@@ -699,6 +699,13 @@ sub AddToIncludesForIDLType
         return;
     }
 
+    if ($codeGenerator->IsAsyncSequenceType($type)) {
+        AddToIncludes("JSDOMConvertAsyncSequence.h", $includesRef, $conditional);
+
+        AddToIncludesForIDLType(@{$type->subtypes}[0], $includesRef, $conditional);
+        return;
+    }
+
     if ($type->name eq "ScheduledAction") {
         AddToIncludes("JSDOMConvertScheduledAction.h", $includesRef, $conditional);
         return;
@@ -7971,6 +7978,7 @@ sub GetBaseIDLType
         my $promiseType = $type->extendedAttributes->{BypassDocumentFullyActiveCheck} ? "IDLPromiseIgnoringSuspension" : "IDLPromise";
         return "${promiseType}<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">";
     }
+    return "IDLAsyncSequence<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">" if $codeGenerator->IsAsyncSequenceType($type);
     return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $type)) . ">" if $type->isUnion;
     return "IDLCallbackFunction<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackFunction($type);
     return "IDLCallbackInterface<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackInterface($type);

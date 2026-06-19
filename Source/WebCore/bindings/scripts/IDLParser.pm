@@ -614,14 +614,14 @@ sub addBuiltinTypedefs()
 my $nextOptionallyReadonlyAttribute_1 = '^(readonly|attribute)$';
 my $nextIntegerType_1 = '^(int|long|short|unsigned)$';
 my $nextFloatType_1 = '^(double|float|unrestricted)$';
-my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|\[|any|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextArgumentList_1 = '^(\(|ByteString|DOMString|USVString|\[|any|async_sequence|boolean|byte|double|float|in|long|object|octet|optional|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextPrimitiveType_1 = '^(boolean|byte|double|float|long|octet|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextStringType_1 = '^(ByteString|DOMString|USVString)$';
 my $nextInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextOperation_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|deleter|double|float|getter|long|object|octet|sequence|setter|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextUnrestrictedFloatType_1 = '^(double|float)$';
 my $nextExtendedAttributeRest3_1 = '^(\,|\])$';
-my $nextType_1 = '^(ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextType_1 = '^(ByteString|DOMString|USVString|any|async_sequence|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextSpecials_1 = '^(deleter|getter|setter)$';
 my $nextDefinitions_1 = '^(callback|dictionary|enum|interface|namespace|partial|typedef)$';
 my $nextDictionaryMember_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|double|float|long|object|octet|required|sequence|short|symbol|undefined|unrestricted|unsigned)$';
@@ -630,7 +630,7 @@ my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|
 my $nextMixinMembers_1 = '^(\(|attribute|ByteString|DOMString|USVString|any|boolean|byte|const|double|float|long|object|octet|readonly|sequence|short|stringifier|symbol|undefined|unrestricted|unsigned)$';
 my $nextNamespaceMembers_1 = '^(\(|ByteString|DOMString|USVString|any|boolean|byte|const|double|float|long|object|octet|readonly|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextPartialInterfaceMember_1 = '^(\(|ByteString|DOMString|USVString|any|attribute|boolean|byte|const|deleter|double|float|getter|inherit|long|object|octet|readonly|sequence|setter|short|static|stringifier|symbol|undefined|unrestricted|unsigned)$';
-my $nextSingleType_1 = '^(ByteString|DOMString|USVString|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
+my $nextSingleType_1 = '^(ByteString|DOMString|USVString|async_sequence|boolean|byte|double|float|long|object|octet|sequence|short|symbol|undefined|unrestricted|unsigned)$';
 my $nextArgumentName_1 = '^(async_iterable|attribute|callback|const|constructor|deleter|dictionary|enum|getter|includes|inherit|interface|iterable|maplike|mixin|namespace|partial|readonly|required|setlike|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
 my $nextConstValue_2 = '^(-|Infinity|NaN)$';
@@ -2727,6 +2727,19 @@ sub parseDistinguishableType
         $self->assertTokenValue($self->getToken(), ">", __LINE__);
 
         $type->name("sequence");
+        push(@{$type->subtypes}, $subtype);
+
+        return $type;
+    }
+    if ($next->value() eq "async_sequence") {
+        $self->assertTokenValue($self->getToken(), "async_sequence", __LINE__);
+        $self->assertTokenValue($self->getToken(), "<", __LINE__);
+
+        my $subtype = $self->parseTypeWithExtendedAttributes();
+
+        $self->assertTokenValue($self->getToken(), ">", __LINE__);
+
+        $type->name("async_sequence");
         push(@{$type->subtypes}, $subtype);
 
         return $type;
