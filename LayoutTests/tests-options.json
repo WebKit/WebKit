@@ -4673,6 +4673,24 @@
     "imported/w3c/web-platform-tests/import-maps/import-maps-base-url.sub.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-backspace.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-in-list-items.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-forwarddelete.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-element-and-another-list.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-elements.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-non-collapsed-selection.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/intersection-observer/scroll-margin-propagation.html": [
         "slow"
     ],

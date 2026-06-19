@@ -212,6 +212,7 @@
     "web-platform-tests/inert": "import",
     "web-platform-tests/infrastructure": "import",
     "web-platform-tests/input-device-capabilities": "skip",
+    "web-platform-tests/input-events": "import",
     "web-platform-tests/installedapp": "skip",
     "web-platform-tests/interfaces": "import",
     "web-platform-tests/intersection-observer": "import",

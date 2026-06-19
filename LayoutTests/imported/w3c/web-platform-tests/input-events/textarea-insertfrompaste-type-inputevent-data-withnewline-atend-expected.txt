@@ -1,0 +1,4 @@
+
+
+FAIL Input event data for inputType insertFromPaste should be set assert_equals: expected (string) "Copying and pasting first line including interchange newline\n" but got (undefined) undefined
+

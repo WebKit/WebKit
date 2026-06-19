@@ -1,0 +1,4 @@
+
+
+FAIL Number input should fire beforeinput event before the input and change event assert_array_equals: lengths differ, expected array ["beforeinput", "input", "change"] length 3, got ["input", "change"] length 2
+

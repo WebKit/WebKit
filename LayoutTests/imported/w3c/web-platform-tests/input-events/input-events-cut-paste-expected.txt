@@ -1,0 +1,20 @@
+To manually run this test, please follow the steps below:
+1. Select 'plain' => Cut (e.g. Ctrl/Cmd-X) => Paste (e.g. Ctrl/Cmd-V).
+2. Select 'rich' => Cut => Paste.
+3. Select 'prevent' => Paste.
+4. Select 'prevent' => Cut => Select 'normal' => Paste.
+
+If a "PASS" result appears the test passes, otherwise it fails
+
+
+rich
+
+prevent
+
+normal
+
+
+FAIL Event order and data on textarea. promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Event order and dataTransfer on contenteditable. promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL preventDefault() should prevent DOM modification but allow clipboard updates. promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+

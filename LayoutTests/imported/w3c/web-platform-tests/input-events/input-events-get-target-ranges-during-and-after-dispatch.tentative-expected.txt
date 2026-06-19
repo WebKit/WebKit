@@ -1,0 +1,7 @@
+ab
+
+
+FAIL Check consistency of getTargetRanges() result between during propagation and after propagation assert_equals: Should "b" be deleted expected "<p>ac</p>" but got "<p>ab</p>"
+PASS Check consistency of getTargetRanges() result between before and after changing selection in an event listener
+FAIL The result of getTargetRanges() of beforeinput event should be fixed at being dispatched assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"ab\", 1) - (#text \"ab\", 2)" but got "(#text \"ab\", 2) - (#text \"ab\", 3)"
+

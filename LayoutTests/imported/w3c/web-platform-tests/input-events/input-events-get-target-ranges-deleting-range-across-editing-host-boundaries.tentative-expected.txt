@@ -1,0 +1,9 @@
+abcnon-editabledef
+
+
+FAIL Backspace at "<p>ab[c<span contenteditable="false">no]n-editable</span>def</p>" assert_equals: If only editable text is deleted, its input type should be deleteContent expected "deleteContent" but got "deleteContentBackward"
+PASS Backspace at "<p>abc<span contenteditable="false">non-[editable</span>de]f</p>"
+FAIL Backspace at "<p contenteditable="false"><span contenteditable>a[bc</span>non-editable<span contenteditable>de]f</span></p>" assert_in_array: The result content is unexpected value "<p contenteditable=\"false\"><span contenteditable=\"\"></span>non-editable<span contenteditable=\"\"></span></p>" not in array ["<p contenteditable=\"false\"><span contenteditable=\"\">abc</span>non-editable<span contenteditable=\"\">def</span></p>", "<p contenteditable=\"false\"><span contenteditable=\"\">a</span>non-editable<span contenteditable=\"\">f</span></p>", "<p contenteditable=\"false\"><span contenteditable=\"\">af</span></p>", "<p contenteditable=\"false\"><span contenteditable=\"\">a</span>non-editable<span contenteditable=\"\">def</span></p>", "<p contenteditable=\"false\"><span contenteditable=\"\">abc</span>non-editable<span contenteditable=\"\">f</span></p>"]
+FAIL Backspace at "<p>a[bc<span contenteditable="false">non-editable<span contenteditable>de]f</span></span></p>" assert_in_array: The result content is unexpected value "" not in array ["<p>abc<span contenteditable=\"false\">non-editable<span contenteditable=\"\">def</span></span></p>", "<p>a<span contenteditable=\"false\">non-editable<span contenteditable=\"\">f</span></span></p>", "<p>af</p>", "<p>a<span contenteditable=\"\">f</span></p>", "<p>a<span contenteditable=\"false\">non-editable<span contenteditable=\"\">def</span></span></p>", "<p>abc<span contenteditable=\"false\">non-editable<span contenteditable=\"\">f</span></span></p>"]
+PASS Backspace at "<p><span contenteditable="false"><span contenteditable>a[bc</span>non-editable</span>de]f</p>"
+
