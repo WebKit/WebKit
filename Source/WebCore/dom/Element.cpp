@@ -2160,7 +2160,7 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const T
         AttributeTypeAndSink type;
         if (document().contextDocument().requiresTrustedTypes())
             type = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
-        auto compliantValue = trustedTypesCompliantAttributeValue(document().contextDocument(), type.attributeType, value, type.sink);
+        auto compliantValue = trustedTypesCompliantAttributeValue(protect(document().contextDocument()), type.attributeType, value, type.sink);
 
         if (compliantValue.hasException())
             return compliantValue.releaseException();
@@ -3783,7 +3783,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
     if (document().contextDocument().requiresTrustedTypes()) {
         auto& name = attrNode.qualifiedName();
         auto type = trustedTypeForAttribute(nodeName(), name.localName().convertToASCIILowercase(), this->namespaceURI(), name.namespaceURI());
-        auto compliantValue = trustedTypesCompliantAttributeValue(document().contextDocument(), type.attributeType, attrNodeValue, type.sink);
+        auto compliantValue = trustedTypesCompliantAttributeValue(protect(document().contextDocument()), type.attributeType, attrNodeValue, type.sink);
 
         if (compliantValue.hasException())
             return compliantValue.releaseException();
@@ -3840,7 +3840,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     if (document().contextDocument().requiresTrustedTypes()) {
         auto& name = attrNode.qualifiedName();
         auto type = trustedTypeForAttribute(nodeName(), name.localName(), this->namespaceURI(), name.namespaceURI());
-        auto compliantValue = trustedTypesCompliantAttributeValue(document().contextDocument(), type.attributeType, attrNodeValue, type.sink);
+        auto compliantValue = trustedTypesCompliantAttributeValue(protect(document().contextDocument()), type.attributeType, attrNodeValue, type.sink);
 
         if (compliantValue.hasException())
             return compliantValue.releaseException();
@@ -3934,7 +3934,7 @@ ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const 
         AttributeTypeAndSink type;
         if (document().contextDocument().requiresTrustedTypes())
             type = trustedTypeForAttribute(nodeName(), parsedAttributeName.localName(), this->namespaceURI(), parsedAttributeName.namespaceURI());
-        auto compliantValue = trustedTypesCompliantAttributeValue(document().contextDocument(), type.attributeType, value, type.sink);
+        auto compliantValue = trustedTypesCompliantAttributeValue(protect(document().contextDocument()), type.attributeType, value, type.sink);
 
         if (compliantValue.hasException())
             return compliantValue.releaseException();
