@@ -27,6 +27,7 @@
 #include "FloatPoint.h"
 #include "Image.h"
 #include "IntRect.h"
+#include "LegacyRenderSVGForeignObject.h"
 #include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "SVGRenderingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -35,6 +36,20 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceMasker);
+
+// <foreignObject> paints its content at the box location() (its x/y) instead of baking x/y into the
+// origin-relative objectBoundingBox()/decoratedBoundingBox(), so the mask geometry (region, image
+// buffer and objectBoundingBox content units) must be positioned at the content origin to line up
+// with what is actually painted. This is safe for the repaint path: a <foreignObject> never expands
+// its repaint rect through the masker (it has no intersectRepaintRectWithResources caller), so this
+// only affects mask painting.
+static FloatRect maskTargetBoundingBox(const RenderObject& renderer)
+{
+    auto boundingBox = renderer.objectBoundingBox();
+    if (CheckedPtr foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(renderer))
+        boundingBox.setLocation(foreignObject->location());
+    return boundingBox;
+}
 
 LegacyRenderSVGResourceMasker::LegacyRenderSVGResourceMasker(SVGMaskElement& element, Style::ComputedStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceMasker, element, WTF::move(style))
@@ -67,6 +82,11 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     MaskerData* maskerData = result.iterator->value.get();
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     FloatRect decoratedBounds = renderer.decoratedBoundingBox();
+
+    // Position the mask region at the content origin for a <foreignObject> (see maskTargetBoundingBox);
+    // do this before intersecting with the mask's region so the effective area is not clipped away.
+    if (CheckedPtr foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(renderer))
+        decoratedBounds.setLocation(foreignObject->location());
 
     // Masks define a clipping region via x/y/width/height attributes.
     // We need to get the effective area to mask.
@@ -108,7 +128,7 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerD
 {
     RefPtr maskImage = maskerData->maskImage;
     auto& maskImageContext = maskImage->context();
-    auto objectBoundingBox = object->objectBoundingBox();
+    auto objectBoundingBox = maskTargetBoundingBox(*object);
 
     if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
         return false;
@@ -185,7 +205,7 @@ void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectC
 
 FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    FloatRect objectBoundingBox = object.objectBoundingBox();
+    FloatRect objectBoundingBox = maskTargetBoundingBox(object);
     Ref maskElement = this->maskElement();
     FloatRect maskBoundaries = SVGLengthContext::resolveRectangle(maskElement.get(), maskElement->maskUnits(), objectBoundingBox);
 
