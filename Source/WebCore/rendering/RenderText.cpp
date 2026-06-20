@@ -65,6 +65,7 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
+#include "TextSpacing.h"
 #include "TextTransform.h"
 #include "TextUtil.h"
 #include "VisiblePosition.h"
@@ -107,7 +108,7 @@ struct SameSizeAsRenderText : public RenderObject {
     std::optional<bool> canUseSimplifiedTextMeasuring;
     std::optional<bool> hasPositionDependentContentWidth;
     std::optional<bool> m_hasStrongDirectionalityContent;
-    uint32_t bitfields : 14;
+    uint32_t bitfields : 15;
 };
 
 static_assert(sizeof(RenderText) == sizeof(SameSizeAsRenderText), "RenderText should stay small");
@@ -507,6 +508,8 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     m_hasPositionDependentContentWidth = false;
     m_hasStrongDirectionalityContent = false;
     auto mayHaveStrongDirectionalityContent = !textContent.is8Bit();
+    auto mayHaveIdeographicContentCandidate = !textContent.is8Bit();
+    auto mayHaveIdeographicContent = false;
     // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
     WTF::BitSet<256> hasSeen;
     for (char32_t character : StringView(textContent).codePoints()) {
@@ -517,7 +520,9 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
         m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && fontCascade.canUseSimplifiedTextMeasuring(character, fontVariant, whitespaceIsCollapsed, primaryFont);
         m_hasPositionDependentContentWidth = *m_hasPositionDependentContentWidth || character == tabCharacter;
         m_hasStrongDirectionalityContent = *m_hasStrongDirectionalityContent || (mayHaveStrongDirectionalityContent && Layout::TextUtil::isStrongDirectionalityCharacter(character));
+        mayHaveIdeographicContent = mayHaveIdeographicContent || (mayHaveIdeographicContentCandidate && TextSpacing::isIdeograph(character));
     }
+    setMayHaveIdeographicContent(mayHaveIdeographicContent);
 }
 
 void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -1835,6 +1840,7 @@ void RenderText::setRenderedText(const String& newText)
     m_canUseSimplifiedTextMeasuring = { };
     m_hasPositionDependentContentWidth = { };
     m_hasStrongDirectionalityContent = { };
+    m_mayHaveIdeographicContent = false;
 
     if (m_text != originalText) {
         originalTextMap().set(*this, originalText);

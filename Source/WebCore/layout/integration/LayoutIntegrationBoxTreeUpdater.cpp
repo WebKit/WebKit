@@ -276,6 +276,12 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             textRenderer->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
         }
 
+        auto mayHaveIdeographicContent = textRenderer->mayHaveIdeographicContent();
+        if (!mayHaveIdeographicContent) {
+            mayHaveIdeographicContent = Layout::TextUtil::mayHaveIdeographicContent(text);
+            textRenderer->setMayHaveIdeographicContent(mayHaveIdeographicContent);
+        }
+
         auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
         if (canUseSimpleFontCodePath)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
@@ -287,6 +293,8 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
         if (*hasStrongDirectionalityContent)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
+        if (mayHaveIdeographicContent)
+            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::MayHaveIdeographicContent);
 
         return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTF::move(style), WTF::move(firstLineStyle));
     }
@@ -367,6 +375,8 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
     if (inlineTextBox.hasStrongDirectionalityContent())
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
+    if (inlineTextBox.mayHaveIdeographicContent())
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::MayHaveIdeographicContent);
 
     if (inlineTextBox.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(inlineTextBox.content(), rendererStyle->fontCascade(), rendererStyle->collapseWhiteSpace(), &rendererText.firstLineStyle()))
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
@@ -432,6 +442,13 @@ void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
     }
     if (*hasStrongDirectionalityContent)
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
+    auto mayHaveIdeographicContent = textRenderer.mayHaveIdeographicContent();
+    if (!mayHaveIdeographicContent) {
+        mayHaveIdeographicContent = Layout::TextUtil::mayHaveIdeographicContent(text);
+        const_cast<RenderText&>(textRenderer).setMayHaveIdeographicContent(mayHaveIdeographicContent);
+    }
+    if (mayHaveIdeographicContent)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::MayHaveIdeographicContent);
 
     inlineTextBox->setContent(text, contentCharacteristic);
 }

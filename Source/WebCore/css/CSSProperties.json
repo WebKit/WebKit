@@ -1551,8 +1551,7 @@
         "text-autospace": {
             "animation-type": "discrete",
             "inherited": true,
-            "initial": "no-autospace",
-            "initial-comment": "Current spec initial value is 'normal'",
+            "initial": "normal",
             "values": [
                 "auto",
                 "normal",

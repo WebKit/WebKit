@@ -71,6 +71,8 @@ private:
     const ElementBox& root() const { return m_root; }
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 
+    bool hasTextAutospace() const { return m_autospaceEnabled && m_mayHaveIdeographicContent; }
+
 private:
     InlineContentCache& m_inlineContentCache;
     const ElementBox& m_root;
@@ -79,7 +81,8 @@ private:
     size_t m_inlineBoxCount { 0 };
     bool m_hasTextAndLineBreakOnlyContent { true }; // Note that this is true for cases like <span>text content</span>
     bool m_contentRequiresVisualReordering { false };
-    bool m_hasTextAutospace { !root().style().textAutospace().isNoAutospace() };
+    bool m_autospaceEnabled { !root().style().textAutospace().isNoAutospace() };
+    bool m_mayHaveIdeographicContent { false };
     std::optional<bool> m_textContentPopulatedFromCache { };
 };
 

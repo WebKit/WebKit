@@ -872,7 +872,9 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
         m_leftoverJustificationWidth = 0;
     }
 
-    if (hasExtraSpacing() || m_containsTabs || m_run->horizontalGlyphStretch() != 1 || !m_fontCascade->textAutospace().isNoAutospace())
+    auto needsAutospaceSpacing = !m_fontCascade->textAutospace().isNoAutospace()
+        && (m_run->mayHaveIdeographicContent() || m_run->textSpacingState().lastCharacterClassFromPreviousRun != TextSpacing::CharacterClass::Undefined);
+    if (hasExtraSpacing() || m_containsTabs || m_run->horizontalGlyphStretch() != 1 || needsAutospaceSpacing)
         applyExtraSpacingAfterShaping(glyphBuffer, characterStartIndex, glyphBufferStartIndex, offset, startingRunWidth);
 
     applyCSSVisibilityRules(glyphBuffer, glyphBufferStartIndex);

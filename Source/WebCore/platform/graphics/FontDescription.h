@@ -174,7 +174,7 @@ private:
 
     FontSelectionRequest m_fontSelectionRequest;
     TextSpacingTrim m_textSpacingTrim;
-    TextAutospace m_textAutospace;
+    TextAutospace m_textAutospace { TextAutospace::Options { TextAutospace::Type::Normal } };
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
     float m_usedZoomFactor { 1.0 };
 

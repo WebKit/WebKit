@@ -129,13 +129,13 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         breakAndComputeBidiLevels(inlineItemList);
     }
 
-    if (contentRequiresVisualReordering() || m_hasTextAutospace)
+    if (contentRequiresVisualReordering() || hasTextAutospace())
         computeInlineTextItemWidthsAndTextSpacing(inlineItemList);
 
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
         ASSERT(!startPosition || startPosition.index < inlineContentCache().inlineItems().content().size());
 
-        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextAutospace, m_inlineBoxCount };
+        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, hasTextAutospace(), m_inlineBoxCount };
         auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
         auto& inlineItemCache = inlineContentCache().inlineItems();
         if (!startPosition || startPosition.index >= inlineItemCache.content().size())
@@ -172,7 +172,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 
 void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemList& inlineItemList)
 {
-    ASSERT(m_hasTextAutospace);
+    ASSERT(hasTextAutospace());
     char32_t lastCharacterFromPreviousRun = 0;
     size_t lastCharacterDepth = 0;
     size_t currentCharacterDepth = 0;
@@ -806,7 +806,7 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
     if (inlineItemList.isEmpty())
         return;
 
-    if (m_hasTextAutospace)
+    if (hasTextAutospace())
         computeInlineBoxBoundaryTextSpacings(inlineItemList);
 
     TextSpacing::SpacingState spacingState;
@@ -929,6 +929,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
         return inlineItemList.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
     m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineTextBox);
+    m_mayHaveIdeographicContent = m_mayHaveIdeographicContent || inlineTextBox.mayHaveIdeographicContent();
 
     if (inlineTextBox.isCombined())
         return inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, { }));
@@ -1054,7 +1055,7 @@ void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItemLi
 {
     inlineItemList.append({ inlineBox, InlineItem::Type::InlineBoxStart });
     m_contentRequiresVisualReordering |= requiresVisualReordering(inlineBox);
-    m_hasTextAutospace |= !inlineBox.style().textAutospace().isNoAutospace();
+    m_autospaceEnabled |= !inlineBox.style().textAutospace().isNoAutospace();
     ++m_inlineBoxCount;
 }
 
@@ -1149,7 +1150,7 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
 
 std::pair<bool, bool> InlineItemsBuilder::shouldDeferTextMeasurement(const InlineTextBox& inlineTextBox) const
 {
-    auto shouldDefer = contentRequiresVisualReordering() || m_hasTextAutospace;
+    auto shouldDefer = contentRequiresVisualReordering() || hasTextAutospace();
     return { shouldDefer || !canCacheWidthOnInlineTextItem(inlineTextBox, false), shouldDefer || !canCacheWidthOnInlineTextItem(inlineTextBox, true) };
 }
 

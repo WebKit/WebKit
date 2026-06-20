@@ -190,6 +190,8 @@ public:
     std::optional<bool> hasPositionDependentContentWidth() const { return m_hasPositionDependentContentWidth; }
     void setHasStrongDirectionalityContent(bool hasStrongDirectionalityContent) { m_hasStrongDirectionalityContent = hasStrongDirectionalityContent; }
     std::optional<bool> hasStrongDirectionalityContent() const { return m_hasStrongDirectionalityContent; }
+    void setMayHaveIdeographicContent(bool mayHaveIdeographicContent) { m_mayHaveIdeographicContent = mayHaveIdeographicContent; }
+    bool mayHaveIdeographicContent() const { return m_mayHaveIdeographicContent; }
 
 protected:
     virtual void computeMinMaxIntrinsicLogicalWidths(float leadingWidth, bool forcedMinMaxWidthComputation = false);
@@ -263,6 +265,7 @@ private:
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
+    unsigned m_mayHaveIdeographicContent : 1 { false };
     FontCascade::CodePath m_fontCodePath : 2;
 };
 

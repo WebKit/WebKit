@@ -42,7 +42,8 @@ public:
         CanUseSimpleFontCodepath,
         ShouldUseSimpleGlyphOverflowCodePath,
         HasPositionDependentContentWidth,
-        HasStrongDirectionalityContent
+        HasStrongDirectionalityContent,
+        MayHaveIdeographicContent
     };
     InlineTextBox(String, bool isCombined, EnumSet<ContentCharacteristic>, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
@@ -55,6 +56,7 @@ public:
     bool shouldUseSimpleGlyphOverflowCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath); }
     bool hasPositionDependentContentWidth() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasPositionDependentContentWidth); }
     bool hasStrongDirectionalityContent() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasStrongDirectionalityContent); }
+    bool mayHaveIdeographicContent() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::MayHaveIdeographicContent); }
 
     void setContent(String newContent, EnumSet<ContentCharacteristic>);
     void setContentCharacteristic(EnumSet<ContentCharacteristic> contentCharacteristicSet) { m_contentCharacteristicSet = contentCharacteristicSet; }

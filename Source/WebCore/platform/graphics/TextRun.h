@@ -58,6 +58,7 @@ public:
         , m_directionalOverride(directionalOverride)
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_disableSpacing(false)
+        , m_mayHaveIdeographicContent(true)
     {
         ASSERT(!m_text.isNull());
     }
@@ -79,6 +80,7 @@ public:
         , m_directionalOverride(0)
         , m_characterScanForCodePath(0)
         , m_disableSpacing(0)
+        , m_mayHaveIdeographicContent(0)
     {
     }
 
@@ -94,6 +96,7 @@ public:
         , m_directionalOverride(0)
         , m_characterScanForCodePath(0)
         , m_disableSpacing(0)
+        , m_mayHaveIdeographicContent(0)
     {
     }
 
@@ -159,6 +162,9 @@ public:
     void setTextSpacingState(TextSpacing::SpacingState spacingState) { m_textSpacingState = spacingState; }
     TextSpacing::SpacingState textSpacingState() const { return m_textSpacingState; }
 
+    bool mayHaveIdeographicContent() const { return m_mayHaveIdeographicContent; }
+    void setMayHaveIdeographicContent(bool value) { m_mayHaveIdeographicContent = value; }
+
 private:
     String m_text;
 
@@ -181,6 +187,7 @@ private:
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.
     unsigned m_characterScanForCodePath : 1;
     unsigned m_disableSpacing : 1;
+    unsigned m_mayHaveIdeographicContent : 1;
 };
 
 inline void TextRun::setTabSize(bool allow, const TabSize& size)
