@@ -44,9 +44,9 @@
 #include "StringRecursionChecker.h"
 #include "VMEntryScopeInlines.h"
 #include <algorithm>
+#include <array>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/StdMap.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -813,6 +813,10 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSlice, (JSGlobalObject* globalObject, Cal
 using SortJSValueVector = MarkedArgumentBufferWithSize<64>;
 using SortEntryVector = Vector<std::tuple<JSValue, String>>;
 
+static constexpr unsigned radixSortThreshold = 32;
+static constexpr unsigned maxRadixByteDepth = 64;
+static constexpr unsigned radixBucketCount = 257;
+
 static ALWAYS_INLINE std::tuple<uint64_t, IndexingType, std::span<EncodedJSValue>> sortCompact(JSGlobalObject* globalObject, JSObject* thisObject, uint64_t length, SortJSValueVector& compactedRoot)
 {
     VM& vm = globalObject->vm();
@@ -903,32 +907,66 @@ static ALWAYS_INLINE std::tuple<uint64_t, IndexingType, std::span<EncodedJSValue
     return std::tuple { undefinedCount, ArrayWithContiguous, std::span { compactedRoot.data(), compactedRoot.size() } };
 }
 
-static unsigned sortBucketSort(std::span<EncodedJSValue> sorted, unsigned dst, SortEntryVector& bucket, unsigned depth)
+static void sortBucketSort(std::span<std::tuple<JSValue, String>> entries, std::span<std::tuple<JSValue, String>> scratch, unsigned byteIndex)
 {
-    if (bucket.size() < 32 || depth > 32) {
-        std::ranges::sort(bucket, WTF::codePointCompareLessThan, [](const auto& element) {
+    size_t size = entries.size();
+    if (size < radixSortThreshold || byteIndex > maxRadixByteDepth) {
+        std::ranges::stable_sort(entries, WTF::codePointCompareLessThan, [](const auto& element) {
             return std::get<1>(element);
         });
-        for (auto& entry : bucket)
-            sorted[dst++] = JSValue::encode(std::get<0>(entry));
-        return dst;
+        return;
     }
 
-    StdMap<char16_t, SortEntryVector> buckets;
-    for (const auto& entry : bucket) {
-        if (std::get<1>(entry).length() == depth) {
-            sorted[dst++] = JSValue::encode(std::get<0>(entry));
-            continue;
+    auto keyOf = [&](const std::tuple<JSValue, String>& entry) -> unsigned {
+        const String& string = std::get<1>(entry);
+        if (byteIndex >= (static_cast<size_t>(string.length()) << 1))
+            return 0;
+        char16_t codeUnit = string.codeUnitAt(byteIndex >> 1);
+        // High byte first, so byte order matches the code-unit order the default comparator needs.
+        uint8_t byte = (byteIndex & 1) ? (codeUnit & 0xFF) : (codeUnit >> 8);
+        return static_cast<unsigned>(byte) + 1;
+    };
+
+    std::array<unsigned, radixBucketCount> counts { };
+    unsigned minBucket = radixBucketCount - 1;
+    unsigned maxBucket = 0;
+    for (const auto& entry : entries) {
+        unsigned key = keyOf(entry);
+        if (!counts[key]) {
+            minBucket = std::min(minBucket, key);
+            maxBucket = std::max(maxBucket, key);
         }
-
-        char16_t character = std::get<1>(entry).codeUnitAt(depth);
-        buckets.insert(std::pair { character, SortEntryVector { } }).first->second.append(entry);
+        ++counts[key];
     }
 
-    for (auto& entries : buckets)
-        dst = sortBucketSort(sorted, dst, entries.second, depth + 1);
+    // One bucket: nothing to reorder. Bucket 0 means every string already ended, so they are done.
+    if (minBucket == maxBucket) {
+        if (minBucket)
+            sortBucketSort(entries, scratch, byteIndex + 1);
+        return;
+    }
 
-    return dst;
+    std::array<unsigned, radixBucketCount> cursors;
+    unsigned running = 0;
+    for (unsigned i = minBucket; i <= maxBucket; ++i) {
+        cursors[i] = running;
+        running += counts[i];
+    }
+
+    for (auto& entry : entries) {
+        unsigned key = keyOf(entry);
+        scratch[cursors[key]++] = WTF::move(entry);
+    }
+    for (size_t i = 0; i < size; ++i)
+        entries[i] = WTF::move(scratch[i]);
+
+    unsigned offset = 0;
+    for (unsigned i = minBucket; i <= maxBucket; ++i) {
+        unsigned count = counts[i];
+        if (i && count > 1)
+            sortBucketSort(entries.subspan(offset, count), scratch.first(count), byteIndex + 1);
+        offset += count;
+    }
 }
 
 static ALWAYS_INLINE std::span<EncodedJSValue> sortStableSort(JSGlobalObject* globalObject, std::span<EncodedJSValue> compacted, std::span<EncodedJSValue> workingSet, JSObject* comparator)
@@ -1043,14 +1081,24 @@ static ALWAYS_INLINE void sortImpl(JSGlobalObject* globalObject, JSObject* thisO
     std::span<EncodedJSValue> dest;
     if (isStringSort) {
         SortEntryVector entries; // Keep in mind that all JSValues are also stored in SortJSValueVector (compacted). Thus, we do not need to keep them marked here.
-        entries.reserveInitialCapacity(compacted.size());
+        if (!entries.tryReserveInitialCapacity(compacted.size())) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            return;
+        }
         for (EncodedJSValue encodedValue : compacted) {
             JSValue value = JSValue::decode(encodedValue);
             String string = value.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
             entries.append(std::tuple { value, WTF::move(string) });
         }
-        sortBucketSort(sorted, 0, entries, 0);
+        SortEntryVector scratchEntries;
+        if (entries.size() >= radixSortThreshold && !scratchEntries.tryGrow(entries.size())) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            return;
+        }
+        sortBucketSort(entries.mutableSpan(), scratchEntries.mutableSpan(), 0);
+        for (size_t index = 0; index < entries.size(); ++index)
+            sorted[index] = JSValue::encode(std::get<0>(entries[index]));
         dest = sorted;
     } else {
         dest = sortStableSort(globalObject, compacted, sorted, asObject(comparatorValue));
