@@ -294,6 +294,12 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
     checkLayoutAttributesConsistency(this, m_layoutAttributes);
     setNeedsPositioningValuesUpdate();
     setNeedsLayout();
+
+    // Invalidate any SVG resource (clip-path, mask, filter) referencing this text subtree so its cached output is flushed and clients repaint.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        repaintClientsOfReferencedSVGResources();
+    else
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this);
 }
 
 static inline void updateFontInAllDescendants(RenderSVGText& text)
