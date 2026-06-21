@@ -5672,7 +5672,7 @@ bool AXObjectCache::addRelation(Element& origin, Element& target, AXRelation rel
     AXLOG(makeString("origin: "_s, origin.debugDescription(), " target: "_s, target.debugDescription(), " relation "_s, static_cast<uint8_t>(relation)));
 
     if (!validRelation(origin, target, relation)) {
-        AX_ASSERT_NOT_REACHED();
+        // Skip invalid relations (which can be created with legitimate markup, e.g. self-referential aria-owns.
         return false;
     }
 

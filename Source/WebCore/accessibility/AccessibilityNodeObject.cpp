@@ -765,11 +765,20 @@ void AccessibilityNodeObject::clearChildren()
 
 void AccessibilityNodeObject::updateOwnedChildrenIfNecessary()
 {
-    bool didRemoveChild = false;
     auto ownedObjects = this->ownedObjects();
     if (ownedObjects.isEmpty())
         return;
 
+    // Tracks the objects whose owned children are currently being resolved, so a re-entrant
+    // call for an object already on the stack can bail instead of recursing forever.
+    static NeverDestroyed<HashSet<const AccessibilityNodeObject*>> objectsCurrentlyResolvingOwnedChildren;
+    if (!objectsCurrentlyResolvingOwnedChildren->add(this).isNewEntry)
+        return;
+    auto removeOnExit = makeScopeExit([&] {
+        objectsCurrentlyResolvingOwnedChildren->remove(this);
+    });
+
+    bool didRemoveChild = false;
     for (const auto& child : ownedObjects) {
         if (m_children.removeFirst(child)) {
             // If the child already exists as a DOM child, but is also in the owned objects, then
