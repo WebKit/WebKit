@@ -3205,9 +3205,15 @@ void HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks()
     if (!protectedDocument()->quirks().needsAutoplayPlayPauseEvents())
         return;
 
+    if (m_isDispatchingAutoplayPlayPauseQuirkEvents)
+        return;
+
     ALWAYS_LOG(LOGIDENTIFIER);
-    scheduleEvent(eventNames().playingEvent);
-    scheduleEvent(eventNames().pauseEvent);
+    queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_asyncEventsCancellationGroup, [](auto& element) {
+        SetForScope dispatching(element.m_isDispatchingAutoplayPlayPauseQuirkEvents, true);
+        element.dispatchEvent(Event::create(eventNames().playingEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
+        element.dispatchEvent(Event::create(eventNames().pauseEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
+    });
 }
 
 void HTMLMediaElement::durationChanged()

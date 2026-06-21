@@ -836,6 +836,41 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
     [webView waitForMessage:@"playing"];
 }
 
+TEST(WebpagePreferences, WebsitePoliciesSynthesizedPauseEventFiresOnce)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+#if PLATFORM(IOS_FAMILY)
+    configuration.get().allowsInlineMediaPlayback = YES;
+    configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
+#endif
+    [configuration preferences].siteSpecificQuirksModeEnabled = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *) {
+        return _WKWebsiteAutoplayQuirkSynthesizedPauseEvents;
+    }];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"autoplay-quirk-pause-fires-once" withExtension:@"html"]];
+    [webView loadRequest:request];
+
+    __block bool done = false;
+    __block RetainPtr<NSString> receivedMessage;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message hasPrefix:@"pause-count:"]) {
+            receivedMessage = message;
+            done = true;
+        }
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ(@"pause-count:1", receivedMessage.get());
+}
+
 TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
 {
     auto* configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
