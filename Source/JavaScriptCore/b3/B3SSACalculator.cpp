@@ -102,7 +102,7 @@ SSACalculator::Def* SSACalculator::reachingDefAtTail(BasicBlock* startingBlock, 
     for (BasicBlock* block = startingBlock; block; block = m_dominators->idom(block)) {
         if (Def* def = m_data[block].m_defs.get(variable)) {
             for (BasicBlock* otherBlock = startingBlock; otherBlock != block; otherBlock = m_dominators->idom(otherBlock))
-                m_data[block].m_defs.add(variable, def);
+                m_data[otherBlock].m_defs.add(variable, def);
             return def;
         }
     }
