@@ -362,6 +362,11 @@ WebProcessProxy::~WebProcessProxy()
     ASSERT(m_pageURLRetainCountMap.isEmpty());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "destructor:");
 
+    // ~AuxiliaryProcessProxy() replies to pending messages after our members are gone; a reply
+    // handler that upgrades its still-live WeakPtr<WebProcessProxy> would then touch freed members
+    // (e.g. m_pagesPendingClose). Cancel them now, while our state is intact.
+    replyToPendingMessages();
+
     liveProcessesLRU().remove(*this);
 
     for (auto identifier : m_speechRecognitionServerMap.keys())
