@@ -74,6 +74,7 @@ using namespace WebCore;
 #define SWSERVERCONNECTION_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_contentConnection.get())
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, value) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, m_contentConnection.get(), value)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWServerConnection);
 
@@ -409,7 +410,8 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    checkTopOrigin(jobData.topOrigin);
+    if (!checkTopOrigin(jobData.topOrigin))
+        return;
 
     ASSERT(!jobData.scopeURL.isNull());
     if (jobData.scopeURL.isNull()) {
@@ -483,7 +485,8 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
 
 void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
 {
-    checkTopOrigin(topOrigin);
+    if (!checkTopOrigin(topOrigin))
+        return;
 
     if (RefPtr registration = doRegistrationMatching(topOrigin, clientURL)) {
         callback(registration->data());
@@ -494,14 +497,16 @@ void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigi
 
 void WebSWServerConnection::whenRegistrationReady(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&& callback)
 {
-    checkTopOrigin(topOrigin);
+    if (!checkTopOrigin(topOrigin))
+        return;
 
     SWServer::Connection::whenRegistrationReady(topOrigin, clientURL, WTF::move(callback));
 }
 
 void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<ServiceWorkerRegistrationData>&)>&& callback)
 {
-    checkTopOrigin(topOrigin);
+    if (!checkTopOrigin(topOrigin))
+        return;
 
     if (RefPtr server = this->server())
         callback(server->getRegistrations(topOrigin, clientURL));
@@ -512,7 +517,8 @@ void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin
 void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
     MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
-    checkTopOrigin(clientOrigin.topOrigin);
+    if (!checkTopOrigin(clientOrigin.topOrigin))
+        return;
 
     registerServiceWorkerClientInternal(WTF::move(clientOrigin), WTF::move(data), controllingServiceWorkerRegistrationIdentifier, WTF::move(userAgent), SWServer::IsBeingCreatedClient::No);
 }
@@ -1015,15 +1021,16 @@ void WebSWServerConnection::reportNetworkUsageToWorkerClient(WebCore::ScriptExec
 }
 #endif
 
-void WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& origin)
+bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& origin)
 {
-    MESSAGE_CHECK(!origin.isNull());
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!origin.isNull(), false);
     RefPtr networkConnectionToWebProcess = m_networkConnectionToWebProcess.get();
     if (!networkConnectionToWebProcess)
-        return;
+        return false;
 
     Ref networkProcess = networkConnectionToWebProcess->networkProcess();
-    MESSAGE_CHECK(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())) != NetworkProcess::AllowCookieAccess::Terminate);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())) != NetworkProcess::AllowCookieAccess::Terminate, false);
+    return true;
 }
 
 } // namespace WebKit
