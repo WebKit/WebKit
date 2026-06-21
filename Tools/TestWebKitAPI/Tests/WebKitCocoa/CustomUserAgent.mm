@@ -275,4 +275,61 @@ TEST(CustomUserAgent, WebpagePreferencesCustomUserAgentAsSiteSpecificQuirksAppli
     EXPECT_WK_STREQ("User-Agent: QuirkUA", receivedUserAgentOnTarget.utf8().data());
 }
 
+// SharedWorker is hosted in a separate WebProcess. The page-side custom UA must
+// propagate through the network process and into that host process so the
+// worker observes it via navigator.userAgent. Regression test for
+// WebSharedWorkerContextManagerConnection's inverted user-agent fallback.
+//
+// Use WKWebpagePreferences._customUserAgent rather than WKWebView.customUserAgent
+// because the page-level customUserAgent is also pushed to remote-worker host
+// processes via WebProcessPool::updateRemoteWorkerUserAgent, which keeps the
+// host's m_userAgent in sync with the page UA and would mask the bug. The
+// per-navigation UA stops at the page's DocumentLoader, so the host's
+// m_userAgent stays as the standard UA and the buggy assignment becomes
+// observable.
+TEST(CustomUserAgent, SharedWorkerNavigatorUserAgent)
+{
+    constexpr auto mainPage = R"PAGE(
+<script>
+const worker = new SharedWorker("sw.js");
+worker.port.onmessage = e => window.webkit.messageHandlers.testHandler.postMessage(e.data);
+worker.port.start();
+</script>
+)PAGE"_s;
+
+    constexpr auto sharedWorkerScript = R"WORKER(
+onconnect = e => {
+    const port = e.ports[0];
+    port.postMessage(navigator.userAgent);
+    port.start();
+};
+)WORKER"_s;
+
+    HTTPServer server({
+        { "/"_s, { mainPage } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, sharedWorkerScript } },
+    });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._customUserAgent = @"SharedWorkerCustomUA/1.0";
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block RetainPtr<NSString> reportedUserAgent;
+    __block bool gotMessage = false;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        reportedUserAgent = message;
+        gotMessage = true;
+    }];
+
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&gotMessage);
+
+    EXPECT_WK_STREQ("SharedWorkerCustomUA/1.0", reportedUserAgent.get());
+}
+
 } // namespace TestWebKitAPI
