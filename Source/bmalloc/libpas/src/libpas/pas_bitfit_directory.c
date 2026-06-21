@@ -37,6 +37,7 @@
 #include "pas_free_granules.h"
 #include "pas_heap_lock.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_race_test_hooks.h"
 #include "pas_segregated_heap.h"
 #include "pas_stream.h"
 
@@ -383,7 +384,7 @@ pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
     const pas_bitfit_page_config* page_config;
     size_t num_granules;
 
-    last_empty_plus_one_value = pas_versioned_field_read(&directory->last_empty_plus_one);
+    last_empty_plus_one_value = pas_versioned_field_read_to_watch(&directory->last_empty_plus_one);
 
     page_config = pas_bitfit_page_config_kind_get_config(directory->config_kind);
     num_granules = page_config->base.page_size / page_config->base.granule_size;
@@ -539,10 +540,12 @@ pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
         return pas_page_sharing_pool_take_success;
     }
 
+    pas_race_test_hook(pas_race_test_hook_bitfit_directory_take_last_empty_after_loop);
+
     pas_versioned_field_try_write(&directory->last_empty_plus_one,
                                   last_empty_plus_one_value,
                                   0);
-    
+
     return pas_page_sharing_pool_take_none_available;
 }
 
