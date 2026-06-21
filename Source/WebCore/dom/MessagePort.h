@@ -73,6 +73,7 @@ public:
 
     WEBCORE_EXPORT static bool isMessagePortAliveForTesting(const MessagePortIdentifier&);
     WEBCORE_EXPORT static void notifyMessageAvailable(const MessagePortIdentifier&);
+    WEBCORE_EXPORT static void notifyAllConnectionsClosed();
 
     WEBCORE_EXPORT void messageAvailable();
     bool started() const { return m_started; }

@@ -28,6 +28,7 @@
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -38,6 +39,7 @@ public:
     static WebMessagePortChannelProvider& singleton();
 
     void messagePortSentToRemote(const WebCore::MessagePortIdentifier&);
+    void networkProcessConnectionClosed();
 
     // Don't do anything in ref() / deref() since this class is a singleton.
     void ref() const { }
@@ -55,6 +57,7 @@ private:
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier& remoteTarget) final;
 
     HashMap<WebCore::MessagePortIdentifier, Vector<WebCore::MessageWithMessagePorts>> m_inProcessPortMessages;
+    HashSet<WebCore::MessagePortIdentifier> m_portsKnownToNetworkProcess;
 };
 
 } // namespace WebKit

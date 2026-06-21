@@ -1478,6 +1478,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     m_webLoaderStrategy->networkProcessCrashed();
     m_webSocketChannelManager.networkProcessCrashed();
     m_broadcastChannelRegistry->networkProcessCrashed();
+    WebMessagePortChannelProvider::singleton().networkProcessConnectionClosed();
 
 #if USE(LIBWEBRTC)
     if (m_libWebRTCNetwork)

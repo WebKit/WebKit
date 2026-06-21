@@ -87,6 +87,31 @@ void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier
     });
 }
 
+void MessagePort::notifyAllConnectionsClosed()
+{
+    ASSERT(isMainThread());
+    Vector<std::pair<ScriptExecutionContextIdentifier, ThreadSafeWeakPtr<MessagePort>>> entries;
+    {
+        Locker locker { allMessagePortsLock };
+        entries.reserveInitialCapacity(allMessagePorts().size());
+        for (auto& [identifier, weakPort] : allMessagePorts()) {
+            if (auto contextIdentifier = portToContextIdentifier().getOptional(identifier))
+                entries.append({ *contextIdentifier, weakPort });
+        }
+    }
+
+    for (auto& [contextIdentifier, weakPort] : entries) {
+        ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [weakPort = WTF::move(weakPort)](auto&) {
+            RefPtr port = weakPort.get();
+            if (!port || port->m_isDetached)
+                return;
+            port->m_isDetached = true;
+            port->m_entangled = false;
+            port->removeAllEventListeners();
+        });
+    }
+}
+
 Ref<MessagePort> MessagePort::create(ScriptExecutionContext& scriptExecutionContext, const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
     Ref messagePort = adoptRef(*new MessagePort(scriptExecutionContext, local, remote));
