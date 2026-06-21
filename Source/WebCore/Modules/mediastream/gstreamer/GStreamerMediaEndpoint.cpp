@@ -2287,6 +2287,9 @@ void GStreamerMediaEndpoint::trackWasReplaced(const String& previousId, const St
         GRefPtr<GstCaps> caps;
         g_object_get(transceiver.get(), "codec-preferences", &caps.outPtr(), nullptr);
 
+        if (!caps)
+            return false;
+
         auto newCaps = adoptGRef(gst_caps_make_writable(caps.leakRef()));
         gst_caps_map_in_place(newCaps.get(), [](auto*, auto* structure, gpointer userData) -> gboolean {
             auto msid = gstStructureGetString(structure, "a-msid"_s);
