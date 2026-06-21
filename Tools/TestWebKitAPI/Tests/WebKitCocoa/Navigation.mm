@@ -4982,6 +4982,245 @@ TEST(Navigation, CookieTransformOnRedirect)
     EXPECT_EQ(transformCallbackCount, 2u);
 }
 
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+TEST(WKNavigation, PartitionedCookieSentOnTopLevelRedirect)
+{
+    using namespace TestWebKitAPI;
+    bool sawCookieOnRedirectTarget { false };
+    bool requestedRedirectTarget { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/page1"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: https://example.com/page2\r\n"
+                "Set-Cookie: PF=value;Secure;HttpOnly;SameSite=None;Partitioned\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/page2"_s) {
+            sawCookieOnRedirectTarget = contains(request.span(), "PF=value"_span);
+            co_await connection.awaitableSend(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+            requestedRedirectTarget = true;
+        }
+    } }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    // Force the network session to be created while m_pages is empty. After
+    // this returns, the session has isOptInCookiePartitioningEnabled = false.
+    __block bool forcedNetworkProcess = false;
+    [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *) {
+        forcedNetworkProcess = true;
+    }];
+    Util::run(&forcedNetworkProcess);
+
+    // Sanity check the broken bootstrap state: with no pages added yet, the
+    // data store should still be in the default mode (All) — not the upgraded
+    // AllExceptPartitioned that propagateSettingUpdates produces.
+    EXPECT_WK_STREQ(@"All", [dataStore _thirdPartyCookieBlockingModeForTesting]);
+
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page1"]]];
+    Util::run(&requestedRedirectTarget);
+
+    EXPECT_TRUE(sawCookieOnRedirectTarget);
+
+    EXPECT_WK_STREQ(@"AllExceptPartitioned", [dataStore _thirdPartyCookieBlockingModeForTesting]);
+
+    __block bool gotStoredCookies = false;
+    [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ(cookies.count, 1u);
+        if (cookies.count) {
+            EXPECT_WK_STREQ(@"PF", cookies[0].name);
+            EXPECT_WK_STREQ(@"https://example.com", cookies[0].properties[@"StoragePartition"]);
+        }
+        gotStoredCookies = true;
+    }];
+    Util::run(&gotStoredCookies);
+}
+
+TEST(WKNavigation, PartitionedCookieSentWhenNetworkProcessExistsBeforePage)
+{
+    using namespace TestWebKitAPI;
+    bool sawCookieOnRedirectTarget { false };
+    bool requestedRedirectTarget { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/page1"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: https://example.com/page2\r\n"
+                "Set-Cookie: PF=value;Secure;HttpOnly;SameSite=None;Partitioned\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/page2"_s) {
+            sawCookieOnRedirectTarget = contains(request.span(), "PF=value"_span);
+            co_await connection.awaitableSend(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+            requestedRedirectTarget = true;
+        }
+    } }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    // removeDataOfTypes drives WebsiteDataStore::removeData → networkProcess()
+    // lazy creator with empty m_pages. Unlike getAllCookies (which uses
+    // networkProcessIfExists), this genuinely creates the session here.
+    __block bool dataRemoved = false;
+    [dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeCookies] modifiedSince:[NSDate distantPast] completionHandler:^{
+        dataRemoved = true;
+    }];
+    Util::run(&dataRemoved);
+
+    // Sanity: the session was born with isOpt=false (no pages), and the
+    // post-addSession propagateSettingUpdates inside networkProcess() saw
+    // computeIsOptInCookiePartitioningEnabled() == false too — so the UIProcess
+    // mode is still at the lazy default. If this ever flips early, the test
+    // is no longer modeling the broken-bootstrap scenario.
+    EXPECT_WK_STREQ(@"All", [dataStore _thirdPartyCookieBlockingModeForTesting]);
+
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page1"]]];
+    Util::run(&requestedRedirectTarget);
+
+    EXPECT_TRUE(sawCookieOnRedirectTarget);
+    EXPECT_WK_STREQ(@"AllExceptPartitioned", [dataStore _thirdPartyCookieBlockingModeForTesting]);
+
+    __block bool gotStoredCookies = false;
+    [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ(cookies.count, 1u);
+        if (cookies.count) {
+            EXPECT_WK_STREQ(@"PF", cookies[0].name);
+            EXPECT_WK_STREQ(@"https://example.com", cookies[0].properties[@"StoragePartition"]);
+        }
+        gotStoredCookies = true;
+    }];
+    Util::run(&gotStoredCookies);
+}
+
+TEST(WKNavigation, PartitionedCookieAfterRedirect)
+{
+    using namespace TestWebKitAPI;
+    bool sawPartitionedCookieOnSubresource { false };
+    bool sawNonPartitionedCookieOnSubresource { false };
+    bool requestedSubresource { false };
+
+    //   (1) example.org/ serves HTML with a JS-driven (client-side) redirect
+    //       to example.com/ — this triggers a top-level cross-site navigation,
+    //       which the client treats as a process swap.
+    //   (2) The redirect target is loaded in a provisional WebProcess
+    //   (3) The Partitioned cookie is set on the first response to example.com,
+    //       which is also the response that commits the provisional page.
+    //   (4) After commit, the original WebProcess is shut down because the swap
+    //       is from a client-side redirect (so the old page is not suspended/cached).
+    //       The bug under investigation is that this termination disables
+    //       setOptInCookiePartitioningEnabled across all NetworkSessions, dropping
+    //       the partition key from in-flight tasks.
+    //   (5) A subresource on example.com/ then loads from the new (committed)
+    //       process.
+    static constexpr auto initialPageHTML =
+        "<script>window.location = \"https://example.com/\";</script>"_s;
+
+    static constexpr auto committedPageBody =
+        "<!DOCTYPE html><img src=\"https://example.com/subresource\">"_s;
+
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (contains(request.span(), "Host: example.org"_span) && path == "/"_s) {
+            co_await connection.awaitableSend(HTTPResponse({ { }, initialPageHTML }).serialize());
+        } else if (contains(request.span(), "Host: example.com"_span) && path == "/"_s) {
+            co_await connection.awaitableSend(makeString(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/html\r\n"
+                "Set-Cookie: testcookie=1; Path=/; Secure; SameSite=None; Max-Age=300\r\n"
+                "Set-Cookie: partitioned_cookie=p1; Path=/; Secure; SameSite=None; Partitioned; Max-Age=300\r\n"
+                "Content-Length: "_s, committedPageBody.length(), "\r\n"
+                "\r\n"_s, committedPageBody));
+        } else if (contains(request.span(), "Host: example.com"_span) && path == "/subresource"_s) {
+            sawNonPartitionedCookieOnSubresource = contains(request.span(), "testcookie=1"_span);
+            sawPartitionedCookieOnSubresource = contains(request.span(), "partitioned_cookie=p1"_span);
+            co_await connection.awaitableSend(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: image/png\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+            requestedSubresource = true;
+        }
+    } }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.org/"]]];
+    Util::run(&requestedSubresource);
+
+    EXPECT_TRUE(sawNonPartitionedCookieOnSubresource);
+    EXPECT_TRUE(sawPartitionedCookieOnSubresource);
+
+    __block bool gotStoredCookies = false;
+    [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        bool foundPartitioned = false;
+        bool foundNonPartitioned = false;
+        for (NSHTTPCookie *cookie in cookies) {
+            if ([cookie.name isEqualToString:@"partitioned_cookie"]) {
+                foundPartitioned = true;
+                EXPECT_WK_STREQ(cookie.properties[@"StoragePartition"], @"https://example.com");
+            } else if ([cookie.name isEqualToString:@"testcookie"]) {
+                foundNonPartitioned = true;
+                EXPECT_NULL(cookie.properties[@"StoragePartition"]);
+            }
+        }
+        EXPECT_TRUE(foundPartitioned);
+        EXPECT_TRUE(foundNonPartitioned);
+        gotStoredCookies = true;
+    }];
+    Util::run(&gotStoredCookies);
+}
+#endif // ENABLE(OPT_IN_PARTITIONED_COOKIES)
+
 TEST(WKNavigation, AllowResourceLoadFromBlockedPortWithCustomScheme)
 {
     using namespace TestWebKitAPI;
