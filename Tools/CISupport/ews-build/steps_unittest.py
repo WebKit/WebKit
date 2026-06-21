@@ -1362,6 +1362,45 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.run_step()
 
+    def test_success_with_warning_containing_error_substring(self):
+        self.setup_step(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=3600,
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES WK_ENABLE_SLOW_BUILD_VERIFICATION=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        )
+            # A deprecation warning whose message references an Objective-C selector
+            # ending in `error:` must not be misread as a compile error.
+            .log('stdio', stdout="CodingTests.swift:164:52: warning: 'unarchiveObject(with:)' was deprecated in macOS 10.14: Use +unarchivedObjectOfClass:fromData:error: instead")
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.run_step()
+
+    def test_failure_from_log_on_clean_exit(self):
+        self.setup_step(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=3600,
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES WK_ENABLE_SLOW_BUILD_VERIFICATION=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        )
+            # A genuine error diagnostic must still fail the build even when the
+            # process exits 0 (the silent-failure workaround), including when its
+            # message text mentions another severity such as `note:`.
+            .log('stdio', stdout='CodingTests.swift:164:52: error: redefinition of Foo; see note: previous definition here')
+            .exit(0),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to compile WebKit')
+        return self.run_step()
+
     def test_skip_for_revert_patches_on_commit_queue(self):
         self.setup_step(CompileWebKit())
         self.setProperty('buildername', 'Commit-Queue')

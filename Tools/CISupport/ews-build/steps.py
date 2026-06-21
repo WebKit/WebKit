@@ -3312,9 +3312,22 @@ class BuildLogLineObserver(ParseByLineLogObserver):
         self.includeRelatedLines = includeRelatedLines
         self.error_context_buffer = []
         self.whitespace_re = re.compile(r'^[\s]*$')
+        # Match the search string only when it is a standalone diagnostic
+        # severity token, i.e. the word containing it is preceded by whitespace
+        # or the start of the line (`Foo.cpp:10:5: error: ...`). A run of
+        # letters can precede the search string (so `rror:` still matches both
+        # `error:` and `Error:`), but the run may not begin mid-token: this
+        # deliberately does not match `error:` embedded in a longer
+        # colon-separated token such as the Objective-C selector
+        # `unarchivedObjectOfClass:fromData:error:` referenced by a deprecation
+        # warning.
+        self.error_re = re.compile(r'(?:^|\s)[A-Za-z]*' + re.escape(searchString))
         self.line_count = 0
         self.thresholdExceedCallBack = thresholdExceedCallBack
         super().__init__(self.parseOutputLine)
+
+    def lineIndicatesError(self, line):
+        return self.error_re.search(line) is not None
 
     def parseOutputLine(self, line):
         self.line_count += 1
@@ -3326,7 +3339,7 @@ class BuildLogLineObserver(ParseByLineLogObserver):
             return
 
         if not self.includeRelatedLines:
-            if self.searchString in line:
+            if self.lineIndicatesError(line):
                 self.errorReceived(line)
             return
 
@@ -3336,7 +3349,7 @@ class BuildLogLineObserver(ParseByLineLogObserver):
         else:
             self.error_context_buffer.append(line)
 
-        if self.searchString in line:
+        if self.lineIndicatesError(line):
             for log in self.error_context_buffer[-50:]:
                 self.errorReceived(log)
             self.error_context_buffer = []
