@@ -267,4 +267,13 @@ TEST(RegionTests, IsValidShape2)
     ASSERT_TRUE(Shape::isValidShape(segments.span(), spans.span())) << r.dataForTesting();
 }
 
+TEST(RegionTests, TotalAreaDoesNotOverflowSignedInt)
+{
+    // 50000 * 50000 == 2,500,000,000, which exceeds INT_MAX (2,147,483,647).
+    // Region::totalArea computes width() * height() in int before promoting
+    // to uint64_t, so the multiplication wraps.
+    Region region(IntRect { 0, 0, 50000, 50000 });
+    EXPECT_EQ(region.totalArea(), 2'500'000'000ULL);
+}
+
 }
