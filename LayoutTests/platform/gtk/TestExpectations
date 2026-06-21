@@ -1366,3 +1366,5 @@ webkit.org/b/319066 [ Debug ] imported/w3c/web-platform-tests/css/css-view-trans
 
 webkit.org/b/319072 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html [ Failure Pass ]
 webkit.org/b/319073 inspector/canvas/create-context-bitmaprenderer.html [ Crash Failure Pass ]
+
+fast/layers/remove-layer-with-nested-stacking.html [ ImageOnlyFailure ] # Previously masked by RenderTreeDump, it can be verified by PNG Pixel Result
