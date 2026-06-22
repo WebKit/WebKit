@@ -3718,13 +3718,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
             m_expressionStack = WTF::move(data.elseBlockStack);
         }
-        // When ending an 'if'/'else', including a synthetic 'else' added right above,
-        // the spec requires the output type of 'if' to be the type from the signature.
-        const bool shouldForceSignature = ControlType::isElse(data.controlData);
+        // The spec requires the output type of a structured control instruction to be
+        // the result type from its signature, even when the fallthrough value is a subtype.
         // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
         // That's a little too effectful for me but I don't have a better API right now.
         // see: https://bugs.webkit.org/show_bug.cgi?id=164353
-        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, shouldForceSignature));
+        WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData, true));
         WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
         m_expressionStack.swap(data.enclosedExpressionStack);
         if (!ControlType::isTopLevel(data.controlData))
