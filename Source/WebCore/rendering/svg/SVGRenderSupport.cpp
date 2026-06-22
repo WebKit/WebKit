@@ -88,7 +88,7 @@ std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(co
         return FloatRect();
 
     FloatRect adjustedRect = rect;
-    adjustedRect.inflate(renderer.style().usedOutlineSize());
+    adjustedRect.inflate(renderer.style().usedOutlineSize(renderer.style().usedZoomForLength(), renderer.style().deviceScaleFactor()));
 
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);

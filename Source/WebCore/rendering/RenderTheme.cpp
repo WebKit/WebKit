@@ -837,13 +837,14 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderElement& re
         return { };
 
     CheckedRef style = renderer->style();
+    auto deviceScaleFactor = style->deviceScaleFactor();
     return {
         extractControlStyleStatesForRendererInternal(*renderer),
         style->computedFontSize(),
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorApplyingColorFilter(),
-        Style::evaluate<FloatBoxExtent>(style->usedBorderWidths().to<Style::LineWidthBox>(), Style::ZoomNeeded { })
+        Style::evaluate<FloatBoxExtent>(style->usedBorderWidths().to<Style::LineWidthBox>(), style->usedZoomForLength(), deviceScaleFactor)
     };
 }
 
@@ -1382,6 +1383,7 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
 {
     auto appearance = style.usedAppearance();
     CheckedRef fontCascade = style.fontCascade();
+    auto deviceScaleFactor = style.deviceScaleFactor();
 
     auto borderBox = controlBorder(appearance, fontCascade.get(), style.usedBorderWidths().to<Style::LineWidthBox>(), style.usedZoom(), element);
 
@@ -1396,25 +1398,25 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     if (!style.writingMode().isHorizontal() && supportsVerticalWritingMode(appearance))
         borderBox = Style::LineWidthBox { borderBox.left(), borderBox.top(), borderBox.right(), borderBox.bottom() };
 
-    if (Style::evaluate<float>(borderBox.top(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderTopWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.top(), style.usedZoomForLength(), deviceScaleFactor) != Style::evaluate<int>(style.usedBorderTopWidth(), style.usedZoomForLength(), deviceScaleFactor)) {
         if (!borderBox.top().isZero())
             style.setBorderTopWidth(Style::LineWidth { borderBox.top() });
         else
             style.resetBorderTop();
     }
-    if (Style::evaluate<float>(borderBox.right(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderRightWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.right(), style.usedZoomForLength(), deviceScaleFactor) != Style::evaluate<int>(style.usedBorderRightWidth(), style.usedZoomForLength(), deviceScaleFactor)) {
         if (!borderBox.right().isZero())
             style.setBorderRightWidth(Style::LineWidth { borderBox.right() });
         else
             style.resetBorderRight();
     }
-    if (Style::evaluate<float>(borderBox.bottom(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderBottomWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.bottom(), style.usedZoomForLength(), deviceScaleFactor) != Style::evaluate<int>(style.usedBorderBottomWidth(), style.usedZoomForLength(), deviceScaleFactor)) {
         if (!borderBox.bottom().isZero())
             style.setBorderBottomWidth(Style::LineWidth { borderBox.bottom() });
         else
             style.resetBorderBottom();
     }
-    if (Style::evaluate<float>(borderBox.left(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderLeftWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.left(), style.usedZoomForLength(), deviceScaleFactor) != Style::evaluate<int>(style.usedBorderLeftWidth(), style.usedZoomForLength(), deviceScaleFactor)) {
         if (!borderBox.left().isZero())
             style.setBorderLeftWidth(Style::LineWidth { borderBox.left() });
         else
@@ -1643,8 +1645,7 @@ void RenderTheme::paintPlatformResizer(const RenderLayerModelObject& renderer, G
 {
     RefPtr<Image> resizeCornerImage;
     FloatSize cornerResizerSize;
-    Ref document = renderer.document();
-    if (document->deviceScaleFactor() >= 2) {
+    if (renderer.document().deviceScaleFactor() >= 2) {
         static NeverDestroyed<Image*> resizeCornerImageHiRes(&ImageAdapter::loadPlatformResource("textAreaResizeCorner@2x").leakRef());
         resizeCornerImage = resizeCornerImageHiRes;
         cornerResizerSize = resizeCornerImage->size();
@@ -1666,7 +1667,7 @@ void RenderTheme::paintPlatformResizer(const RenderLayerModelObject& renderer, G
 
     if (!resizeCornerImage)
         return;
-    FloatRect imageRect = snapRectToDevicePixels(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), document->deviceScaleFactor());
+    FloatRect imageRect = snapRectToDevicePixels(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), renderer.document().deviceScaleFactor());
     context.drawImage(*resizeCornerImage, imageRect);
 }
 

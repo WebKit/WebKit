@@ -259,9 +259,10 @@ Layout::BoxGeometry::VerticalEdges BoxGeometryUpdater::verticalLogicalMargin(con
 Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalBorder(const RenderBoxModelObject& renderer, WritingMode writingMode, bool isIntrinsicWidthMode)
 {
     auto& style = renderer.style();
+    auto deviceScaleFactor = style.deviceScaleFactor();
 
     auto borderWidths = RectEdges<LayoutUnit>::map(style.usedBorderWidths(), [&](auto width) {
-        return Style::evaluate<LayoutUnit>(width, Style::ZoomNeeded { });
+        return Style::evaluate<LayoutUnit>(width, style.usedZoomForLength(), deviceScaleFactor);
     });
 
     if (!isIntrinsicWidthMode)

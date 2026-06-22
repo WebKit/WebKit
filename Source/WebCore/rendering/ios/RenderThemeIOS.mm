@@ -396,7 +396,7 @@ Style::PaddingBox RenderThemeIOS::platformPopupInternalPaddingBox(const Style::C
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         // FIXME: Reduce code duplication with toTruncatedPaddingEdge.
-        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(),  Style::ZoomNeeded { }))) / style.usedZoom() };
+        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), style.deviceScaleFactor()))) / style.usedZoom() };
 
         // Return in horizontal-tb LTR; popupInternalPaddingBox() handles conversion.
         // The chevron is always on the logical end, so pad the end to prevent text from overlapping with it.
@@ -628,9 +628,9 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphBlockSize / 2.0f);
     if (!style.writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) - Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(box.style().usedBorderWidthEnd(), box.style().usedZoomForLength(), box.style().deviceScaleFactor()) - Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) + Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), box.style().usedZoomForLength(), box.style().deviceScaleFactor()) + Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();

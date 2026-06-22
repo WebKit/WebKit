@@ -331,7 +331,7 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
     }
 
     if (options.contains(DecorationOption::IncludeOutline))
-        box.inflate(m_renderer->outlineStyleForRepaint().usedOutlineSize());
+        box.inflate(m_renderer->outlineStyleForRepaint().usedOutlineSize(m_renderer->outlineStyleForRepaint().usedZoomForLength(), m_renderer->outlineStyleForRepaint().deviceScaleFactor()));
 }
 
 LayoutRect SVGBoundingBoxComputation::computeVisualOverflowRect(const RenderLayerModelObject& renderer)

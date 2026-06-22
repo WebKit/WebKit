@@ -141,10 +141,10 @@ public:
     // MARK: - Derived Values
 
     WEBCORE_EXPORT float computedLineHeight() const;
-    LayoutBoxExtent imageOutsets(const Style::BorderImage&) const;
-    LayoutBoxExtent imageOutsets(const Style::MaskBorder&) const;
-    LayoutBoxExtent borderImageOutsets() const;
-    LayoutBoxExtent maskBorderOutsets() const;
+    LayoutBoxExtent imageOutsets(const Style::BorderImage&, float deviceScaleFactor) const;
+    LayoutBoxExtent imageOutsets(const Style::MaskBorder&, float deviceScaleFactor) const;
+    LayoutBoxExtent borderImageOutsets(float deviceScaleFactor) const;
+    LayoutBoxExtent maskBorderOutsets(float deviceScaleFactor) const;
     inline bool hasBorderImageOutsets() const;
 
     // MARK: - Used Values
@@ -170,7 +170,7 @@ public:
 
     Style::Length<> usedOutlineOffset() const;
     Style::LineWidth usedOutlineWidth() const;
-    float usedOutlineSize() const; // used value combining `outline-width` and `outline-offset`
+    float usedOutlineSize(Style::ZoomFactor, float deviceScaleFactor) const; // used value combining `outline-width` and `outline-offset`
 
     inline decltype(auto) usedBorderWidths() const;
     inline Style::LineWidth usedBorderBottomWidth() const;

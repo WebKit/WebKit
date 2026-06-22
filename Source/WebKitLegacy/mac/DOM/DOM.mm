@@ -450,11 +450,12 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
         return zeroQuad();
 
     auto& style = renderer->style();
+    auto deviceScaleFactor = style.deviceScaleFactor();
     WebCore::IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
 
-    boundingBox.move(WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }), WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.usedBorderRightWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style.usedBorderBottomWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
+    boundingBox.move(WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), style.usedZoomForLength(), deviceScaleFactor), WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), deviceScaleFactor));
+    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), style.usedZoomForLength(), deviceScaleFactor) - WebCore::Style::evaluate<float>(style.usedBorderRightWidth(), style.usedZoomForLength(), deviceScaleFactor));
+    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style.usedBorderBottomWidth(), style.usedZoomForLength(), deviceScaleFactor) - WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), deviceScaleFactor));
 
     // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
     return wkQuadFromFloatQuad(WebCore::FloatQuad(boundingBox));

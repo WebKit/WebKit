@@ -44,6 +44,7 @@
 #include "HTMLElement.h"
 #include "LocalFrame.h"
 #include "OpenTypeMathData.h"
+#include "Page.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
@@ -576,32 +577,38 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyInitialBorderTopWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderTopWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    auto zoom = evaluationTimeZoomEnabled(builderState) ? 1.0f : builderState.style().usedZoom();
+    builderState.style().setBorderTopWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * zoom, builderState.document().deviceScaleFactor()));
 }
 
 inline void BuilderCustom::applyInitialBorderRightWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderRightWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    auto zoom = evaluationTimeZoomEnabled(builderState) ? 1.0f : builderState.style().usedZoom();
+    builderState.style().setBorderRightWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * zoom, builderState.document().deviceScaleFactor()));
 }
 
 inline void BuilderCustom::applyInitialBorderBottomWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderBottomWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    auto zoom = evaluationTimeZoomEnabled(builderState) ? 1.0f : builderState.style().usedZoom();
+    builderState.style().setBorderBottomWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * zoom, builderState.document().deviceScaleFactor()));
 }
 
 inline void BuilderCustom::applyInitialBorderLeftWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderLeftWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    auto zoom = evaluationTimeZoomEnabled(builderState) ? 1.0f : builderState.style().usedZoom();
+    builderState.style().setBorderLeftWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * zoom, builderState.document().deviceScaleFactor()));
 }
 
 inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 {
-    builderState.style().setOutlineWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    auto zoom = evaluationTimeZoomEnabled(builderState) ? 1.0f : builderState.style().usedZoom();
+    builderState.style().setOutlineWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * zoom, builderState.document().deviceScaleFactor()));
 }
 
 inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
 {
-    builderState.style().setColumnRuleWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    auto zoom = evaluationTimeZoomEnabled(builderState) ? 1.0f : builderState.style().usedZoom();
+    builderState.style().setColumnRuleWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * zoom, builderState.document().deviceScaleFactor()));
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

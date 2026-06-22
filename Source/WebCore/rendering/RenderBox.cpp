@@ -900,11 +900,12 @@ IntRect absoluteInteractionBounds(const RenderObject& renderer)
     }
 
     auto& style = renderer.style();
+    auto deviceScaleFactor = style.deviceScaleFactor();
     FloatRect boundingBox = renderer.absoluteBoundingBoxRect(true /* use transforms*/);
     // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
-    boundingBox.move(Style::evaluate<float>(style.usedBorderLeftWidth(), Style::ZoomNeeded { }), Style::evaluate<float>(style.usedBorderTopWidth(), Style::ZoomNeeded { }));
-    boundingBox.setWidth(boundingBox.width() - Style::evaluate<float>(style.usedBorderLeftWidth(), Style::ZoomNeeded { }) - Style::evaluate<float>(style.usedBorderRightWidth(), Style::ZoomNeeded { }));
-    boundingBox.setHeight(boundingBox.height() - Style::evaluate<float>(style.usedBorderBottomWidth(), Style::ZoomNeeded { }) - Style::evaluate<float>(style.usedBorderTopWidth(), Style::ZoomNeeded { }));
+    boundingBox.move(Style::evaluate<float>(style.usedBorderLeftWidth(), style.usedZoomForLength(), deviceScaleFactor), Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), deviceScaleFactor));
+    boundingBox.setWidth(boundingBox.width() - Style::evaluate<float>(style.usedBorderLeftWidth(), style.usedZoomForLength(), deviceScaleFactor) - Style::evaluate<float>(style.usedBorderRightWidth(), style.usedZoomForLength(), deviceScaleFactor));
+    boundingBox.setHeight(boundingBox.height() - Style::evaluate<float>(style.usedBorderBottomWidth(), style.usedZoomForLength(), deviceScaleFactor) - Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), deviceScaleFactor));
     return enclosingIntRect(boundingBox);
 }
 
@@ -2115,7 +2116,7 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
         LayoutRect borderImageRect = borderBoxRect();
         
         // Apply outsets to the border box.
-        borderImageRect.expand(style().maskBorderOutsets());
+        borderImageRect.expand(style().maskBorderOutsets(style().deviceScaleFactor()));
         return borderImageRect;
     }
 
@@ -4727,7 +4728,7 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox, Enu
 
     // Now compute border-image-outset overflow.
     if (style().hasBorderImageOutsets()) {
-        auto borderOutsets = style().borderImageOutsets();
+        auto borderOutsets = style().borderImageOutsets(style().deviceScaleFactor());
         convertOutsetsToOverflowCoordinates(borderOutsets, writingMode());
 
         overflowMinX = std::min(overflowMinX, borderBox.x() - borderOutsets.left());
@@ -4737,7 +4738,7 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox, Enu
     }
 
     if (outlineStyleForRepaint().hasOutlineInVisualOverflow()) {
-        auto outlineSize = LayoutUnit { outlineStyleForRepaint().usedOutlineSize() };
+        auto outlineSize = LayoutUnit { outlineStyleForRepaint().usedOutlineSize(outlineStyleForRepaint().usedZoomForLength(), outlineStyleForRepaint().deviceScaleFactor()) };
 
         overflowMinX = std::min(overflowMinX, borderBox.x() - outlineSize);
         overflowMaxX = std::max(overflowMaxX, borderBox.maxX() + outlineSize);

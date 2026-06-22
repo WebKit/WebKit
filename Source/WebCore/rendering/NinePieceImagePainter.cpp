@@ -230,7 +230,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     ASSERT(styleImage->isLoaded(renderer));
 
     auto sourceSlices      = computeSlices(source, ninePieceImage.slice(), styleImage->imageScaleFactor());
-    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(style.usedBorderWidths().to<Style::LineWidthBox>(), Style::ZoomNeeded { }), sourceSlices, style.usedZoomForLength());
+    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(style.usedBorderWidths().to<Style::LineWidthBox>(), style.usedZoomForLength(), deviceScaleFactor), sourceSlices, style.usedZoomForLength());
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 

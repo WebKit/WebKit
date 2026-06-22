@@ -739,7 +739,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (!areaElementStyle)
         return;
 
-    auto outlineWidth = Style::evaluate<float>(areaElementStyle->usedOutlineWidth(), Style::ZoomNeeded { });
+    auto outlineWidth = Style::evaluate<float>(areaElementStyle->usedOutlineWidth(), areaElementStyle->usedZoomForLength(), areaElementStyle->deviceScaleFactor());
     if (!outlineWidth)
         return;
 
