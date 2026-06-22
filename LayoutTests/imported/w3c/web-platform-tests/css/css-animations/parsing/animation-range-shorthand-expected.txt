@@ -8,7 +8,7 @@ PASS e.style['animation-range'] = "entry-crossing" should set the property value
 PASS e.style['animation-range'] = "exit" should set the property value
 PASS e.style['animation-range'] = "exit-crossing" should set the property value
 PASS e.style['animation-range'] = "entry, exit" should set the property value
-FAIL e.style['animation-range'] = "0% 100%" should set the property value assert_equals: serialization should be canonical expected "0%" but got "0% 100%"
+PASS e.style['animation-range'] = "0% 100%" should set the property value
 PASS e.style['animation-range'] = "entry 0% entry 100%" should set the property value
 PASS e.style['animation-range'] = "entry-crossing 0% entry-crossing 100%" should set the property value
 PASS e.style['animation-range'] = "exit 0% exit 100%" should set the property value
@@ -31,7 +31,7 @@ PASS e.style['animation-range'] = "normal 100px" should set the property value
 PASS e.style['animation-range'] = "100px" should set the property value
 PASS e.style['animation-range'] = "100px normal" should set the property value
 PASS e.style['animation-range'] = "10% normal" should set the property value
-FAIL e.style['animation-range'] = "entry normal" should set the property value assert_equals: serialization should be canonical expected "entry normal" but got "entry"
+PASS e.style['animation-range'] = "entry normal" should set the property value
 PASS Property animation-range value 'normal'
 PASS Property animation-range value 'normal normal'
 PASS Property animation-range value 'cover'
@@ -65,7 +65,7 @@ PASS Property animation-range value 'normal 100px'
 PASS Property animation-range value '100px'
 PASS Property animation-range value '100px normal'
 PASS Property animation-range value '10% normal'
-FAIL Property animation-range value 'entry normal' assert_equals: expected "entry normal" but got "entry"
+PASS Property animation-range value 'entry normal'
 PASS Property animation-range value '10% calc(70% + 10% * sign(100em - 1px))'
 PASS e.style['animation-range'] = "entry 50% 0s" should not set the property value
 PASS e.style['animation-range'] = "0s entry 50%" should not set the property value
