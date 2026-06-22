@@ -673,6 +673,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
         updateInfo.updateRects.append(rect);
     }
 
+    webPage->flushPendingIntrinsicContentSizeUpdate();
     webPage->didUpdateRendering();
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them

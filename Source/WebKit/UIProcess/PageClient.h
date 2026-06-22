@@ -557,12 +557,12 @@ public:
     virtual RetainPtr<NSView> inspectorAttachmentView() = 0;
     virtual _WKRemoteObjectRegistry *remoteObjectRegistry() = 0;
 
-    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) = 0;
-
     virtual void registerInsertionUndoGrouping() = 0;
 
     virtual void setFocusedElementInputType(InputType) = 0;
 #endif // PLATFORM(MAC)
+
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize&) { }
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
     virtual void didUpdateTransientZoomStateForScrollPocket(std::optional<TransientZoomState>) { }

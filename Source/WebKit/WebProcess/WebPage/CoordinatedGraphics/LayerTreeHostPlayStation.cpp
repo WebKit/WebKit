@@ -202,6 +202,7 @@ void LayerTreeHost::flushLayers()
     m_pendingResize = false;
     m_forceFrameSync = false;
 
+    page->flushPendingIntrinsicContentSizeUpdate();
     page->didUpdateRendering();
 
     // Eject any backing stores whose only reference is held in the HashMap cache.

@@ -115,6 +115,7 @@ private:
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
     void didChangeContentSize(const WebCore::IntSize&) override;
+    void intrinsicContentSizeDidChange(const WebCore::IntSize&) override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
     void didStartProvisionalLoadForMainFrame() override;
     void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
