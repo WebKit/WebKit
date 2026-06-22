@@ -1785,8 +1785,8 @@ private:
         case SuperSamplerEnd:
             compileSuperSamplerEnd();
             break;
-        case StoreBarrier:
-        case FencedStoreBarrier:
+        case DFG::StoreBarrier:
+        case DFG::FencedStoreBarrier:
             compileStoreBarrier();
             break;
         case HasIndexedProperty:
@@ -17909,7 +17909,7 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileStoreBarrier()
     {
-        emitStoreBarrier(lowCell(m_node->child1()), m_node->op() == FencedStoreBarrier);
+        emitStoreBarrier(lowCell(m_node->child1()), m_node->op() == DFG::FencedStoreBarrier);
     }
 
     LValue compileHasIndexedPropertyImpl(LValue index, S_JITOperation_GCZ slowPathOperation)

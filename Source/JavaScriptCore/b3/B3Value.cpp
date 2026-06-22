@@ -860,6 +860,17 @@ Effects Value::effectsSlow() const
         result.exitsSideways = true;
         result.reads = HeapRange::top();
         break;
+    case StoreBarrier:
+        result.reads = HeapRange::top();
+        result.writes = HeapRange::top();
+        result.exitsSideways = true;
+        break;
+    case FencedStoreBarrier:
+        result.reads = HeapRange::top();
+        result.writes = HeapRange::top();
+        result.fence = true;
+        result.exitsSideways = true;
+        break;
     case WasmStructGet: {
         const auto* derived = as<WasmStructGetValue>();
         result.reads = derived->range();
@@ -1129,6 +1140,8 @@ ValueKey Value::key() const
     case WasmArrayGet:
     case WasmArraySet:
     case WasmArrayNew:
+    case StoreBarrier:
+    case FencedStoreBarrier:
     case MemoryCopy:
     case MemoryFill:
     case Fence:
@@ -1279,6 +1292,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case Oops:
     case EntrySwitch:
     case WasmBoundsCheck:
+    case StoreBarrier:
+    case FencedStoreBarrier:
         return Void;
     case Select:
         ASSERT(secondChild);

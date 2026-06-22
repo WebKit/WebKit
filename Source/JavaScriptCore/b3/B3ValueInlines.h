@@ -154,6 +154,8 @@ ALWAYS_INLINE bool Value::mustExecute() const
     case BelowEqual: \
     case EqualOrUnordered: \
     case Select: \
+    case StoreBarrier: \
+    case FencedStoreBarrier: \
         return MACRO(Value); \
     case WasmArrayLength: \
         return MACRO(WasmArrayLengthValue); \

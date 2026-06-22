@@ -293,7 +293,7 @@ public:
     JS_EXPORT_PRIVATE void NODELETE setShouldDumpIR();
 
     void setUsessSIMD()
-    { 
+    {
         RELEASE_ASSERT(Options::useWasmSIMD());
         m_usesSIMD = true;
     }
@@ -308,6 +308,12 @@ public:
         ASSERT(Options::useWasmIPInt());
         return m_usesSIMD;
     }
+
+    // Set by emitters of the StoreBarrier / FencedStoreBarrier opcodes (currently the
+    // wasm OMG IR generator). Gates the StoreBarrierElision / StoreBarrierClustering
+    // phases so non-wasm B3 compiles skip them entirely.
+    void setUsesStoreBarriers() { m_usesStoreBarriers = true; }
+    bool usesStoreBarriers() const { return m_usesStoreBarriers; }
 
     void setIonGraphPasses(Ref<JSON::Array>&&);
     void appendIonGraphPass(ASCIILiteral);
@@ -347,6 +353,7 @@ private:
     bool m_needsPCToOriginMap { false };
     bool m_shouldDumpIR { false };
     bool m_usesSIMD { false };
+    bool m_usesStoreBarriers { false };
 };
     
 } } // namespace JSC::B3

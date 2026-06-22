@@ -893,6 +893,14 @@ public:
                 }
                 VALIDATE(m_procedure.code().wasmBoundsCheckGenerator(), ("At ", *value));
                 break;
+            case StoreBarrier:
+            case FencedStoreBarrier:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 2, ("At ", *value));
+                VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
+                VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
+                VALIDATE(value->type() == Void, ("At ", *value));
+                break;
             case WasmStructGet:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Int64, ("At ", *value)); // struct pointer
