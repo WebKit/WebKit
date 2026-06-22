@@ -48,7 +48,7 @@
 
 namespace WebGPU {
 
-constexpr static auto largeBufferSize = 32 * 1024 * 1024;
+constexpr static auto largeBufferSize = WGPU_LARGE_BUFFER_SIZE;
 constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
@@ -1225,8 +1225,16 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         return;
     }
 
-    if (noCopy)
+    if (noCopy) {
+        if (!newData.isEmpty()) {
+            // The MTLBuffer above was created with newBufferWithBytesNoCopy and aliases newData's storage; keep that storage alive until the GPU has consumed it.
+            __block Vector<uint8_t> retainedNewData = WTF::move(newData);
+            [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
+                retainedNewData = { };
+            }];
+        }
         finalizeBlitCommandEncoder();
+    }
 }
 
 void Queue::setLabel(String&& label)

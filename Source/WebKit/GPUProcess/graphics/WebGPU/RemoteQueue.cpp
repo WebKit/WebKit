@@ -35,11 +35,23 @@
 #include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUQueue.h>
+#include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUExt.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQueue);
+
+// For transfers at or above WGPU_LARGE_BUFFER_SIZE the backend uses newBufferWithBytesNoCopy and aliases `data`'s mapping; keep it alive until the GPU has consumed the bytes. Smaller transfers are copied into a Metal buffer synchronously, so `data` can be released as soon as we return.
+static void keepAliveUntilSubmittedWorkDone(WebCore::WebGPU::Queue& backing, RefPtr<WebCore::SharedMemory>&& data)
+{
+    if (!data || data->size() < WGPU_LARGE_BUFFER_SIZE)
+        return;
+    backing.onSubmittedWorkDone([data = WTF::move(data)]() mutable {
+        data = nullptr;
+    });
+}
 
 RemoteQueue::RemoteQueue(WebCore::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(queue)
@@ -98,7 +110,9 @@ void RemoteQueue::writeBuffer(
         return;
     }
 
-    protectedBacking()->writeBufferNoCopy(*convertedBuffer, bufferOffset, data->mutableSpan(), 0, std::nullopt);
+    Ref backing = m_backing;
+    backing->writeBufferNoCopy(*convertedBuffer, bufferOffset, data->mutableSpan(), 0, std::nullopt);
+    keepAliveUntilSubmittedWorkDone(backing, WTF::move(data));
     completionHandler(true);
 }
 
@@ -128,15 +142,17 @@ void RemoteQueue::writeTexture(
     auto convertedDestination = objectHeap->convertFromBacking(destination);
     ASSERT(convertedDestination);
     auto convertedDataLayout = objectHeap->convertFromBacking(dataLayout);
-    ASSERT(convertedDestination);
+    ASSERT(convertedDataLayout);
     auto convertedSize = objectHeap->convertFromBacking(size);
     ASSERT(convertedSize);
-    if (!convertedDestination || !convertedDestination || !convertedSize || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
+    if (!convertedDestination || !convertedDataLayout || !convertedSize || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }
 
-    protectedBacking()->writeTexture(*convertedDestination, data ? data->mutableSpan() : std::span<uint8_t> { }, *convertedDataLayout, *convertedSize);
+    Ref backing = m_backing;
+    backing->writeTexture(*convertedDestination, data->mutableSpan(), *convertedDataLayout, *convertedSize);
+    keepAliveUntilSubmittedWorkDone(backing, WTF::move(data));
     completionHandler(true);
 }
 

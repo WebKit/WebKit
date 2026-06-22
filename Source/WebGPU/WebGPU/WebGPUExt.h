@@ -41,6 +41,13 @@
 #define WGPU_FUZZER_ASSERT_NOT_REACHED(...) WTFLogAlways(__VA_ARGS__)
 #endif
 
+// Threshold above which the Metal backend uses newBufferWithBytesNoCopy in writeBuffer / writeTexture
+// and aliases the caller's storage rather than copying. Callers passing transfers >= this size MUST
+// keep the source bytes alive until the GPU has consumed them (e.g. via addCompletedHandler).
+// Value is 32 * 1024 * 1024; written as a single integer literal so Swift's clang macro importer
+// picks it up as `WGPU_LARGE_BUFFER_SIZE` rather than skipping it.
+#define WGPU_LARGE_BUFFER_SIZE 33554432
+
 #include <optional>
 #include <simd/simd.h>
 #include <wtf/MachSendRight.h>
