@@ -122,6 +122,17 @@ constexpr auto allInternalPseudoElementTypes = EnumSet {
 
 constexpr auto allPseudoElementTypes = allPublicPseudoElementTypes | allInternalPseudoElementTypes;
 
+constexpr auto elementBackedPseudoElementTypes = EnumSet {
+    PseudoElementType::Before,
+    PseudoElementType::After,
+    PseudoElementType::PickerIcon,
+};
+
+inline bool isElementBackedPseudoElementType(PseudoElementType type)
+{
+    return elementBackedPseudoElementTypes.contains(type);
+}
+
 inline std::optional<PseudoElementType> parentPseudoElement(PseudoElementType pseudoElementType)
 {
     switch (pseudoElementType) {

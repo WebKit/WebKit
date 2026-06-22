@@ -321,8 +321,7 @@ Element::Element(ClangVTableWorkaroundTag, const QualifiedName& tagName, Documen
 
 Element::~Element()
 {
-    ASSERT(!beforePseudoElement());
-    ASSERT(!afterPseudoElement());
+    ASSERT(!hasRareData() || elementRareData()->pseudoElements().isEmpty());
 
     ASSERT(!is<HTMLImageElement>(*this) || !intersectionObserverDataIfExists());
     disconnectFromIntersectionObservers();
@@ -3219,8 +3218,8 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
 
         setSavedLayerScrollPosition({ });
 
-        clearBeforePseudoElement();
-        clearAfterPseudoElement();
+        for (auto type : elementBackedPseudoElementTypes)
+            clearPseudoElement(type);
 
 #if ENABLE(FULLSCREEN_API)
         if (hasFullscreenFlag()) [[unlikely]]
@@ -4710,9 +4709,8 @@ static PseudoElement* NODELETE beforeOrAfterPseudoElement(const Element& host, P
 {
     switch (pseudoElementSpecifier) {
     case PseudoElementType::Before:
-        return host.beforePseudoElement();
     case PseudoElementType::After:
-        return host.afterPseudoElement();
+        return host.pseudoElement(pseudoElementSpecifier);
     default:
         return nullptr;
     }
@@ -4992,35 +4990,32 @@ void Element::normalizeAttributes()
 
 PseudoElement& Element::ensurePseudoElement(PseudoElementType type)
 {
-    if (type == PseudoElementType::Before) {
-        if (!beforePseudoElement())
-            ensureElementRareData().setBeforePseudoElement(PseudoElement::create(*this, type));
-        return *beforePseudoElement();
-    }
+    ASSERT(isElementBackedPseudoElementType(type));
+    auto& rareData = ensureElementRareData();
+    if (auto* existing = rareData.pseudoElement(type))
+        return *existing;
+    rareData.setPseudoElement(type, PseudoElement::create(*this, type));
+    return *rareData.pseudoElement(type);
+}
 
-    ASSERT(type == PseudoElementType::After);
-    if (!afterPseudoElement())
-        ensureElementRareData().setAfterPseudoElement(PseudoElement::create(*this, type));
-    return *afterPseudoElement();
+PseudoElement* Element::pseudoElement(PseudoElementType type) const
+{
+    return hasRareData() ? elementRareData()->pseudoElement(type) : nullptr;
 }
 
 PseudoElement* Element::beforePseudoElement() const
 {
-    return hasRareData() ? elementRareData()->beforePseudoElement() : nullptr;
+    return hasRareData() ? elementRareData()->pseudoElement(PseudoElementType::Before) : nullptr;
 }
 
 PseudoElement* Element::afterPseudoElement() const
 {
-    return hasRareData() ? elementRareData()->afterPseudoElement() : nullptr;
+    return hasRareData() ? elementRareData()->pseudoElement(PseudoElementType::After) : nullptr;
 }
 
 RefPtr<PseudoElement> Element::pseudoElementIfExists(Style::PseudoElementIdentifier pseudoElementIdentifier)
 {
-    if (pseudoElementIdentifier.type == PseudoElementType::Before)
-        return beforePseudoElement();
-    if (pseudoElementIdentifier.type == PseudoElementType::After)
-        return afterPseudoElement();
-    return nullptr;
+    return hasRareData() ? RefPtr { elementRareData()->pseudoElement(pseudoElementIdentifier.type) } : nullptr;
 }
 
 RefPtr<const PseudoElement> Element::pseudoElementIfExists(Style::PseudoElementIdentifier pseudoElementIdentifier) const
@@ -5037,18 +5032,21 @@ static void disconnectPseudoElement(PseudoElement* pseudoElement)
     pseudoElement->clearHostElement();
 }
 
-void Element::clearBeforePseudoElementSlow()
+void Element::clearPseudoElementSlow(PseudoElementType type)
 {
     ASSERT(hasRareData());
-    disconnectPseudoElement(elementRareData()->beforePseudoElement());
-    elementRareData()->setBeforePseudoElement(nullptr);
+    disconnectPseudoElement(elementRareData()->pseudoElement(type));
+    elementRareData()->setPseudoElement(type, nullptr);
 }
 
-void Element::clearAfterPseudoElementSlow()
+void Element::clearBeforePseudoElement()
 {
-    ASSERT(hasRareData());
-    disconnectPseudoElement(elementRareData()->afterPseudoElement());
-    elementRareData()->setAfterPseudoElement(nullptr);
+    clearPseudoElement(PseudoElementType::Before);
+}
+
+void Element::clearAfterPseudoElement()
+{
+    clearPseudoElement(PseudoElementType::After);
 }
 
 bool Element::matchesValidPseudoClass() const

@@ -126,6 +126,10 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
     if (!shouldHavePseudoElementRenderer()) {
         if (existingPseudoElement)
             m_builder.destroy(*existingPseudoElement);
+        if (isElementBackedPseudoElementType(type)) {
+            if (RefPtr host = renderer.element())
+                host->clearPseudoElement(type);
+        }
         return;
     }
 
@@ -146,13 +150,24 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
     Ref document = renderer.document();
     auto pseudoElementStyle = Style::ComputedStyle::clone(*pseudoStyle);
 
-    RenderPtr<RenderBlockFlow> pseudoElement = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(pseudoElementStyle));
+    RefPtr<PseudoElement> pseudoElementNode;
+    if (isElementBackedPseudoElementType(type)) {
+        if (RefPtr host = renderer.element())
+            pseudoElementNode = host->ensurePseudoElement(type);
+    }
+
+    RenderPtr<RenderBlockFlow> pseudoElement = pseudoElementNode
+        ? createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *pseudoElementNode, WTF::move(pseudoElementStyle))
+        : createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(pseudoElementStyle));
     pseudoElement->initializeStyle();
 
     if (pseudoElement->style().content().isData())
         RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, *pseudoElement, pseudoElement->style(), type);
 
     renderer.setPseudoElementRenderer(type, *pseudoElement.get());
+
+    if (pseudoElementNode)
+        pseudoElementNode->setRenderer(pseudoElement.get());
 
     m_builder.attach(renderer, WTF::move(pseudoElement), beforeChild);
 }

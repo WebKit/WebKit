@@ -891,8 +891,8 @@ void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType te
                 break;
             }
 
-            GeneratedContent::removeBeforePseudoElement(element.get(), builder);
-            GeneratedContent::removeAfterPseudoElement(element.get(), builder);
+            for (auto type : elementBackedPseudoElementTypes)
+                GeneratedContent::removePseudoElement(element.get(), type, builder);
 
             if (!is<PseudoElement>(element.get())) {
                 // ::before and ::after cannot have a ::marker pseudo-element addressable via

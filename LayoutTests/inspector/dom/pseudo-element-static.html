@@ -50,8 +50,22 @@ function test() {
             InspectorTest.expectThat(domNode.afterPseudoElement(), "DOMNode has an after pseudo element");
             InspectorTest.expectThat(domNode.beforePseudoElement().pseudoType() === WI.DOMNode.PseudoElementType.Before, "DOMNode for before pseudo element has the right type");
             InspectorTest.expectThat(domNode.afterPseudoElement().pseudoType() === WI.DOMNode.PseudoElementType.After, "DOMNode for after pseudo element has the right type");
-            InspectorTest.completeTest();
         });
+
+        documentNode.querySelector("select", function(nodeId) {
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.log("");
+            InspectorTest.expectThat(domNode, "Got DOMNode for select element");
+            InspectorTest.assert(!domNode.pseudoType());
+            InspectorTest.expectThat(domNode.hasPseudoElements(), "DOMNode has pseudo elements");
+            InspectorTest.expectThat(domNode.pseudoElements().size === 1, "DOMNode has 1 pseudo element");
+
+            let pickerIconPseudo = domNode.pseudoElements().get(WI.DOMNode.PseudoElementType.PickerIcon);
+            InspectorTest.expectThat(pickerIconPseudo, "DOMNode has ::picker-icon pseudo element");
+            InspectorTest.expectEqual(pickerIconPseudo.pseudoType(), WI.DOMNode.PseudoElementType.PickerIcon, "DOMNode for ::picker-icon pseudo element has the right type");
+        });
+
+        InspectorTest.completeTest();
     });
 }
 </script>
@@ -62,12 +76,20 @@ function test() {
     <style>
     #x:before, #b:before { content: "before"; }
     #x:after, #a:after { content: "after"; }
+    select {
+       appearance: base-select;
+    }
+    select::picker-icon {
+        color: green;
+    }
     </style>
 
     <div id="none">TEST ELEMENT: No Pseudo Elements</div>
     <div id="b">TEST ELEMENT: Has Before Pseudo Element</div>
     <div id="a">TEST ELEMENT: Has After Pseudo Element</div>
     <div id="x">TEST ELEMENT: Has Before and After Pseudo Elements</div>
-
+    <select id="target">
+        <option>Option</option>
+    </select>
 </body>
 </html>

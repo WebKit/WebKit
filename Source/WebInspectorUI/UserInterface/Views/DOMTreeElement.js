@@ -1782,6 +1782,13 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (afterPseudoElement)
             visibleChildren.push(afterPseudoElement);
 
+        for (let [type, pseudoElement] of node.pseudoElements()) {
+            if (type === WI.DOMNode.PseudoElementType.Before || type === WI.DOMNode.PseudoElementType.After)
+                continue;
+
+            visibleChildren.push(pseudoElement);
+        }
+
         return visibleChildren;
     }
 

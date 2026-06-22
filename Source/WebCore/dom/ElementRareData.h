@@ -55,11 +55,9 @@ public:
     explicit ElementRareData();
     ~ElementRareData();
 
-    void setBeforePseudoElement(RefPtr<PseudoElement>&&);
-    void setAfterPseudoElement(RefPtr<PseudoElement>&&);
-
-    PseudoElement* beforePseudoElement() const { return m_beforePseudoElement.get(); }
-    PseudoElement* afterPseudoElement() const { return m_afterPseudoElement.get(); }
+    void setPseudoElement(PseudoElementType, RefPtr<PseudoElement>&&);
+    PseudoElement* pseudoElement(PseudoElementType) const;
+    const auto& pseudoElements() const LIFETIME_BOUND { return m_pseudoElements; }
 
     void resetComputedStyle();
 
@@ -193,7 +191,7 @@ public:
             result.add(UseType::ResizeObserver);
         if (!m_animationRareData.isEmpty())
             result.add(UseType::Animations);
-        if (m_beforePseudoElement || m_afterPseudoElement)
+        if (!m_pseudoElements.isEmpty())
             result.add(UseType::PseudoElements);
         if (m_attributeStyleMap)
             result.add(UseType::AttributeStyleMap);
@@ -252,8 +250,7 @@ private:
 
     HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> m_viewTransitionCapturedName;
 
-    RefPtr<PseudoElement> m_beforePseudoElement;
-    RefPtr<PseudoElement> m_afterPseudoElement;
+    HashMap<PseudoElementType, Ref<PseudoElement>, IntHash<PseudoElementType>, WTF::StrongEnumHashTraits<PseudoElementType>> m_pseudoElements;
 
     RefPtr<StylePropertyMap> m_attributeStyleMap;
     RefPtr<StylePropertyMapReadOnly> m_computedStyleMap;
@@ -283,20 +280,25 @@ inline ElementRareData::ElementRareData()
 
 inline ElementRareData::~ElementRareData()
 {
-    ASSERT(!m_beforePseudoElement);
-    ASSERT(!m_afterPseudoElement);
+    ASSERT(m_pseudoElements.isEmpty());
 }
 
-inline void ElementRareData::setBeforePseudoElement(RefPtr<PseudoElement>&& pseudoElement)
+inline void ElementRareData::setPseudoElement(PseudoElementType type, RefPtr<PseudoElement>&& pseudoElement)
 {
-    ASSERT(!m_beforePseudoElement || !pseudoElement);
-    m_beforePseudoElement = WTF::move(pseudoElement);
+    if (!pseudoElement) {
+        m_pseudoElements.remove(type);
+        return;
+    }
+    ASSERT(!m_pseudoElements.contains(type));
+    m_pseudoElements.set(type, pseudoElement.releaseNonNull());
 }
 
-inline void ElementRareData::setAfterPseudoElement(RefPtr<PseudoElement>&& pseudoElement)
+inline PseudoElement* ElementRareData::pseudoElement(PseudoElementType type) const
 {
-    ASSERT(!m_afterPseudoElement || !pseudoElement);
-    m_afterPseudoElement = WTF::move(pseudoElement);
+    auto it = m_pseudoElements.find(type);
+    if (it == m_pseudoElements.end())
+        return nullptr;
+    return it->value.ptr();
 }
 
 inline void ElementRareData::resetComputedStyle()

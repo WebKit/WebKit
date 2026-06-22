@@ -95,7 +95,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
                     return composedDescendants.at(*host).traverseNext();
                 return composedDescendants.begin();
             }
-            ASSERT(node.isAfterPseudoElement());
+            ASSERT(node.isAfterPseudoElement() || isElementBackedPseudoElementType(pseudoElement->pseudoElementType()));
             elementStack.removeLast();
             if (host != parentElement)
                 return composedDescendants.at(*host).traverseNextSkippingChildren();

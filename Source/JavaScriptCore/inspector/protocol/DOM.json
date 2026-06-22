@@ -17,7 +17,7 @@
         {
             "id": "PseudoType",
             "type": "string",
-            "enum": ["before", "after"],
+            "enum": ["before", "after", "picker-icon"],
             "description": "Pseudo element type."
         },
         {

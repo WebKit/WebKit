@@ -635,9 +635,10 @@ public:
     virtual void finishParsingChildren();
 
     PseudoElement& ensurePseudoElement(PseudoElementType);
+    PseudoElement* NODELETE pseudoElement(PseudoElementType) const;
     WEBCORE_EXPORT PseudoElement* NODELETE beforePseudoElement() const;
     WEBCORE_EXPORT PseudoElement* NODELETE afterPseudoElement() const;
-    RefPtr<PseudoElement> pseudoElementIfExists(Style::PseudoElementIdentifier);
+    WEBCORE_EXPORT RefPtr<PseudoElement> pseudoElementIfExists(Style::PseudoElementIdentifier);
     RefPtr<const PseudoElement> pseudoElementIfExists(Style::PseudoElementIdentifier) const;
 
     bool childNeedsShadowWalker() const;
@@ -807,6 +808,7 @@ public:
 
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
+    void clearPseudoElement(PseudoElementType);
     void resetComputedStyle();
     void NODELETE resetStyleRelations();
     void resetChildStyleRelations();
@@ -1006,8 +1008,7 @@ private:
     void removeAttributeInternal(unsigned index, InSynchronizationOfLazyAttribute);
 
     void setSavedLayerScrollPositionSlow(const ScrollPosition&);
-    void clearBeforePseudoElementSlow();
-    void clearAfterPseudoElementSlow();
+    void clearPseudoElementSlow(PseudoElementType);
 
     LayoutRect absoluteEventBounds(bool& boundsIncludeAllDescendantElements, bool& includesFixedPositionElements);
     LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
@@ -1084,6 +1085,12 @@ private:
 };
 
 inline bool isInTopLayerOrBackdrop(const Style::ComputedStyle&, const Element*);
+
+inline void Element::clearPseudoElement(PseudoElementType type)
+{
+    if (hasRareData())
+        clearPseudoElementSlow(type);
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ContentRelevancy);
 
