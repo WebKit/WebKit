@@ -74,15 +74,12 @@ void PropertyCondition::dump(PrintStream& out) const
 bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     Concurrency concurrency, Structure* structure, JSObject* base) const
 {
-    if (PropertyConditionInternal::verbose) {
-        dataLog(
-            "Determining validity of ", *this, " with structure ", pointerDump(structure), " and base ",
-            JSValue(base), " assuming impure property watchpoints are set.\n");
-    }
-    
+    dataLogLnIf(PropertyConditionInternal::verbose,
+        "Determining validity of ", *this, " with structure ", pointerDump(structure), " and base ",
+        JSValue(base), " assuming impure property watchpoints are set.");
+
     if (!*this) {
-        if (PropertyConditionInternal::verbose)
-            dataLog("Invalid because unset.\n");
+        dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because unset.");
         return false;
     }
 
@@ -95,16 +92,14 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     case Equivalence:
     case HasStaticProperty:
         if (!structure->propertyAccessesAreCacheable()) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because property accesses are not cacheable.\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because property accesses are not cacheable.");
             return false;
         }
         break;
         
     case HasPrototype:
         if (!structure->prototypeQueriesAreCacheable()) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because prototype queries are not cacheable.\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because prototype queries are not cacheable.");
             return false;
         }
         break;
@@ -116,11 +111,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->get(structure->vm(), concurrency, uid(), currentAttributes);
         if (currentOffset != offset() || currentAttributes != attributes()) {
-            if (PropertyConditionInternal::verbose) {
-                dataLogLn(
-                    "Invalid because we need offset, attributes to be ", offset(), ", ", attributes(),
-                    " but they are ", currentOffset, ", ", currentAttributes);
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because we need offset, attributes to be ", offset(), ", ", attributes(),
+                " but they are ", currentOffset, ", ", currentAttributes);
             return false;
         }
 
@@ -136,8 +129,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         
     case Absence: {
         if (structure->isDictionary()) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because it's a dictionary.\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because it's a dictionary.");
             return false;
         }
 
@@ -151,17 +143,21 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
 
         PropertyOffset currentOffset = structure->get(structure->vm(), concurrency, uid());
         if (currentOffset != invalidOffset) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because the property exists at offset: ", currentOffset, "\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the property exists at offset: ", currentOffset);
             return false;
         }
 
-        if (structure->storedPrototypeObject() != prototype()) {
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because the prototype is ", structure->storedPrototype(), " even though "
-                    "it should have been ", JSValue(prototype()), "\n");
+        if (structure->hasNonReifiedStaticProperties()) {
+            if (structure->findPropertyHashEntry(uid())) {
+                dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the property exists in the non-reified static property table: ", uid(), ".");
+                return false;
             }
+        }
+
+        if (structure->storedPrototypeObject() != prototype()) {
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because the prototype is ", structure->storedPrototype(), " even though "
+                "it should have been ", JSValue(prototype()));
             return false;
         }
         
@@ -170,14 +166,12 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     
     case AbsenceOfSetEffect: {
         if (structure->isDictionary()) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because it's a dictionary.\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because it's a dictionary.");
             return false;
         }
         
         if (structure->typeInfo().overridesPut() && JSObject::mightBeSpecialProperty(structure->vm(), structure->typeInfo().type(), uid())) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because its put() override may treat ", uid(), " property as special non-structure one.\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because its put() override may treat ", uid(), " property as special non-structure one.");
             return false;
         }
 
@@ -185,18 +179,15 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         PropertyOffset currentOffset = structure->get(structure->vm(), concurrency, uid(), currentAttributes);
         if (currentOffset != invalidOffset) {
             if (currentAttributes & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor | PropertyAttribute::CustomAccessorOrValue)) {
-                if (PropertyConditionInternal::verbose) {
-                    dataLog(
-                        "Invalid because we expected not to have a setter, but we have one at offset ",
-                        currentOffset, " with attributes ", currentAttributes, "\n");
-                }
+                dataLogLnIf(PropertyConditionInternal::verbose,
+                    "Invalid because we expected not to have a setter, but we have one at offset ",
+                    currentOffset, " with attributes ", currentAttributes);
                 return false;
             }
         } else if (structure->hasNonReifiedStaticProperties()) {
             if (auto entry = structure->findPropertyHashEntry(uid())) {
                 if (entry->value->attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue) {
-                    if (PropertyConditionInternal::verbose)
-                        dataLog("Invalid because we expected not to have a setter, but we have one in non-reified static property table: ", uid(), ".\n");
+                    dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because we expected not to have a setter, but we have one in non-reified static property table: ", uid(), ".");
                     return false;
                 }
             }
@@ -211,11 +202,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         }
         
         if (structure->storedPrototypeObject() != prototype()) {
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because the prototype is ", structure->storedPrototype(), " even though "
-                    "it should have been ", JSValue(prototype()), "\n");
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because the prototype is ", structure->storedPrototype(), " even though "
+                "it should have been ", JSValue(prototype()));
             return false;
         }
         
@@ -232,23 +221,19 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         }
 
         if (hasIndexedProperties(structure->indexingType())) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because the indexed properties exist: ", structure->indexingType(), "\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because the indexed properties exist: ", structure->indexingType());
             return false;
         }
 
         if (structure->mayInterceptIndexedAccesses() || structure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
-            if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because structure intercepts index access.\n");
+            dataLogLnIf(PropertyConditionInternal::verbose, "Invalid because structure intercepts index access.");
             return false;
         }
 
         if (structure->storedPrototypeObject() != prototype()) {
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because the prototype is ", structure->storedPrototype(), " even though "
-                    "it should have been ", JSValue(prototype()), "\n");
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because the prototype is ", structure->storedPrototype(), " even though "
+                "it should have been ", JSValue(prototype()));
             return false;
         }
 
@@ -265,11 +250,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         }
 
         if (structure->storedPrototypeObject() != prototype()) {
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because the prototype is ", structure->storedPrototype(), " even though "
-                    "it should have been ", JSValue(prototype()), "\n");
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because the prototype is ", structure->storedPrototype(), " even though "
+                "it should have been ", JSValue(prototype()));
             return false;
         }
         
@@ -283,11 +266,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         if (!base || base->structure() != structure) {
             // Conservatively return false, since we cannot verify this one without having the
             // object.
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because we don't have a base or the base has the wrong structure: ",
-                    RawPointer(base), "\n");
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because we don't have a base or the base has the wrong structure: ",
+                RawPointer(base));
             return false;
         }
         
@@ -296,21 +277,16 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         
         PropertyOffset currentOffset = structure->get(structure->vm(), concurrency, uid());
         if (currentOffset == invalidOffset) {
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because the base no long appears to have ", uid(), " on its structure: ",
-                        RawPointer(base), "\n");
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because the base no long appears to have ", uid(), " on its structure: ",
+                RawPointer(base));
             return false;
         }
 
         JSValue currentValue = base->getDirect(cellLocker, concurrency, structure, currentOffset);
         if (currentValue != requiredValue() || !currentValue) {
-            if (PropertyConditionInternal::verbose) {
-                dataLog(
-                    "Invalid because the value is ", currentValue, " but we require ", requiredValue(),
-                    "\n");
-            }
+            dataLogLnIf(PropertyConditionInternal::verbose,
+                "Invalid because the value is ", currentValue, " but we require ", requiredValue());
             return false;
         }
         
