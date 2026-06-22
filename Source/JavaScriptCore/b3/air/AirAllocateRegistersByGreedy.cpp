@@ -37,7 +37,6 @@
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
 #include "AirNaturalLoops.h"
-#include "AirPadInterference.h"
 #include "AirPhaseInsertionSet.h"
 #include "AirPhaseScope.h"
 #include "AirRegLiveness.h"
@@ -860,8 +859,6 @@ public:
 
         dataLogLnIf(verbose() || shouldDumpFunction(), "Greedy register allocator: function ", m_code.proc().name(), " input IR:\n", m_code);
 
-        // FIXME: reconsider use of padIntereference, https://bugs.webkit.org/show_bug.cgi?id=288122
-        padInterference(m_code);
         buildRegisterSets();
         buildIndices();
         buildLiveRanges();
@@ -2775,9 +2772,8 @@ private:
         for (Interval hole : holeRange.intervals()) {
             BasicBlock* block = findBlockContainingPoint(hole.begin());
             UseDefCost freq(2 * adjustedBlockFrequency(block));
-            // padInterference() ensures this.
-            // FIXME: reconsider that, see https://bugs.webkit.org/show_bug.cgi?id=288122
-            ASSERT(hole.begin() > positionOfHead(block));
+            // hole.begin() will be an Early or Late point, so hole.begin() - 1 will not cross block boundaries.
+            ASSERT(pointAtOffset(hole.begin(), PointOffsets::Early) <= hole.begin() && positionOfHead(block) < hole.begin());
             // Model gapTmp interference with any other tmp split at this location by starting
             // the gapTmp's range one position before the hole. Otherwise, the same register
             // may be chosen for the gapTmp and another splitTmp, which wouldn't be valid
