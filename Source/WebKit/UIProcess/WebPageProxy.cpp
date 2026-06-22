@@ -6771,6 +6771,19 @@ void WebPageProxy::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroll
     send(Messages::WebPage::SetAlwaysShowsVerticalScroller(alwaysShowsVerticalScroller));
 }
 
+void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
+{
+    if (isScrollable == m_mainFrameIsScrollable)
+        return;
+
+    m_mainFrameIsScrollable = isScrollable;
+
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable));
+}
+
 void WebPageProxy::listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     if (milestones == internals().observedLayoutMilestones)
@@ -11374,10 +11387,8 @@ void WebPageProxy::didChangeContentSize(const IntSize& size)
 
 void WebPageProxy::didChangeIntrinsicContentSize(const IntSize& intrinsicContentSize)
 {
-#if USE(APPKIT)
     if (RefPtr pageClient = this->pageClient())
         pageClient->intrinsicContentSizeDidChange(intrinsicContentSize);
-#endif
 }
 
 #if ENABLE(WEBXR)
@@ -13719,6 +13730,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     }
     parameters.alwaysShowsHorizontalScroller = m_alwaysShowsHorizontalScroller;
     parameters.alwaysShowsVerticalScroller = m_alwaysShowsVerticalScroller;
+    parameters.mainFrameIsScrollable = m_mainFrameIsScrollable;
     parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;
     parameters.paginationMode = m_paginationMode;
     parameters.paginationBehavesLikeColumns = m_paginationBehavesLikeColumns;

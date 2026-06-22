@@ -247,14 +247,6 @@ void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const F
     protect(legacyMainFrameProcess())->send(Messages::WebPage::UpdateMouseEventTargetAfterWindowAndViewFramesChanged(webMouseLocationInWindow, webMouseLocationInScreen), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
-{
-    if (!hasRunningProcess())
-        return;
-
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), webPageIDInMainFrameProcess());
-}
-
 void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {

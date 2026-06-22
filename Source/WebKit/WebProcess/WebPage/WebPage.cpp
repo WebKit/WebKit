@@ -638,6 +638,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
+    , m_mainFrameIsScrollable { parameters.mainFrameIsScrollable }
     , m_shouldRenderCanvasInGPUProcess { parameters.shouldRenderCanvasInGPUProcess }
     , m_shouldRenderDOMInGPUProcess { parameters.shouldRenderDOMInGPUProcess }
     , m_shouldPlayMediaInGPUProcess { parameters.shouldPlayMediaInGPUProcess }
@@ -1151,6 +1152,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
     setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
+    setMainFrameIsScrollable(parameters.mainFrameIsScrollable);
     setViewportSizeForCSSViewportUnits(parameters.viewportSizeForCSSViewportUnits);
 
     setScrollPinningBehavior(parameters.scrollPinningBehavior);
@@ -1581,6 +1583,8 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
+    setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
+    setMainFrameIsScrollable(parameters.mainFrameIsScrollable);
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });

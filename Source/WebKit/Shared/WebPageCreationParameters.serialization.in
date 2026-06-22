@@ -56,6 +56,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     bool alwaysShowsHorizontalScroller;
     bool alwaysShowsVerticalScroller;
+    bool mainFrameIsScrollable;
 
     bool suppressScrollbarAnimations;
 
