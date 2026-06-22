@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+</style>
+</head>
+<body>
+<input id="input" type="text" list="list">
+<datalist id="list"><option value="a"><option value="b"></datalist>
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    input.addEventListener('click', (e) => {
+        input.type = 'button';
+        gc();
+    }, { once: true });
+
+    if (window.internals) {
+        let shadow = internals.shadowRoot(input);
+        let listButton = shadow.querySelector("div[useragentpart='-webkit-list-button']");
+
+        await UIHelper.activateElement(listButton);
+    }
+
+    debug("PASS if no crash.");
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>
