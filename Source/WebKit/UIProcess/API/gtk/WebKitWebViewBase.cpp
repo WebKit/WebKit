@@ -342,8 +342,11 @@ struct _WebKitWebViewBasePrivate {
     KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
     IntSize contentsSize;
+    IntSize intrinsicContentSize;
+    int fitContentHeightWidth { 0 };
     std::optional<MotionEvent> lastMotionEvent;
     bool isBlank;
+    bool fitContentHeight { false };
     bool shouldNotifyFocusEvents { true };
 
     ToplevelWindow* toplevelOnScreenWindow { nullptr };
@@ -977,6 +980,38 @@ static void webkitWebViewBaseSetSize(WebKitWebViewBase* webViewBase, const IntSi
         drawingArea->setSize(priv->viewSize);
 }
 
+static bool webkitWebViewBaseUpdateFitContentHeightWidth(WebKitWebViewBase* webViewBase, int width)
+{
+    auto* priv = webViewBase->priv;
+    if (!priv->fitContentHeight)
+        return false;
+
+    width = std::max(width, 0);
+    if (width == priv->fitContentHeightWidth)
+        return false;
+
+    priv->fitContentHeightWidth = width;
+    priv->intrinsicContentSize = { };
+    priv->pageProxy->setMinimumSizeForAutoLayout(width > 0 ? IntSize(width, 1) : IntSize());
+    return true;
+}
+
+static int webkitWebViewBaseNaturalHeight(WebKitWebViewBase* webViewBase)
+{
+    auto* priv = webViewBase->priv;
+    if (priv->fitContentHeight && priv->intrinsicContentSize.height() > 0)
+        return priv->intrinsicContentSize.height();
+    return priv->contentsSize.height();
+}
+
+static GtkSizeRequestMode webkitWebViewBaseGetRequestMode(GtkWidget* widget)
+{
+    if (WEBKIT_WEB_VIEW_BASE(widget)->priv->fitContentHeight)
+        return GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+
+    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->get_request_mode(widget);
+}
+
 #if USE(GTK4)
 static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, int width, int height, int baseline)
 #else
@@ -1037,18 +1072,23 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 #endif
 
     webkitWebViewBaseSetSize(webViewBase, viewRect.size());
+    if (webkitWebViewBaseUpdateFitContentHeightWidth(webViewBase, viewRect.width()))
+        gtk_widget_queue_resize(widget);
 }
 
 #if USE(GTK4)
-static void webkitWebViewBaseMeasure(GtkWidget* widget, GtkOrientation orientation, int, int* minimumSize, int* naturalSize, int*, int*)
+static void webkitWebViewBaseMeasure(GtkWidget* widget, GtkOrientation orientation, int forSize, int* minimumSize, int* naturalSize, int*, int*)
 {
-    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    auto* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
     switch (orientation) {
     case GTK_ORIENTATION_HORIZONTAL:
         *naturalSize = priv->contentsSize.width();
         break;
     case GTK_ORIENTATION_VERTICAL:
-        *naturalSize = priv->contentsSize.height();
+        if (forSize > 0)
+            webkitWebViewBaseUpdateFitContentHeightWidth(webViewBase, forSize);
+        *naturalSize = webkitWebViewBaseNaturalHeight(webViewBase);
         break;
     }
 
@@ -1064,9 +1104,17 @@ static void webkitWebViewBaseGetPreferredWidth(GtkWidget* widget, gint* minimumS
 
 static void webkitWebViewBaseGetPreferredHeight(GtkWidget* widget, gint* minimumSize, gint* naturalSize)
 {
-    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    auto* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     *minimumSize = 0;
-    *naturalSize = priv->contentsSize.height();
+    *naturalSize = webkitWebViewBaseNaturalHeight(webViewBase);
+}
+
+static void webkitWebViewBaseGetPreferredHeightForWidth(GtkWidget* widget, gint width, gint* minimumSize, gint* naturalSize)
+{
+    auto* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    webkitWebViewBaseUpdateFitContentHeightWidth(webViewBase, width);
+    *minimumSize = 0;
+    *naturalSize = webkitWebViewBaseNaturalHeight(webViewBase);
 }
 #endif
 
@@ -2431,11 +2479,13 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->draw = webkitWebViewBaseDraw;
 #endif
     widgetClass->size_allocate = webkitWebViewBaseSizeAllocate;
+    widgetClass->get_request_mode = webkitWebViewBaseGetRequestMode;
 #if USE(GTK4)
     widgetClass->measure = webkitWebViewBaseMeasure;
 #else
     widgetClass->get_preferred_width = webkitWebViewBaseGetPreferredWidth;
     widgetClass->get_preferred_height = webkitWebViewBaseGetPreferredHeight;
+    widgetClass->get_preferred_height_for_width = webkitWebViewBaseGetPreferredHeightForWidth;
 #endif
     widgetClass->map = webkitWebViewBaseMap;
     widgetClass->unmap = webkitWebViewBaseUnmap;
@@ -2870,6 +2920,41 @@ void webkitWebViewBaseSetContentsSize(WebKitWebViewBase* webkitWebViewBase, cons
     if (priv->contentsSize == contentsSize)
         return;
     priv->contentsSize = contentsSize;
+    gtk_widget_queue_resize(GTK_WIDGET(webkitWebViewBase));
+}
+
+void webkitWebViewBaseSetIntrinsicContentSize(WebKitWebViewBase* webkitWebViewBase, const IntSize& intrinsicContentSize)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (priv->intrinsicContentSize == intrinsicContentSize)
+        return;
+
+    priv->intrinsicContentSize = intrinsicContentSize;
+    if (priv->fitContentHeight)
+        gtk_widget_queue_resize(GTK_WIDGET(webkitWebViewBase));
+}
+
+void webkitWebViewBaseSetFitContentHeight(WebKitWebViewBase* webkitWebViewBase, bool fitContentHeight)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (priv->fitContentHeight == fitContentHeight)
+        return;
+
+    priv->fitContentHeight = fitContentHeight;
+    priv->fitContentHeightWidth = 0;
+
+    if (fitContentHeight) {
+        webkitWebViewBaseUpdateFitContentHeightWidth(webkitWebViewBase,
+            webkitWebViewBaseGetViewSize(webkitWebViewBase).width());
+    } else
+        priv->pageProxy->setMinimumSizeForAutoLayout({ });
+
+    gtk_widget_queue_resize(GTK_WIDGET(webkitWebViewBase));
+}
+
+bool webkitWebViewBaseGetFitContentHeight(WebKitWebViewBase* webkitWebViewBase)
+{
+    return webkitWebViewBase->priv->fitContentHeight;
 }
 
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)

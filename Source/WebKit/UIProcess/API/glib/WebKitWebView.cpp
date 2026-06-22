@@ -235,6 +235,7 @@ enum {
     PROP_ZOOM_LEVEL,
 #if PLATFORM(GTK)
     PROP_MAIN_FRAME_SCROLLING_ENABLED,
+    PROP_FIT_CONTENT_HEIGHT,
 #endif
     PROP_IS_LOADING,
     PROP_IS_PLAYING_AUDIO,
@@ -1106,6 +1107,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_MAIN_FRAME_SCROLLING_ENABLED:
         webkit_web_view_set_main_frame_scrolling_enabled(webView, g_value_get_boolean(value));
         break;
+    case PROP_FIT_CONTENT_HEIGHT:
+        webkit_web_view_set_fit_content_height(webView, g_value_get_boolean(value));
+        break;
 #endif
 #if !ENABLE(2022_GLIB_API)
     case PROP_IS_EPHEMERAL:
@@ -1202,6 +1206,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 #if PLATFORM(GTK)
     case PROP_MAIN_FRAME_SCROLLING_ENABLED:
         g_value_set_boolean(value, webkit_web_view_get_main_frame_scrolling_enabled(webView));
+        break;
+    case PROP_FIT_CONTENT_HEIGHT:
+        g_value_set_boolean(value, webkit_web_view_get_fit_content_height(webView));
         break;
 #endif
     case PROP_IS_LOADING:
@@ -1551,6 +1558,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             "main-frame-scrolling-enabled",
             nullptr, nullptr,
             TRUE,
+            WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WebKitWebView:fit-content-height:
+     *
+     * Whether the #WebKitWebView requests its main-frame content height.
+     *
+     * When this property is %TRUE, the widget requests a natural height based on
+     * the latest intrinsic content height for its measured width. The value is
+     * updated asynchronously as layout changes, so the widget may initially
+     * request its fallback height. The default value is %FALSE.
+     *
+     * Since: 2.54
+     */
+    sObjProperties[PROP_FIT_CONTENT_HEIGHT] =
+        g_param_spec_boolean(
+            "fit-content-height",
+            nullptr, nullptr,
+            FALSE,
             WEBKIT_PARAM_READWRITE);
 #endif
 
@@ -4275,7 +4301,8 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
  * larger scrollable GTK interface, where the outer container owns scrolling.
  *
  * This does not change page contents and is not equivalent to injecting CSS
- * such as `overflow: hidden`.
+ * such as `overflow: hidden`. It also does not make the widget request its full
+ * content height; use webkit_web_view_set_fit_content_height() for that.
  *
  * Since: 2.54
  */
@@ -4306,6 +4333,55 @@ gboolean webkit_web_view_get_main_frame_scrolling_enabled(WebKitWebView* webView
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), TRUE);
 
     return getPage(webView).mainFrameIsScrollable();
+}
+
+/**
+ * webkit_web_view_set_fit_content_height:
+ * @web_view: a #WebKitWebView
+ * @fit_content_height: whether the widget should request its content height
+ *
+ * Sets whether @web_view should request enough height to fit its main-frame
+ * contents for the current width.
+ *
+ * When enabled, WebKit uses the main frame's intrinsic content size to update
+ * the widget's natural height. The value is updated asynchronously as layout
+ * changes, so the widget may initially request its fallback height until the
+ * WebProcess reports the first content size.
+ *
+ * This property only affects GTK size negotiation. To prevent the web view from
+ * scrolling internally, also call
+ * webkit_web_view_set_main_frame_scrolling_enabled() with %FALSE.
+ *
+ * Since: 2.54
+ */
+void webkit_web_view_set_fit_content_height(WebKitWebView* webView, gboolean fitContentHeight)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    fitContentHeight = !!fitContentHeight;
+    if (webkit_web_view_get_fit_content_height(webView) == fitContentHeight)
+        return;
+
+    webkitWebViewBaseSetFitContentHeight(WEBKIT_WEB_VIEW_BASE(webView), fitContentHeight);
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_FIT_CONTENT_HEIGHT]);
+}
+
+/**
+ * webkit_web_view_get_fit_content_height:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets whether @web_view requests its main-frame content height.
+ *
+ * Returns: %TRUE if @web_view requests its main-frame content height, or
+ *   %FALSE otherwise
+ *
+ * Since: 2.54
+ */
+gboolean webkit_web_view_get_fit_content_height(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return webkitWebViewBaseGetFitContentHeight(WEBKIT_WEB_VIEW_BASE(webView));
 }
 #endif
 

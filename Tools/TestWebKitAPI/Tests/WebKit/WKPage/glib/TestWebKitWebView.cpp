@@ -359,18 +359,28 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
 }
 
 #if PLATFORM(GTK)
-static void testWebViewMainFrameScrollingEnabled(WebViewTest* test, gconstpointer)
+static void testWebViewMainFrameScrollingAndFitContentHeight(WebViewTest* test, gconstpointer)
 {
     gboolean mainFrameScrollingEnabled = FALSE;
+    gboolean fitContentHeight = TRUE;
     unsigned mainFrameScrollingNotifications = 0;
+    unsigned fitContentHeightNotifications = 0;
 
-    g_object_get(test->webView(), "main-frame-scrolling-enabled", &mainFrameScrollingEnabled, nullptr);
+    g_object_get(test->webView(),
+        "main-frame-scrolling-enabled", &mainFrameScrollingEnabled,
+        "fit-content-height", &fitContentHeight,
+        nullptr);
     g_assert_true(mainFrameScrollingEnabled);
+    g_assert_false(fitContentHeight);
 
     g_signal_connect(test->webView(), "notify::main-frame-scrolling-enabled",
         G_CALLBACK(+[](WebKitWebView*, GParamSpec*, unsigned* notifications) {
             ++*notifications;
         }), &mainFrameScrollingNotifications);
+    g_signal_connect(test->webView(), "notify::fit-content-height",
+        G_CALLBACK(+[](WebKitWebView*, GParamSpec*, unsigned* notifications) {
+            ++*notifications;
+        }), &fitContentHeightNotifications);
 
     webkit_web_view_set_main_frame_scrolling_enabled(test->webView(), FALSE);
     g_assert_false(webkit_web_view_get_main_frame_scrolling_enabled(test->webView()));
@@ -382,6 +392,19 @@ static void testWebViewMainFrameScrollingEnabled(WebViewTest* test, gconstpointe
     g_object_set(test->webView(), "main-frame-scrolling-enabled", TRUE, nullptr);
     g_assert_true(webkit_web_view_get_main_frame_scrolling_enabled(test->webView()));
     g_assert_cmpuint(mainFrameScrollingNotifications, ==, 2);
+
+    webkit_web_view_set_fit_content_height(test->webView(), TRUE);
+    g_assert_true(webkit_web_view_get_fit_content_height(test->webView()));
+    g_assert_cmpuint(fitContentHeightNotifications, ==, 1);
+    g_assert_cmpint(gtk_widget_get_request_mode(GTK_WIDGET(test->webView())),
+        ==, GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH);
+
+    webkit_web_view_set_fit_content_height(test->webView(), TRUE);
+    g_assert_cmpuint(fitContentHeightNotifications, ==, 1);
+
+    g_object_set(test->webView(), "fit-content-height", FALSE, nullptr);
+    g_assert_false(webkit_web_view_get_fit_content_height(test->webView()));
+    g_assert_cmpuint(fitContentHeightNotifications, ==, 2);
 
     webkit_web_view_set_main_frame_scrolling_enabled(test->webView(), FALSE);
     test->loadHtml("<html><body style='height: 10000px'></body></html>", nullptr);
@@ -2331,7 +2354,8 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
 #if PLATFORM(GTK)
-    WebViewTest::add("WebKitWebView", "main-frame-scrolling-enabled", testWebViewMainFrameScrollingEnabled);
+    WebViewTest::add("WebKitWebView", "main-frame-scrolling-and-fit-content-height",
+        testWebViewMainFrameScrollingAndFitContentHeight);
 #endif
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
     WebViewTest::add("WebKitWebView", "run-async-js-functions", testWebViewRunAsyncFunctions);

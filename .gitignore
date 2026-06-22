@@ -1,3 +1,4 @@
+build/
 *.pbxuser
 *.perspective*
 *.pyc

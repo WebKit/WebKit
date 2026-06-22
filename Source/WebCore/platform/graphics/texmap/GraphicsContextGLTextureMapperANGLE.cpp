@@ -306,7 +306,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     eglContextAttributes.append(0);
 #endif
 
-    if (contains(unsafeSpan(displayExtensions), "EGL_ANGLE_power_preference"_span)) {
+    if (WTF::contains(unsafeSpan(displayExtensions), "EGL_ANGLE_power_preference"_span)) {
         eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
         // EGL_HIGH_POWER_ANGLE if desired.
