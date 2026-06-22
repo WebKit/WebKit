@@ -233,6 +233,9 @@ enum {
 
     PROP_URI,
     PROP_ZOOM_LEVEL,
+#if PLATFORM(GTK)
+    PROP_MAIN_FRAME_SCROLLING_ENABLED,
+#endif
     PROP_IS_LOADING,
     PROP_IS_PLAYING_AUDIO,
 #if !ENABLE(2022_GLIB_API)
@@ -1099,6 +1102,11 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;
+#if PLATFORM(GTK)
+    case PROP_MAIN_FRAME_SCROLLING_ENABLED:
+        webkit_web_view_set_main_frame_scrolling_enabled(webView, g_value_get_boolean(value));
+        break;
+#endif
 #if !ENABLE(2022_GLIB_API)
     case PROP_IS_EPHEMERAL:
         webView->priv->isEphemeral = g_value_get_boolean(value);
@@ -1191,6 +1199,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_ZOOM_LEVEL:
         g_value_set_double(value, webkit_web_view_get_zoom_level(webView));
         break;
+#if PLATFORM(GTK)
+    case PROP_MAIN_FRAME_SCROLLING_ENABLED:
+        g_value_set_boolean(value, webkit_web_view_get_main_frame_scrolling_enabled(webView));
+        break;
+#endif
     case PROP_IS_LOADING:
         g_value_set_boolean(value, webkit_web_view_is_loading(webView));
         break;
@@ -1519,6 +1532,27 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             nullptr, nullptr,
             0, G_MAXDOUBLE, 1,
             WEBKIT_PARAM_READWRITE);
+
+#if PLATFORM(GTK)
+    /**
+     * WebKitWebView:main-frame-scrolling-enabled:
+     *
+     * Whether the main frame of the #WebKitWebView is scrollable.
+     *
+     * When this property is %FALSE, main-frame scrolling is disabled and
+     * main-frame scrollbars are hidden. This is useful when embedding a web
+     * view inside a larger scrollable GTK interface, where the outer container
+     * owns scrolling. The default value is %TRUE.
+     *
+     * Since: 2.54
+     */
+    sObjProperties[PROP_MAIN_FRAME_SCROLLING_ENABLED] =
+        g_param_spec_boolean(
+            "main-frame-scrolling-enabled",
+            nullptr, nullptr,
+            TRUE,
+            WEBKIT_PARAM_READWRITE);
+#endif
 
     /**
      * WebKitWebView:is-loading:
@@ -4227,6 +4261,53 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webView->priv->settings.get());
     return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor() / pageScale;
 }
+
+#if PLATFORM(GTK)
+/**
+ * webkit_web_view_set_main_frame_scrolling_enabled:
+ * @web_view: a #WebKitWebView
+ * @enabled: whether main-frame scrolling is enabled
+ *
+ * Sets whether the main frame of @web_view can scroll.
+ *
+ * When @enabled is %FALSE, main-frame scrolling is disabled and main-frame
+ * scrollbars are hidden. This is useful when embedding a web view inside a
+ * larger scrollable GTK interface, where the outer container owns scrolling.
+ *
+ * This does not change page contents and is not equivalent to injecting CSS
+ * such as `overflow: hidden`.
+ *
+ * Since: 2.54
+ */
+void webkit_web_view_set_main_frame_scrolling_enabled(WebKitWebView* webView, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    enabled = !!enabled;
+    if (webkit_web_view_get_main_frame_scrolling_enabled(webView) == enabled)
+        return;
+
+    getPage(webView).setMainFrameIsScrollable(enabled);
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MAIN_FRAME_SCROLLING_ENABLED]);
+}
+
+/**
+ * webkit_web_view_get_main_frame_scrolling_enabled:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets whether the main frame of @web_view can scroll.
+ *
+ * Returns: %TRUE if main-frame scrolling is enabled, or %FALSE otherwise
+ *
+ * Since: 2.54
+ */
+gboolean webkit_web_view_get_main_frame_scrolling_enabled(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), TRUE);
+
+    return getPage(webView).mainFrameIsScrollable();
+}
+#endif
 
 /**
  * webkit_web_view_can_execute_editing_command:

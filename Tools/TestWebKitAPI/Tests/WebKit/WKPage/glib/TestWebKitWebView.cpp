@@ -358,6 +358,47 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->webView()), ==, 2.5);
 }
 
+#if PLATFORM(GTK)
+static void testWebViewMainFrameScrollingEnabled(WebViewTest* test, gconstpointer)
+{
+    gboolean mainFrameScrollingEnabled = FALSE;
+    unsigned mainFrameScrollingNotifications = 0;
+
+    g_object_get(test->webView(), "main-frame-scrolling-enabled", &mainFrameScrollingEnabled, nullptr);
+    g_assert_true(mainFrameScrollingEnabled);
+
+    g_signal_connect(test->webView(), "notify::main-frame-scrolling-enabled",
+        G_CALLBACK(+[](WebKitWebView*, GParamSpec*, unsigned* notifications) {
+            ++*notifications;
+        }), &mainFrameScrollingNotifications);
+
+    webkit_web_view_set_main_frame_scrolling_enabled(test->webView(), FALSE);
+    g_assert_false(webkit_web_view_get_main_frame_scrolling_enabled(test->webView()));
+    g_assert_cmpuint(mainFrameScrollingNotifications, ==, 1);
+
+    webkit_web_view_set_main_frame_scrolling_enabled(test->webView(), FALSE);
+    g_assert_cmpuint(mainFrameScrollingNotifications, ==, 1);
+
+    g_object_set(test->webView(), "main-frame-scrolling-enabled", TRUE, nullptr);
+    g_assert_true(webkit_web_view_get_main_frame_scrolling_enabled(test->webView()));
+    g_assert_cmpuint(mainFrameScrollingNotifications, ==, 2);
+
+    webkit_web_view_set_main_frame_scrolling_enabled(test->webView(), FALSE);
+    test->loadHtml("<html><body style='height: 10000px'></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    GUniqueOutPtr<GError> error;
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("window.scrollTo(0, 1000); window.scrollY", &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(value), ==, 0);
+
+    webkit_web_view_set_main_frame_scrolling_enabled(test->webView(), TRUE);
+    value = test->runJavaScriptAndWaitUntilFinished("window.scrollTo(0, 1000); window.scrollY", &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(value), >, 0);
+}
+#endif
+
 static void testWebViewRunAsyncFunctions(WebViewTest* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
@@ -2289,6 +2330,9 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
+#if PLATFORM(GTK)
+    WebViewTest::add("WebKitWebView", "main-frame-scrolling-enabled", testWebViewMainFrameScrollingEnabled);
+#endif
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
     WebViewTest::add("WebKitWebView", "run-async-js-functions", testWebViewRunAsyncFunctions);
 #if ENABLE(FULLSCREEN_API)
