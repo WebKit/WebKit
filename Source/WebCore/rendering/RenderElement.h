@@ -213,11 +213,11 @@ public:
     // absoluteAnchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an
     // anchor. For inline renderers, this gets the logical top left of the first leaf child and the logical bottom
     // right of the last leaf child, converts them to absolute coordinates, and makes a box out of them.
-    LayoutRect absoluteAnchorRect(bool* insideFixed = nullptr) const;
+    LayoutRect absoluteAnchorRect(bool* insideFixed = nullptr, OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms) const;
 
     // absoluteAnchorRectWithScrollMargin() is similar to absoluteAnchorRect, but it also takes into account any
     // CSS scroll-margin that is set in the style of this RenderElement.
-    MarginRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr) const;
+    MarginRect absoluteAnchorRectWithScrollMargin(bool* insideFixed = nullptr, OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms) const;
 
     inline bool hasFilter() const; // Defined in RenderElementStyleInlines.h.
     inline bool hasBackdropFilter() const; // Defined in RenderElementStyleInlines.h.
@@ -438,8 +438,8 @@ private:
     void imageContentChanged(CachedImage&) final;
     void scheduleRenderingUpdateForImage(CachedImage&) final;
 
-    bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
-    bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;
+    bool getLeadingCorner(FloatPoint& output, bool& insideFixed, OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms) const;
+    bool getTrailingCorner(FloatPoint& output, bool& insideFixed, OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms) const;
 
     void NODELETE clearSubtreeLayoutRootIfNeeded() const;
     

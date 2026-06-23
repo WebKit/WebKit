@@ -2069,15 +2069,15 @@ const Style::ComputedStyle* RenderElement::targetTextPseudoStyle() const
     return textSegmentPseudoStyle(PseudoElementType::TargetText);
 }
 
-bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
+bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed, OptionSet<MapCoordinatesMode> mode) const
 {
     if (isSVGRenderer()) {
-        point = localToAbsoluteQuad(strokeBoundingBox(), MapCoordinatesMode::UseTransforms).boundingBox().minXMinYCorner();
+        point = localToAbsoluteQuad(strokeBoundingBox(), mode).boundingBox().minXMinYCorner();
         return true;
     }
 
     if (!isInline() || isBlockLevelReplacedOrAtomicInline()) {
-        point = localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms, &insideFixed);
+        point = localToAbsolute(FloatPoint(), mode, &insideFixed);
         return true;
     }
 
@@ -2103,7 +2103,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
         ASSERT(o);
 
         if (!o->isInline() || o->isBlockLevelReplacedOrAtomicInline()) {
-            point = o->localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms, &insideFixed);
+            point = o->localToAbsolute(FloatPoint(), mode, &insideFixed);
             return true;
         }
 
@@ -2116,7 +2116,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
                     point.move(textRenderer->linesBoundingBox().x(), run->lineBox()->contentLogicalTop());
             } else if (auto* box = dynamicDowncast<RenderBox>(*o))
                 point.moveBy(box->location());
-            point = o->container()->localToAbsolute(point, MapCoordinatesMode::UseTransforms, &insideFixed);
+            point = o->container()->localToAbsolute(point, mode, &insideFixed);
             return true;
         }
     }
@@ -2130,15 +2130,15 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
     return false;
 }
 
-bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) const
+bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed, OptionSet<MapCoordinatesMode> mode) const
 {
     if (isSVGRenderer()) {
-        point = localToAbsoluteQuad(strokeBoundingBox(), MapCoordinatesMode::UseTransforms).boundingBox().maxXMaxYCorner();
+        point = localToAbsoluteQuad(strokeBoundingBox(), mode).boundingBox().maxXMaxYCorner();
         return true;
     }
 
     if (!isInline() || isBlockLevelReplacedOrAtomicInline()) {
-        point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), MapCoordinatesMode::UseTransforms, &insideFixed);
+        point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), mode, &insideFixed);
         return true;
     }
 
@@ -2169,20 +2169,20 @@ bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) cons
                 point.moveBy(linesBox.maxXMaxYCorner());
             } else
                 point.moveBy(downcast<RenderBox>(*o).frameRect().maxXMaxYCorner());
-            point = o->container()->localToAbsolute(point, MapCoordinatesMode::UseTransforms, &insideFixed);
+            point = o->container()->localToAbsolute(point, mode, &insideFixed);
             return true;
         }
     }
     return true;
 }
 
-LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
+LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed, OptionSet<MapCoordinatesMode> mode) const
 {
     FloatPoint leading, trailing;
     bool leadingInFixed = false;
     bool trailingInFixed = false;
-    getLeadingCorner(leading, leadingInFixed);
-    getTrailingCorner(trailing, trailingInFixed);
+    getLeadingCorner(leading, leadingInFixed, mode);
+    getTrailingCorner(trailing, trailingInFixed, mode);
 
     FloatPoint upperLeft = leading;
     FloatPoint lowerRight = trailing;
@@ -2201,9 +2201,9 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
-MarginRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
+MarginRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed, OptionSet<MapCoordinatesMode> mode) const
 {
-    auto anchorRect = absoluteAnchorRect(insideFixed);
+    auto anchorRect = absoluteAnchorRect(insideFixed, mode);
 
     auto& scrollMarginBox = style().scrollMarginBox();
     if (Style::isZero(scrollMarginBox))

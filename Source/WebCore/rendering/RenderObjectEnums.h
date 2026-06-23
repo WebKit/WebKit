@@ -53,11 +53,12 @@ enum class MarkingBehavior : uint8_t {
 };
 
 enum class MapCoordinatesMode : uint8_t {
-    IsFixed             = 1 << 0,
-    UseTransforms       = 1 << 1,
-    ApplyContainerFlip  = 1 << 2,
-    IgnoreStickyOffsets = 1 << 3,
-    ClampOverscroll     = 1 << 4,
+    IsFixed                     = 1 << 0,
+    UseTransforms               = 1 << 1,
+    ApplyContainerFlip          = 1 << 2,
+    IgnoreStickyOffsets         = 1 << 3,
+    ClampOverscroll             = 1 << 4,
+    IgnoreAcceleratedTransforms = 1 << 5,
 };
 
 }

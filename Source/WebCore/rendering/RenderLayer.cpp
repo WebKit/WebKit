@@ -1806,6 +1806,29 @@ TransformationMatrix RenderLayer::currentTransform() const
     return currentTransform(Style::TransformResolver::allTransformOperations);
 }
 
+TransformationMatrix RenderLayer::currentRestingTransform(OptionSet<Style::TransformResolverOption> options) const
+{
+    if (!m_transform)
+        return { };
+
+    auto styleable = Styleable::fromRenderer(renderer());
+    if (styleable && styleable->isRunningAcceleratedTransformRelatedAnimation()) {
+        // Compute the transform from the style as it was *before* keyframe effects were applied this
+        // frame. lastStyleChangeEventStyle() is set by StyleTreeResolver right before
+        // applyKeyframeEffects mutates the resolved style with interpolated values, so it's the
+        // resting/at-rest transform we want.
+        if (CheckedPtr restingStyle = styleable->lastStyleChangeEventStyle()) {
+            TransformationMatrix transform;
+            updateTransformFromStyle(transform, *restingStyle, options);
+            return transform;
+        }
+    }
+
+    // No in-flight accelerated transform animation, or no resting style cached: the live
+    // currentTransform() result is also the resting result.
+    return currentTransform(options);
+}
+
 TransformationMatrix RenderLayer::renderableTransform(OptionSet<PaintBehavior> paintBehavior) const
 {
     if (!m_transform)

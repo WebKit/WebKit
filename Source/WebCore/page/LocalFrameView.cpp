@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -3461,15 +3461,13 @@ void LocalFrameView::scrollToFocusedElementInternal()
     if (!m_shouldScrollToFocusedElement || m_delayedScrollToFocusedElementTimer.isActive())
         return; // Updating the layout may have ran scripts.
 
-    m_shouldScrollToFocusedElement = false;
-
     RefPtr focusedElement = document->focusedElement();
     if (!focusedElement)
         return;
     auto updateTarget = focusedElement->focusAppearanceUpdateTarget();
     if (!updateTarget)
         return;
-    
+
     // Get the scroll-margin of the shadow host when we're inside a user agent shadow root.
     if (updateTarget->containingShadowRoot() && updateTarget->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
         updateTarget = updateTarget->shadowHost();
@@ -3478,8 +3476,18 @@ void LocalFrameView::scrollToFocusedElementInternal()
     if (!renderer || renderer->isRenderWidget())
         return;
 
+    m_shouldScrollToFocusedElement = false;
+
+    // Compute the focus target's anchor rect using *resting* (post-animation) transforms for any
+    // ancestor running an accelerated transform-family animation. This matches what Chrome and
+    // Firefox observably do: when focus moves into an element whose parent is sliding/scaling/rotating
+    // into view, we scroll based on where the element will be at rest, not where it is mid-animation.
+    // See rdar://171019322 (spotify.com queue panel "hop") for the motivating bug. With the resting
+    // rect, scrollRectToVisible naturally short-circuits when the target would already be visible at
+    // rest (the Spotify case) and otherwise scrolls to the right (resting) position rather than to a
+    // transient mid-animation snapshot that the animation would later invalidate.
     bool insideFixed;
-    auto absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    auto absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed, { MapCoordinatesMode::UseTransforms, MapCoordinatesMode::IgnoreAcceleratedTransforms });
     auto anchorRectWithScrollMargin = absoluteBounds.marginRect;
     auto anchorRect = absoluteBounds.anchorRect;
     LocalFrameView::scrollRectToVisible(anchorRectWithScrollMargin, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No, ScrollBehavior::Auto, OnlyAllowForwardScrolling::No, AllowScrollingOverflowHidden::Yes, anchorRect });

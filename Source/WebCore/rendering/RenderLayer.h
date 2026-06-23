@@ -841,6 +841,10 @@ public:
     // the layer does not have a transform, the identity matrix is returned.
     TransformationMatrix currentTransform(OptionSet<Style::TransformResolverOption>) const;
     TransformationMatrix currentTransform() const;
+    // Like currentTransform(), but computes the transform from the pre-animation (resting) style
+    // when an accelerated transform-related animation is in flight. Used by callers that want the
+    // post-animation/at-rest geometry rather than the live interpolated geometry.
+    TransformationMatrix currentRestingTransform(OptionSet<Style::TransformResolverOption>) const;
     TransformationMatrix renderableTransform(OptionSet<PaintBehavior>) const;
     
     // Get the children transform (to apply a perspective on children), which is applied to transformed sublayers, but not this layer.

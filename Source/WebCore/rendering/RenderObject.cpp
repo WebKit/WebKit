@@ -1535,14 +1535,17 @@ bool RenderObject::shouldUseTransformFromContainer(const RenderElement* containe
 }
 
 // FIXME: Now that it's no longer passed a container maybe this should be renamed?
-void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix& transform) const
+void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix& transform, OptionSet<MapCoordinatesMode> mode) const
 {
     transform.makeIdentity();
     transform.translate(offsetInContainer.width(), offsetInContainer.height());
     CheckedPtr<RenderLayer> layer;
-    if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
-        transform.multiply(layer->currentTransform());
-    else if (document().settings().layerBasedSVGEngineEnabled() && isSVGLayerAwareRenderer()) {
+    if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform()) {
+        if (mode.contains(MapCoordinatesMode::IgnoreAcceleratedTransforms))
+            transform.multiply(layer->currentRestingTransform(Style::TransformResolver::allTransformOperations));
+        else
+            transform.multiply(layer->currentTransform());
+    } else if (document().settings().layerBasedSVGEngineEnabled() && isSVGLayerAwareRenderer()) {
         // Non-layered SVG elements: use the cached local transform. localTransform() is virtual,
         // returning m_localTransform for RenderSVGModelObject and RenderSVGText, identity otherwise.
         if (auto svgTransform = localTransform(); !svgTransform.isIdentity())
@@ -1570,7 +1573,7 @@ void RenderObject::pushOntoTransformState(TransformState& transformState, Option
     bool preserve3D = mode.contains(MapCoordinatesMode::UseTransforms) && participatesInPreserve3D();
     if (mode.contains(MapCoordinatesMode::UseTransforms) && shouldUseTransformFromContainer(container)) {
         TransformationMatrix matrix;
-        getTransformFromContainer(offsetInContainer, matrix);
+        getTransformFromContainer(offsetInContainer, matrix, mode);
         transformState.applyTransform(matrix, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
     } else
         transformState.move(offsetInContainer.width(), offsetInContainer.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);

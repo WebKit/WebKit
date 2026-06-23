@@ -1069,7 +1069,7 @@ public:
     virtual void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const;
 
     bool NODELETE shouldUseTransformFromContainer(const RenderElement* container) const;
-    void getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix&) const;
+    void getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix&, OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms) const;
     
     void pushOntoTransformState(TransformState&, OptionSet<MapCoordinatesMode>, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const;
 

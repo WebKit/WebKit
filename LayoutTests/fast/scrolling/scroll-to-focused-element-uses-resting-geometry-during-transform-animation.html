@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+/*
+ * Test scenario A: focus target is visible at the panel's RESTING (post-animation) position.
+ * The panel slides in from off-screen via an accelerated transform; focus fires mid-animation.
+ * Expectation: NO page scroll (because the target IS visible at rest). Matches Chrome/Firefox.
+ */
+#panelA {
+    position: fixed;
+    top: 100px;
+    left: 0;
+    width: 300px;
+    height: 200px;
+    background: #eee;
+    transform: translateX(-500px);
+    will-change: transform;
+    transition: transform 0.5s linear;
+}
+#panelA.open { transform: translateX(0); }
+#targetA { position: absolute; top: 50px; left: 10px; }
+
+/*
+ * Test scenario B: focus target is NOT visible at rest — scrolling INTO the panel's overflow
+ * is required to reveal it. The panel ALSO has a transform animation in flight at the moment
+ * focus fires. Expectation: scroll-into-view fires immediately and lands on the RESTING geometry
+ * (no later "hop").
+ */
+#panelB {
+    position: fixed;
+    top: 350px;
+    left: 0;
+    width: 300px;
+    height: 200px;
+    overflow: auto;
+    background: #ddd;
+    transform: translateX(-500px);
+    will-change: transform;
+    transition: transform 0.5s linear;
+}
+#panelB.open { transform: translateX(0); }
+#panelB .spacer { height: 800px; }
+#targetB { position: absolute; top: 700px; left: 10px; }
+</style>
+
+<div id="panelA"><a id="targetA" href="#">target A</a></div>
+
+<div id="panelB"><div class="spacer"></div><a id="targetB" href="#">target B</a></div>
+
+<script>
+async function runScenario(panelId, targetId, mustScroll) {
+    const panel = document.getElementById(panelId);
+    const target = document.getElementById(targetId);
+
+    const transitionRun = new Promise(resolve =>
+        panel.addEventListener('transitionrun', resolve, { once: true }));
+    const transitionEnd = new Promise(resolve =>
+        panel.addEventListener('transitionend', resolve, { once: true }));
+
+    const initialPageScrollY = window.scrollY;
+    const initialPanelScrollTop = panel.scrollTop;
+
+    await new Promise(requestAnimationFrame);
+    panel.classList.add('open');
+    await transitionRun;
+
+    target.focus();
+
+    // scrollToFocusedElementInternal runs from a delayed timer (0 s); give it a chance to fire
+    // before sampling scroll positions. A single rAF + step_timeout(0) is enough in practice.
+    await new Promise(resolve => requestAnimationFrame(() => t.step_timeout(resolve, 0)));
+
+    // Mid-animation: scroll-into-view computed the focus target's rect against the panel's
+    // *resting* (post-animation) transform, not the in-flight interpolated value. So the
+    // observable result depends only on whether the target would be visible at rest:
+    //   scenario A: visible at rest → no scroll
+    //   scenario B: not visible at rest → panel.scrollTop is non-zero (immediately, not deferred)
+    if (!mustScroll) {
+        assert_equals(window.scrollY, initialPageScrollY,
+            `${panelId}: page must not scroll when target is visible at panel's resting position (got window.scrollY=${window.scrollY})`);
+        assert_equals(panel.scrollTop, initialPanelScrollTop,
+            `${panelId}: panel must not internal-scroll either (target visible at rest; got panel.scrollTop=${panel.scrollTop})`);
+    } else {
+        assert_greater_than(panel.scrollTop, 100,
+            `${panelId}: panel must scroll to bring focus target into view, immediately, using resting geometry (got panel.scrollTop=${panel.scrollTop})`);
+    }
+
+    // After the animation ends, geometry must remain stable — no hop. The post-animation
+    // scroll position should match what we observed mid-animation.
+    const midAnimationPanelScroll = panel.scrollTop;
+    const midAnimationPageScroll = window.scrollY;
+    await transitionEnd;
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    assert_equals(panel.scrollTop, midAnimationPanelScroll,
+        `${panelId}: panel scroll must not change after animation completes (no hop)`);
+    assert_equals(window.scrollY, midAnimationPageScroll,
+        `${panelId}: page scroll must not change after animation completes (no hop)`);
+}
+
+promise_test(t => runScenario('panelA', 'targetA', /* mustScroll */ false),
+    "Focus into a panel mid-transform-animation does NOT page-scroll when target is visible at the panel's resting position (Spotify-class case, rdar://171019322)");
+
+promise_test(t => runScenario('panelB', 'targetB', /* mustScroll */ true),
+    "Focus into a panel mid-transform-animation DOES scroll the panel's internal scroll container, immediately, when target requires scrolling at rest — and the scroll position is stable across the rest of the animation (no hop)");
+</script>
+</body>
+</html>

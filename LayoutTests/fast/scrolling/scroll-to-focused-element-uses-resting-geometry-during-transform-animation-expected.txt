@@ -1,0 +1,5 @@
+
+
+PASS Focus into a panel mid-transform-animation does NOT page-scroll when target is visible at the panel's resting position (Spotify-class case, rdar://171019322)
+PASS Focus into a panel mid-transform-animation DOES scroll the panel's internal scroll container, immediately, when target requires scrolling at rest — and the scroll position is stable across the rest of the animation (no hop)
+
