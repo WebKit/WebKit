@@ -917,6 +917,14 @@
                 "Recreate FBO upon flush/finish/fencesync under certain conditions to work around driver bugs."
             ],
             "issue": "http://crbug.com/493747593"
+        },
+        {
+            "name": "disable_clear_texture",
+            "category": "Workarounds",
+            "description": [
+                "Disable the EXT_clear_texture extension due to driver bugs."
+            ],
+            "issue": "http://crbug.com/475877320"
         }
     ]
 }

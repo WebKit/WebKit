@@ -60,7 +60,9 @@ bool RefCountedEvent::init(Context *context, EventStage eventStage)
                 // that many VkEvents under normal situation. If we failed to allocate, there is a
                 // high chance that we may have a leak somewhere. This macro should help us catch
                 // such potential bugs in the bots if that happens.
-                UNREACHABLE();
+                ASSERT(false);
+                // Ensure memory is freed and pointer is nulled
+                SafeDelete(mHandle);
                 // If still fail to create, we just return. An invalid event will trigger
                 // pipelineBarrier code path
                 return false;

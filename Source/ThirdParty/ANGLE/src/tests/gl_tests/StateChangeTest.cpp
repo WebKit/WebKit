@@ -10448,6 +10448,138 @@ TEST_P(StateChangeTestES3, PrimitiveRestart)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that primitive restart works correctly when drawing with an unsigned byte element array
+// buffer that is updated between draw calls. Buffer updates for unsigned bytes might result in
+// faulty index conversion in some backends.
+TEST_P(StateChangeTestES3, PrimitiveRestartWithUnsignedBytesIndexBufferUpdates)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    GLint posAttrib = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_EQ(0, posAttrib);
+
+    // Two triangles forming a full-screen quad split along the diagonal.
+    // Triangle 1: upper-left half  (-1,-1), (1,1), (-1,1)
+    // Triangle 2: lower-right half (-1,-1), (1,-1), (1,1)
+    std::vector<Vector3> positionData = {
+        {-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f},  {-1.0f, 1.0f, 0.0f},  // Triangle 1
+        {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}    // Triangle 2
+    };
+
+    // Indices for Triangle 1 only
+    std::vector<GLubyte> indices1 = {0, 1, 2};
+
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(positionData[0]),
+                 positionData.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posAttrib);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 7, nullptr, GL_STREAM_DRAW);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+
+    // Draw 1: Red color, Triangle 1
+    glUniform4f(colorLoc, 1, 0, 0, 1);  // Red
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices1.size(), indices1.data());
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, nullptr);
+
+    // Verify after Draw 1
+    EXPECT_PIXEL_COLOR_EQ(w / 4, h / 2, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * w / 4, h / 2, GLColor::black);
+
+    // Update index buffer to have Triangle 1, Restart, Triangle 2
+    std::vector<GLubyte> indices2 = {0, 1, 2, 0xFF, 3, 4, 5};
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices2.size(), indices2.data());
+
+    // Draw 2: Blue color, both triangles
+    glUniform4f(colorLoc, 0, 0, 1, 1);  // Blue
+    glDrawElements(GL_TRIANGLES, 7, GL_UNSIGNED_BYTE, nullptr);
+
+    // Verify after Draw 2
+    EXPECT_PIXEL_COLOR_EQ(w / 4, h / 2, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * w / 4, h / 2, GLColor::blue);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests that primitive restart works correctly when drawing with an unsigned byte client indices
+// that are updated between draw calls.
+TEST_P(StateChangeTestES3, PrimitiveRestartWithUnsignedBytesClientIndexData)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    GLint posAttrib = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_EQ(0, posAttrib);
+
+    // Two triangles forming a full-screen quad split along the diagonal.
+    // Triangle 1: upper-left half  (-1,-1), (1,1), (-1,1)
+    // Triangle 2: lower-right half (-1,-1), (1,-1), (1,1)
+    std::vector<Vector3> positionData = {
+        {-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f},  {-1.0f, 1.0f, 0.0f},  // Triangle 1
+        {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}    // Triangle 2
+    };
+
+    // Indices for Triangle 1 only
+    std::vector<GLubyte> indices1 = {0, 1, 2};
+
+    GLBuffer posBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(positionData[0]),
+                 positionData.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posAttrib);
+
+    // No element array buffer bound
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+
+    // Draw 1: Red color, Triangle 1
+    glUniform4f(colorLoc, 1, 0, 0, 1);  // Red
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, indices1.data());
+
+    // Verify after Draw 1
+    EXPECT_PIXEL_COLOR_EQ(w / 4, h / 2, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(3 * w / 4, h / 2, GLColor::black);
+
+    // Indices for both triangles
+    std::vector<GLubyte> indices2 = {0, 1, 2, 0xFF, 3, 4, 5};
+
+    // Draw 2: Blue color, both triangles
+    glUniform4f(colorLoc, 0, 0, 1, 1);  // Blue
+    glDrawElements(GL_TRIANGLES, 7, GL_UNSIGNED_BYTE, indices2.data());
+
+    // Verify after Draw 2
+    EXPECT_PIXEL_COLOR_EQ(w / 4, h / 2, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(3 * w / 4, h / 2, GLColor::blue);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests that primitive restart for patches can be queried when tessellation shaders are available,
 // and that its value is independent of whether primitive restart is enabled.
 TEST_P(StateChangeTestES31, PrimitiveRestartForPatchQuery)

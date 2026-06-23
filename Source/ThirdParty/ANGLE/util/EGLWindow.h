@@ -44,6 +44,7 @@ struct ANGLE_UTIL_EXPORT ConfigParameters
     int stencilBits;
 
     bool webGLCompatibility;
+    bool hardenedContext;
     bool robustResourceInit;
 
     // EGLWindow-specific.

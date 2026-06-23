@@ -461,7 +461,166 @@ TEST_P(LineLoopTest, SimpleDrawArrays)
 }
 
 class LineLoopTestES3 : public LineLoopTest
-{};
+{
+  protected:
+    void runTestInstanced(std::function<void(void)> definePositionBuffer,
+                          std::function<void(void)> defineColorBuffer,
+                          std::function<void(void)> draw)
+    {
+        // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
+        ignoreD3D11SDKLayersWarnings();
+
+        constexpr char kVS[] = R"(#version 300 es
+    precision mediump float;
+    in vec2 position;
+    in vec2 colorIn;
+    out vec2 color;
+    void main()
+    {
+        gl_Position = vec4(position, 0, 1);
+        if ((gl_InstanceID / 2) % 2 == 1)
+        {
+            gl_Position.y += 1.0;
+        }
+        if (gl_InstanceID % 2 == 1)
+        {
+            gl_Position.x += 1.0;
+        }
+        color = colorIn;
+    })";
+
+        constexpr char kFS[] = R"(#version 300 es
+    precision mediump float;
+    in vec2 color;
+    out vec4 colorOut;
+    void main()
+    {
+        colorOut = vec4(color, 0, 1);
+    })";
+
+        ANGLE_GL_PROGRAM(program, kVS, kFS);
+        glUseProgram(program);
+
+        const GLint posLoc = glGetAttribLocation(program, "position");
+        const GLint colLoc = glGetAttribLocation(program, "colorIn");
+
+        // Draw 4 squares.  With a divisor of 2 on color, 2 of them will be one color, two the
+        // other.
+
+        GLBuffer position;
+        glBindBuffer(GL_ARRAY_BUFFER, position);
+        definePositionBuffer();
+        glEnableVertexAttribArray(posLoc);
+        glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        GLBuffer color;
+        glBindBuffer(GL_ARRAY_BUFFER, color);
+        defineColorBuffer();
+        glEnableVertexAttribArray(colLoc);
+        glVertexAttribPointer(colLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glVertexAttribDivisor(colLoc, 2);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        draw();
+
+        // Verify pixels.  The result looks like the following:
+        //
+        //      +-----------------------+
+        //      |                       |
+        //      |   +----+     +----+   |
+        //      |   |    |     |    |   |  <-- two red squares
+        //      |   |    |     |    |   |
+        //      |   +----+     +----+   |
+        //      |                       |
+        //      |                       |
+        //      |   +----+     +----+   |
+        //      |   |    |     |    |   |  <-- two green squares
+        //      |   |    |     |    |   |
+        //      |   +----+     +----+   |
+        //      |                       |
+        //      +-----------------------+
+        //            |
+        //            V
+        //  Black inside and outside the squares
+        //
+        const int w = getWindowWidth();
+        const int h = getWindowHeight();
+        // Don't check too close to the lines to account for precision issues.  This is the margin
+        // from the middle of the lines.
+        const int m = 2;
+        const GLColor green(51, 153, 0, 255);
+
+        // Left of squares
+        EXPECT_PIXEL_RECT_EQ(0, 0, w / 8 - m, h, GLColor::black);
+        // Between squares
+        EXPECT_PIXEL_RECT_EQ(w / 2 - w / 8 + m, 0, w / 4 - m * 2, h, GLColor::black);
+        // Right of squares
+        EXPECT_PIXEL_RECT_EQ(w - w / 8 + m, 0, w / 8 - m, h, GLColor::black);
+
+        // Above squares
+        EXPECT_PIXEL_RECT_EQ(0, 0, w, h / 8 - m, GLColor::black);
+        // Between squares
+        EXPECT_PIXEL_RECT_EQ(0, h / 2 - h / 8 + m, w, h / 4 - m * 2, GLColor::black);
+        // Below squares
+        EXPECT_PIXEL_RECT_EQ(0, h - h / 8 + m, w, h / 8 - m, GLColor::black);
+
+        // Check the lines of the squares, leaving a margin for precision errors.
+        std::vector<GLColor> result(w * h);
+        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, result.data());
+
+        auto checkHorizontalLine = [&result, w](int x, int y, int width, GLColor expect) {
+            for (int c = 0; c < width; ++c)
+            {
+                if (result[y * w + x + c] != expect)
+                {
+                    return false;
+                }
+            }
+            return true;
+        };
+        auto checkVerticalLine = [&result, w](int x, int y, int height, GLColor expect) {
+            for (int r = 0; r < height; ++r)
+            {
+                if (result[(y + r) * w + x] != expect)
+                {
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        for (int x : {w / 8, w / 2 - w / 8, w / 2 + w / 8, w - w / 8})
+        {
+            const int y      = h / 8 + m;
+            const int length = h / 4 - m * 2;
+            // The line may not exactly land on |x|, check around it too, one of them should be
+            // non-black.
+            EXPECT_TRUE(checkVerticalLine(x - 1, y, length, GLColor::red) ^
+                        checkVerticalLine(x, y, length, GLColor::red) ^
+                        checkVerticalLine(x + 1, y, length, GLColor::red));
+            EXPECT_TRUE(checkVerticalLine(x - 1, h / 2 + y, length, green) ^
+                        checkVerticalLine(x, h / 2 + y, length, green) ^
+                        checkVerticalLine(x + 1, h / 2 + y, length, green));
+        }
+        for (int y : {h / 8, h / 2 - h / 8, h / 2 + h / 8, h - h / 8})
+        {
+            const int x          = w / 8 + m;
+            const int length     = w / 4 - m * 2;
+            const GLColor expect = y < h / 2 ? GLColor::red : green;
+            EXPECT_PIXEL_RECT_EQ(x, y, length, 1, expect);
+            EXPECT_PIXEL_RECT_EQ(w / 2 + x, y, length, 1, expect);
+
+            EXPECT_TRUE(checkHorizontalLine(x, y - 1, length, expect) ^
+                        checkHorizontalLine(x, y, length, expect) ^
+                        checkHorizontalLine(x, y + 1, length, expect));
+            EXPECT_TRUE(checkHorizontalLine(w / 2 + x, y - 1, length, expect) ^
+                        checkHorizontalLine(w / 2 + x, y, length, expect) ^
+                        checkHorizontalLine(w / 2 + x, y + 1, length, expect));
+        }
+
+        ASSERT_GL_NO_ERROR();
+    }
+};
 
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
 TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUByteIndexBuffer)
@@ -485,6 +644,163 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUByteIndexBuffer)
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test glDrawArraysInstanced with a line loop and a non-zero divisor.
+TEST_P(LineLoopTestES3, LineLoopDrawArraysInstanced)
+{
+    const int w        = getWindowWidth();
+    const int h        = getWindowHeight();
+    const float left   = static_cast<float>(w / 8) / (w - 1) * 2.0 - 1.0;
+    const float right  = static_cast<float>(w / 2 - w / 8) / (w - 1) * 2.0 - 1.0;
+    const float top    = static_cast<float>(h / 8) / (h - 1) * 2.0 - 1.0;
+    const float bottom = static_cast<float>(h / 2 - h / 8) / (h - 1) * 2.0 - 1.0;
+
+    const GLfloat kPositions[] = {
+        // Top left.  Instances 1 and 3 shift this square to the right.  Instances 2 and 3 shift it
+        // down.
+        left, top, left, bottom, right, bottom, right, top,
+    };
+    constexpr GLfloat kColors[] = {
+        // Top
+        1.0f,
+        0.0f,
+        // Bottom
+        0.2f,
+        0.6f,
+    };
+    runTestInstanced(
+        [&kPositions]() {
+            glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions, GL_STATIC_DRAW);
+        },
+        [&kColors]() { glBufferData(GL_ARRAY_BUFFER, sizeof(kColors), kColors, GL_STATIC_DRAW); },
+        []() { glDrawArraysInstanced(GL_LINE_LOOP, 0, 4, 4); });
+}
+
+// Test glDrawArraysInstancedBaseInstance with a line loop and a non-zero divisor.
+TEST_P(LineLoopTestES3, LineLoopDrawArraysInstancedBaseInstance)
+{
+    const bool hasEXT   = IsGLExtensionEnabled("GL_EXT_base_instance");
+    const bool hasANGLE = IsGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance");
+    ANGLE_SKIP_TEST_IF(!hasEXT && !hasANGLE);
+
+    const int w        = getWindowWidth();
+    const int h        = getWindowHeight();
+    const float left   = static_cast<float>(w / 8) / (w - 1) * 2.0 - 1.0;
+    const float right  = static_cast<float>(w / 2 - w / 8) / (w - 1) * 2.0 - 1.0;
+    const float top    = static_cast<float>(h / 8) / (h - 1) * 2.0 - 1.0;
+    const float bottom = static_cast<float>(h / 2 - h / 8) / (h - 1) * 2.0 - 1.0;
+
+    const GLfloat kPositions[] = {
+        // Top left.  Instances 1 and 3 shift this square to the right.  Instances 2 and 3 shift it
+        // down.
+        left, top, left, bottom, right, bottom, right, top,
+    };
+    constexpr GLfloat kColors[] = {
+        // 5 unused attributes, skipped by base instance
+        // clang-format off
+        0.1f, 0.2f,
+        0.3f, 0.4f,
+        0.5f, 0.6f,
+        0.7f, 0.8f,
+        0.9f, 0.95f,
+        // Top
+        1.0f, 0.0f,
+        // Bottom
+        0.2f, 0.6f,
+        // clang-format on
+    };
+    runTestInstanced(
+        [&kPositions]() {
+            glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions, GL_STATIC_DRAW);
+        },
+        [&kColors]() { glBufferData(GL_ARRAY_BUFFER, sizeof(kColors), kColors, GL_STATIC_DRAW); },
+        [hasEXT]() {
+            if (hasEXT)
+            {
+                glDrawArraysInstancedBaseInstanceEXT(GL_LINE_LOOP, 0, 4, 4, 5);
+            }
+            else
+            {
+                glDrawArraysInstancedBaseInstanceANGLE(GL_LINE_LOOP, 0, 4, 4, 5);
+            }
+        });
+}
+
+// Test glDrawElementsInstancedBaseVertexBaseInstance with a line loop and a non-zero divisor.
+TEST_P(LineLoopTestES3, LineLoopDrawElementsInstancedBaseVertexBaseInstance)
+{
+    const bool hasEXT   = IsGLExtensionEnabled("GL_EXT_base_instance");
+    const bool hasANGLE = IsGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance");
+    ANGLE_SKIP_TEST_IF(!hasEXT && !hasANGLE);
+
+    const int w        = getWindowWidth();
+    const int h        = getWindowHeight();
+    const float left   = static_cast<float>(w / 8) / (w - 1) * 2.0 - 1.0;
+    const float right  = static_cast<float>(w / 2 - w / 8) / (w - 1) * 2.0 - 1.0;
+    const float top    = static_cast<float>(h / 8) / (h - 1) * 2.0 - 1.0;
+    const float bottom = static_cast<float>(h / 2 - h / 8) / (h - 1) * 2.0 - 1.0;
+
+    const GLfloat kPositions[] = {
+        // 5 unused vertices, skipped by base vertex
+        // clang-format off
+        0.1f, 0.4f,
+        0.3f, 0.6f,
+        0.5f, 0.8f,
+        0.7f, 0.6f,
+        0.9f, 0.4f,
+        // Top left.  Instances 1 and 3 shift this square to the right.  Instances 2 and 3 shift it
+        // down.  The 2nd and 3rd vertices are swapped, but are reordered by the index buffer.
+        left, top, right, bottom, left, bottom, right, top,
+        // clang-format on
+    };
+    constexpr GLfloat kColors[] = {
+        // 9 unused attributes, skipped by base instance.
+        // clang-format off
+        0.1f, 0.2f,
+        0.3f, 0.4f,
+        0.5f, 0.6f,
+        0.7f, 0.8f,
+        0.9f, 0.95f,
+        0.85f, 0.75f,
+        0.65f, 0.55f,
+        0.45f, 0.35f,
+        0.25f, 0.15f,
+        // Top
+        1.0f, 0.0f,
+        // Bottom
+        0.2f, 0.6f,
+        // clang-format on
+    };
+    constexpr GLint kIndices[] = {
+        // The square
+        2,
+        1,
+        3,
+        0,
+    };
+
+    GLBuffer index;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices, GL_STATIC_DRAW);
+
+    runTestInstanced(
+        [&kPositions]() {
+            glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions, GL_STATIC_DRAW);
+        },
+        [&kColors]() { glBufferData(GL_ARRAY_BUFFER, sizeof(kColors), kColors, GL_STATIC_DRAW); },
+        [hasEXT]() {
+            if (hasEXT)
+            {
+                glDrawElementsInstancedBaseVertexBaseInstanceEXT(GL_LINE_LOOP, 4, GL_UNSIGNED_INT,
+                                                                 nullptr, 4, 5, 9);
+            }
+            else
+            {
+                glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_LINE_LOOP, 4, GL_UNSIGNED_INT,
+                                                                   nullptr, 4, 5, 9);
+            }
+        });
 }
 
 // Test that uploading data to buffer that's in use then using it for line loop elements works.

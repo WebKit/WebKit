@@ -185,14 +185,7 @@ GLuint TextureState::getEffectiveMaxLevel() const
         clampedMaxLevel        = std::min(clampedMaxLevel, mImmutableLevels - 1);
         return clampedMaxLevel;
     }
-    if (IsMipmapSupported(mType) && IsMipmapFiltered(mSamplerState.getMinFilter()))
-    {
-        return mMaxLevel;
-    }
-    else
-    {
-        return std::max(mMaxLevel, mBaseLevel);
-    }
+    return std::max(mMaxLevel, mBaseLevel);
 }
 
 GLuint TextureState::getMipmapMaxLevel() const
@@ -529,7 +522,11 @@ bool TextureState::computeMipmapCompleteness() const
 {
     const GLuint maxLevel  = getMipmapMaxLevel();
     const GLuint baseLevel = getEffectiveBaseLevel();
-    if (baseLevel > maxLevel)
+    // Max level is always clamped to base level in the helpers.  For completeness check, ensure
+    // that the real max level is not below base level.
+    ASSERT(maxLevel >= baseLevel);
+    if (!mImmutableFormat && IsMipmapSupported(mType) &&
+        IsMipmapFiltered(mSamplerState.getMinFilter()) && mMaxLevel < baseLevel)
     {
         return false;
     }
@@ -627,9 +624,7 @@ GLuint TextureState::getEnabledLevelCount() const
     GLuint levelCount      = 0;
     const GLuint baseLevel = getEffectiveBaseLevel();
     GLuint maxLevel        = getMipmapMaxLevel();
-
-    // In edge case where base level > max level, make sure to get at least one level.
-    maxLevel = std::max(baseLevel, maxLevel);
+    ASSERT(maxLevel >= baseLevel);
 
     // Note: for cube textures, we only check the first face.
     TextureTarget target         = TextureTypeToTarget(mType, 0);

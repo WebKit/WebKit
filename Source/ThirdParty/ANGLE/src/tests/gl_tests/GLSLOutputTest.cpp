@@ -534,6 +534,30 @@ void main() {
     verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 2 + 1);
 }
 
+// Test that loopForwardProgress() is inserted when the loop variable is global.
+TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteForWithGlobal)
+{
+    constexpr char kFS[] = R"(#version 300 es
+highp int i;
+void f()
+{
+    i = 0;
+}
+void main() {
+    for (i = 0; i < 100; i++)
+    {
+        i = 0;
+    }
+    for (i = 0; i < 100; i++)
+    {
+        f();
+    }
+})";
+    compileShader(GL_FRAGMENT_SHADER, kFS);
+    // One occurrence for defining |loopForwardProgress()|, and one call in each loop.
+    verifyCountInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress", 2 + 1);
+}
+
 // Test that loopForwardProgress() is not inserted when the for loop is not an infinite loop,
 // testing various tricky loops.
 TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, FiniteFors)

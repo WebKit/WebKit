@@ -20,6 +20,7 @@
         "FrameStart": 1,
         "IsBinaryDataCompressed": false,
         "IsBindGeneratesResourcesEnabled": true,
+        "IsHardenedContextEnabled": false,
         "IsRobustResourceInitEnabled": false,
         "IsWebGLCompatibilityEnabled": false
     },

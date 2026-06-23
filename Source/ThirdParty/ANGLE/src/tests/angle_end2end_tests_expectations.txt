@@ -424,6 +424,7 @@
 504886981 MAC OPENGL : RobustResourceInitTestES3.ReadbackWithMippedTexture/* = SKIP
 497533569 MAC INTEL OPENGL : TransformFeedbackTest.ProgramSwitchDuringPauseAndResume/* = SKIP
 497533569 MAC INTEL OPENGL : TransformFeedbackTest.ProgramSwitchDuringPauseAndResumeWithBufferChange/* = SKIP
+513172707 MAC INTEL OPENGL : DrawBaseVertexBaseInstanceTest_ES3.InstanceIDDoesNotIncludeBaseInstance/* = SKIP
 
 // BlitFramebufferTest.ScissoredMultisampleStencil failures
 42262159 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
@@ -575,6 +576,9 @@
 496259841 WIN D3D11 : RobustResourceInitTestES3.InvalidateThenReadBack/* = SKIP
 496259841 WIN D3D11 : RobustResourceInitTestES3.DrawThenInvalidateThenReadBack/* = SKIP
 496259841 WIN D3D11 : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
+512896813 WIN D3D11 : LineLoopTestES3.LineLoopDrawArraysInstancedBaseInstance/* = SKIP
+512896813 WIN D3D11 : LineLoopTestES3.LineLoopDrawElementsInstancedBaseVertexBaseInstance/* = SKIP
+514615434 D3D11 : DrawBaseVertexBaseInstanceTest.NegativeBaseVertex/* = SKIP
 
 // Android
 42264624 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
@@ -648,7 +652,6 @@
 42264513 PIXEL4ORXL GLES : ImageTest.SourceCubeTarget2D_Colorspace/* = SKIP
 42264513 PIXEL4ORXL GLES : ImageTest.SourceCubeTargetExternal_Colorspace/* = SKIP
 42264513 PIXEL4ORXL GLES : ImageTest.SourceCubeTargetRenderbuffer_Colorspace/* = SKIP
-42264513 PIXEL4ORXL GLES : ImageTest.SourceNativeClientBufferTargetExternal_Colorspace/* = SKIP
 42264513 PIXEL4ORXL GLES : ImageTest.SourceNativeClientBufferTargetRenderbuffer_Colorspace/* = SKIP
 42264513 PIXEL4ORXL GLES : ImageTest.SourceRenderbufferTargetRenderbuffer_Colorspace/* = SKIP
 42264513 PIXEL4ORXL GLES : ImageTest.SourceRenderbufferTargetTexture_Colorspace/* = SKIP
@@ -1021,7 +1024,6 @@
 480069042 PIXEL10 GLES : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources/* = SKIP
 480069042 PIXEL10 GLES : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets/* = SKIP
 480069042 PIXEL10 GLES : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
-480069042 PIXEL10 GLES : ImageTest.SourceNativeClientBufferTargetExternal/* = SKIP
 480069042 PIXEL10 GLES : ImageTest.SourceYUVAHBTargetExternalRGBSampleInitData/* = SKIP
 480069042 PIXEL10 GLES : ImageTest.ValidationImageBase/* = SKIP
 480069042 PIXEL10 GLES : ImageTestES3.ClearYUVAHB/* = SKIP
@@ -1205,6 +1207,14 @@
 489247643 PIXEL10 GLES : ImageTest.BindExternalTextureAsImage_R16_UINT/* = SKIP
 489247643 PIXEL10 GLES : ImageTest.BindExternalTextureAsImage_R16G16_UINT/* = SKIP
 510376884 PIXEL10 GLES : ComputeShaderTest.DeleteTextureBoundToImageUnit/* = SKIP
+512394647 PIXEL10 GLES : EGLContextCompatibilityTest.PbufferDifferentConfig/OpenGLES_R16G16B16A16_R16G16B16 = SKIP
+512394647 PIXEL10 GLES : EGLContextCompatibilityTest.PbufferDifferentConfig/OpenGLES_R16G16B16D24_R16G16B16 = SKIP
+512394647 PIXEL10 GLES : EGLContextCompatibilityTest.PbufferDifferentConfig/OpenGLES_R8G8B8A8D24_R8G8B8A8 = SKIP
+512394647 PIXEL10 GLES : EGLContextCompatibilityTest.PbufferDifferentConfig/OpenGLES_R8G8B8A8D24_R8G8B8A8D24S8 = SKIP
+512394647 PIXEL10 GLES : FramebufferTest_ES31.ClearColorMorePrecisionThanFBOFormatShouldNotApplyDithering/* = SKIP
+512394647 PIXEL10 GLES : MipmapTestES3.GenerateMipmapLargeNPOTTexture/* = SKIP
+512394647 PIXEL10 GLES : RobustBufferAccessBehaviorTest.OutOfBoundsArrayBuffers/* = SKIP
+512394647 PIXEL10 GLES : WebGLCompatibilityTest.EXTBlendFuncExtendedMissingOutputsWithAllChannelsMaskedOut/* = SKIP
 
 480069042 PIXEL10 VULKAN : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_Vulkan*__GL_RG16_SNORM_EXT_GL_RG_GL_SHORT_GL_TEXTURE_2D_ARRAY = SKIP
 480069042 PIXEL10 VULKAN : ClearTextureEXTTestES31Unrenderable.Clear/ES3_1_Vulkan*__GL_RGB32UI_GL_RGB_INTEGER_GL_UNSIGNED_INT_GL_TEXTURE_2D_ARRAY = SKIP
@@ -1226,8 +1236,6 @@
 480069042 PIXEL10 VULKAN : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources/* = SKIP
 480069042 PIXEL10 VULKAN : ImageTest.SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets/* = SKIP
 480069042 PIXEL10 VULKAN : ImageTest.SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData/* = SKIP
-480069042 PIXEL10 VULKAN : ImageTest.SourceNativeClientBufferTargetExternal/* = SKIP
-480069042 PIXEL10 VULKAN : ImageTest.SourceNativeClientBufferTargetExternal_Colorspace/* = SKIP
 480069042 PIXEL10 VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleInitData/* = SKIP
 480069042 PIXEL10 VULKAN : ImageTestES3.ClearYUVAHB/* = SKIP
 480069042 PIXEL10 VULKAN : ImageTestES3.ClearYUVAHBWithDepth/* = SKIP
@@ -1934,6 +1942,10 @@
 465357680 SAMSUNG GALAXYS24EXYNOS VULKAN : StateChangeTestES3.PrimitiveRestart/ES3_Vulkan_NoSupportsExtendedDynamicState2* = SKIP
 465357680 SAMSUNG GALAXYS24EXYNOS VULKAN : StateChangeTestES3.PrimitiveRestart/ES3_Vulkan_NoUsePrimitiveRestartEnableDynamicState = SKIP
 500540748 SAMSUNG GALAXYS24EXYNOS VULKAN : ImageTestES3.RGBXAHBImportPreservesData_Colorspace_TexStorage/* = SKIP
+511737097 SAMSUNG GALAXYS24EXYNOS VULKAN : StateChangeTestES3.PrimitiveRestartWithUnsignedBytesClientIndexData/ES3_Vulkan_NoSupportsExtendedDynamicState2* = SKIP
+511737097 SAMSUNG GALAXYS24EXYNOS VULKAN : StateChangeTestES3.PrimitiveRestartWithUnsignedBytesClientIndexData/ES3_Vulkan_NoUsePrimitiveRestartEnableDynamicState = SKIP
+511737097 SAMSUNG GALAXYS24EXYNOS VULKAN : StateChangeTestES3.PrimitiveRestartWithUnsignedBytesIndexBufferUpdates/ES3_Vulkan_NoSupportsExtendedDynamicState2* = SKIP
+511737097 SAMSUNG GALAXYS24EXYNOS VULKAN : StateChangeTestES3.PrimitiveRestartWithUnsignedBytesIndexBufferUpdates/ES3_Vulkan_NoUsePrimitiveRestartEnableDynamicState = SKIP
 
 // Additional Xclipse failures on latest public
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : AdvancedBlendTest.AdvancedBlendDisabledAndThenEnabledKHR/* = SKIP
@@ -2222,6 +2234,15 @@
 
 42266876 WIN VULKAN : VulkanPerformanceCounterTest.SubmittingOutsideCommandBufferDoesNotBreakRenderPass/* = SKIP
 42266876 LINUX VULKAN : VulkanPerformanceCounterTest.SubmittingOutsideCommandBufferDoesNotBreakRenderPass/* = SKIP
+
+// Related to relaxed precision
+512211312 PIXEL4ORXL GLES : GLSLPrecisionTest_ES3.ClampLowpVaryingAndSubtractLowerLimit/* = SKIP
+512211312 PIXEL4ORXL GLES : GLSLPrecisionTest_ES3.ClampLowpUniformAndSubtractLowerLimit/* = SKIP
+512211312 PIXEL6 : GLSLPrecisionTest_ES3.SubtractLowpVaryingByItsValue/* = SKIP
+512211312 PIXEL10 : GLSLPrecisionTest_ES3.ClampLowp*/* = SKIP
+512211312 PIXEL10 : GLSLPrecisionTest_ES3.SubtractLowpVaryingByItsValue/* = SKIP
+512211312 WIN INTEL VULKAN : GLSLPrecisionTest_ES3.SubtractLowpVaryingByItsValue/* = SKIP
+512211312 WIN INTEL VULKAN : GLSLPrecisionTest_ES3.SubtractLowpUniformByItsValue/* = SKIP
 
 // Workaround feature that is only supposed to be enabled on vulkan backend
 292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = SKIP
@@ -2729,11 +2750,23 @@
 500930576 OPENGL : ReadPixelsTest.LargeTexture/* = SKIP
 // Crashes inside AMD Metal driver when copying the texture -> buffer
 500930576 METAL AMD : ReadPixelsTest.LargeTexture/* = SKIP
+
+// XFB with incomplete primitives fail on GL and Vulkan
+513536751 INTEL OPENGL : TransformFeedbackTest.InstancedOverflowIncompletePrimitive/* = SKIP
+// fails on Vulkan without transform feedback extension
+513536751 VULKAN : TransformFeedbackTest.InstancedOverflowIncompletePrimitive/*NoSupportsTransformFeedbackExtension* = SKIP
+513536751 VULKAN SWIFTSHADER : TransformFeedbackTest.InstancedOverflowIncompletePrimitive/* = SKIP
+
 // Fails test on Metal
 499091328 MAC AMD METAL : Texture2DArrayTestES3.ReformatStagedBufferUpdatesLayerCountOOB/* = SKIP
 
 // Timeout on Intel
 509829264 VULKAN WIN INTEL : SimpleStateChangeTestES31.TransformFeedbackThenReadWithCompute/* = SKIP
+
+512157667 LINUX VULKAN : WebGLCompatibilityTest.PointSizeDefaultWhenNotSet/* = SKIP
+512157667 WIN VULKAN : WebGLCompatibilityTest.PointSizeDefaultWhenNotSet/* = SKIP
+512157667 WIN D3D11 : WebGLCompatibilityTest.PointSizeDefaultWhenNotSet/* = SKIP
+512157667 WIN D3D9 : WebGLCompatibilityTest.PointSizeDefaultWhenNotSet/* = SKIP
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file

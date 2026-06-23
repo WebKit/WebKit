@@ -288,10 +288,9 @@ angle::Result Image11::loadData(const gl::Context *context,
     GLuint inputRowPitch   = 0;
     GLuint inputDepthPitch = 0;
     GLuint inputSkipBytes = 0;
-    ANGLE_CHECK_GL_MATH(context11,
-                        formatInfo.computeRowDepthSkipBytes(
-                            type, gl::Extents{area.width, area.height, area.depth}, unpack,
-                            applySkipImages, &inputRowPitch, &inputDepthPitch, &inputSkipBytes));
+    ANGLE_CHECK_GL_MATH(context11, formatInfo.computeRowDepthSkipBytes(
+                                       type, area.width, area.height, unpack, applySkipImages,
+                                       &inputRowPitch, &inputDepthPitch, &inputSkipBytes));
 
     const d3d11::DXGIFormatSize &dxgiFormatInfo = d3d11::GetDXGIFormatSizeInfo(mDXGIFormat);
     GLuint outputPixelSize                      = dxgiFormatInfo.pixelBytes;

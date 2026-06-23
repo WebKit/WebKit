@@ -487,9 +487,8 @@ class Framebuffer final : public angle::ObserverInterface,
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
     bool formsRenderingFeedbackLoopWith(const Context *context) const;
-    bool formsCopyingFeedbackLoopWith(TextureID copyTextureID,
-                                      GLint copyTextureLevel,
-                                      GLint copyTextureLayer) const;
+    bool formsCopyingFeedbackLoopWith(TextureID destTextureId,
+                                      const gl::ImageIndex &destImageIndex) const;
 
     angle::Result ensureClearAttachmentsInitialized(const Context *context, GLbitfield mask);
     angle::Result ensureClearBufferAttachmentsInitialized(const Context *context,

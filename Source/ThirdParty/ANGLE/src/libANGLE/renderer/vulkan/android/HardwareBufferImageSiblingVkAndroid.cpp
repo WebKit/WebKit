@@ -387,9 +387,13 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     bool isDepthOrStencilFormat      = imageFormat.hasDepthOrStencilBits();
     mFormat                          = gl::Format(vkFormat->getIntendedGLFormat());
 
+    // Some driver set colorAttachmentFormat but its not render-able. So check formatFeatures as
+    // well.
     bool externalRenderTargetSupported =
         isExternal && renderer->getFeatures().supportsExternalFormatResolve.enabled &&
-        bufferFormatResolveProperties.colorAttachmentFormat != VK_FORMAT_UNDEFINED;
+        bufferFormatResolveProperties.colorAttachmentFormat != VK_FORMAT_UNDEFINED &&
+        (bufferFormatProperties.formatFeatures & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) != 0;
+
     // Can assume based on us getting here already. The supportsYUVSamplerConversion
     // check below should serve as a backup otherwise.
     bool externalTexturingSupported = isExternal;
@@ -521,8 +525,18 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     }
 
     const gl::TextureType textureType = AhbDescUsageToTextureType(ahbDescription, layerCount);
-    const angle::FormatID actualRenderableFormatID = vkFormat->getActualRenderableImageFormatID();
 
+    // If the renderer prefers to use the BGR565 format over RGB565 by default, the actual image
+    // format for a hardware buffer should be changed back to RGB565 so the corresponding image
+    // below is also created with the same format. Otherwise, errors will occur.
+    angle::FormatID intendedFormatID         = vkFormat->getIntendedFormatID();
+    angle::FormatID actualRenderableFormatID = vkFormat->getActualRenderableImageFormatID();
+    if (renderer->getFeatures().preferBGR565ToRGB565.enabled &&
+        intendedFormatID == angle::FormatID::R5G6B5_UNORM &&
+        actualRenderableFormatID == angle::FormatID::B5G6R5_UNORM)
+    {
+        actualRenderableFormatID = angle::FormatID::R5G6B5_UNORM;
+    }
     // If VkExternalFormatANDROID::externalFormat is non-zero disallow format reinterpretability
     vk::ImageFormatReinterpretability formatReinterpretability =
         (externalFormat.externalFormat != 0)
@@ -536,10 +550,9 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         &imageFormatListInfoStorage, &imageFormats, formatReinterpretability, &imageCreateFlags);
 
     ANGLE_TRY(mImage->initExternal(
-        displayVk, textureType, vkExtents, vkFormat->getIntendedFormatID(),
-        actualRenderableFormatID, 1, usage, imageCreateFlags,
-        vk::ImageAccess::ExternalPreInitialized, imageCreateInfoPNext, gl::LevelIndex(0),
-        mLevelCount, layerCount, robustInitEnabled, hasProtectedContent(),
+        displayVk, textureType, vkExtents, intendedFormatID, actualRenderableFormatID, 1, usage,
+        imageCreateFlags, vk::ImageAccess::ExternalPreInitialized, imageCreateInfoPNext,
+        gl::LevelIndex(0), mLevelCount, layerCount, robustInitEnabled, hasProtectedContent(),
         vk::TileMemory::Prohibited, conversionDesc, nullptr, formatReinterpretability));
 
     VkImportAndroidHardwareBufferInfoANDROID importHardwareBufferInfo = {};

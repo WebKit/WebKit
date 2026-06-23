@@ -2579,9 +2579,8 @@ bool Framebuffer::formsRenderingFeedbackLoopWith(const Context *context) const
     return false;
 }
 
-bool Framebuffer::formsCopyingFeedbackLoopWith(TextureID copyTextureID,
-                                               GLint copyTextureLevel,
-                                               GLint copyTextureLayer) const
+bool Framebuffer::formsCopyingFeedbackLoopWith(TextureID destTextureId,
+                                               const gl::ImageIndex &destImageIndex) const
 {
     if (mState.isDefault())
     {
@@ -2592,17 +2591,21 @@ bool Framebuffer::formsCopyingFeedbackLoopWith(TextureID copyTextureID,
     const FramebufferAttachment *readAttachment = getReadColorAttachment();
     ASSERT(readAttachment);
 
-    if (readAttachment->isTextureWithId(copyTextureID))
+    if (!readAttachment->isTextureWithId(destTextureId))
     {
-        const auto &imageIndex = readAttachment->getTextureImageIndex();
-        if (imageIndex.getLevelIndex() == copyTextureLevel)
-        {
-            // Check 3D/Array texture layers.
-            return !imageIndex.hasLayer() || copyTextureLayer == ImageIndex::kEntireLevel ||
-                   imageIndex.getLayerIndex() == copyTextureLayer;
-        }
+        return false;
     }
-    return false;
+
+    const auto &sourceImageIndex = readAttachment->getTextureImageIndex();
+    if (sourceImageIndex.getLevelIndex() != destImageIndex.getLevelIndex())
+    {
+        return false;
+    }
+
+    // Generates a feedback loop if either source or dest encompass all layers (includes unlayered
+    // texture types) OR layers are the same
+    return !sourceImageIndex.hasLayer() || !destImageIndex.hasLayer() ||
+           sourceImageIndex.getLayerIndex() == destImageIndex.getLayerIndex();
 }
 
 GLint Framebuffer::getDefaultWidth() const

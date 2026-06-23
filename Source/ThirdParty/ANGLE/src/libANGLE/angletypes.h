@@ -317,29 +317,6 @@ struct RasterizerState final
 bool operator==(const RasterizerState &a, const RasterizerState &b);
 bool operator!=(const RasterizerState &a, const RasterizerState &b);
 
-struct BlendState final
-{
-    // This will zero-initialize the struct, including padding.
-    BlendState();
-    BlendState(const BlendState &other);
-
-    bool blend;
-    GLenum sourceBlendRGB;
-    GLenum destBlendRGB;
-    GLenum sourceBlendAlpha;
-    GLenum destBlendAlpha;
-    GLenum blendEquationRGB;
-    GLenum blendEquationAlpha;
-
-    bool colorMaskRed;
-    bool colorMaskGreen;
-    bool colorMaskBlue;
-    bool colorMaskAlpha;
-};
-
-bool operator==(const BlendState &a, const BlendState &b);
-bool operator!=(const BlendState &a, const BlendState &b);
-
 struct DepthStencilState final
 {
     // This will zero-initialize the struct, including padding.

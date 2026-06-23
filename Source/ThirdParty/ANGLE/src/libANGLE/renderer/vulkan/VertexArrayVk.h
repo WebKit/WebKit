@@ -42,11 +42,13 @@ class VertexArrayVk : public VertexArrayImpl
                             gl::VertexArray::DirtyAttribBitsArray *attribBits,
                             gl::VertexArray::DirtyBindingBitsArray *bindingBits) override;
 
-    angle::Result updateDefaultAttrib(ContextVk *contextVk, size_t attribIndex);
+    angle::Result updateDefaultAttribs(ContextVk *contextVk,
+                                       const gl::AttributesMask &dirtyDefaultAttribsMask);
 
     angle::Result updateStreamedAttribs(const gl::Context *context,
                                         GLint firstVertex,
                                         GLsizei vertexOrIndexCount,
+                                        GLsizei baseInstance,
                                         GLsizei instanceCount,
                                         gl::DrawElementsType indexTypeOrInvalid,
                                         const void *indices,
@@ -152,8 +154,11 @@ class VertexArrayVk : public VertexArrayImpl
                                         BufferBindingDirty *bufferBindingDirty);
 
     gl::AttributesMask getStreamingVertexAttribsMask() const { return mStreamingVertexAttribsMask; }
-
     gl::AttributesMask getCurrentEnabledAttribsMask() const { return mCurrentEnabledAttribsMask; }
+    gl::AttributesMask getCurrentDefaultAttribsMask() const { return mCurrentDefaultAttribsMask; }
+
+    void syncDirtyDisabledAttribs(ContextVk *contextVk,
+                                  const gl::AttributesMask &disabledAttributesMask);
 
   private:
 
@@ -173,23 +178,18 @@ class VertexArrayVk : public VertexArrayImpl
                                          const angle::Format &dstFormat,
                                          const VertexCopyFunction vertexLoadFunction);
 
-    angle::Result syncDirtyEnabledNonStreamingAttrib(
+    void syncDirtyEnabledNonStreamingAttrib(
         ContextVk *contextVk,
         const gl::VertexAttribute &attrib,
         const gl::VertexBinding &binding,
         size_t attribIndex,
         const gl::VertexArray::DirtyAttribBits &dirtyAttribBits);
 
-    angle::Result syncDirtyEnabledStreamingAttrib(
-        ContextVk *contextVk,
-        const gl::VertexAttribute &attrib,
-        const gl::VertexBinding &binding,
-        size_t attribIndex,
-        const gl::VertexArray::DirtyAttribBits &dirtyAttribBits);
-
-    angle::Result syncDirtyDisabledAttrib(ContextVk *contextVk,
-                                          const gl::VertexAttribute &attrib,
-                                          size_t attribIndex);
+    void syncDirtyEnabledStreamingAttrib(ContextVk *contextVk,
+                                         const gl::VertexAttribute &attrib,
+                                         const gl::VertexBinding &binding,
+                                         size_t attribIndex,
+                                         const gl::VertexArray::DirtyAttribBits &dirtyAttribBits);
 
     angle::Result syncNeedsConversionAttrib(ContextVk *contextVk,
                                             const gl::VertexAttribute &attrib,
@@ -234,7 +234,12 @@ class VertexArrayVk : public VertexArrayImpl
 
     gl::BufferBindingMask mDivisorExceedMaxSupportedValueBindingMask;
 
+    // Equivalent to mState.getEnabledAttributesMask(), but used for detect from enabled to disabled
+    // transition.
     gl::AttributesMask mCurrentEnabledAttribsMask;
+    // The bit is set when the attribute is updated by VertexArrayVk::updateDefaultAttribs call
+    gl::AttributesMask mCurrentDefaultAttribsMask;
+
     // Track client and/or emulated attribs that we have to stream their buffer contents
     gl::AttributesMask mStreamingVertexAttribsMask;
     gl::AttributesMask mNeedsConversionAttribsMask;

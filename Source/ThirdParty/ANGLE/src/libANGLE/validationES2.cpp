@@ -3389,6 +3389,13 @@ bool ValidateCopyTextureCHROMIUM(const Context *context,
         return false;
     }
 
+    if (!ValidImageAllocationSize(context, entryPoint, sourceWidth, sourceHeight, 1, 0,
+                                  destInternalFormatInfo.sizedInternalFormat))
+    {
+        // Error already generated
+        return false;
+    }
+
     if (dest->getImmutableFormat())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kDestinationImmutable);

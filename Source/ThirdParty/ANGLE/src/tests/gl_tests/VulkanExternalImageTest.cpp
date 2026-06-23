@@ -249,6 +249,9 @@ class VulkanExternalImageTest : public ANGLETest<>
     void runWaitSemaphoresRetainsContentTest(bool isSwiftshader, bool enableDebugLayers);
 };
 
+class VulkanExternalRGB565ImageTest : public VulkanExternalImageTest
+{};
+
 class VulkanExternalImageTestES31 : public VulkanExternalImageTest
 {};
 
@@ -428,6 +431,81 @@ void RunShouldClearTest(bool useMemoryObjectFlags,
     vkFreeMemory(helper.getDevice(), deviceMemory, nullptr);
 }
 
+template <typename Traits>
+void RunShouldClearTestRGB565(bool useMemoryObjectFlags,
+                              VkImageCreateFlags createFlags,
+                              bool isSwiftshader,
+                              bool enableDebugLayers)
+{
+    ASSERT(EnsureGLExtensionEnabled(Traits::MemoryObjectExtension()));
+
+    VulkanHelper helper;
+    helper.initialize(isSwiftshader, enableDebugLayers);
+
+    VkImageUsageFlags usageFlags = kNoStorageImageUsageFlags;
+
+    AdjustCreateFlags(useMemoryObjectFlags, &createFlags);
+
+    VkFormat format = VK_FORMAT_R5G6B5_UNORM_PACK16;
+    ANGLE_SKIP_TEST_IF(!Traits::CanCreateImage(helper, format, VK_IMAGE_TYPE_2D,
+                                               VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags));
+
+    VkImage image                 = VK_NULL_HANDLE;
+    VkDeviceMemory deviceMemory   = VK_NULL_HANDLE;
+    VkDeviceSize deviceMemorySize = 0;
+
+    VkExtent3D extent = {1, 1, 1};
+    VkResult result   = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr,
+                                              extent, &image, &deviceMemory, &deviceMemorySize);
+    EXPECT_EQ(result, VK_SUCCESS);
+
+    typename Traits::Handle memoryHandle = Traits::InvalidHandle();
+    result = Traits::ExportMemory(&helper, deviceMemory, &memoryHandle);
+    EXPECT_EQ(result, VK_SUCCESS);
+    EXPECT_NE(memoryHandle, Traits::InvalidHandle());
+
+    {
+        GLMemoryObject memoryObject;
+        GLint dedicatedMemory = GL_TRUE;
+        glMemoryObjectParameterivEXT(memoryObject, GL_DEDICATED_MEMORY_OBJECT_EXT,
+                                     &dedicatedMemory);
+        Traits::ImportMemory(memoryObject, deviceMemorySize, memoryHandle);
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        if (useMemoryObjectFlags)
+        {
+            glTexStorageMemFlags2DANGLE(GL_TEXTURE_2D, 1, GL_RGB565, 1, 1, memoryObject, 0,
+                                        createFlags, usageFlags, nullptr);
+        }
+        else
+        {
+            glTexStorageMem2DEXT(GL_TEXTURE_2D, 1, GL_RGB565, 1, 1, memoryObject, 0);
+        }
+
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+        const uint16_t rgb565Cyan = 0x7FF;
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, &rgb565Cyan);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGB, GL_UNSIGNED_BYTE,
+                        &GLColorRGB::yellow);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    }
+
+    EXPECT_GL_NO_ERROR();
+
+    vkDestroyImage(helper.getDevice(), image, nullptr);
+    vkFreeMemory(helper.getDevice(), deviceMemory, nullptr);
+}
+
 // Test creating and clearing a simple RGBA8 texture in an opaque fd.
 TEST_P(VulkanExternalImageTest, ShouldClearOpaqueFdRGBA8)
 {
@@ -465,6 +543,26 @@ TEST_P(VulkanExternalImageTest, ShouldClearMutableNoStorageUsageOpaqueFdRGBA8)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_memory_object_flags"));
     RunShouldClearTest<OpaqueFdTraits>(true, kMutableImageCreateFlags, kNoStorageImageUsageFlags,
                                        isSwiftshader(), enableDebugLayers());
+}
+
+// Test creating, clearing, and updating an RGB565 texture without STORAGE in an opaque fd.
+TEST_P(VulkanExternalRGB565ImageTest, ShouldClearOpaqueFdNoStorage)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object_fd"));
+    // http://anglebug.com/42263236
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL() && (IsPixel2() || IsPixel2XL()));
+    RunShouldClearTestRGB565<OpaqueFdTraits>(false, kDefaultImageCreateFlags, isSwiftshader(),
+                                             enableDebugLayers());
+}
+
+// Test creating, clearing, and updating an RGB565 texture without STORAGE in an opaque fd using
+// GL_ANGLE_memory_object_flags.
+TEST_P(VulkanExternalRGB565ImageTest, ShouldClearOpaqueWithFlagsFdNoStorage)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object_fd"));
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_memory_object_flags"));
+    RunShouldClearTestRGB565<OpaqueFdTraits>(true, kDefaultImageCreateFlags, isSwiftshader(),
+                                             enableDebugLayers());
 }
 
 // Test creating and clearing a simple RGBA8 texture in a zircon vmo.
@@ -1804,6 +1902,11 @@ void main()
                                                    enableDebugLayers());
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(VulkanExternalImageTest);
-ANGLE_INSTANTIATE_TEST_ES31(VulkanExternalImageTestES31);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(VulkanExternalImageTest,
+                                       ES3_VULKAN().enable(Feature::ForceRenderableFallbackFormat));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    VulkanExternalRGB565ImageTest,
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferBGR565ToRGB565));
+ANGLE_INSTANTIATE_TEST_ES31_AND(VulkanExternalImageTestES31,
+                                ES31_VULKAN().enable(Feature::ForceRenderableFallbackFormat));
 }  // namespace angle

@@ -1321,6 +1321,7 @@ ImageDefinitionMtl &TextureMtl::getImageDefinition(const gl::ImageIndex &imageIn
 
     return imageDef;
 }
+
 angle::Result TextureMtl::getRenderTarget(ContextMtl *context,
                                           const gl::ImageIndex &imageIndex,
                                           GLsizei implicitSamples,
@@ -2136,7 +2137,7 @@ angle::Result TextureMtl::setSubImageImpl(const gl::Context *context,
     GLuint sourceSkipBytes  = 0;
     ANGLE_CHECK_GL_MATH(
         contextMtl, formatInfo.computeRowDepthSkipBytes(
-                        type, gl::Extents{area.width, area.height, area.depth}, unpack,
+                        type, area.width, area.height, unpack,
                         index.usesTex3D(), &sourceRowPitch, &sourceDepthPitch, &sourceSkipBytes));
 
     // Get corresponding source data's ANGLE format

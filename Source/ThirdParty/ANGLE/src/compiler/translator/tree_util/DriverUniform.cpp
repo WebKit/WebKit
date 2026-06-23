@@ -26,7 +26,7 @@ constexpr const char kDepthRange[]       = "depthRange";
 constexpr const char kRenderArea[]       = "renderArea";
 constexpr const char kFlipXY[]           = "flipXY";
 constexpr const char kMisc[]             = "misc";
-constexpr const char kPadding[]          = "padding";
+constexpr const char kBaseInstance[]     = "baseInstance";
 constexpr const char kAcbBufferOffsets[] = "acbBufferOffsets";
 
 // Extended uniforms
@@ -81,7 +81,7 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
         kRenderArea,
         kFlipXY,
         kMisc,
-        kPadding,
+        kBaseInstance,
         kAcbBufferOffsets,
     }};
 
@@ -97,8 +97,8 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
         new TType(EbtUInt, EbpHigh, EvqGlobal),
         // misc: Various bits of state
         new TType(EbtUInt, EbpHigh, EvqGlobal),
-        // padding: ushort
-        new TType(EbtUInt, EbpHigh, EvqGlobal),
+        // baseInstance: int
+        new TType(EbtInt, EbpHigh, EvqGlobal),
         // acbBufferOffsets: Packed ubyte8
         new TType(EbtUInt, EbpHigh, EvqGlobal, 2),
     }};
@@ -192,6 +192,8 @@ bool DriverUniform::addGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbo
 
 TIntermTyped *DriverUniform::createDriverUniformRef(const char *fieldName) const
 {
+    ASSERT(mDriverUniforms);
+
     size_t fieldIndex = 0;
     if (mMode == DriverUniformMode::InterfaceBlock)
     {
@@ -314,6 +316,11 @@ TIntermTyped *DriverUniform::getSwapXY() const
     };
     return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtBool, EbpUndefined>(),
                                                &args);
+}
+
+TIntermTyped *DriverUniform::getBaseInstance() const
+{
+    return createDriverUniformRef(kBaseInstance);
 }
 
 TIntermTyped *DriverUniform::getAdvancedBlendEquation() const

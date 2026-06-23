@@ -64,6 +64,8 @@ const char *GetCommandString(CommandID id)
             return "BlitImage";
         case CommandID::BufferBarrier:
             return "BufferBarrier";
+        case CommandID::BufferBarrier2:
+            return "BufferBarrier2";
         case CommandID::ClearAttachments:
             return "ClearAttachments";
         case CommandID::ClearColorImage:
@@ -112,16 +114,22 @@ const char *GetCommandString(CommandID id)
             return "FillBuffer";
         case CommandID::ImageBarrier:
             return "ImageBarrier";
+        case CommandID::ImageBarrier2:
+            return "ImageBarrier2";
         case CommandID::ImageWaitEvent:
             return "ImageWaitEvent";
         case CommandID::InsertDebugUtilsLabel:
             return "InsertDebugUtilsLabel";
         case CommandID::MemoryBarrier:
             return "MemoryBarrier";
+        case CommandID::MemoryBarrier2:
+            return "MemoryBarrier2";
         case CommandID::NextSubpass:
             return "NextSubpass";
         case CommandID::PipelineBarrier:
             return "PipelineBarrier";
+        case CommandID::PipelineBarrier2:
+            return "PipelineBarrier2";
         case CommandID::PushConstants:
             return "PushConstants";
         case CommandID::ResetEvent:
@@ -180,10 +188,8 @@ const char *GetCommandString(CommandID id)
             return "WaitEvents";
         case CommandID::WriteTimestamp:
             return "WriteTimestamp";
-        default:
-            // Need this to work around MSVC warning 4715.
-            UNREACHABLE();
-            return "--unreachable--";
+        case CommandID::WriteTimestamp2:
+            return "WriteTimestamp2";
     }
 }
 
@@ -225,6 +231,9 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
         {
             switch (currentCommand->id)
             {
+                case CommandID::Invalid:
+                    UNREACHABLE();
+                    break;
                 case CommandID::BeginDebugUtilsLabel:
                 {
                     const DebugUtilsLabelParams *params =
@@ -966,11 +975,6 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                         getParamPtr<WriteTimestampParams>(currentCommand);
                     vkCmdWriteTimestamp2KHR(cmdBuffer, VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT,
                                             params->queryPool, params->query);
-                    break;
-                }
-                default:
-                {
-                    UNREACHABLE();
                     break;
                 }
             }

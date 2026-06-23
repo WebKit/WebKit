@@ -542,6 +542,7 @@ angle::Result SyncHelperNativeFence::serverWait(ContextVk *contextVk)
     importFdInfo.flags                      = VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR;
     importFdInfo.handleType                 = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR;
     importFdInfo.fd                         = dup(mExternalFence->getFenceFd());
+    ANGLE_VK_CHECK(contextVk, importFdInfo.fd >= 0, VK_ERROR_OUT_OF_HOST_MEMORY);
     ANGLE_VK_TRY(contextVk, waitSemaphore.get().importFd(device, importFdInfo));
 
     // Add semaphore to next submit job.
@@ -572,6 +573,7 @@ angle::Result SyncHelperNativeFence::dupNativeFenceFD(ErrorContext *context, int
     }
 
     *fdOut = dup(mExternalFence->getFenceFd());
+    ANGLE_VK_CHECK(context, *fdOut >= 0, VK_ERROR_OUT_OF_HOST_MEMORY);
 
     return angle::Result::Continue;
 }

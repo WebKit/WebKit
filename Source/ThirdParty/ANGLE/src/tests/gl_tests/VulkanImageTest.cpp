@@ -52,6 +52,9 @@ class VulkanImageTest : public ANGLETest<>
     }
 };
 
+class VulkanRGB565Test : public VulkanImageTest
+{};
+
 class VulkanMemoryTest : public ANGLETest<>
 {
   protected:
@@ -569,6 +572,96 @@ TEST_P(VulkanImageTest, ClientBufferWithDraw)
     vkFreeMemory(helper.getDevice(), vkDeviceMemory, nullptr);
 }
 
+// Test importing VkImage with eglCreateImageKHR with RGB565, drawing and updating the texture.
+TEST_P(VulkanRGB565Test, ClientBufferWithDraw)
+{
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_vulkan_image"));
+
+    VulkanHelper helper;
+    helper.initializeFromANGLE();
+
+    constexpr VkImageUsageFlags kDefaultImageUsageFlags =
+        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+        VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+
+    VkImage vkImage                   = VK_NULL_HANDLE;
+    VkDeviceMemory vkDeviceMemory     = VK_NULL_HANDLE;
+    VkDeviceSize deviceSize           = 0u;
+    VkImageCreateInfo imageCreateInfo = {};
+
+    VkResult result = VK_SUCCESS;
+    result = helper.createImage2D(VK_FORMAT_R5G6B5_UNORM_PACK16, 0, kDefaultImageUsageFlags,
+                                  {kWidth, kHeight, 1}, &vkImage, &vkDeviceMemory, &deviceSize,
+                                  &imageCreateInfo);
+    EXPECT_EQ(result, VK_SUCCESS);
+    EXPECT_EQ(imageCreateInfo.sType, VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
+
+    uint64_t info    = reinterpret_cast<uint64_t>(&imageCreateInfo);
+    EGLint attribs[] = {
+        EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE,
+        static_cast<EGLint>((info >> 32) & 0xffffffff),
+        EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE,
+        static_cast<EGLint>(info & 0xffffffff),
+        EGL_NONE,
+    };
+    EGLImageKHR eglImage = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_VULKAN_IMAGE_ANGLE,
+                                             reinterpret_cast<EGLClientBuffer>(&vkImage), attribs);
+    EXPECT_NE(eglImage, EGL_NO_IMAGE_KHR);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
+
+    GLuint textures[1] = {texture};
+    GLenum layouts[1]  = {GL_NONE};
+    glAcquireTexturesANGLE(1, textures, layouts);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+    // Clear framebuffer with white.
+    glClearColor(1.f, 1.f, 1.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw red to the texture.
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    // Copy cyan to one half of the image.
+    std::vector<uint16_t> cyanBlock(kWidth * kHeight, 0x7FF);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight / 2, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                    cyanBlock.data());
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight / 2, GLColor::cyan);
+    EXPECT_PIXEL_RECT_EQ(0, kHeight / 2, kWidth, kHeight / 2, GLColor::red);
+
+    // Copy yellow to one half of the image.
+    std::vector<GLColorRGB> yellowBlock(kWidth * kHeight, GLColorRGB::yellow);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth / 2, kHeight, GL_RGB, GL_UNSIGNED_BYTE,
+                    yellowBlock.data());
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight / 2, GLColor::cyan);
+    EXPECT_PIXEL_RECT_EQ(kWidth / 2, kHeight / 2, kWidth / 2, kHeight / 2, GLColor::red);
+
+    EXPECT_GL_NO_ERROR();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    framebuffer.reset();
+    texture.reset();
+
+    glFinish();
+
+    EXPECT_EGL_TRUE(eglDestroyImageKHR(display, eglImage));
+    vkDestroyImage(helper.getDevice(), vkImage, nullptr);
+    vkFreeMemory(helper.getDevice(), vkDeviceMemory, nullptr);
+}
+
 // Test that when VMA image suballocation is used, image memory can be allocated from the system in
 // case the device memory runs out.
 TEST_P(VulkanMemoryTest, AllocateVMAImageWhenDeviceOOM)
@@ -934,6 +1027,9 @@ TEST_P(VulkanMemoryTest, AllocateBufferAfterFreeing2DGarbageWhenDeviceOOM)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(VulkanImageTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    VulkanRGB565Test,
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferBGR565ToRGB565));
 ANGLE_INSTANTIATE_TEST_ES3(VulkanMemoryTest);
 
 }  // namespace angle

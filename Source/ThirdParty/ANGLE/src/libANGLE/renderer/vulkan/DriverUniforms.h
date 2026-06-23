@@ -88,12 +88,14 @@ class GraphicsDriverUniforms
   public:
     GraphicsDriverUniforms(vk::Renderer *renderer)
         : mAllDirtyBits({DIRTY_BIT_ATOMIC_COUNTER_BUFFER, DIRTY_BIT_DEPTH_RANGE,
-                         DIRTY_BIT_RENDER_AREA, DIRTY_BIT_FLIP_XY, DIRTY_BIT_MISC})
+                         DIRTY_BIT_RENDER_AREA, DIRTY_BIT_FLIP_XY, DIRTY_BIT_MISC,
+                         DIRTY_BIT_BASE_INSTANCE})
     {
         std::fill(mUniformData.depthRange.begin(), mUniformData.depthRange.end(), 0.0f);
         mUniformData.renderArea = 0;
         mUniformData.flipXY     = 0;
         mUniformData.uint32Misc = 0;
+        mUniformData.baseInstance = 0;
         std::fill(mUniformData.acbBufferOffsets.begin(), mUniformData.acbBufferOffsets.end(), 0);
 
         if (renderer->getFeatures().emulateTransformFeedback.enabled)
@@ -209,6 +211,17 @@ class GraphicsDriverUniforms
         mDirtyBits.set(DIRTY_BIT_ATOMIC_COUNTER_BUFFER);
     }
 
+    bool updateBaseInstance(int32_t baseInstance)
+    {
+        if (mUniformData.baseInstance != baseInstance)
+        {
+            mUniformData.baseInstance = baseInstance;
+            mDirtyBits.set(DIRTY_BIT_BASE_INSTANCE);
+            return true;
+        }
+        return false;
+    }
+
     void updateAdvancedBlendEquation(uint32_t advancedBlendEquation)
     {
         SetBitField(mUniformData.misc.advancedBlendEquation, advancedBlendEquation);
@@ -277,6 +290,7 @@ class GraphicsDriverUniforms
         DIRTY_BIT_RENDER_AREA,
         DIRTY_BIT_FLIP_XY,
         DIRTY_BIT_MISC,
+        DIRTY_BIT_BASE_INSTANCE,
         DIRTY_BIT_ATOMIC_COUNTER_BUFFER,
         DIRTY_BIT_EMULATED_TRANSFORM_FEEDBACK,
 
@@ -341,7 +355,9 @@ class GraphicsDriverUniforms
             } misc;
             uint32_t uint32Misc;
         };
-        int32_t padding;
+
+        // Used to implement gl_InstanceID (which is gl_InstanceIndex - baseInstance)
+        int32_t baseInstance;
 
         // Contain packed 8-bit values for atomic counter buffer offsets.  These offsets are within
         // Vulkan's minStorageBufferOffsetAlignment limit and are used to support unaligned offsets
@@ -372,6 +388,7 @@ class GraphicsDriverUniforms
         offsetof(struct UniformData, renderArea),
         offsetof(struct UniformData, flipXY),
         offsetof(struct UniformData, misc),
+        offsetof(struct UniformData, baseInstance),
         offsetof(struct UniformData, acbBufferOffsets),
         offsetof(struct UniformData, xfbBufferOffsets),
         sizeof(struct UniformData)};

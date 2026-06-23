@@ -183,8 +183,18 @@ angle::Result MemoryObjectVk::createImage(
     // The format of the image is dictated by |internalFormat|, we can't fall back to a renderable
     // format if any, because the image must match the external one.
     const vk::Format &vkFormat     = renderer->getFormat(internalFormat);
+    const angle::FormatID intendedFormatID = vkFormat.getIntendedFormatID();
     angle::FormatID actualFormatID =
         vkFormat.getActualImageFormatID(vk::ImageFormatSupport::SampleOnly);
+
+    // Although no error has been observed from using BGR565 when using an RGB565 memory object, it
+    // is switched similar to other external objects.
+    if (renderer->getFeatures().preferBGR565ToRGB565.enabled &&
+        intendedFormatID == angle::FormatID::R5G6B5_UNORM &&
+        actualFormatID == angle::FormatID::B5G6R5_UNORM)
+    {
+        actualFormatID = angle::FormatID::R5G6B5_UNORM;
+    }
 
     VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo = {};
     externalMemoryImageCreateInfo.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
@@ -202,11 +212,11 @@ angle::Result MemoryObjectVk::createImage(
     // VkExternalMemoryImageCreateInfo.
     bool hasProtectedContent = mProtectedMemory;
     ANGLE_TRY(image->initExternal(
-        contextVk, type, vkExtents, vkFormat.getIntendedFormatID(), actualFormatID, 1, usageFlags,
-        createFlags, vk::ImageAccess::ExternalPreInitialized, &externalMemoryImageCreateInfo,
-        gl::LevelIndex(0), static_cast<uint32_t>(levels), layerCount,
-        contextVk->isRobustResourceInitEnabled(), hasProtectedContent, vk::TileMemory::Prohibited,
-        vk::YcbcrConversionDesc{}, nullptr, formatReinterpretability));
+        contextVk, type, vkExtents, intendedFormatID, actualFormatID, 1, usageFlags, createFlags,
+        vk::ImageAccess::ExternalPreInitialized, &externalMemoryImageCreateInfo, gl::LevelIndex(0),
+        static_cast<uint32_t>(levels), layerCount, contextVk->isRobustResourceInitEnabled(),
+        hasProtectedContent, vk::TileMemory::Prohibited, vk::YcbcrConversionDesc{}, nullptr,
+        formatReinterpretability));
 
     VkMemoryRequirements externalMemoryRequirements;
     image->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);
@@ -231,6 +241,7 @@ angle::Result MemoryObjectVk::createImage(
             importMemoryFdInfo.handleType = ToVulkanHandleType(mHandleType);
             importMemoryFdInfo.fd         = dup(mFd);
             importMemoryInfo              = &importMemoryFdInfo;
+            ANGLE_VK_CHECK(contextVk, importMemoryFdInfo.fd >= 0, VK_ERROR_OUT_OF_HOST_MEMORY);
             break;
         case gl::HandleType::ZirconVmo:
             ASSERT(mZirconHandle != ZX_HANDLE_INVALID);
@@ -246,16 +257,13 @@ angle::Result MemoryObjectVk::createImage(
             UNREACHABLE();
     }
 
-    // TODO(jmadill, spang): Memory sub-allocation. http://anglebug.com/40096464
     ASSERT(offset == 0);
     ASSERT(externalMemoryRequirements.size == mSize);
 
     VkMemoryPropertyFlags flags = hasProtectedContent ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0;
-    ANGLE_TRY(image->initExternalMemory(contextVk, renderer->getMemoryProperties(),
-                                        externalMemoryRequirements, 1, &importMemoryInfo,
-                                        contextVk->getDeviceQueueIndex(), flags));
-
-    return angle::Result::Continue;
+    return image->initExternalMemory(contextVk, renderer->getMemoryProperties(),
+                                     externalMemoryRequirements, 1, &importMemoryInfo,
+                                     contextVk->getDeviceQueueIndex(), flags);
 }
 
 }  // namespace rx
