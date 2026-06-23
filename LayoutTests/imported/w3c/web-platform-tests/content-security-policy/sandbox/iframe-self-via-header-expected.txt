@@ -1,0 +1,4 @@
+
+
+PASS Expecting logs: ["PASS script-src self sandboxed iframe (header-delivered)"]
+
