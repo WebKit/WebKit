@@ -57,18 +57,27 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".get()"_s);
 
     Ref storage = storageForType(dataType);
-    storage->getValuesForKeys(keys, [callingAPIName, completionHandler = WTF::move(completionHandler)](HashMap<String, String> values, const String& errorMessage) mutable {
+    storage->getValuesForKeys(keys, [callingAPIName, dataType, completionHandler = WTF::move(completionHandler)](HashMap<String, String> values, const String& errorMessage) mutable {
         if (!errorMessage.isEmpty())
             completionHandler(toWebExtensionError(callingAPIName, nullString(), errorMessage));
         else {
             Ref jsonObject = JSON::Object::create();
-            for (auto entry : values)
+            for (auto& entry : values)
                 jsonObject->setString(entry.key, entry.value);
 
+            size_t size = 0;
             Vector<String> serializedJSONStrings;
             serializeToMultipleJSONStrings(jsonObject, [&](String&& jsonChunk) {
+                size += jsonChunk.sizeInBytes();
                 serializedJSONStrings.append(WTF::move(jsonChunk));
             });
+
+            if (size > webExtensionStorageAreaMaximumBytesPerCall) {
+                ASSERT_UNUSED(dataType, dataType == WebExtensionDataType::Local);
+                completionHandler(toWebExtensionError(callingAPIName, nullString(), "it exceeded maximum data size allowed per call"_s));
+                return;
+            }
+
             completionHandler(serializedJSONStrings);
         }
     });
