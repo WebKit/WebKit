@@ -66,14 +66,19 @@ static bool NODELETE spansFlexMaxTrackSizingFunction(WTF::Range<size_t> spannedT
 
 // https://www.w3.org/TR/css-grid-2/#specified-size-suggestion
 // If the item's preferred size in the relevant axis is definite, then the specified size suggestion is that size. It is otherwise undefined.
-static std::optional<LayoutUnit> inlineSpecifiedSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, LayoutUnit containingBlockSize)
+static std::optional<LayoutUnit> inlineSpecifiedSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, std::optional<LayoutUnit> containingBlockSize)
 {
     auto& preferredSize = gridItem.inlineAxisSizes().preferredSize;
-    if (preferredSize.isFixed() || preferredSize.isPercent() || preferredSize.isCalculated())
-        return Style::evaluate<LayoutUnit>(preferredSize, containingBlockSize, gridItem.usedZoom()) + borderAndPadding;
-    if (preferredSize.isAuto())
+    if (auto fixed = preferredSize.tryFixed())
+        return Style::evaluate<LayoutUnit>(*fixed, gridItem.usedZoom()) + borderAndPadding;
+    if (preferredSize.isPercentOrCalculated()) {
+        if (!containingBlockSize)
+            return { };
+        return Style::evaluate<LayoutUnit>(preferredSize, *containingBlockSize, gridItem.usedZoom()) + borderAndPadding;
+    }
+    if (preferredSize.isAuto() || preferredSize.isMinContent() || preferredSize.isMaxContent() || preferredSize.isFitContent() || preferredSize.isStretch() || preferredSize.isIntrinsicKeyword() || preferredSize.isMinIntrinsic())
         return { };
-    ASSERT_NOT_IMPLEMENTED_YET();
+    ASSERT_NOT_REACHED();
     return { };
 }
 
@@ -91,14 +96,19 @@ static LayoutUnit inlineContentSizeSuggestion(const PlacedGridItem& gridItem, co
 
 // https://www.w3.org/TR/css-grid-2/#specified-size-suggestion
 // If the item's preferred size in the relevant axis is definite, then the specified size suggestion is that size. It is otherwise undefined.
-static std::optional<LayoutUnit> blockSpecifiedSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, LayoutUnit containingBlockSize)
+static std::optional<LayoutUnit> blockSpecifiedSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, std::optional<LayoutUnit> containingBlockSize)
 {
     auto& preferredSize = gridItem.blockAxisSizes().preferredSize;
-    if (preferredSize.isFixed() || preferredSize.isPercent() || preferredSize.isCalculated())
-        return Style::evaluate<LayoutUnit>(preferredSize, containingBlockSize, gridItem.usedZoom()) + borderAndPadding;
-    if (preferredSize.isAuto())
+    if (auto fixed = preferredSize.tryFixed())
+        return Style::evaluate<LayoutUnit>(*fixed, gridItem.usedZoom()) + borderAndPadding;
+    if (preferredSize.isPercentOrCalculated()) {
+        if (!containingBlockSize)
+            return { };
+        return Style::evaluate<LayoutUnit>(preferredSize, *containingBlockSize, gridItem.usedZoom()) + borderAndPadding;
+    }
+    if (preferredSize.isAuto() || preferredSize.isMinContent() || preferredSize.isMaxContent() || preferredSize.isFitContent() || preferredSize.isStretch() || preferredSize.isIntrinsicKeyword() || preferredSize.isMinIntrinsic())
         return { };
-    ASSERT_NOT_IMPLEMENTED_YET();
+    ASSERT_NOT_REACHED();
     return { };
 }
 
