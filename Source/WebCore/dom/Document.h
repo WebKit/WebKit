@@ -1985,7 +1985,7 @@ public:
     LazyLoadModelObserver& lazyLoadModelObserver();
 #endif
 #if ENABLE(VIDEO)
-    LazyLoadVideoObserver& lazyLoadVideoObserver();
+    LazyLoadVideoObserver& lazyLoadVideoObserver() LIFETIME_BOUND;
 #endif
 
     ContentVisibilityDocumentState& contentVisibilityDocumentState();

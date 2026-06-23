@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "IntersectionObserver.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -37,8 +38,9 @@ class Document;
 class HTMLVideoElement;
 class IntersectionObserver;
 
-class LazyLoadVideoObserver {
+class LazyLoadVideoObserver : public CanMakeCheckedPtr<LazyLoadVideoObserver> {
     WTF_MAKE_TZONE_ALLOCATED(LazyLoadVideoObserver);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LazyLoadVideoObserver);
 public:
     LazyLoadVideoObserver();
     ~LazyLoadVideoObserver();
@@ -46,6 +48,7 @@ public:
     static void observe(HTMLVideoElement&);
     static void unobserve(HTMLVideoElement&, Document&);
 
+    void disconnect();
     bool isObserved(HTMLVideoElement&) const;
 
 private:
