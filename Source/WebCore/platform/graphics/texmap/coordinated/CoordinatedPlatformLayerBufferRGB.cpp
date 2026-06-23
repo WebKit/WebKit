@@ -99,6 +99,18 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferRGB::skiaImage()
 }
 #endif
 
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferRGB::copyBuffer(OptionSet<TextureMapperFlags> flags) const
+{
+    auto textureID = this->textureID();
+    if (!textureID)
+        return nullptr;
+
+    auto size = this->size();
+    auto texture = BitmapTexture::create(size);
+    texture->copyFromExternalTexture(textureID, { IntPoint::zero(), size }, { });
+    return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), flags, nullptr);
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

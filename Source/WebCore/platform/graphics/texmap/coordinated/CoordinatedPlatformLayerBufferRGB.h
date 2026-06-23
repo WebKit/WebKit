@@ -42,6 +42,8 @@ public:
 
     unsigned textureID() const { return m_textureID; }
 
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer(OptionSet<TextureMapperFlags>) const;
+
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 

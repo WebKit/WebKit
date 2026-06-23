@@ -4134,9 +4134,8 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     }
 
 #if USE(COORDINATED_GRAPHICS)
-    auto shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux ? CoordinatedPlatformLayerBufferProxy::ShouldWait::Yes : CoordinatedPlatformLayerBufferProxy::ShouldWait::No;
-    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample %s", shouldWait == CoordinatedPlatformLayerBufferProxy::ShouldWait::Yes ? "synchronously" : "");
-    m_contentsBufferProxy->dropCurrentBufferWhilePreservingTexture(shouldWait);
+    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample");
+    m_contentsBufferProxy->dropCurrentBufferWhilePreservingTexture();
 #endif
 }
 #endif

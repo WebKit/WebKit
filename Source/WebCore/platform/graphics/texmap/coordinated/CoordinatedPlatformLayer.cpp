@@ -537,8 +537,11 @@ void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
 #if USE(SKIA)
     if (m_skiaTarget) {
         if (auto* buffer = m_skiaTarget->contentsBuffer()) {
-            if (is<CoordinatedPlatformLayerBufferVideo>(*buffer))
-                m_contentsBuffer.pending = downcast<CoordinatedPlatformLayerBufferVideo>(*buffer).copyBuffer();
+            if (is<CoordinatedPlatformLayerBufferVideo>(*buffer)) {
+                auto& videoBuffer = downcast<CoordinatedPlatformLayerBufferVideo>(*buffer);
+                m_contentsBuffer.pending = videoBuffer.copyBuffer();
+                videoBuffer.clearVideoFrame();
+            }
             m_skiaTarget->setContentsBuffer(WTF::move(m_contentsBuffer.pending));
         }
         return;
