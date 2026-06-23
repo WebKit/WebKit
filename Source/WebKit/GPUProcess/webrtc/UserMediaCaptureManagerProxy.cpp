@@ -140,6 +140,11 @@ public:
 
     void start()
     {
+        // A compromised WebContent process may send StartProducingData repeatedly. Once we are
+        // observing, prepareAudioDescription() would race the capture thread's audioSamplesAvailable().
+        if (m_isObservingMedia)
+            return;
+
         m_shouldReset = true;
         m_isStopped = false;
         m_source->start();
