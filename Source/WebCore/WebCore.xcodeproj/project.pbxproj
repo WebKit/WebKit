@@ -2887,6 +2887,7 @@
 		71FCB17027BAB3FE00E0631C /* FrameRateAligner.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FCB16D27BAB3DF00E0631C /* FrameRateAligner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72144333223EC8B000F12FF7 /* SVGProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EE5363223B2A2400FBA944 /* SVGProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72144334223EC91600F12FF7 /* SVGPropertyOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EE5360223B2A2100FBA944 /* SVGPropertyOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		721B02F72FBE907300688E0A /* ImageDecoderFactoryAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B02F52FBE7E7700688E0A /* ImageDecoderFactoryAVF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3E9629679E38004F5FF6 /* InnerSpinButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3E9529679E38004F5FF6 /* InnerSpinButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3ECF29680811004F5FF6 /* ColorWellPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3ECE29680811004F5FF6 /* ColorWellPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3EF52968F47D004F5FF6 /* MenuListButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3EF42968F47D004F5FF6 /* MenuListButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13940,6 +13941,8 @@
 		721443452240C8BA00F12FF7 /* SVGAnimatedValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedValueProperty.h; sourceTree = "<group>"; };
 		721443462240CAD200F12FF7 /* SVGValueProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGValueProperty.h; sourceTree = "<group>"; };
 		7214B9B7274458FA003BE6DF /* FilterEffectVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectVector.h; sourceTree = "<group>"; };
+		721B02F52FBE7E7700688E0A /* ImageDecoderFactoryAVF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDecoderFactoryAVF.h; sourceTree = "<group>"; };
+		721B02F62FBE7E7700688E0A /* ImageDecoderFactoryAVF.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDecoderFactoryAVF.cpp; sourceTree = "<group>"; };
 		721B3E9329679E02004F5FF6 /* InnerSpinButtonMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InnerSpinButtonMac.h; sourceTree = "<group>"; };
 		721B3E9429679E02004F5FF6 /* InnerSpinButtonMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InnerSpinButtonMac.mm; sourceTree = "<group>"; };
 		721B3E9529679E38004F5FF6 /* InnerSpinButtonPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InnerSpinButtonPart.h; sourceTree = "<group>"; };
@@ -23620,6 +23623,8 @@
 				A1C7D7C12AB7AD010055AD62 /* ContentKeyGroupDataSource.h */,
 				CDD8D311271F2C8D00DAA256 /* FormatDescriptionUtilities.cpp */,
 				CDD8D310271F2C8D00DAA256 /* FormatDescriptionUtilities.h */,
+				721B02F62FBE7E7700688E0A /* ImageDecoderFactoryAVF.cpp */,
+				721B02F52FBE7E7700688E0A /* ImageDecoderFactoryAVF.h */,
 				07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */,
 				07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */,
 				07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */,
@@ -44515,6 +44520,7 @@
 				CD19FEA81F573972000C42FB /* ImageDecoder.h in Headers */,
 				CD19FEAE1F574B6D000C42FB /* ImageDecoderAVFObjC.h in Headers */,
 				555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */,
+				721B02F72FBE907300688E0A /* ImageDecoderFactoryAVF.h in Headers */,
 				1D47658E25CCA778007AF312 /* ImageDecoderIdentifier.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */,
@@ -46178,7 +46184,6 @@
 				95F45D27264DFBF100D0B8B8 /* PageColorSampler.h in Headers */,
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
 				A5B81CC21FAA44BC0037D1E6 /* PageConsoleAgent.h in Headers */,
-				A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */,
 				A5F36D3B18F758720054C024 /* PageDebugger.h in Headers */,
 				A5B81CC31FAA44BC0037D1E6 /* PageDebuggerAgent.h in Headers */,
 				91E0DDC1230B41E50019E1E3 /* PageDOMDebuggerAgent.h in Headers */,

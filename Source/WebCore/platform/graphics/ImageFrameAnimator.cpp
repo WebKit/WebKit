@@ -29,6 +29,7 @@
 #include "BitmapImageSource.h"
 #include "Logging.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

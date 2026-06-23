@@ -25,6 +25,7 @@
 #include "ColorComponents.h"
 #include "ColorTypes.h"
 #include "FilterEffectApplier.h"
+#include "IntRect.h"
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/TZoneMalloc.h>

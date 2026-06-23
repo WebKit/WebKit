@@ -361,6 +361,7 @@ platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @nonARC @no-unify
 platform/graphics/avfoundation/AudioVideoRendererAVFObjC.mm @nonARC
 platform/graphics/avfoundation/FormatDescriptionUtilities.cpp
 platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.cpp
+platform/graphics/avfoundation/ImageDecoderFactoryAVF.cpp
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/LegacyCDMPrivateAVFObjC.mm @nonARC

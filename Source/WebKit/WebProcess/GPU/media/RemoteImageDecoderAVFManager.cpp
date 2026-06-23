@@ -34,6 +34,7 @@
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #include "SharedBufferReference.h"
 #include "WebProcess.h"
+#include <WebCore/ImageDecoderFactoryAVF.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -104,12 +105,11 @@ GPUProcessConnection& RemoteImageDecoderAVFManager::ensureGPUProcessConnection()
 void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)
 {
     if (!useGPUProcess) {
-        ImageDecoder::resetFactories();
+        ImageDecoderFactoryAVF::singleton().reset();
         return;
     }
 
-    ImageDecoder::clearFactories();
-    ImageDecoder::installFactory({
+    ImageDecoderFactoryAVF::singleton().set({
         RemoteImageDecoderAVF::supportsMediaType,
         RemoteImageDecoderAVF::canDecodeType,
         [weakThis = ThreadSafeWeakPtr { *this }](FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption) {
