@@ -1401,13 +1401,9 @@ http/tests/webgpu/webgpu/api/operation/adapter/info.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/rendering/basic.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/storage_texture/read_only.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/texture_view/write.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/createBindGroup.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/image_copy/layout_related.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/render_pipeline/depth_stencil_state.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/render_pipeline/misc.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSampledTexturesPerShaderStage.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxSamplersPerShaderStage.html [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/textureSampleBaseClampToEdge.html [ Skip ]
 
 http/tests/webgpu/webgpu/shader/execution/limits.html [ Skip ]
@@ -1455,7 +1451,6 @@ http/tests/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.html
 http/tests/webgpu/webgpu/shader/validation/parse/literal.html  [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/types/struct.html  [ Skip ]
 [ Debug ]  http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/image_copy/buffer_texture_copies.html [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_matrix_multiplication.html [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/faceForward.html [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fwidth.html [ Skip ]
@@ -1475,7 +1470,6 @@ http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fwidthFine.htm
 # skipped due to debug crashes - https://bugs.webkit.org/show_bug.cgi?id=274972
 http/tests/webgpu/webgpu/api/validation/render_pass/render_pass_descriptor.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/canvas/getCurrentTexture.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/createBindGroupLayout.html [ Skip ]
 
 # skipped debug due to https://bugs.webkit.org/show_bug.cgi?id=273961
 [ Release ] http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Pass ]
