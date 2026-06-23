@@ -1490,7 +1490,7 @@ static UIWindowScene *windowScene()
 
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(WKFrameInfo *)frame
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [[self window] makeKeyWindow];
     [[self textInputContentView] becomeFirstResponder];
     [self waitForNextPresentationUpdate];

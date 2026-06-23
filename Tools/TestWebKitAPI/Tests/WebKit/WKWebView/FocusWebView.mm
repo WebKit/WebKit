@@ -393,7 +393,7 @@ TEST(FocusWebView, NoFocusEventsForBackgroundWindow)
     [[webView window] resignKeyWindow];
     [webView objectByEvaluatingJavaScript:@"input.focus()"];
     [[webView window] makeKeyWindow];
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     // iOS requires that the window manually be made first responder to be focused.
     [webView becomeFirstResponder];
 #endif

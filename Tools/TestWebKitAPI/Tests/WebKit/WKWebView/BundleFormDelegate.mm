@@ -91,7 +91,7 @@ TEST(WebKit, WKWebProcessPlugInWithoutRegisteredCustomClass)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleFormDelegateProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [webView focusInWindow];
     [webView waitForNextPresentationUpdate];
 #endif
@@ -125,7 +125,7 @@ TEST(WebKit, WKWebProcessPlugInWithRegisteredCustomClass)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleFormDelegateProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [webView focusInWindow];
     [webView waitForNextPresentationUpdate];
 #endif
@@ -157,7 +157,7 @@ TEST(WebKit, WKWebProcessPlugInWithUnregisteredCustomClass)
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleFormDelegateProtocol)];
     [[webView _remoteObjectRegistry] registerExportedObject:object.get() interface:interface];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
     [webView focusInWindow];
     [webView waitForNextPresentationUpdate];
 #endif
