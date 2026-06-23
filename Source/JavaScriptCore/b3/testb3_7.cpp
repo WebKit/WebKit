@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "testb3.h"
+#include "B3BackwardsDominators.h"
 #include <wtf/WasmSIMD128.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -1676,6 +1677,70 @@ void testInfiniteLoopDoesntCauseBadHoisting()
     auto code = compileProc(proc);
     RELEASE_ASSERT(!proc.calleeSaveRegisterAtOffsetList().registerCount());
     invoke<void>(*code, static_cast<intptr_t>(55)); // Shouldn't crash dereferncing 55.
+}
+
+void testBackwardsDominatorsWithMultipleBackEdges()
+{
+    // A loop whose header has two latches (back-edge sources), where only one
+    // of them also exits the loop:
+    //
+    //   root    --> header
+    //   header  --> success | failure          (branch)
+    //   success --> header (back edge) | exit   (branch)   // latch that can exit
+    //   failure --> header (back edge)                     // latch with no exit
+    //   exit    --> Return                                 // the only terminal
+    //
+    // `success` and `failure` are both back-edge sources. The `failure` latch
+    // has no exit of its own, so control that keeps taking it loops forever.
+    // BackwardsGraph treats that as a form of terminality: it computes
+    // post-dominators by reversing the CFG and giving the synthetic reverse
+    // root a successor for every terminal and every back-edge source.
+    //
+    // The property B3 LICM (and the control-equivalence consumers) rely on is
+    // the post-dominator relation: `success` must NOT post-dominate the header
+    // or the loop entry, because control can stay in the loop forever via the
+    // exit-less `failure` latch without ever reaching `success`. If `failure`
+    // is missing from the reverse root's successors, the header is reachable in
+    // the reverse CFG only through `success`, so `success` falsely
+    // post-dominates the header (and `root`) -- the false relationship that
+    // would let LICM hoist a control-dependent read out of the loop.
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* success = proc.addBlock();
+    BasicBlock* failure = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
+    Value* arg = arguments[0];
+
+    root->appendNewControlValue(proc, Jump, Origin(), header);
+    header->appendNewControlValue(
+        proc, Branch, Origin(),
+        header->appendNew<Value>(proc, Equal, Origin(), arg,
+            header->appendNew<ConstPtrValue>(proc, Origin(), 10)),
+        success, failure);
+    success->appendNewControlValue(
+        proc, Branch, Origin(),
+        success->appendNew<Value>(proc, Equal, Origin(), arg,
+            success->appendNew<ConstPtrValue>(proc, Origin(), 20)),
+        header, exit);
+    failure->appendNewControlValue(proc, Jump, Origin(), header);
+    exit->appendNewControlValue(proc, Return, Origin());
+
+    proc.resetReachability();
+
+    BackwardsDominators& backwardsDominators = proc.backwardsDominators();
+
+    // Sanity: `header` genuinely post-dominates the entry (root's only successor
+    // is header), so the checks below are not vacuously true.
+    CHECK(backwardsDominators.dominates(header, root));
+
+    // The actual property: `success` must not post-dominate the header or the
+    // loop entry, because the exit-less `failure` latch is an escape that
+    // bypasses `success`. A dropped `failure` back-edge source makes both of
+    // these falsely true.
+    CHECK(!backwardsDominators.dominates(success, header));
+    CHECK(!backwardsDominators.dominates(success, root));
 }
 
 static void testSimpleTuplePair(unsigned first, int64_t second)
