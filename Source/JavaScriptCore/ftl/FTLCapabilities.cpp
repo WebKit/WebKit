@@ -538,6 +538,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
         break;
 
     case DFG::Identity:
+    case DFG::DebugProbe:
         // No backend handles this because it will be optimized out. But we may check
         // for capabilities before optimization. It would be a deep error to remove this
         // case because it would prevent us from catching bugs where the FTL backend

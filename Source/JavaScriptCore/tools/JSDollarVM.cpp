@@ -54,6 +54,7 @@
 #include "JSString.h"
 #include "LinkBuffer.h"
 #include "NativeCallee.h"
+#include "ObjectConstructor.h"
 #include "OperationResult.h"
 #include "Options.h"
 #include "Parser.h"
@@ -2116,6 +2117,7 @@ static NO_RETURN_DUE_TO_CRASH JSC_DECLARE_HOST_FUNCTION(functionCrash);
 static JSC_DECLARE_HOST_FUNCTION(functionBreakpoint);
 static JSC_DECLARE_HOST_FUNCTION(functionExit);
 static JSC_DECLARE_HOST_FUNCTION(functionDFGTrue);
+static JSC_DECLARE_HOST_FUNCTION(functionProbe);
 static JSC_DECLARE_HOST_FUNCTION(functionFTLTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionOMGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuMfence);
@@ -2255,6 +2257,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpLineBreakData);
 static JSC_DECLARE_HOST_FUNCTION(functionWeakCreate);
+static JSC_DECLARE_HOST_FUNCTION(functionIROFactDump);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -2331,6 +2334,19 @@ JSC_DEFINE_HOST_FUNCTION(functionDFGTrue, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
     return JSValue::encode(jsBoolean(false));
+}
+
+// Identity-like marker for IRO tests. In LLInt/baseline this just returns
+// the second argument; in DFG/FTL the bytecode parser swaps the call for a
+// DebugProbe DFG node carrying the constant string id so tests can pin a
+// specific DFG node by id.
+// Usage: $vm.probe(id, x)
+JSC_DEFINE_HOST_FUNCTION(functionProbe, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    if (callFrame->argumentCount() < 2)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(callFrame->uncheckedArgument(1));
 }
 
 // Returns true if the current frame is a FTL frame.
@@ -4395,6 +4411,55 @@ JSC_DEFINE_HOST_FUNCTION(functionWeakCreate, (JSGlobalObject* globalObject, Call
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionIROFactDump, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    RELEASE_ASSERT(!Options::useConcurrentJIT(), "$vm.iroFactDump requires --useConcurrentJIT=0");
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSFunction* fn = dynamicDowncast<JSFunction>(callFrame->argument(0));
+    if (!fn)
+        return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
+    CodeBlock* codeBlock = fn->jsExecutable()->codeBlockForCall();
+    if (!codeBlock)
+        return JSValue::encode(jsEmptyString(vm));
+    // The IRO dump is keyed under the top-tier CodeBlock; codeBlockForCall
+    // returns baseline, so walk replacement() up to FTL.
+    while (codeBlock && codeBlock->jitType() != JITType::FTLJIT) {
+        CodeBlock* next = codeBlock->replacement();
+        if (next == codeBlock || !next)
+            break;
+        codeBlock = next;
+    }
+    if (!codeBlock)
+        return JSValue::encode(jsEmptyString(vm));
+    if (codeBlock->jitType() != JITType::FTLJIT)
+        return throwVMTypeError(globalObject, scope, "Function has not been FTL-compiled"_s);
+
+    String dump = VMInspector::getIROFactDump(codeBlock);
+    if (dump.isEmpty())
+        return JSValue::encode(jsEmptyString(vm));
+
+    // This is stored as json to avoid allocating js cells on the compiler thread.
+    JSValue parsed = JSONParse(globalObject, dump);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!parsed.isObject())
+        return JSValue::encode(jsEmptyString(vm));
+    JSObject* root = asObject(parsed);
+
+    JSArray* eliminations = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+    for (auto& [op, on] : VMInspector::iroProbeEliminations(codeBlock)) {
+        JSObject* entry = constructEmptyObject(globalObject);
+        entry->putDirect(vm, Identifier::fromString(vm, "op"_s), jsString(vm, op));
+        entry->putDirect(vm, Identifier::fromString(vm, "on"_s), jsString(vm, on));
+        eliminations->push(globalObject, entry);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    root->putDirect(vm, Identifier::fromString(vm, "eliminations"_s), eliminations);
+    return JSValue::encode(root);
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4609,6 +4674,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, alwaysAllow, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
     addFunction(vm, alwaysAllow, "dumpLineBreakData"_s, functionDumpLineBreakData, 0);
     addFunction(vm, alwaysAllow, "weakCreate"_s, functionWeakCreate, 0);
+    addFunction(vm, alwaysAllow, "iroFactDump"_s, functionIROFactDump, 1);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "probe"_s), 2, functionProbe, ImplementationVisibility::Public, DebugProbeIntrinsic, jsDollarVMPropertyAttributes);
 
     if (allowIfNotFuzz)
         m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));

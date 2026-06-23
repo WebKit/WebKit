@@ -428,6 +428,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // Ideally, the dependencies should be explicit. See https://bugs.webkit.org/show_bug.cgi?id=157534.
         RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performIntegerRangeOptimization);
+        RUN_PHASE(performDebugProbeElimination);
         
         RUN_PHASE(performCleanUp);
         RUN_PHASE(performIntegerCheckCombining);

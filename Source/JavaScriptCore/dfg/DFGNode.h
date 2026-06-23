@@ -1618,6 +1618,17 @@ public:
         return op() == GetInternalField || op() == PutInternalField;
     }
 
+    bool hasDebugProbeId() const
+    {
+        return op() == DebugProbe;
+    }
+
+    FrozenValue* debugProbeId() const
+    {
+        ASSERT(hasDebugProbeId());
+        return m_opInfo.as<FrozenValue*>();
+    }
+
     unsigned internalFieldIndex()
     {
         ASSERT(hasInternalFieldIndex());

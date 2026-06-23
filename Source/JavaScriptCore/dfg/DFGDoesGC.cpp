@@ -61,6 +61,7 @@ bool doesGC(Graph& graph, Node* node)
     case LazyJSConstant:
     case Identity:
     case IdentityWithProfile:
+    case DebugProbe:
     case GetCallee:
     case SetCallee:
     case GetArgumentCountIncludingThis:

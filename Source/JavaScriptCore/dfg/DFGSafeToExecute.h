@@ -196,6 +196,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case LazyJSConstant:
     case Identity:
     case IdentityWithProfile:
+    case DebugProbe:
     case GetCallee:
     case GetArgumentCountIncludingThis:
     case GetLocal:

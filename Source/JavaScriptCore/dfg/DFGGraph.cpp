@@ -1894,6 +1894,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
         switch (node->op()) {
         case BooleanToNumber:
         case Identity:
+        case DebugProbe:
         case ValueRep:
         case DoubleRep:
         case Int52Rep:

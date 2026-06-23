@@ -35,6 +35,9 @@
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include "VMInspector.h"
+#include <wtf/JSONValues.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {
 
@@ -1293,13 +1296,14 @@ public:
         }
         
         // Now we transform the code based on the results computed in the previous loop.
+        dumpFactsHeader();
         changed = false;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_relationships = m_relationshipsAtHead[block];
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Transformation: at ", node, ": ", listDump(sortedRelationships()));
-                
+
                 // This ends up being pretty awkward to write because we need to decide if we
                 // optimize by using the relationships before the operation, but we need to
                 // call executeNode() before we optimize.
@@ -1491,6 +1495,7 @@ public:
                             if (node->op() == CheckInBounds)
                                 m_insertionSet.insertNode(nodeIndex, SpecNone, AssertInBounds, node->origin, node->child1(), node->child2());
                         }
+                        recordProbeTransform(node->child1().node(), "CheckInBounds"_s);
                         // We just need to make sure we are a value-producing node.
                         node->convertToIdentityOn(node->child1().node());
                         changed = true;
@@ -1524,15 +1529,171 @@ public:
                 default:
                     break;
                 }
-                
+
                 executeNode(block->at(nodeIndex));
+                dumpNodeFacts(node);
             }
         }
-        
+        commitFactDump();
+
         return changed;
     }
 
 private:
+    // Helpers $vm.iroFactDump (see JSTests/stress/resources/iro-test-helpers.js).
+    static Ref<JSON::Value> rangeJSON(std::optional<std::tuple<int32_t, int32_t>> range)
+    {
+        if (!range)
+            return JSON::Value::null();
+        auto [lo, hi] = *range;
+        auto arr = JSON::Array::create();
+        arr->pushInteger(lo);
+        arr->pushInteger(hi);
+        return arr;
+    }
+
+    static ASCIILiteral relationKindName(Relationship::Kind kind)
+    {
+        switch (kind) {
+        case Relationship::LessThan:    return "<"_s;
+        case Relationship::GreaterThan: return ">"_s;
+        case Relationship::Equal:       return "=="_s;
+        case Relationship::NotEqual:    return "!="_s;
+        }
+        return "?"_s;
+    }
+
+    void dumpFactsHeader()
+    {
+        if (!Options::useTestingHelpers()) [[likely]]
+            return;
+        m_factProbes = JSON::Array::create();
+        m_probeIds.clear();
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                if (node->op() != DebugProbe)
+                    continue;
+                String id = probeIdOf(node);
+                if (id.isNull())
+                    continue;
+                m_probeIds.add(node, id);
+                if (node->child1())
+                    m_probeIds.add(node->child1().node(), id);
+            }
+        }
+    }
+
+    // Record that IRO applied a transform, if operand is a probe.
+    void recordProbeTransform(Node* operand, ASCIILiteral op)
+    {
+        if (!m_factProbes) [[likely]]
+            return;
+        auto it = m_probeIds.find(operand);
+        if (it == m_probeIds.end())
+            return;
+        VMInspector::addIROProbeElimination(m_graph.m_codeBlock, op, it->value);
+    }
+
+    void commitFactDump()
+    {
+        if (!m_factProbes) [[likely]]
+            return;
+        auto factRoot = JSON::Object::create();
+        factRoot->setArray("probes"_s, m_factProbes.releaseNonNull());
+        StringPrintStream graphStream;
+        m_graph.dump(graphStream);
+        factRoot->setString("graph"_s, graphStream.toString());
+
+        VMInspector::storeIROFactDump(m_graph.m_codeBlock, factRoot->toJSONString());
+    }
+
+    static String probeIdOf(Node* n)
+    {
+        if (!n || n->op() != DebugProbe)
+            return String();
+        FrozenValue* frozen = n->debugProbeId();
+        JSValue value = frozen->value();
+        if (!value || !value.isString())
+            return String();
+        return String(asString(value)->tryGetValue().data);
+    }
+
+    // The probe id naming this relationship side, or null if it isn't a probe.
+    String probeIdForSide(NodeFlowProjection proj)
+    {
+        if (!proj || !proj.node() || proj.kind() != NodeFlowProjection::Primary)
+            return String();
+        auto it = m_probeIds.find(proj.node());
+        return it != m_probeIds.end() ? it->value : String();
+    }
+
+    bool writeSide(JSON::Object& obj, ASCIILiteral key, NodeFlowProjection proj)
+    {
+        if (!proj || !proj.node() || proj.kind() != NodeFlowProjection::Primary)
+            return false;
+        Node* n = proj.node();
+        if (auto it = m_probeIds.find(n); it != m_probeIds.end())
+            obj.setString(key, it->value);
+        else if (n->isInt32Constant())
+            obj.setInteger(key, n->asInt32());
+        else
+            return false;
+        return true;
+    }
+
+    void dumpNodeFacts(Node* node)
+    {
+        if (!Options::useTestingHelpers()) [[likely]]
+            return;
+        if (!m_factProbes || node->op() != DebugProbe)
+            return;
+        String selfId = probeIdOf(node);
+        if (selfId.isNull())
+            return;
+
+        auto entry = JSON::Object::create();
+        entry->setString("id"_s, selfId);
+        entry->setValue("range"_s, rangeJSON(rangeFor(node)));
+
+        auto lineRanges = JSON::Array::create();
+        HashSet<Node*> seen;
+        for (auto& relEntry : m_relationships) {
+            Node* otherNode = relEntry.key.node();
+            if (!seen.add(otherNode).isNewEntry)
+                continue;
+            String otherId = probeIdOf(otherNode);
+            if (otherId.isNull())
+                continue;
+            auto pair = JSON::Object::create();
+            pair->setString("id"_s, otherId);
+            pair->setValue("range"_s, rangeJSON(rangeFor(otherNode)));
+            lineRanges->pushObject(WTF::move(pair));
+        }
+        entry->setArray("lineRanges"_s, WTF::move(lineRanges));
+
+        auto rels = JSON::Array::create();
+        for (auto& stored : sortedRelationships()) {
+            if (!stored)
+                continue;
+            // IRO stores each relationship in both orientations; pick the one
+            // with the anchor on the left.
+            Relationship rel = probeIdForSide(stored.right()) == selfId
+                ? stored.flipped() : stored;
+            if (probeIdForSide(rel.left()) != selfId)
+                continue;
+            auto r = JSON::Object::create();
+            if (!writeSide(r.get(), "rhs"_s, rel.right()))
+                continue;
+            r->setString("lhs"_s, selfId);
+            r->setString("rel"_s, StringView(relationKindName(rel.kind())).toString());
+            r->setInteger("offset"_s, rel.offset());
+            rels->pushObject(WTF::move(r));
+        }
+        entry->setArray("rels"_s, WTF::move(rels));
+
+        protect(m_factProbes)->pushObject(WTF::move(entry));
+    }
+
     void executeNode(Node* node)
     {
         switch (node->op()) {
@@ -1540,6 +1701,12 @@ private:
         case CheckInBounds: {
             setRelationship(Relationship::safeCreate(node->child1().node(), node->child2().node(), Relationship::LessThan));
             setRelationship(Relationship::safeCreate(node->child1().node(), m_zero, Relationship::GreaterThan, -1));
+            break;
+        }
+
+        case Identity:
+        case DebugProbe: {
+            setEquivalence(node->child1().node(), node);
             break;
         }
 
@@ -2144,6 +2311,12 @@ private:
     BlockMap<RelationshipMap> m_relationshipsAtHead;
     InsertionSet m_insertionSet;
 
+    // State for the IRO fact dump consumed by JS tests
+    RefPtr<JSON::Array> m_factProbes;
+    RefPtr<JSON::Array> m_factEliminations;
+    HashSet<String> m_seenEliminations;
+    UncheckedKeyHashMap<Node*, String> m_probeIds;
+
     unsigned m_iterations { 0 };
 };
     
@@ -2152,6 +2325,36 @@ private:
 bool performIntegerRangeOptimization(Graph& graph)
 {
     return runPhase<IntegerRangeOptimizationPhase>(graph);
+}
+
+class DebugProbeEliminationPhase : public Phase {
+public:
+    DebugProbeEliminationPhase(Graph& graph)
+        : Phase(graph, "debug probe elimination"_s)
+    {
+    }
+
+    bool run()
+    {
+        if (!Options::useTestingHelpers()) [[likely]]
+            return false;
+
+        bool changed = false;
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block) {
+                if (node->op() == DebugProbe) {
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                }
+            }
+        }
+        return changed;
+    }
+};
+
+bool performDebugProbeElimination(Graph& graph)
+{
+    return runPhase<DebugProbeEliminationPhase>(graph);
 }
 
 } } // namespace JSC::DFG
