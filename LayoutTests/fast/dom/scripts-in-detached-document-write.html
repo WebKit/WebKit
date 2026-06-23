@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+test(() => {
+    const container = document.getElementById("container");
+    const detached = document.implementation.createHTMLDocument();
+    let executed = false;
+    
+    detached.write("<div>");
+    const root = detached.body.firstElementChild;
+    container.appendChild(root); 
+    
+    detached.write("<script>window.executedByDetachedWrite = true;<\/script>");
+    detached.write("</div>");
+    
+    assert_false(!!window.executedByDetachedWrite, "Script should not have executed");
+}, "Scripts in detached documents should not execute if the detached DOM gets connected to the main frame via document.write");
+</script>
+</body>
+</html>

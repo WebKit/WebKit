@@ -32,12 +32,14 @@
 #include <WebCore/ScriptType.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
 class CachedScript;
 class ContainerNode;
+class Document;
 class Element;
 class LoadableModuleScript;
 class Node;
@@ -90,7 +92,7 @@ public:
     bool virtualHasPendingActivity() const final;
 
 protected:
-    ScriptElement(Element&, bool createdByParser, bool isEvaluated);
+    ScriptElement(Element&, Document* parserDocument, bool createdByParser, bool isEvaluated);
 
     void setHaveFiredLoadEvent(bool haveFiredLoad) { m_haveFiredLoad = haveFiredLoad; }
     void setErrorOccurred(bool errorOccurred) { m_errorOccurred = errorOccurred; }
@@ -141,6 +143,7 @@ private:
     virtual bool isScriptPreventedByAttributes() const { return false; }
 
     WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_parserDocument;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };
     JSC::SourceTaintedOrigin m_taintedOrigin;
     ParserInserted m_parserInserted : bitWidthOfParserInserted;

@@ -81,9 +81,10 @@ namespace WebCore {
 
 static const auto maxUserGesturePropagationTime = 1_s;
 
-ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
+ScriptElement::ScriptElement(Element& element, Document* parserDocument, bool parserInserted, bool alreadyStarted)
     : ActiveDOMObject(element.document())
     , m_element(element)
+    , m_parserDocument(parserDocument)
     , m_parserInserted(parserInserted ? ParserInserted::Yes : ParserInserted::No)
     , m_alreadyStarted(alreadyStarted)
     , m_forceAsync(!parserInserted)
@@ -258,9 +259,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         m_forceAsync = false;
     }
 
+    if (m_parserDocument && &element->document() != m_parserDocument.get())
+        return false;
+
     m_alreadyStarted = true;
 
-    // FIXME: If script is parser inserted, verify it's still in the original document.
     Ref document = element->document();
 
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a
