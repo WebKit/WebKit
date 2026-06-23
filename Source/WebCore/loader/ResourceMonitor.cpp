@@ -107,7 +107,7 @@ void ResourceMonitor::didReceiveResponse(const URL& url, OptionSet<ContentExtens
         return;
 
     RefPtr frame = m_frame.get();
-    RefPtr page = frame ? frame->mainFrame().page() : nullptr;
+    RefPtr page = frame ? frame->page() : nullptr;
     if (!page)
         return;
 
@@ -134,7 +134,7 @@ static ASCIILiteral eligibilityToString(ResourceMonitorEligibility eligibility)
 void ResourceMonitor::continueAfterDidReceiveEligibility(Eligibility eligibility, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType)
 {
     RefPtr frame = m_frame.get();
-    RefPtr page = frame ? frame->mainFrame().page() : nullptr;
+    RefPtr page = frame ? frame->page() : nullptr;
     if (!page)
         return;
 
