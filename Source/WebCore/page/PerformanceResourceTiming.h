@@ -48,11 +48,11 @@ public:
 
     const String& initiatorType() const LIFETIME_BOUND { return m_resourceTiming.initiatorType(); }
     String deliveryType() const { return m_resourceTiming.deliveryType(); }
-    const String& NODELETE nextHopProtocol() const LIFETIME_BOUND;
+    const String& nextHopProtocol() const LIFETIME_BOUND;
 
     double workerStart() const;
-    double redirectStart() const;
-    double redirectEnd() const;
+    virtual double redirectStart() const;
+    virtual double redirectEnd() const;
     double fetchStart() const;
     double domainLookupStart() const;
     double domainLookupEnd() const;
@@ -64,9 +64,9 @@ public:
     double firstInterimResponseStart() const;
     double responseStart() const;
     double responseEnd() const;
-    uint64_t NODELETE transferSize() const;
-    uint64_t NODELETE encodedBodySize() const;
-    uint64_t NODELETE decodedBodySize() const;
+    uint64_t transferSize() const;
+    uint64_t encodedBodySize() const;
+    uint64_t decodedBodySize() const;
     double workerRouterEvaluationStart() const;
     double workerCacheLookupStart() const;
     const String& NODELETE workerMatchedRouterSource() const LIFETIME_BOUND;
@@ -81,6 +81,9 @@ public:
 protected:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
+
+    // https://fetch.spec.whatwg.org/#fetch-finale step 4.2.5.
+    virtual bool shouldRestrictTimingForTAO() const { return m_resourceTiming.networkLoadMetrics().failsTAOCheck; }
 
     bool isLoadedFromServiceWorker() const { return m_resourceTiming.isLoadedFromServiceWorker(); }
 

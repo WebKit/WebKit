@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Navigation Timing: response timing after cross-origin redirect (popup)</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/common/utils.js"></script>
+    <script src="/common/dispatcher/dispatcher.js"></script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that navigation timing attributes (responseStart,
+   fetchStart, etc.) are correctly reported after a cross-origin redirect
+   in a top-level (popup) navigation.</p>
+
+<script>
+    promise_test(async (t) => {
+        const uid = token();
+        const executorUrl = remoteExecutorUrl(uid);
+
+        const popup = window.open(executorUrl);
+        t.add_cleanup(() => { popup.close(); });
+
+        const rc = new RemoteContext(uid);
+        const result = await rc.execute_script(() => {
+            const entry = performance.getEntriesByType("navigation")[0];
+            return {
+                responseStart: entry ? entry.responseStart : -1,
+                responseEnd: entry ? entry.responseEnd : -1,
+                hasEntry: !!entry
+            };
+        });
+
+        assert_true(result.hasEntry, "navigation entry should exist");
+        assert_greater_than(result.responseStart, 0,
+            "responseStart should be > 0");
+        assert_greater_than_equal(result.responseEnd, result.responseStart,
+            "responseEnd should be >= responseStart");
+    }, "Popup control: navigation timing (no redirect)");
+
+    promise_test(async (t) => {
+        const uid = token();
+        const executorUrl = remoteExecutorUrl(uid);
+
+        const redirectUrl = make_absolute_url({
+            subdomain: "www",
+            path: "/common/redirect.py",
+            query: "location=" + encodeURIComponent(executorUrl.href)
+        });
+
+        const popup = window.open(redirectUrl);
+        t.add_cleanup(() => { popup.close(); });
+
+        const rc = new RemoteContext(uid);
+        const result = await rc.execute_script(() => {
+            const entry = performance.getEntriesByType("navigation")[0];
+            return {
+                responseStart: entry ? entry.responseStart : -1,
+                responseEnd: entry ? entry.responseEnd : -1,
+                fetchStart: entry ? entry.fetchStart : -1,
+                requestStart: entry ? entry.requestStart : -1,
+                hasEntry: !!entry
+            };
+        });
+
+        assert_true(result.hasEntry, "navigation entry should exist");
+        assert_greater_than(result.responseStart, 0,
+            "responseStart should be > 0 after cross-origin redirect");
+        assert_greater_than_equal(result.responseStart, result.requestStart,
+            "responseStart should be >= requestStart");
+        assert_greater_than_equal(result.requestStart, result.fetchStart,
+            "requestStart should be >= fetchStart");
+        assert_greater_than_equal(result.responseEnd, result.responseStart,
+            "responseEnd should be >= responseStart");
+    }, "Popup: navigation timing after cross-origin redirect");
+</script>
+</body>
+</html>

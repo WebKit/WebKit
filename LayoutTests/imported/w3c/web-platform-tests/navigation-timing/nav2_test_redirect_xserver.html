@@ -14,15 +14,27 @@
             function onload_test()
             {
                 var performanceNamespace = document.getElementById("frameContext").contentWindow.performance;
-                assert_equals(performanceNamespace.getEntriesByType("navigation")[0].type,
+                var entry = performanceNamespace.getEntriesByType("navigation")[0];
+                assert_equals(entry.type,
                     "navigate",
                     "Expected navigation type to be navigate.");
-                assert_equals(performanceNamespace.getEntriesByType("navigation")[0].redirectCount, 0,
+                assert_equals(entry.redirectCount, 0,
                     "Expected redirectCount to be 0.");
-                assert_equals(performanceNamespace.getEntriesByType("navigation")[0].redirectStart, 0,
+                assert_equals(entry.redirectStart, 0,
                     "Expected redirectStart to be 0.");
-                assert_equals(performanceNamespace.getEntriesByType("navigation")[0].redirectEnd, 0,
+                assert_equals(entry.redirectEnd, 0,
                     "Expected redirectEnd to be 0.");
+
+                // The final response's timing attributes should still be
+                // populated even after a cross-origin redirect.
+                assert_greater_than(entry.responseStart, 0,
+                    "Expected responseStart to be greater than 0.");
+                assert_greater_than_equal(entry.responseStart, entry.requestStart,
+                    "Expected responseStart to be >= requestStart.");
+                assert_greater_than_equal(entry.requestStart, entry.fetchStart,
+                    "Expected requestStart to be >= fetchStart.");
+                assert_greater_than_equal(entry.responseEnd, entry.responseStart,
+                    "Expected responseEnd to be >= responseStart.");
 
                 done();
             }

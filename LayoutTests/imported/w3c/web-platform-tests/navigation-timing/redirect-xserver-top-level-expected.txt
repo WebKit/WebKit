@@ -1,0 +1,8 @@
+Description
+
+This test validates that navigation timing attributes (responseStart, fetchStart, etc.) are correctly reported after a cross-origin redirect in a top-level (popup) navigation.
+
+
+PASS Popup control: navigation timing (no redirect)
+PASS Popup: navigation timing after cross-origin redirect
+

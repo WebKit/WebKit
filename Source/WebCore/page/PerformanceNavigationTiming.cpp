@@ -121,8 +121,30 @@ PerformanceNavigationTiming::NavigationType PerformanceNavigationTiming::type() 
     return m_navigationType;
 }
 
+double PerformanceNavigationTiming::redirectStart() const
+{
+    // https://www.w3.org/TR/navigation-timing-2/#PerformanceResourceTiming
+    // "The redirectStart getter steps are to perform the following steps.. If this’s redirect count is 0, return 0."
+    if (m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+        return 0.0;
+
+    return PerformanceResourceTiming::redirectStart();
+}
+
+double PerformanceNavigationTiming::redirectEnd() const
+{
+    // https://www.w3.org/TR/navigation-timing-2/#PerformanceResourceTiming
+    // "The redirectEnd getter steps are to perform the following steps.. If this’s redirect count is 0, return 0."
+    if (m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+        return 0.0;
+
+    return PerformanceResourceTiming::redirectEnd();
+}
+
 unsigned short PerformanceNavigationTiming::redirectCount() const
 {
+    // https://html.spec.whatwg.org/#initialise-the-document-object step 15.2.
+    // Redirect count is 0 when there are cross-origin redirects.
     if (m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
         return 0;
 

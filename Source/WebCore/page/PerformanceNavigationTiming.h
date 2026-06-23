@@ -63,10 +63,17 @@ public:
     double loadEventStart() const;
     double loadEventEnd() const;
     NavigationType NODELETE type() const;
+    double redirectStart() const final;
+    double redirectEnd() const final;
     unsigned short NODELETE redirectCount() const;
 
     double NODELETE startTime() const final;
     double duration() const final;
+
+    // Navigation timing is never restricted by the TAO check; see
+    // https://fetch.spec.whatwg.org/#fetch-finale step 3.
+    // https://html.spec.whatwg.org/#initialise-the-document-object step 16.
+    bool shouldRestrictTimingForTAO() const final { return false; }
 
     DocumentEventTiming& documentEventTiming() LIFETIME_BOUND { return m_documentEventTiming; }
     DocumentLoadTiming& documentLoadTiming() LIFETIME_BOUND { return m_documentLoadTiming; }
