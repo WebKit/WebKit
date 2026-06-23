@@ -31,15 +31,19 @@ import os
 log = logging.getLogger('webkitscmpy')
 
 
-def _maybe_add_webkitcorepy_path():
-    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
+def _maybe_add_library_path(library):
+    # Hopefully we're beside the provided library path, otherwise that library will need to be installed.
     libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
-    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
-        sys.path.insert(0, webkitcorepy_path)
+    library_path = os.path.join(libraries_path, library)
+    if os.path.isdir(library_path) and os.path.isdir(os.path.join(library_path, library)):
+        if library_path not in sys.path:
+            sys.path.insert(0, library_path)
+            print(f'ADDING {library_path}')
+        return True
+    return False
 
 
-_maybe_add_webkitcorepy_path()
+_maybe_add_library_path('webkitcorepy')
 
 try:
     from webkitcorepy import AutoInstall, Package, Version
@@ -50,14 +54,16 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(7, 0, 2)
+version = Version(7, 1, 0)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('markupsafe', Version(3, 0, 3), pypi_name='MarkupSafe', wheel=True))
 AutoInstall.register(Package('jinja2', Version(3, 1, 4), implicit_deps=['markupsafe']))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
 AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
-AutoInstall.register(Package('webkitbugspy', Version(0, 15, 1)), local=True)
+
+if not _maybe_add_library_path('webkitbugspy'):
+    AutoInstall.register(Package('webkitbugspy', Version(0, 15, 1)))
 
 AutoInstall.register(Package('rapidfuzz', Version(3, 4, 0)))
 
