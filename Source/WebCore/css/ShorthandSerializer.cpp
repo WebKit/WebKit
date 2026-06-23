@@ -708,7 +708,7 @@ String ShorthandSerializer::serializeLayered() const
                     // If the two are different, both need to be serialized, unless clip is invalid as origin
                     if (layerValues.valueID(j) == CSSValueNoClip)
                         continue;
-                    if (layerValues.valueID(j) == CSSValueBorderArea) {
+                    if (layerValues.valueID(j) == CSSValueBorderArea || layerValues.isPair(j)) {
                         layerValues.skip(j - 1) = layerValues.valueID(j - 1) == CSSValueBorderBox;
                         continue;
                     }

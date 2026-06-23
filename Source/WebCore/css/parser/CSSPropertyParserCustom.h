@@ -1085,7 +1085,7 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
         switch (property) {
         // background-*
         case CSSPropertyBackgroundClip:
-            return CSSPropertyParsing::consumeSingleBackgroundClip(range);
+            return CSSPropertyParserHelpers::consumeSingleBackgroundClipValue(range);
         case CSSPropertyBackgroundBlendMode:
             return CSSPropertyParsing::consumeSingleBackgroundBlendMode(range);
         case CSSPropertyBackgroundAttachment:
@@ -1204,7 +1204,7 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
                     if (property == CSSPropertyBackgroundOrigin || property == CSSPropertyMaskOrigin)
                         originValue = value;
                     else if (property == CSSPropertyBackgroundClip)
-                        clipIsBorderArea = isValueID(value, CSSValueBorderArea);
+                        clipIsBorderArea = isValueID(value, CSSValueBorderArea) || (value && value->isPair());
                     parsedLonghand[i] = true;
                     foundProperty = true;
                     longhands[i].append(value.releaseNonNull());

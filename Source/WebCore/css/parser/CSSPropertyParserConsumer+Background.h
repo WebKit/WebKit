@@ -112,6 +112,16 @@ RefPtr<CSSValue> consumeSingleMaskSize(CSSParserTokenRange&, CSS::PropertyParser
 // https://drafts.csswg.org/css-backgrounds/#typedef-repeat-style
 RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange&, CSS::PropertyParserState&);
 
+// MARK: - Background Clip
+
+// <single-background-clip> = <visual-box> | [ border-area || text ] | -webkit-text
+// https://www.w3.org/TR/css-backgrounds-4/#background-clip
+RefPtr<CSSValue> consumeSingleBackgroundClipValue(CSSParserTokenRange&);
+
+// <'background-clip'> = <single-background-clip>#
+// https://www.w3.org/TR/css-backgrounds-4/#background-clip
+RefPtr<CSSValue> consumeBackgroundClipLonghand(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 // MARK: - Shadows
 
 // <'box-shadow'> = none | <shadow>#

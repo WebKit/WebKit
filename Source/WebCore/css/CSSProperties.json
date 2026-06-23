@@ -2255,7 +2255,9 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "separator": " ",
                 "disables-native-appearance": true,
-                "parser-grammar": "<single-background-clip>#"
+                "parser-function": "consumeBackgroundClipLonghand",
+                "parser-grammar-unused": "<single-background-clip>#",
+                "parser-grammar-unused-reason": "Needs support for the || combinator in [ border-area || text ]."
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -14576,7 +14578,7 @@
             }
         },
         "<single-background-clip>": {
-            "grammar": "<box> | border-area | text | -webkit-text",
+            "grammar": "<visual-box> | [ border-area || text ] | -webkit-text",
             "exported": true,
             "specification": {
                 "category": "css-backgrounds",
