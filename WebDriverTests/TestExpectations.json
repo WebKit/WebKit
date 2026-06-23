@@ -5396,14 +5396,12 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/sandbox.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
+        "expected": { "all": { "status": ["PASS"] }},
         "subtests": {
-            "test_sandbox_with_side_effects": {
-                "expected": { "all": { "status": ["PASS"] } }
-            },
-            "test_sandbox_with_empty_name": {
-                "expected": { "all": { "status": ["PASS"] } }
-            }
+            "test_sandbox_returns_same_node": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - RemoteReference support not yet implemented"}}},
+            "test_exception_details[True]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - Exception details not yet fully implemented"}}},
+            "test_exception_details[False]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - Exception details not yet fully implemented"}}},
+            "test_target_realm": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - Realm target resolution not yet implemented"}}}
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/user_activation.py": {

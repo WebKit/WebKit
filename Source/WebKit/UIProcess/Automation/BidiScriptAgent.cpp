@@ -343,12 +343,8 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!canCreateSandboxRealm(*browsingContext, *sandboxName), InvalidParameter, makeString("too many sandbox realms for browsing context (maximum "_s, String::number(maxSandboxRealmsPerBrowsingContext), ")"_s));
     }
 
-    // FIXME: `target.sandbox` currently only affects the returned realm identifier.
-    // Actual sandbox realm execution requires plumbing the sandbox name through
-    // WebAutomationSession/WebProcess evaluation so scripts run in a distinct JS world.
-    // https://bugs.webkit.org/show_bug.cgi?id=314152
     String realmID = realmIdForTarget(*browsingContext, sandboxName);
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
+    session->evaluateJavaScriptFunctionInSandbox(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, sandboxName ? std::optional<String>(*sandboxName) : std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
         // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
         // https://bugs.webkit.org/show_bug.cgi?id=301159
 
@@ -464,13 +460,9 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!canCreateSandboxRealm(*browsingContext, *sandboxName), InvalidParameter, makeString("too many sandbox realms for browsing context (maximum "_s, String::number(maxSandboxRealmsPerBrowsingContext), ")"_s));
     }
 
-    // FIXME: `target.sandbox` currently only affects the returned realm identifier.
-    // Actual sandbox realm execution requires plumbing the sandbox name through
-    // WebAutomationSession/WebProcess evaluation so scripts run in a distinct JS world.
-    // https://bugs.webkit.org/show_bug.cgi?id=314152
     String realmID = realmIdForTarget(*browsingContext, sandboxName);
 
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, 1, std::nullopt,
+    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, 1, std::nullopt, sandboxName ? std::optional<String>(*sandboxName) : std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -1038,6 +1030,19 @@ void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspec
     m_activeRealms.set(realmIdentifier, WTF::move(realmInfo));
 
     sendRealmCreatedEvent(realmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext);
+
+    // Promote any sandbox realms that were registered but not yet activated.
+    // Now that we have the origin from the WebProcess, emit realmCreated events for them.
+    for (const auto& [sandboxKey, sandboxRealmId] : m_sandboxRealms) {
+        if (sandboxKey.first != browsingContext)
+            continue;
+        auto it = m_activeRealms.find(sandboxRealmId);
+        if (it != m_activeRealms.end() && it->value.origin.isNull()) {
+            it->value.origin = origin.isolatedCopy();
+            String sandboxRealmID = makeString("realm-"_s, sandboxRealmId.loggingString());
+            sendRealmCreatedEvent(sandboxRealmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, sandboxKey.second);
+        }
+    }
 }
 
 void BidiScriptAgent::notifyRealmDestroyed(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext)
