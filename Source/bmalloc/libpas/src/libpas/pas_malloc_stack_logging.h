@@ -44,10 +44,8 @@ typedef enum pas_msl_is_enabled_flag pas_msl_is_enabled_flag;
 extern pas_msl_is_enabled_flag pas_msl_is_enabled_flag_value;
 PAS_API bool pas_compute_msl_is_enabled(void);
 
-#if PAS_OS(DARWIN)
 PAS_API PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result);
 PAS_API PAS_NEVER_INLINE void pas_msl_free_logging_slow(void*);
-#endif
 
 static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
 {
@@ -64,7 +62,7 @@ static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
 
 static PAS_ALWAYS_INLINE pas_allocation_result pas_msl_malloc_logging(size_t size, pas_allocation_result result)
 {
-#if PAS_OS(DARWIN) && !defined(__swift__) // FIXME: Workaround for rdar://119319825
+#if PAS_ENABLE_MALLOC_STACK_LOGGER
     if (PAS_UNLIKELY(malloc_logger))
         return pas_msl_malloc_logging_slow(size, result); /* Keep it tail-call to avoid messing up the fast path code. */
 #else
@@ -75,8 +73,7 @@ static PAS_ALWAYS_INLINE pas_allocation_result pas_msl_malloc_logging(size_t siz
 
 static PAS_ALWAYS_INLINE void pas_msl_free_logging(void* ptr)
 {
-#if PAS_OS(DARWIN) && !defined(__swift__) // FIXME: Workaround for rdar://119319825
-
+#if PAS_ENABLE_MALLOC_STACK_LOGGER
     if (PAS_UNLIKELY(malloc_logger))
         return pas_msl_free_logging_slow(ptr); /* Keep it tail-call to avoid messing up the fast path code. */
 #else
