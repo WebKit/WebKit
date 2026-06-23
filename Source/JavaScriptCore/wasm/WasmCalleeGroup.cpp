@@ -382,8 +382,6 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         if (!tuple)
             return;
 
-        bool bbqCalleeKeptAlive = false;
-        UNUSED_VARIABLE(bbqCalleeKeptAlive);
 #if ENABLE(WEBASSEMBLY_BBQJIT)
         // This callee could be weak but we still need to update it since it could call our BBQ callee
         // that we're going to want to destroy.
@@ -396,7 +394,6 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
             collectCallsites(bbqCallee.get());
             ASSERT(!bbqCallee->osrEntryCallee() || m_osrEntryCallees.find(callerIndex) != m_osrEntryCallees.end());
             keepAliveBBQCallees.append(bbqCallee.releaseNonNull());
-            bbqCalleeKeptAlive = true;
         }
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
@@ -404,17 +401,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         if (auto iter = m_osrEntryCallees.find(callerIndex); iter != m_osrEntryCallees.end()) {
             if (RefPtr callee = iter->value.get()) {
                 collectCallsites(callee.get());
-                // If we track the OMGOSREntryCallee as a callsite there are 2 possibilities -
-                // 1. The BBQCallee is already being tracked - in this case we don't have to
-                //    track the OMGOSREntryCallee since the BBQCallee owns it and keeping the
-                //    BBQCallee alive is good enough to keep the OMGOSREntryCallee alive. Also,
-                //    OMGOSREntryCallee is only supposed to be owned by BBQCallee
-                // 2. The BBQCallee is not tracked - This happens if the BBQCallee is already
-                //    released but the OMGOSREntryCallee is still alive. In this case there is
-                //    no other strong reference to OMGOSREntryCallee so we have to keep it
-                //    alive here.
-                if (!bbqCalleeKeptAlive)
-                    keepAliveOSREntryCallees.append(callee.releaseNonNull());
+                keepAliveOSREntryCallees.append(callee.releaseNonNull());
             } else
                 m_osrEntryCallees.remove(iter);
         }
