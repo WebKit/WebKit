@@ -300,12 +300,6 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self.textInputContentView insertTextSuggestion:textSuggestion];
 }
 
-- (void)focusInWindow
-{
-    [[self window] makeKeyWindow];
-    [self becomeFirstResponder];
-}
-
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 - (UIWKDocumentContext *)synchronouslyRequestDocumentContext:(UIWKDocumentRequest *)request
@@ -1617,6 +1611,12 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     RetainPtr scrollView = [self scrollView];
     [self scrollViewWillBeginZooming:scrollView.get() withView:[self viewForZoomingInScrollView:scrollView.get()]];
     [scrollView setZoomScale:zoomScale];
+}
+
+- (void)focusInWindow
+{
+    [[self window] makeKeyWindow];
+    [self becomeFirstResponder];
 }
 
 @end
