@@ -426,7 +426,8 @@ void SourceBufferPrivate::setMediaSourceEnded(bool isEnded)
                 TrackBuffer& trackBuffer = trackBufferPair.second;
                 TrackID trackID = trackBufferPair.first;
 
-                buffer.trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
+                trackBuffer.setEnqueueDiscontinuityBoundary(MediaTime::positiveInfiniteTime());
+                buffer.provideMediaData(trackBuffer, trackID);
             }
         }
     });

@@ -266,7 +266,7 @@ void TrackBuffer::updateMinimumUpcomingPresentationTime()
 bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& timeFudgeFactor, bool isEnded)
 {
     clearDecodeQueue();
-    m_enqueueDiscontinuityBoundary = time + m_discontinuityTolerance;
+    m_enqueueDiscontinuityBoundary = isEnded ? MediaTime::positiveInfiniteTime() : time + m_discontinuityTolerance;
 
     m_needsReenqueueing = false;
 
