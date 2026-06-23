@@ -28,3 +28,23 @@
     }
 }
 .rule-g { color: red; @media(min-width: 0px) { &.explicit-nested-rule { color: blue; } color: green; } }
+
+.rule-deep-nested-interleaved {
+    background-color: red;
+
+    @media (min-width: 0px) {
+        background-color: orange;
+
+        &.explicit-nested-rule {
+            background-color: yellow;
+        }
+
+        @supports (display: grid) {
+            background-color: violet;
+        }
+
+        background-color: lime;
+    }
+
+    background-color: green;
+}

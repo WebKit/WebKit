@@ -37,6 +37,7 @@ public:
     virtual ~CSSNestedDeclarations();
 
     WEBCORE_EXPORT CSSStyleProperties& style();
+    const StyleRuleNestedDeclarations& nestedDeclarationsRule() const { return m_styleRule.get(); }
 
 private:
     CSSNestedDeclarations(StyleRuleNestedDeclarations&, CSSStyleSheet*);

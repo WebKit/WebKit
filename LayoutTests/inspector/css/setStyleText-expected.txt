@@ -70,6 +70,27 @@ Author CSS rules after modifications:
     "sourceLine": "<filtered>",
     "origin": "author",
     "style": {
+      "cssProperties": [],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        #x {background-color: yellow;}\n        background-color: lime;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
       "cssProperties": [
         {
           "name": "background-color",
@@ -85,11 +106,20 @@ Author CSS rules after modifications:
       "width": "",
       "height": "",
       "range": "<filtered>",
-      "cssText": "background-color: lime;\n#x {background-color: yellow;}\n"
+      "cssText": "\n        #x {background-color: yellow;}\n        background-color: lime;\n    "
     },
     "sourceURL": "<filtered>",
     "ruleId": "<filtered>",
-    "isImplicitlyNested": false
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": "body",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
   },
   {
     "selectorList": {
@@ -124,7 +154,7 @@ Author CSS rules after modifications:
       "width": "",
       "height": "",
       "range": "<filtered>",
-      "cssText": "background-color: blue;\n#x {background-color: magenta;}\n"
+      "cssText": "\n            background-color: blue;\n            #x {background-color: magenta;}\n        "
     },
     "sourceURL": "<filtered>",
     "ruleId": "<filtered>",
