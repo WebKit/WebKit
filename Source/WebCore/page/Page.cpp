@@ -870,26 +870,21 @@ void Page::setMainFrame(Ref<Frame>&& frame)
     chrome().client().mainFrameDidChange();
 }
 
-void Page::setMainFrameURLAndOrigin(const URL& url, RefPtr<SecurityOrigin>&& origin)
+void Page::localTopDocumentURLOrOriginDidChange(const URL& url, RefPtr<SecurityOrigin>&& origin)
 {
-    // This URL and SecurityOrigin is relevant to this Page only if it is not
-    // directly hosting the local main frame.
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (!localFrame) {
-        m_topDocumentSyncData->documentURL = url;
-
-        if (!origin)
-            origin = SecurityOrigin::create(url);
-        m_topDocumentSyncData->documentSecurityOrigin = WTF::move(origin);
-
-        return;
-    }
-
     if (!settings().siteIsolationEnabled())
         return;
 
     // If this page is hosting the local main frame, make sure the url and origin
     // match what we expect, then broadcast them out to other processes.
+    // m_topDocumentSyncData may have been replaced by updateTopDocumentSyncData while the page was
+    // suspended in bfcache. Re-establish it from the local document if there is a mismatch.
+    if (url != m_topDocumentSyncData->documentURL) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
+            if (RefPtr document = localFrame->document())
+                m_topDocumentSyncData = document->syncData();
+        }
+    }
     RELEASE_ASSERT(url == m_topDocumentSyncData->documentURL);
     if (!origin)
         RELEASE_ASSERT(!m_topDocumentSyncData->documentSecurityOrigin);

@@ -54,12 +54,14 @@ class FormDataReference;
 }
 
 namespace WebCore {
+class DocumentSyncData;
 class RegistrableDomain;
 class ResourceRequest;
 enum class CrossOriginOpenerPolicyValue : uint8_t;
 enum class RestoredFromBackForwardCache : bool;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 struct BackForwardItemIdentifierType;
+struct DocumentSyncSerializationData;
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 }
 
@@ -152,6 +154,8 @@ public:
 
     bool needsCookieAccessAddedInNetworkProcess() const { return m_needsCookieAccessAddedInNetworkProcess; }
 
+    RefPtr<WebCore::DocumentSyncData> topDocumentSyncData() const;
+
     API::WebsitePolicies* mainFrameWebsitePolicies() const { return m_mainFrameWebsitePolicies.get(); }
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
@@ -173,6 +177,8 @@ private:
 
     void decidePolicyForNavigationActionAsync(IPC::Connection&, NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void decidePolicyForResponse(FrameInfoData&&, std::optional<WebCore::NavigationIdentifier>, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
+    void broadcastDocumentSyncData(IPC::Connection&, const WebCore::DocumentSyncSerializationData&);
+    void broadcastAllDocumentSyncData(IPC::Connection&, Ref<WebCore::DocumentSyncData>&&);
     void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, URL&&);
     void didPerformServerRedirect(String&& sourceURLString, String&& destinationURLString, WebCore::FrameIdentifier);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, WebCore::ResourceRequest&&, const UserData&);
@@ -237,6 +243,7 @@ private:
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     RefPtr<API::WebsitePolicies> m_mainFrameWebsitePolicies;
+    RefPtr<WebCore::DocumentSyncData> m_topDocumentSyncData;
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_accessibilityToken;

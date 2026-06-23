@@ -774,6 +774,7 @@ public:
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     void setTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&&);
+    Ref<WebCore::DocumentSyncData> topDocumentSyncData() const;
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
     WebFrameProxy* focusedOrMainFrame() const { return m_focusedFrame ? m_focusedFrame.get() : m_mainFrame.get(); }
 
@@ -3779,7 +3780,7 @@ private:
 #endif
 
     RefPtr<WebFrameProxy> m_mainFrame;
-    RefPtr<WebCore::DocumentSyncData> m_topDocumentSyncData;
+    Ref<WebCore::DocumentSyncData> m_topDocumentSyncData;
     RefPtr<WebFrameProxy> m_focusedFrame;
 
     String m_userAgent;

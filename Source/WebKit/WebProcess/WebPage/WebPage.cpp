@@ -1037,9 +1037,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         for (auto& childParameters : remotePageParameters->frameTreeParameters.children)
             constructFrameTree(m_mainFrame.get(), childParameters);
 
-        // Use the origin from FrameTreeSyncData so Page::mainFrameOrigin() reflects the inherited origin.
-        RefPtr<SecurityOrigin> mainFrameOrigin = dynamicDowncast<RemoteFrame>(page->mainFrame()) ? protect(page->mainFrame())->frameDocumentSecurityOrigin() : nullptr;
-        page->setMainFrameURLAndOrigin(remotePageParameters->initialMainDocumentURL, WTF::move(mainFrameOrigin));
+        page->updateTopDocumentSyncData(remotePageParameters->topDocumentSyncData.copyRef());
 
         if (auto websitePolicies = remotePageParameters->websitePoliciesData) {
             if (auto* remoteMainFrameClient = m_mainFrame->remoteFrameClient())
@@ -8906,11 +8904,9 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
         return completionHandler(false);
     }
 
-    // Re-establish the authoritative main-frame URL/origin before restoring. It must come from the
-    // UIProcess, not a local read here: the cross-site top-document broadcast races ahead of this
-    // restore, so this process's top URL is still the stale cross-site value.
+    // FIXME: m_topDocumentSyncData should be stored with cache entry so that web process does not need to pull from UI process.
     if (mainFrameURLAndOrigin)
-        page->setMainFrameURLAndOrigin(mainFrameURLAndOrigin->first, mainFrameURLAndOrigin->second.securityOrigin());
+        page->localTopDocumentURLOrOriginDidChange(mainFrameURLAndOrigin->first, mainFrameURLAndOrigin->second.securityOrigin());
 
     m_isSuspended = false;
     unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
