@@ -118,10 +118,11 @@ RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCo
 
 RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 {
+    ASSERT(!m_displayRefreshObserverID);
+    ASSERT(!m_delayedRenderingUpdateDetectionTimer);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     ASSERT(!m_momentumEventDispatcher);
 #endif
-    ASSERT(!m_displayRefreshObserverID);
 }
 
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
@@ -135,6 +136,13 @@ void RemoteLayerTreeEventDispatcher::invalidate()
         Locker locker { m_scrollingTreeLock };
         m_scrollingTree = nullptr;
     }
+
+    // m_delayedRenderingUpdateDetectionTimer is created on the scrolling thread and fires on the
+    // scrolling thread's run loop, so it must be destroyed there to avoid racing with an in-flight
+    // CFRunLoopTimer callback that holds a raw pointer to it.
+    ScrollingThread::dispatch([protectedThis = Ref { *this }] {
+        protectedThis->m_delayedRenderingUpdateDetectionTimer = nullptr;
+    });
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     m_momentumEventDispatcher = nullptr;
