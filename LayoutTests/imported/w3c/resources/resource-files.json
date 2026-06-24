@@ -14757,6 +14757,10 @@
         "web-platform-tests/xhr/xmlhttprequest-sync-not-hang-scriptloader-subframe.html",
         "web-platform-tests/xml/xslt/encoding-single-chunk-ref.html",
         "web-platform-tests/xml/xslt/large-cdata-ref.html",
-        "web-platform-tests/xml/xslt/sort-ref.html"
+        "web-platform-tests/xml/xslt/sort-ref.html",
+        "web-platform-tests/xml/xslt/xslt-mutation-crash-import.xsl",
+        "web-platform-tests/xml/xslt/xslt-mutation-crash-slow.xsl",
+        "web-platform-tests/xml/xslt/xslt-type-confusion.xml",
+        "web-platform-tests/xml/xslt/xslt-type-confusion.xsl"
     ]
 }
