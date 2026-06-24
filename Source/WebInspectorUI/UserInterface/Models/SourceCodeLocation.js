@@ -42,6 +42,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         if (this._sourceCode) {
             this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
             this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+            this._sourceCode.addEventListener(WI.SourceCode.Event.DisplayNameChanged, this._sourceCodeDisplayNameChanged, this);
         }
 
         this._resetMappedLocation();
@@ -228,10 +229,13 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
 
         element.title = prefix + this.tooltipString() + suffix;
 
-        this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
+        function handleChange(event)
+        {
             if (this.sourceCode)
                 element.title = prefix + this.tooltipString() + suffix;
-        }, this);
+        }
+        this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, handleChange, this);
+        this.addEventListener(WI.SourceCodeLocation.Event.DisplayNameChanged, handleChange, this);
     }
 
     populateLiveDisplayLocationString(element, propertyName, columnStyle, nameStyle, prefix)
@@ -261,10 +265,13 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
 
         updateDisplayString.call(this, false);
 
-        this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
+        function handleChange(event)
+        {
             if (this.sourceCode)
                 updateDisplayString.call(this, currentDisplay, true);
-        }, this);
+        }
+        this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, handleChange, this);
+        this.addEventListener(WI.SourceCodeLocation.Event.DisplayNameChanged, handleChange, this);
 
         var boundMouseOverOrMove = mouseOverOrMove.bind(this);
         element.addEventListener("mouseover", boundMouseOverOrMove);
@@ -285,6 +292,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
             if (this._sourceCode) {
                 this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
                 this._sourceCode.removeEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+                this._sourceCode.removeEventListener(WI.SourceCode.Event.DisplayNameChanged, this._sourceCodeDisplayNameChanged, this);
             }
 
             this._sourceCode = sourceCode;
@@ -292,6 +300,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
             if (this._sourceCode) {
                 this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
                 this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+                this._sourceCode.addEventListener(WI.SourceCode.Event.DisplayNameChanged, this._sourceCodeDisplayNameChanged, this);
             }
         });
     }
@@ -454,6 +463,11 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
     {
         this._makeChangeAndDispatchChangeEventIfNeeded(null);
     }
+
+    _sourceCodeDisplayNameChanged()
+    {
+        this.dispatchEventToListeners(WI.SourceCodeLocation.Event.DisplayNameChanged);
+    }
 };
 
 WI.SourceCodeLocation.DisplayLocationClassName = "display-location";
@@ -474,5 +488,6 @@ WI.SourceCodeLocation.ColumnStyle = {
 
 WI.SourceCodeLocation.Event = {
     LocationChanged: "source-code-location-location-changed",
-    DisplayLocationChanged: "source-code-location-display-location-changed"
+    DisplayLocationChanged: "source-code-location-display-location-changed",
+    DisplayNameChanged: "source-code-location-display-name-changed",
 };

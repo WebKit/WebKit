@@ -55,6 +55,14 @@ function relativePath(path, basePath)
     return finalComponents.join("/");
 }
 
+function tryDecodeURIComponent(string) {
+    try {
+        return decodeURIComponent(string);
+    } catch {
+        return string;
+    }
+}
+
 function parseSecurityOrigin(securityOrigin)
 {
     securityOrigin = securityOrigin ? securityOrigin.trim() : "";
@@ -219,24 +227,14 @@ function parseQueryString(queryString, arrayResult)
     if (!queryString)
         return arrayResult ? [] : {};
 
-    function decode(string)
-    {
-        try {
-            // Replace "+" with " " then decode percent encoded values.
-            return decodeURIComponent(string.replace(/\+/g, " "));
-        } catch {
-            return string;
-        }
-    }
-
     var parameters = arrayResult ? [] : {};
     for (let parameterString of queryString.split("&")) {
         let index = parameterString.indexOf("=");
         if (index === -1)
             index = parameterString.length;
 
-        let name = decode(parameterString.substring(0, index));
-        let value = decode(parameterString.substring(index + 1));
+        let name = tryDecodeURIComponent(parameterString.substring(0, index).replace(/\+/g, " "));
+        let value = tryDecodeURIComponent(parameterString.substring(index + 1).replace(/\+/g, " "));
 
         if (arrayResult)
             parameters.push({name, value});
@@ -257,7 +255,7 @@ WI.displayNameForURL = function(url, urlComponents, options = {})
 
     var displayName;
     try {
-        displayName = decodeURIComponent(urlComponents.lastPathComponent || "");
+        displayName = tryDecodeURIComponent(urlComponents.lastPathComponent || "");
     } catch {
         displayName = urlComponents.lastPathComponent;
     }

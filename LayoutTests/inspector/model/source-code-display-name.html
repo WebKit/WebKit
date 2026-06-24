@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("SourceCode.DisplayName");
+
+    [
+        {
+            name: "SourceCode.DisplayName.UniqueNamesUnchanged",
+            urls: [
+                "http://example.com/only.js",
+                "http://example.com/other.js",
+                "http://example.com/api.php?token=secret",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.SameNameDifferentFolders",
+            urls: [
+                "http://example.com/a/script.js",
+                "http://example.com/b/script.js",
+                "http://example.com/c/script.js",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.SameGrandparentDirectory",
+            urls: [
+                "http://example.com/a/c/x.txt",
+                "http://example.com/b/c/x.txt",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.ExtraDirectoryAfterSamePrefix",
+            urls: [
+                "http://example.com/a/x.txt",
+                "http://example.com/a/b/x.txt",
+                "http://example.com/a/c/x.txt",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.DeeplyNestedCommonPathTrimmed",
+            urls: [
+                "http://example.com/common/deep/a/file.js",
+                "http://example.com/common/deep/b/file.js",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.SameFolderDifferentQuery",
+            urls: [
+                "http://example.com/runner.html",
+                "http://example.com/runner.html?id=1",
+                "http://example.com/runner.html?id=2",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.DifferentQueryNeedsNoFolder",
+            urls: [
+                "http://example.com/a/index.js?v=1",
+                "http://example.com/b/index.js?v=2",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.DifferentHost",
+            urls: [
+                "https://a.example.com/x/app.js",
+                "https://b.example.com/x/app.js",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.DifferentPort",
+            urls: [
+                "http://localhost:8000/app.js",
+                "http://localhost:9000/app.js",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.OnlyCollidingNamesChange",
+            urls: [
+                "http://example.com/a/shared.js",
+                "http://example.com/b/shared.js",
+                "http://example.com/unique.js",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.IdenticalURLsShareName",
+            urls: [
+                "http://example.com/dir/dup.js",
+                "http://example.com/dir/dup.js",
+                "http://example.com/other/dup.js",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.EncodedSegmentsDecoded",
+            urls: [
+                "http://example.com/a%20b/page.html",
+                "http://example.com/c/page.html",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.TrailingSlashNotDuplicated",
+            urls: [
+                "http://example.com/a/b/",
+                "http://example.com/c/b/",
+            ],
+        },
+        {
+            name: "SourceCode.DisplayName.TrailingSlashWithQuery",
+            urls: [
+                "http://example.com/a/b/?1",
+                "http://example.com/c/b/?1",
+            ],
+        },
+    ].forEach(({name, urls}) => {
+        suite.addTestCase({
+            name,
+            test() {
+                WI.SourceCode.clearDisplayNameAffixes();
+
+                let resources = urls.map((url) => {
+                    let resource = new WI.Resource(url, {type: WI.Resource.Type.Script});
+                    resource.displayName; // Trigger algorithm.
+                    return resource;
+                });
+
+                let displayNames = resources.map((resource) => resource.displayName);
+
+                for (let i = 0; i < urls.length; ++i)
+                    InspectorTest.log(`${JSON.stringify(urls[i])} => ${JSON.stringify(displayNames[i])}`);
+            },
+        });
+    });
+
+    suite.addTestCase({
+        name: "SourceCode.DisplayName.DisplayNameChanged",
+        description: "An already-shown source code is updated (and fires an event) when a colliding one appears.",
+        test() {
+            WI.SourceCode.clearDisplayNameAffixes();
+
+            let first = new WI.Resource("http://example.com/x/event.js", {type: WI.Resource.Type.Script});
+            InspectorTest.expectEqual(first.displayName, "event.js", "Should start bare while unique.");
+
+            let second = new WI.Resource("http://example.com/y/event.js", {type: WI.Resource.Type.Script});
+
+            let firstEventCount = 0;
+            first.singleFireEventListener(WI.SourceCode.Event.DisplayNameChanged, function(event) {
+                ++firstEventCount;
+            });
+
+            let secondEventCount = 0;
+            second.singleFireEventListener(WI.SourceCode.Event.DisplayNameChanged, function(event) {
+                ++secondEventCount;
+            });
+
+            InspectorTest.expectEqual(second.displayName, "y/event.js", "The new source code should get an affix.");
+            InspectorTest.expectEqual(firstEventCount, 1, "DisplayNameChanged should fire on the existing source code when a colliding one appears.");
+            InspectorTest.expectEqual(secondEventCount, 1, "DisplayNameChanged should fire on the new source code when it collides with the existing source code.");
+            InspectorTest.expectEqual(first.displayName, "x/event.js", "The existing source code should get an affix.");
+            InspectorTest.expectEqual(firstEventCount, 1, "DisplayNameChanged should not fire on the existing source code without a new collision.");
+            InspectorTest.expectEqual(secondEventCount, 1, "DisplayNameChanged should not fire on the new source code without a new collision.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceCode.DisplayName.Clear",
+        description: "Clearing reverts every source code back to its bare name.",
+        test() {
+            WI.SourceCode.clearDisplayNameAffixes();
+
+            let first = new WI.Resource("http://example.com/a/clear.js", {type: WI.Resource.Type.Script});
+            InspectorTest.expectEqual(first.displayName, "clear.js", "First source code should not have an affix before second source code.");
+
+            let second = new WI.Resource("http://example.com/b/clear.js", {type: WI.Resource.Type.Script});
+            InspectorTest.expectEqual(second.displayName, "b/clear.js", "Second source code should have an affix after first source code.");
+            InspectorTest.expectEqual(first.displayName, "a/clear.js", "First source code should have an affix after second source code.");
+
+            WI.SourceCode.clearDisplayNameAffixes();
+            InspectorTest.expectEqual(first.displayName, "clear.js", "First source code should not have an affix after clearing.");
+            InspectorTest.expectEqual(second.displayName, "b/clear.js", "Second source code should have an affix after clearing.");
+            InspectorTest.expectEqual(first.displayName, "a/clear.js", "First source code should have an affix after second source code.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for `WI.SourceCode.prototype.get displayName`.</p>
+</body>
+</html>

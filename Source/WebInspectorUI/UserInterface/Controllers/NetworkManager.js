@@ -1586,6 +1586,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (this._mainFrame)
             this._mainFrame.markAsMainFrame();
 
+        WI.SourceCode.clearDisplayNameAffixes();
+
         this.dispatchEventToListeners(WI.NetworkManager.Event.MainFrameDidChange, {oldMainFrame});
     }
 
