@@ -3550,18 +3550,18 @@ GridLanesEnabled:
 
 HDRAcceleratedApplyGainMapEnabled:
   type: bool
-  status: stable
+  status: testable
   category: css
   webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "HDR Accelerated Apply GainMap"
   humanReadableDescription: "Enable HDR Accelerated Apply GainMap"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 HTMLEnhancedSelectEnabled:
    type: bool
