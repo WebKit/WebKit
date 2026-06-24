@@ -802,9 +802,27 @@ void Options::notifyOptionsChanged()
     Options::forceUnlinkedDFG() = false;
     Options::useWasmSIMD() = false;
     Options::useWasmIPInt() = false;
-#if !CPU(ARM_THUMB2)
+#if !CPU(ARM_THUMB2) && !CPU(RISCV64)
+    // RISCV64 has BBQJIT (WEBASSEMBLY_BBQJIT enabled in PlatformEnable.h);
+    // wasm SIMD and IPInt are still off above, so BBQJIT is the only wasm
+    // tier on this architecture.
     Options::useBBQJIT() = false;
 #endif
+#endif
+
+#if CPU(RISCV64)
+    // The base RISC-V ISA permits a faulting store to commit some of its
+    // bytes before raising the exception (single-copy atomicity is only
+    // guaranteed for naturally-aligned accesses up to XLEN, not for a
+    // store that straddles a page boundary into PROT_NONE). On hardware
+    // that does this (e.g. SiFive U74 in JH7110), JSC's signal-based
+    // bounds check sees the page fault but the in-bounds bytes have
+    // already been corrupted -- subsequent reads return wrong values.
+    // Force explicit bounds checking instead. Reproducer:
+    // spec-tests/memory_trap.wast.js #295 (i32.store at 65535 partially
+    // overwrites byte 65535 before trapping, then i64.load at 65528
+    // sees the corrupted high byte).
+    Options::useWasmFastMemory() = false;
 #endif
 
 #if !CPU(ARM64)

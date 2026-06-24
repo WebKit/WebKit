@@ -36,6 +36,20 @@
     template<typename... Args> void methodName(Args&&...) { }
 #define MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(methodName, returnType) \
     template<typename... Args> returnType methodName(Args&&...) { return { }; }
+// Atomic / FP-minmax / SIMD methods needed by BBQJIT for which no native
+// RISC-V code generation exists yet. These are deliberately runtime-fatal
+// rather than silent noops: wasm shared memory and SIMD are gated off on
+// RISCV64 (useSharedArrayBuffer / useWasmSIMD), so the BBQJIT codegen for
+// atomic and SIMD wasm opcodes must never run. If something does reach
+// these, we want to know with a loud crash, not a silent miscompilation.
+#define MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(methodName) \
+    template<typename... Args> void methodName(Args&&...) { RELEASE_ASSERT_NOT_REACHED(); }
+#define MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(methodName, returnType) \
+    template<typename... Args> returnType methodName(Args&&...) \
+    { \
+        RELEASE_ASSERT_NOT_REACHED(); \
+        return { }; \
+    }
 
 namespace JSC {
 
@@ -197,6 +211,25 @@ public:
         loadImmediate(imm, temp.data());
         m_assembler.addwInsn(dest, temp.data(), op2);
         m_assembler.maskRegister<32>(dest);
+    }
+
+    void add8(TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.lbuInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+            m_assembler.addiInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+            m_assembler.sbInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+            return;
+        }
+
+        m_assembler.lbuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        m_assembler.addInsn(temp.data(), temp.memory(), temp.data());
+
+        resolution = resolveAddress(address, temp.memory());
+        m_assembler.sbInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
     }
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
@@ -553,36 +586,51 @@ public:
 
     void countTrailingZeros32(RegisterID src, RegisterID dest)
     {
-        auto temp = temps<Data>();
-        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<32>());
+        // Previously used slli (64-bit left shift) on a zero-extended 32-bit
+        // value, looking for temp == 0. That never zeros the value until the
+        // set bits fall off bit 63 - so dest decremented past zero and
+        // returned a negative result for any nonzero src. Use the more
+        // direct "right-shift and test bit 0" loop, which terminates in at
+        // most 32 iterations.
+        auto temp = temps<Data, Memory>();
         m_assembler.zeroExtend<32>(temp.data(), src);
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<32>());
 
-        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        JumpList done(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<0>());
 
         Label loop = label();
-        m_assembler.slliInsn<1>(temp.data(), temp.data());
-        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
-        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        m_assembler.andiInsn(temp.memory(), temp.data(), Imm::I<1>());
+        done.append(makeBranch(NotEqual, temp.memory(), RISCV64Registers::zero));
+        m_assembler.srliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<1>());
         jump().linkTo(loop, this);
 
-        zero.link(this);
+        done.link(this);
     }
 
     void countTrailingZeros64(RegisterID src, RegisterID dest)
     {
-        auto temp = temps<Data>();
-        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<64>());
+        // Same fix as countTrailingZeros32 for the 64-bit case: scan from
+        // bit 0 upward using right-shift + andi 1, instead of left-shifting
+        // until the value falls off the register.
+        auto temp = temps<Data, Memory>();
         m_assembler.addiInsn(temp.data(), src, Imm::I<0>());
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<64>());
 
-        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        JumpList done(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<0>());
 
         Label loop = label();
-        m_assembler.slliInsn<1>(temp.data(), temp.data());
-        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
-        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        m_assembler.andiInsn(temp.memory(), temp.data(), Imm::I<1>());
+        done.append(makeBranch(NotEqual, temp.memory(), RISCV64Registers::zero));
+        m_assembler.srliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<1>());
         jump().linkTo(loop, this);
 
-        zero.link(this);
+        done.link(this);
     }
 
     void byteSwap16(RegisterID reg)
@@ -815,8 +863,189 @@ public:
         m_assembler.srliInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(rotateRight32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(rotateRight64);
+    // rotateRight32/64: native rv64gc has no rotate instruction (Zbb's
+    // rorw/ror would do it in one), so synthesise via shift + shift + or.
+    // These are called by BBQJIT's I32Rotl/I32Rotr/I64Rotl/I64Rotr handlers
+    // on every non-x86 path (the rotl variants are routed through
+    // rotateRight32 with a negated shift, so a broken or missing
+    // rotateRight* silently miscompiles both rotr and rotl).
+    void rotateRight32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 31;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            m_assembler.maskRegister<32>(dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.srliwInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.slliwInsn(temp.memory(), src, uint32_t(32 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateRight32(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<32>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.srlwInsn(temp.memory(), src, shift);
+        m_assembler.sllwInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateRight64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 63;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.srliInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.slliInsn(temp.memory(), src, uint32_t(64 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+    }
+
+    void rotateRight64(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<64>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.srlInsn(temp.memory(), src, shift);
+        m_assembler.sllInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+    }
+
+    // Two-operand in-place variants used by MacroAssembler.h convenience
+    // wrappers (e.g. urshiftPtr / rolPtr / FastRotation::apply). These were
+    // matched by the previous templated NOOP overload and silently did
+    // nothing; forward to the three-operand form so callers see the real
+    // rotate.
+    void rotateRight32(TrustedImm32 imm, RegisterID srcDst) { rotateRight32(srcDst, imm, srcDst); }
+    void rotateRight64(TrustedImm32 imm, RegisterID srcDst) { rotateRight64(srcDst, imm, srcDst); }
+    void rotateRight32(RegisterID shift, RegisterID srcDst) { rotateRight32(srcDst, shift, srcDst); }
+    void rotateRight64(RegisterID shift, RegisterID srcDst) { rotateRight64(srcDst, shift, srcDst); }
+
+    // Scalar BBQJIT primitives: fused shift/add and rotate-left, used by the
+    // wasm bytecode-to-machine-code path. RISC-V's baseline rv64gc has no
+    // rotate instruction (Zbb's rolw/rol would do it in one), so synthesize
+    // via shift + shift + or.
+    void addLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        auto temp = temps<Data>();
+        m_assembler.slliInsn(temp.data(), m, uint32_t(amount.m_value & 63));
+        m_assembler.addInsn(d, n, temp.data());
+    }
+
+    void multiplyAddZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulwInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.maskRegister<32>(temp.data());
+        m_assembler.addInsn(dest, summand, temp.data());
+    }
+
+    void rotateLeft32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 31;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            m_assembler.maskRegister<32>(dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.slliwInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.srliwInsn(temp.memory(), src, uint32_t(32 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateLeft32(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<32>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.sllwInsn(temp.memory(), src, shift);
+        m_assembler.srlwInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateLeft64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 63;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.slliInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.srliInsn(temp.memory(), src, uint32_t(64 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+    }
+
+    void rotateLeft64(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<64>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.sllInsn(temp.memory(), src, shift);
+        m_assembler.srlInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+    }
+
+    // Integer divide / modulo via the RISC-V M extension (in rv64gc).
+    // The 32-bit forms produce a sign-extended result; mask to 32 bits.
+    void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divwInsn(dest, dividend, divisor);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void uDiv32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divuwInsn(dest, dividend, divisor);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void div64(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divInsn(dest, dividend, divisor);
+    }
+
+    void uDiv64(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divuInsn(dest, dividend, divisor);
+    }
+
+    // dest = minuend - (mulLeft * mulRight). Used by wasm i32/i64 rem
+    // (rem == lhs - (lhs/rhs) * rhs). RISC-V has no fused mul-sub.
+    void multiplySub32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulwInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.subwInsn(dest, minuend, temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.subInsn(dest, minuend, temp.data());
+    }
+
+    // uint32 -> single-precision float, fcvt.s.wu (one instruction).
+    void convertUInt32ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::WU>(dest, src);
+    }
 
     void load8(Address address, RegisterID dest)
     {
@@ -1406,6 +1635,73 @@ public:
         transfer64(src, dest);
     }
 
+    // 8- and 16-bit mem-to-mem transfers, and Address->BaseIndex
+    // variants of the existing widths, needed by BBQJIT (wasm
+    // struct copy / memory init etc.). Implemented in the same shape
+    // as the existing transfer32 / transfer64: load to a scratch
+    // register, store from it.
+    void transfer8(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load8(src, temp.data());
+        store8(temp.data(), dest);
+    }
+
+    void transfer8(BaseIndex src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load8(src, temp.data());
+        store8(temp.data(), dest);
+    }
+
+    void transfer8(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load8(src, temp.data());
+        store8(temp.data(), dest);
+    }
+
+    void transfer16(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load16(src, temp.data());
+        store16(temp.data(), dest);
+    }
+
+    void transfer16(BaseIndex src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load16(src, temp.data());
+        store16(temp.data(), dest);
+    }
+
+    void transfer16(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load16(src, temp.data());
+        store16(temp.data(), dest);
+    }
+
+    void transfer32(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load32(src, temp.data());
+        store32(temp.data(), dest);
+    }
+
+    void transfer64(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load64(src, temp.data());
+        store64(temp.data(), dest);
+    }
+
+    void transferVector(Address src, BaseIndex dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
+    }
+
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair32(src1, src2, dest, TrustedImm32(0));
@@ -1699,6 +1995,15 @@ public:
         m_assembler.lwInsn(temp.data(), temp.memory(), Imm::I<0>());
         m_assembler.orInsn(temp.data(), src, temp.data());
         m_assembler.swInsn(temp.memory(), temp.data(), Imm::S<0>());
+    }
+
+    void or32(RegisterID src, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.orInsn(temp.data(), src, temp.data());
+        m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
     }
 
     void or32(TrustedImm32 imm, AbsoluteAddress address)
@@ -2007,6 +2312,28 @@ public:
         m_assembler.fmvInsn<RISCV64Assembler::FMVType::W, RISCV64Assembler::FMVType::X>(dest, src);
     }
 
+    // 64-bit integer arithmetic on values held in FP registers. Used by the
+    // JSValue double boxing / NaN purification paths, where the bit pattern of
+    // a double is offset by JSValue::DoubleEncodeOffset without leaving the FP
+    // register file. RISC-V has no integer ALU on FPRs, so move through GPRs.
+    void add64(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.data(), op1);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.memory(), op2);
+        m_assembler.addInsn(temp.data(), temp.data(), temp.memory());
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, temp.data());
+    }
+
+    void sub64(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.data(), op1);
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::X, RISCV64Assembler::FMVType::D>(temp.memory(), op2);
+        m_assembler.subInsn(temp.data(), temp.data(), temp.memory());
+        m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, temp.data());
+    }
+
     void moveDouble(FPRegisterID src, FPRegisterID dest)
     {
         if (src != dest)
@@ -2100,6 +2427,230 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulSat);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorDotProduct);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSwizzle);
+    // Additional vector noop stubs needed by BBQJIT (kept unreachable via
+    // useWasmSIMD = false on RISCV64; see Options.cpp).
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compareFloatingPointVectorUnordered);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveZeroToVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAbsInt64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertLowSignedInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertLowUnsignedInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertUnsigned);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtaddPairwiseUnsignedInt16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractPair);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorHorizontalAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad8Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSshl);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSshr8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshl);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshr8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSwizzle2);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSatSignedFloat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSatUnsignedFloat32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSatUnsignedFloat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnsignedMax);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnsignedMin);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnzipEven);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorZipUpper);
+
+    // RV64A standard A-extension (always present in rv64gc): real impls
+    // for 32/64-bit primitives. 8/16-bit primitives stay UNIMPLEMENTED
+    // because base RV64A has no byte/half AMOs (Zabha is optional, not
+    // in rv64gc); BBQJIT routes 8/16 atomic ops through the
+    // WasmIPIntSlowPaths.cpp C helpers (GCC __atomic_* builtins, which
+    // expand to LR.W byte-mask loops -- properly atomic on rv64gc).
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq16);
+    void loadLinkAcq32(Address address, RegisterID dest)
+    {
+        ASSERT(!address.offset);
+        m_assembler.lr_wInsn(dest, address.base, { Assembler::MemoryAccess::Acquire });
+    }
+    void loadLinkAcq64(Address address, RegisterID dest)
+    {
+        ASSERT(!address.offset);
+        m_assembler.lr_dInsn(dest, address.base, { Assembler::MemoryAccess::Acquire });
+    }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel16);
+    void storeCondRel32(RegisterID value, Address address, RegisterID status)
+    {
+        ASSERT(!address.offset);
+        m_assembler.sc_wInsn(status, address.base, value, { Assembler::MemoryAccess::Release });
+    }
+    void storeCondRel64(RegisterID value, Address address, RegisterID status)
+    {
+        ASSERT(!address.offset);
+        m_assembler.sc_dInsn(status, address.base, value, { Assembler::MemoryAccess::Release });
+    }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS8, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS16, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS32, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS64, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg16);
+    void atomicXchg32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoswap_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchg64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoswap_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    // 2-arg X86-style overloads (input-and-result in the same register).
+    // Live only in BBQJIT's isX86_64() branch, which is never taken at
+    // runtime on RISC-V; provided so the source still compiles.
+    void atomicXchg32(RegisterID valueAndResult, Address address) { atomicXchg32(valueAndResult, address, valueAndResult); }
+    void atomicXchg64(RegisterID valueAndResult, Address address) { atomicXchg64(valueAndResult, address, valueAndResult); }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd16);
+    void atomicXchgAdd32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoadd_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgAdd64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoadd_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgAdd32(RegisterID valueAndResult, Address address) { atomicXchgAdd32(valueAndResult, address, valueAndResult); }
+    void atomicXchgAdd64(RegisterID valueAndResult, Address address) { atomicXchgAdd64(valueAndResult, address, valueAndResult); }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear16);
+    // atomicXchgClear is "atomic AND NOT": no AMOANDN in base A; xori-1 + AMOAND.
+    void atomicXchgClear32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data>();
+        m_assembler.xoriInsn(t.data(), value, Imm::I<-1>());
+        m_assembler.amoand_wInsn(result, address.base, t.data(),
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgClear64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data>();
+        m_assembler.xoriInsn(t.data(), value, Imm::I<-1>());
+        m_assembler.amoand_dInsn(result, address.base, t.data(),
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgClear32(RegisterID valueAndResult, Address address) { atomicXchgClear32(valueAndResult, address, valueAndResult); }
+    void atomicXchgClear64(RegisterID valueAndResult, Address address) { atomicXchgClear64(valueAndResult, address, valueAndResult); }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr16);
+    void atomicXchgOr32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoor_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgOr64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoor_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgOr32(RegisterID valueAndResult, Address address) { atomicXchgOr32(valueAndResult, address, valueAndResult); }
+    void atomicXchgOr64(RegisterID valueAndResult, Address address) { atomicXchgOr64(valueAndResult, address, valueAndResult); }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor16);
+    void atomicXchgXor32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoxor_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgXor64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoxor_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgXor32(RegisterID valueAndResult, Address address) { atomicXchgXor32(valueAndResult, address, valueAndResult); }
+    void atomicXchgXor64(RegisterID valueAndResult, Address address) { atomicXchgXor64(valueAndResult, address, valueAndResult); }
+    // atomicStrongCAS{32,64}(expectedAndResult, newValue, address):
+    // Loads *address into expectedAndResult; if old == caller's expected,
+    // stores newValue. Same external contract as ARM64-LSE casa. Caller
+    // checks expectedAndResult == old-expected to detect success.
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS16);
+    void atomicStrongCAS32(RegisterID expectedAndResult, RegisterID newValue, Address address)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data, Memory>();
+        Label loop = label();
+        m_assembler.lr_wInsn(t.data(), address.base, { Assembler::MemoryAccess::Acquire });
+        m_assembler.addiwInsn(t.memory(), expectedAndResult, Imm::I<0>());
+        Jump mismatch = makeBranch(NotEqual, t.data(), t.memory());
+        m_assembler.sc_wInsn(t.memory(), address.base, newValue, { Assembler::MemoryAccess::Release });
+        Jump scFail = makeBranch(NotEqual, t.memory(), RISCV64Registers::zero);
+        scFail.linkTo(loop, this);
+        mismatch.link(this);
+        m_assembler.addiInsn(expectedAndResult, t.data(), Imm::I<0>());
+    }
+    void atomicStrongCAS64(RegisterID expectedAndResult, RegisterID newValue, Address address)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data, Memory>();
+        Label loop = label();
+        m_assembler.lr_dInsn(t.data(), address.base, { Assembler::MemoryAccess::Acquire });
+        Jump mismatch = makeBranch(NotEqual, t.data(), expectedAndResult);
+        m_assembler.sc_dInsn(t.memory(), address.base, newValue, { Assembler::MemoryAccess::Release });
+        Jump scFail = makeBranch(NotEqual, t.memory(), RISCV64Registers::zero);
+        scFail.linkTo(loop, this);
+        mismatch.link(this);
+        m_assembler.addiInsn(expectedAndResult, t.data(), Imm::I<0>());
+    }
+    // 5-arg StatusCondition form (X86-style). Live only in BBQJIT's
+    // isX86_64() branch -- on RISC-V the surrounding code exits via
+    // an earlier `return;` so this never runs at runtime. Provide a
+    // viable overload so the source still compiles.
+    void atomicStrongCAS32(StatusCondition, RegisterID, RegisterID, Address, RegisterID)
+        { RELEASE_ASSERT_NOT_REACHED(); }
+    void atomicStrongCAS64(StatusCondition, RegisterID, RegisterID, Address, RegisterID)
+        { RELEASE_ASSERT_NOT_REACHED(); }
+    // Additional SIMD vector noop stubs uncovered by enabling BBQJIT.
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshl8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSshr);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshr);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulLow);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulHigh);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorFusedMulAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorFusedNegMulAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad16Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad32Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad64Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad8Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad16Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad32Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad64Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore8Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore16Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore32Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore64Lane);
+    // vectorExtractLane / vectorReplaceLane: by-value templated stubs.
+    // The MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD form uses
+    // Args&& forwarding references; binding a SIMDInfo::lane /
+    // SIMDInfo::signMode bit-field to a non-const reference is
+    // ill-formed, so use by-value template parameters instead.
+    // (The SIMD type names are not visible in this header without
+    // pulling in <JavaScriptCore/SIMDInfo.h>, which we avoid for
+    // pure stubs.) Same unreachability rationale as the other SIMD
+    // stubs: useWasmSIMD = false on RISCV64.
+    template<typename T1, typename T2, typename T3, typename T4>
+    void vectorExtractLane(T1, T2, T3, T4) { }
+    template<typename T1, typename T2, typename T3, typename T4, typename T5>
+    void vectorExtractLane(T1, T2, T3, T4, T5) { }
+    template<typename T1, typename T2, typename T3, typename T4>
+    void vectorReplaceLane(T1, T2, T3, T4) { }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(move128ToVector);
 
     template<PtrTag resultTag, PtrTag locationTag>
     static CodePtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
@@ -3470,6 +4021,26 @@ public:
         m_assembler.fsgnjxInsn<64>(dest, src, src);
     }
 
+    void floatMin(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fminInsn<32>(dest, op1, op2);
+    }
+
+    void floatMax(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmaxInsn<32>(dest, op1, op2);
+    }
+
+    void doubleMin(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fminInsn<64>(dest, op1, op2);
+    }
+
+    void doubleMax(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmaxInsn<64>(dest, op1, op2);
+    }
+
     void ceilFloat(FPRegisterID src, FPRegisterID dest)
     {
         roundFP<32, RISCV64Assembler::FPRoundingMode::RUP>(src, dest);
@@ -3607,6 +4178,18 @@ public:
         auto temp = temps<Data>();
         loadImmediate(imm, temp.data());
         convertInt32ToDouble(temp.data(), dest);
+    }
+
+    void convertUInt32ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::WU>(dest, src);
+    }
+
+    void convertUInt32ToDouble(TrustedImm32 imm, FPRegisterID dest)
+    {
+        auto temp = temps<Data>();
+        loadImmediate(imm, temp.data());
+        convertUInt32ToDouble(temp.data(), dest);
     }
 
     void convertInt64ToFloat(RegisterID src, FPRegisterID dest)
@@ -4708,6 +5291,7 @@ private:
     void testFinalize(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         switch (cond) {
+        case Carry:
         case Overflow:
         case Signed:
         case PositiveOrZero:

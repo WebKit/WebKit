@@ -429,7 +429,7 @@ end
 macro ipintReloadMemory(scratch)
     if ARM64 or ARM64E
         loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
-    elsif X86_64
+    elsif X86_64 or RISCV64
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
         loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
     end
@@ -633,6 +633,11 @@ end
 # On JSVALUE64, each 64-bit argument GPR holds one whole Wasm value.
 macro forEachWasmArgumentGPR(fn)
     if ARM64 or ARM64E
+        fn(0, wa0, wa1)
+        fn(2, wa2, wa3)
+        fn(4, wa4, wa5)
+        fn(6, wa6, wa7)
+    elsif RISCV64
         fn(0, wa0, wa1)
         fn(2, wa2, wa3)
         fn(4, wa4, wa5)
@@ -1341,7 +1346,7 @@ op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
 end)
 
 op(ipint_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64)
     preserveCallerPCAndCFR()
     saveIPIntRegisters()
     storep wasmInstance, CodeBlock[cfr]
@@ -1355,7 +1360,7 @@ else
 end
 end)
 
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64)
 .ipint_entry_end_local:
     loadp UnboxedWasmCalleeStackSlot[cfr], MC
     loadp Wasm::IPIntCallee::m_localInitBytecode + VectorBufferOffset[MC], MC
@@ -1446,7 +1451,7 @@ end
 end
 
 op(ipint_catch_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or RISCV64)
     ipintCatchCommon()
 
     move cfr, a1
@@ -1462,7 +1467,7 @@ end
 end)
 
 op(ipint_catch_all_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or RISCV64)
     ipintCatchCommon()
 
     move cfr, a1
@@ -1478,7 +1483,7 @@ end
 end)
 
 op(ipint_table_catch_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64)
     ipintCatchCommon()
 
     # push arguments but no ref: sp in a2, call normal operation
@@ -1496,7 +1501,7 @@ end
 end)
 
 op(ipint_table_catch_ref_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64)
     ipintCatchCommon()
 
     # push both arguments and ref
@@ -1514,7 +1519,7 @@ end
 end)
 
 op(ipint_table_catch_all_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64)
     ipintCatchCommon()
 
     # do nothing: 0 in sp for no arguments, call normal operation
@@ -1532,7 +1537,7 @@ end
 end)
 
 op(ipint_table_catch_allref_entry, macro()
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64)
     ipintCatchCommon()
 
     # push only the ref
@@ -2085,7 +2090,7 @@ _pinballHandlerRejectFunction:
 # 5. Instruction implementation #
 #################################
 
-if JSVALUE64 and (ARM64 or ARM64E or X86_64)
+if JSVALUE64 and (ARM64 or ARM64E or X86_64 or RISCV64)
     include InPlaceInterpreter64
 else
 # For unimplemented architectures: make sure that the assertions can still find the labels
@@ -2743,4 +2748,20 @@ unimplementedInstruction(_i32_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
+
+# LowLevelInterpreter.asm references these labels for the IPInt call
+# sequence, so they must exist at link time on every architecture that
+# enables WEBASSEMBLY but has no IPInt implementation. They are never
+# reached at run time.
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
+    crash()
 end

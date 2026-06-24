@@ -366,7 +366,7 @@ public:
     static constexpr FPRReg argumentFPR7 = RISCV64Registers::f17; // fpRegT7
 
     static constexpr FPRReg returnValueFPR = RISCV64Registers::f10; // fpRegT0
-    static constexpr FPRReg nonPreservedNonArgumentFPR0 = RISCV64Registers::f11;
+    static constexpr FPRReg nonPreservedNonArgumentFPR0 = RISCV64Registers::f0;
 
     static FPRReg toRegister(unsigned index)
     {

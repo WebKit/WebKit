@@ -176,6 +176,11 @@
 #endif
 #endif
 
+/* BCPU(RISCV64) - RISC-V 64-bit */
+#if defined(__riscv) && __riscv_xlen == 64
+#define BCPU_RISCV64 1
+#endif
+
 /* BCPU(ARM) - ARM, any version*/
 #define BARM_ARCH_AT_LEAST(N) (BCPU(ARM) && BARM_ARCH_VERSION >= N)
 
@@ -397,7 +402,7 @@
 
 /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
 #if !defined(BENABLE_LIBPAS)
-#if (!BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)) && BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
+#if (!BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)) && BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64) || BCPU(RISCV64))) || BPLATFORM(PLAYSTATION))
 #define BENABLE_LIBPAS 1
 #ifndef PAS_BMALLOC
 #define PAS_BMALLOC 1

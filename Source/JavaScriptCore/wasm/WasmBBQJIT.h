@@ -1392,6 +1392,11 @@ public:
     template<typename Functor>
     void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, Location old, Location cur, const Functor& functor);
 
+#if CPU(RISCV64) && USE(JSVALUE64)
+    template<typename Functor>
+    void emitAtomicOpGenericRISCV64ByteMask(ExtAtomicOpType, Address, GPRReg oldGPR, GPRReg scratchGPR, Location valueLocation, const Functor&);
+#endif
+
     [[nodiscard]] Value emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint64_t uoffset);
 
     [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
@@ -2088,6 +2093,13 @@ public:
 
     template<typename Args>
     void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation&, const RTT& signature);
+
+    // On RISC-V the psABI requires 32-bit integer arguments to be sign-extended
+    // in their 64-bit argument registers; BBQ otherwise zero-extends them when
+    // loading from canonical i32 slots (lwu). Emit sext.w on any I32 arg that
+    // ends up in a register before a transition to a C ABI host function or
+    // wasm-to-host import. No-op on other architectures.
+    void emitSignExtendI32ArgsForCCall(const CallInformation&, const RTT& signature);
 
     void slowPathSpillBindings(const RegisterBindings&);
     void slowPathRestoreBindings(const RegisterBindings&);
