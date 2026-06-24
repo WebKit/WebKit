@@ -1433,6 +1433,18 @@ AbstractValue Graph::inferredValueForProperty(const AbstractValue& base, const R
     return AbstractValue::heapTop();
 }
 
+bool Graph::mayBeCopyOnWriteArray(const AbstractValue& value)
+{
+    if (!value.m_structure.isFinite())
+        return true;
+    bool result = false;
+    value.m_structure.forEach([&](RegisteredStructure structure) {
+        if (isCopyOnWrite(structure->indexingMode()))
+            result = true;
+    });
+    return result;
+}
+
 JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
 {
     // This has an awesome concurrency story. See comment for GetGlobalVar in ByteCodeParser.

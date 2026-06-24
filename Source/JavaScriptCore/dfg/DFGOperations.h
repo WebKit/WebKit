@@ -150,6 +150,7 @@ static constexpr unsigned sortScratchSlotCount = 16;
 JSC_DECLARE_JIT_OPERATION(operationAcquireSortScratch, JSCell*, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObject*, Structure*, int32_t, int32_t, Butterfly*));
+JSC_DECLARE_JIT_OPERATION(operationCloneCowArray, JSCell*, (JSGlobalObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt8ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt8ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewInt16ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));

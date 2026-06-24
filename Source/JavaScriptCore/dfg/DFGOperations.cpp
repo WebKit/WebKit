@@ -2699,6 +2699,17 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObjec
     OPERATION_RETURN(scope, std::bit_cast<char*>(result));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationCloneCowArray, JSCell*, (JSGlobalObject* globalObject, JSObject* source))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(isCopyOnWrite(source->indexingMode()));
+    OPERATION_RETURN(scope, JSArray::createWithButterfly(vm, nullptr, globalObject->originalArrayStructureForIndexingType(source->indexingMode()), source->butterfly()));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Structure* arrayStructure, JSCell* immutableButterflyCell))
 {
     VM& vm = *vmPointer;

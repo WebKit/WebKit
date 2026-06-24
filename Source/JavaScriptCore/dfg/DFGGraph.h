@@ -1112,6 +1112,9 @@ public:
     // value for some property accessed with the given abstract value base.
     AbstractValue inferredValueForProperty(const AbstractValue& base, PropertyOffset, StructureClobberState);
     AbstractValue inferredValueForProperty(const AbstractValue& base, const RegisteredStructureSet&, PropertyOffset, StructureClobberState);
+
+    // Conservatively answers whether the given value may carry a copy-on-write indexing mode.
+    bool mayBeCopyOnWriteArray(const AbstractValue&);
     
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);

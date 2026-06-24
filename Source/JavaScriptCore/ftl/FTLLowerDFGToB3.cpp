@@ -8484,11 +8484,42 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.constInt32(0));
         }
 
+        LValue rawIndexingType = m_out.load8ZeroExt32(sourceArray, m_heaps.JSCell_indexingTypeAndMisc);
+
+        // Only emit the copy-on-write share path when the abstract interpreter cannot prove the source
+        // is non-CoW. This keeps the predicted result type in DFGAbstractInterpreterInlines.h (which uses
+        // the same predicate) consistent with what we actually produce here.
+        bool mayBeCopyOnWrite = m_graph.mayBeCopyOnWriteArray(abstractValue(m_graph.varArgChild(m_node, 0)));
+
+        LBasicBlock loop = m_out.newBlock();
+        LBasicBlock loopDone = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        Vector<ValueFromBlock, 2> results;
+        LBasicBlock lastNext = nullptr;
+
+        if (mayBeCopyOnWrite) {
+            LBasicBlock cowSharePath = m_out.newBlock();
+            LBasicBlock copyPath = m_out.newBlock();
+
+            // If the source butterfly is copy-on-write and the slice covers the whole array,
+            // we can share the source butterfly instead of allocating and copying a new one.
+            LValue cowCondition = m_out.testNonZero32(rawIndexingType, m_out.constInt32(CopyOnWrite));
+            if (m_node->numChildren() != 2)
+                cowCondition = m_out.bitAnd(cowCondition, m_out.bitAnd(m_out.isZero32(startIndex), m_out.equal(resultLength, inputLength)));
+            m_out.branch(cowCondition, unsure(cowSharePath), unsure(copyPath));
+
+            lastNext = m_out.appendTo(cowSharePath, copyPath);
+            results.append(m_out.anchor(vmCall(pointerType(), operationCloneCowArray, weakPointer(globalObject), sourceArray)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(copyPath, loop);
+        }
+
         ArrayValues arrayResult;
         {
-            LValue indexingType = m_out.load8ZeroExt32(sourceArray, m_heaps.JSCell_indexingTypeAndMisc);
             // We can ignore the writability of the cell since we won't write to the source.
-            indexingType = m_out.bitAnd(indexingType, m_out.constInt32(AllWritableArrayTypesAndHistory));
+            LValue indexingType = m_out.bitAnd(rawIndexingType, m_out.constInt32(AllWritableArrayTypesAndHistory));
             // When we emit an ArraySlice, we dominate the use of the array by a CheckStructure
             // to ensure the incoming array is one to be one of the original array structures
             // with one of the following indexing shapes: Int32, Contiguous, Double.
@@ -8504,17 +8535,17 @@ IGNORE_CLANG_WARNINGS_END
         // Keep the sourceArray alive at least until after anything that can GC.
         ensureStillAliveHere(sourceArray);
 
-        LBasicBlock loop = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
         resultLength = m_out.zeroExtPtr(resultLength);
         ValueFromBlock startLoadIndex = m_out.anchor(m_out.zeroExtPtr(startIndex));
         ValueFromBlock startStoreIndex = m_out.anchor(m_out.constIntPtr(0));
 
         m_out.branch(
-            m_out.below(m_out.constIntPtr(0), resultLength), unsure(loop), unsure(continuation));
+            m_out.below(m_out.constIntPtr(0), resultLength), unsure(loop), unsure(loopDone));
 
-        LBasicBlock lastNext = m_out.appendTo(loop, continuation);
+        if (lastNext)
+            m_out.appendTo(loop, loopDone);
+        else
+            lastNext = m_out.appendTo(loop, loopDone);
         LValue storeIndex = m_out.phi(pointerType(), startStoreIndex);
         LValue loadIndex = m_out.phi(pointerType(), startLoadIndex);
         LValue value = m_out.load64(m_out.baseIndex(m_heaps.root, sourceStorage, loadIndex, ScaleEight));
@@ -8523,12 +8554,15 @@ IGNORE_CLANG_WARNINGS_END
         m_out.addIncomingToPhi(storeIndex, m_out.anchor(nextStoreIndex));
         m_out.addIncomingToPhi(loadIndex, m_out.anchor(m_out.add(loadIndex, m_out.constIntPtr(1))));
         m_out.branch(
-            m_out.below(nextStoreIndex, resultLength), unsure(loop), unsure(continuation));
+            m_out.below(nextStoreIndex, resultLength), unsure(loop), unsure(loopDone));
+
+        m_out.appendTo(loopDone, continuation);
+        mutatorFence();
+        results.append(m_out.anchor(arrayResult.array));
+        m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-
-        mutatorFence();
-        setJSValue(arrayResult.array);
+        setJSValue(m_out.phi(pointerType(), results));
     }
 
     void compileArrayConcatArray()
