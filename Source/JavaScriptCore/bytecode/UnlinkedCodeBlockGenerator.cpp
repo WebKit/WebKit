@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,14 +51,15 @@ void UnlinkedCodeBlockGenerator::addTypeProfilerExpressionInfo(unsigned instruct
     m_typeProfilerInfoMap.set(instructionOffset, range);
 }
 
-void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> instructions)
+bool UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> instructions)
 {
     ASSERT(instructions);
+    bool metadataOK = true;
     {
         Locker locker { m_codeBlock->cellLock() };
         m_codeBlock->m_instructions = WTF::move(instructions);
         m_codeBlock->allocateSharedProfiles(m_numBinaryArithProfiles, m_numUnaryArithProfiles);
-        m_codeBlock->m_metadata->finalize();
+        metadataOK = m_codeBlock->m_metadata->finalize();
 
         m_codeBlock->m_jumpTargets = WTF::move(m_jumpTargets);
         m_codeBlock->m_identifiers = WTF::move(m_identifiers);
@@ -95,6 +96,7 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> i
     }
     m_vm.writeBarrier(m_codeBlock.get());
     m_vm.heap.reportExtraMemoryAllocated(m_codeBlock.get(), m_codeBlock->m_instructions->sizeInBytes() + m_codeBlock->metadataSizeInBytes());
+    return metadataOK;
 }
 
 UnlinkedHandlerInfo* UnlinkedCodeBlockGenerator::handlerForBytecodeIndex(BytecodeIndex bytecodeIndex, RequiredHandler requiredHandler)
